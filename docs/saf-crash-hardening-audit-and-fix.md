@@ -32,10 +32,10 @@ A repository-wide audit mapped **96 total activity launch sites** across the app
 
 ## 3. Core Architecture Solution
 
-Rather than duplicating try-catch blocks across 27 UI screen files, a centralized extension function abstraction was created in [`app/src/main/java/com/yourname/pdftoolkit/util/SafeLauncher.kt`](file:///c:/Users/chait/Projects/pdf_tools/app/src/main/java/com/yourname/pdftoolkit/util/SafeLauncher.kt):
+Rather than duplicating try-catch blocks across 27 UI screen files, a centralized extension function abstraction was created in [`app/src/main/java/com/maheshraikg/pdftoolkit/util/SafeLauncher.kt`](file:///c:/Users/chait/Projects/pdf_tools/app/src/main/java/com/maheshraikg/pdftoolkit/util/SafeLauncher.kt):
 
 ```kotlin
-package com.yourname.pdftoolkit.util
+package com.maheshraikg.pdftoolkit.util
 
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -64,12 +64,12 @@ fun <I> ActivityResultLauncher<I>.safeLaunch(
 ```
 
 ### Image Crop Hardening (`CropHelper.kt`)
-UCrop activity launches in [`app/src/main/java/com/yourname/pdftoolkit/util/CropHelper.kt`](file:///c:/Users/chait/Projects/pdf_tools/app/src/main/java/com/yourname/pdftoolkit/util/CropHelper.kt#L259-L270) were wrapped with `try-catch(ActivityNotFoundException)` to catch missing crop activity intents gracefully and notify the user via Toast.
+UCrop activity launches in [`app/src/main/java/com/maheshraikg/pdftoolkit/util/CropHelper.kt`](file:///c:/Users/chait/Projects/pdf_tools/app/src/main/java/com/maheshraikg/pdftoolkit/util/CropHelper.kt#L259-L270) were wrapped with `try-catch(ActivityNotFoundException)` to catch missing crop activity intents gracefully and notify the user via Toast.
 
 ---
 
 ## 4. Verification & Build Validation
 
-1. **Refactor Extent:** All 67 `ActivityResultLauncher` call sites across 27 Jetpack Compose UI screens (`app/src/main/java/com/yourname/pdftoolkit/ui/screens/`) were updated to use `.safeLaunch(input, context)`.
+1. **Refactor Extent:** All 67 `ActivityResultLauncher` call sites across 27 Jetpack Compose UI screens (`app/src/main/java/com/maheshraikg/pdftoolkit/ui/screens/`) were updated to use `.safeLaunch(input, context)`.
 2. **Post-Fix Audit:** Automated regex audit confirmed **0 unprotected activity launchers remaining**.
 3. **Build Verification:** Verified clean build via `./gradlew :app:assembleFdroidDebug` (`BUILD SUCCESSFUL in 46s`).

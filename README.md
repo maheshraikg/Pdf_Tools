@@ -1,38 +1,35 @@
 <p align="center">
-  <img src="store_assets/app_icon_512.png" width="120" height="120" alt="PDF Toolkit">
+  <img src="store_assets/app_icon_512.png" width="120" height="120" alt="PDF Master Tools">
 </p>
 
-<h1 align="center">PDF Toolkit</h1>
+<h1 align="center">PDF Master Tools</h1>
 
 <p align="center">
   <strong>A privacy-first, offline PDF utility for Android</strong>
 </p>
 
 <p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.yourname.pdftoolkit">
-    <img src="https://img.shields.io/badge/Play%20Store-Download-green?logo=googleplay" alt="Play Store">
-  </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License">
   </a>
-  <a href="https://github.com/Karna14314/Pdf_Tools/stargazers">
-    <img src="https://img.shields.io/github/stars/Karna14314/Pdf_Tools?style=flat&color=yellow" alt="GitHub Stars">
+  <a href="https://github.com/maheshraikg/Pdf_Tools/stargazers">
+    <img src="https://img.shields.io/github/stars/maheshraikg/Pdf_Tools?style=flat&color=yellow" alt="GitHub Stars">
   </a>
-  <a href="https://github.com/Karna14314/Pdf_Tools/forks">
-    <img src="https://img.shields.io/github/forks/Karna14314/Pdf_Tools?style=flat&color=blue" alt="GitHub Forks">
+  <a href="https://github.com/maheshraikg/Pdf_Tools/forks">
+    <img src="https://img.shields.io/github/forks/maheshraikg/Pdf_Tools?style=flat&color=blue" alt="GitHub Forks">
   </a>
-  <a href="https://github.com/Karna14314/Pdf_Tools/watchers">
-    <img src="https://img.shields.io/github/watchers/Karna14314/Pdf_Tools?style=flat&color=green" alt="GitHub Watchers">
+  <a href="https://github.com/maheshraikg/Pdf_Tools/watchers">
+    <img src="https://img.shields.io/github/watchers/maheshraikg/Pdf_Tools?style=flat&color=green" alt="GitHub Watchers">
   </a>
-  <a href="https://github.com/Karna14314/Pdf_Tools/issues">
-    <img src="https://img.shields.io/github/issues/Karna14314/Pdf_Tools?style=flat&color=red" alt="GitHub Issues">
+  <a href="https://github.com/maheshraikg/Pdf_Tools/issues">
+    <img src="https://img.shields.io/github/issues/maheshraikg/Pdf_Tools?style=flat&color=red" alt="GitHub Issues">
   </a>
-  <a href="https://github.com/Karna14314/Pdf_Tools/releases">
-    <img src="https://img.shields.io/github/v/release/Karna14314/Pdf_Tools?include_prereleases" alt="Latest Release">
+  <a href="https://github.com/maheshraikg/Pdf_Tools/releases">
+    <img src="https://img.shields.io/github/v/release/maheshraikg/Pdf_Tools?include_prereleases" alt="Latest Release">
   </a>
   <img src="https://img.shields.io/badge/Platform-Android-3DDC84?logo=android" alt="Platform">
-  <img src="https://img.shields.io/github/last-commit/Karna14314/Pdf_Tools?style=flat&color=orange" alt="Last Commit">
-  <a href="https://oosmetrics.com/repo/Karna14314/Pdf_Tools">
+  <img src="https://img.shields.io/github/last-commit/maheshraikg/Pdf_Tools?style=flat&color=orange" alt="Last Commit">
+  <a href="https://oosmetrics.com/repo/maheshraikg/Pdf_Tools">
     <img src="https://api.oosmetrics.com/api/v1/badge/achievement/ae7516ca-85f2-4c6f-a679-149537b637d8.svg" alt="oosmetrics">
   </a>
 </p>
@@ -41,12 +38,8 @@
 
 ## 📱 Get it on Android
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.yourname.pdftoolkit">
-    <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="80" alt="Get it on Google Play">
-  </a>
-</p>
-
+> Not yet published. Play Store and F-Droid links will be added here once this fork's own listing goes live.
+>
 > Offline · Privacy-first · No account required
 
 ---
@@ -137,7 +130,7 @@ All flavors are **privacy-first** with no ads, no analytics, and no proprietary 
 
 ```bash
 # Clone the repository
-git clone https://github.com/Karna14314/Pdf_Tools.git
+git clone https://github.com/maheshraikg/Pdf_Tools.git
 cd Pdf_Tools
 
 # Play Store flavor (ML Kit OCR)
@@ -156,9 +149,9 @@ cd Pdf_Tools
 
 | Platform | Link | Notes |
 |----------|------|-------|
-| Google Play | [Install](https://play.google.com/store/apps/details?id=com.yourname.pdftoolkit) | Stable, auto-updates |
-| GitHub Releases | [Download APK](https://github.com/Karna14314/Pdf_Tools/releases) | Opensource flavor, manual install |
-| F-Droid | Coming soon | Under review |
+| Google Play | Not yet published | Will be added once this fork's Play Console listing is live |
+| GitHub Releases | [Download APK](https://github.com/maheshraikg/Pdf_Tools/releases) | Opensource flavor, manual install |
+| F-Droid | Not yet submitted | Will be added once submitted under this fork's package ID |
 
 ---
 
@@ -174,20 +167,23 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 **Important:** The F-Droid and opensource flavors must remain free of proprietary dependencies. Any new dependencies must be compatible with the F-Droid inclusion policy.
 
-See [open issues](https://github.com/Karna14314/Pdf_Tools/issues) for feature requests and bug reports.
+See [open issues](https://github.com/maheshraikg/Pdf_Tools/issues) for feature requests and bug reports.
 
 ---
 
 ## 👤 Maintainer
 
-**Narisetti Chaitanya Naidu**  
-GitHub: [@Karna14314](https://github.com/Karna14314)
+**maheshraikg**  
+GitHub: [@maheshraikg](https://github.com/maheshraikg)
+
+This is a fork of the original [PDF Toolkit](https://github.com/Karna14314/Pdf_Tools) project, created by Narisetti Chaitanya Naidu and licensed under Apache 2.0.
 
 ---
 
 ## 📄 License
 
-Copyright © 2026 Narisetti Chaitanya Naidu
+Copyright © 2024-2025 PDF Toolkit Contributors (original project)  
+Modifications Copyright © 2026 maheshraikg
 
 Licensed under the Apache License, Version 2.0  
-See [LICENSE](LICENSE) for full text.
+See [LICENSE](LICENSE) for full text and [NOTICE](docs/NOTICE.md) for third-party attributions.

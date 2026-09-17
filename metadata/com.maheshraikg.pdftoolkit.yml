@@ -1,0 +1,58 @@
+Categories:
+  - Reading
+  - Writing
+License: Apache-2.0
+AuthorName: maheshraikg
+SourceCode: https://github.com/maheshraikg/Pdf_Tools
+IssueTracker: https://github.com/maheshraikg/Pdf_Tools/issues
+AutoName: PDF Master Tools
+
+RepoType: git
+Repo: https://github.com/maheshraikg/Pdf_Tools
+
+# NOTE: this is a rebrand/fork of the original "PDF Toolkit" project
+# (originally by Narisetti Chaitanya Naidu, Apache-2.0). The CurrentVersion/
+# Builds entries below are placeholders carried over from that project and
+# reference commits that predate the applicationId/package rename in this
+# fork. Before submitting to F-Droid, replace them with real versionName/
+# versionCode/commit values from this repository's own release tags.
+CurrentVersion: 1.0.0
+CurrentVersionCode: 1
+
+Builds:
+  - versionName: 1.0.0
+    versionCode: 1
+    commit: REPLACE_WITH_RELEASE_TAG_COMMIT
+    subdir: app
+    gradle:
+      - fdroid
+    gradleprops:
+      - APP_VERSION_CODE=1
+      - APP_VERSION_NAME=1.0.0
+
+Description: |-
+  PDF Master Tools is a comprehensive PDF and image manipulation tool for Android.
+
+  Features include:
+  * Merge multiple PDFs into one
+  * Split PDF into multiple files
+  * Compress PDF to reduce file size
+  * Convert PDF pages to images
+  * Convert images to PDF
+  * Reorder, rotate, and delete PDF pages
+  * Extract specific pages from PDF
+  * Add watermarks and page numbers
+  * Password protect PDFs (lock/unlock)
+  * Sign PDFs with digital signatures
+  * OCR using Tesseract (open source)
+  * Scan documents to PDF using camera
+  * Extract text from PDFs
+  * View and edit PDF metadata
+  * Image tools (compress, resize, convert formats)
+
+  The F-Droid version uses Tesseract OCR instead of Google ML Kit
+  to maintain compatibility with F-Droid's free software requirements.
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: gradle.properties|APP_VERSION_CODE=(\\d+)|.|APP_VERSION_NAME=(.+)

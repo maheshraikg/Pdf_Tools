@@ -2,7 +2,7 @@
 set -e
 
 echo "========================================="
-echo "PDF Toolkit Lint Check"
+echo "PDF Master Tools Lint Check"
 echo "========================================="
 
 echo "Running Android Lint..."
