@@ -602,4 +602,24 @@ Saved to: %1$s</string>
     <string name="fill_form_filled">Form Filled!</string>
     <string name="fill_fields_updated">%1$d fields updated</string>
     <string name="fill_no_editable_fields">This form has no editable fields</string>
+
+    <!-- Multi-output result screen -->
+    <string name="multi_output_files_created">%1$d files created</string>
+    <string name="multi_output_images_saved">All images have been saved to your gallery</string>
+    <string name="multi_output_pdfs_saved">All PDFs have been saved to the output folder</string>
+    <string name="action_open_all_gallery">Open All in Gallery</string>
+    <string name="action_open_first_pdf">Open First PDF</string>
+    <string name="share_chooser_title">Share file</string>
+    <string name="share_chooser_title_multiple">Share files</string>
+    <string name="share_failed">Couldn\'t share file. No app available to handle this action.</string>
+    <string name="file_unknown_size">Unknown size</string>
+    <string name="file_default_name">File %1$d</string>
+
+    <!-- History item actions -->
+    <string name="history_delete_dialog_title">Delete this entry?</string>
+    <string name="history_delete_dialog_message">This will remove this entry from your history. The actual file will not be deleted.</string>
+    <string name="history_open_in_gallery">Open in Gallery</string>
+    <string name="history_sidebar_empty_title">No history yet</string>
+    <string name="history_sidebar_empty_subtitle">Your operations will appear here</string>
+    <string name="history_output_name_with_count">%1$s (%2$d files)</string>
 </resources>

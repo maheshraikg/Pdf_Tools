@@ -112,6 +112,7 @@ fun HistorySidebar(
     var history by remember { mutableStateOf<List<HistoryEntry>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var showClearConfirmation by remember { mutableStateOf(false) }
+    var entryToDelete by remember { mutableStateOf<HistoryEntry?>(null) }
     
     // Load history when sidebar opens
     LaunchedEffect(isOpen) {
@@ -169,7 +170,7 @@ fun HistorySidebar(
                                 )
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Text(
-                                    text = "History",
+                                    text = stringResource(R.string.history_title),
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -240,12 +241,12 @@ fun HistorySidebar(
                                     )
                                     Spacer(modifier = Modifier.height(16.dp))
                                     Text(
-                                        text = "No history yet",
+                                        text = stringResource(R.string.history_sidebar_empty_title),
                                         style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                     Text(
-                                        text = "Your operations will appear here",
+                                        text = stringResource(R.string.history_sidebar_empty_subtitle),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                                     )
@@ -272,12 +273,7 @@ fun HistorySidebar(
                                                 }
                                             }
                                         },
-                                        onDelete = {
-                                            scope.launch {
-                                                HistoryManager.deleteEntry(context, entry.id)
-                                                history = HistoryManager.getHistory(context)
-                                            }
-                                        }
+                                        onDelete = { entryToDelete = entry }
                                     )
                                 }
                             }
@@ -327,6 +323,43 @@ fun HistorySidebar(
             },
             dismissButton = {
                 TextButton(onClick = { showClearConfirmation = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        )
+    }
+
+    // Single entry delete confirmation dialog
+    entryToDelete?.let { entry ->
+        AlertDialog(
+            onDismissRequest = { entryToDelete = null },
+            icon = {
+                Icon(
+                    Icons.Default.DeleteForever,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error
+                )
+            },
+            title = { Text(stringResource(R.string.history_delete_dialog_title)) },
+            text = { Text(stringResource(R.string.history_delete_dialog_message)) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        scope.launch {
+                            HistoryManager.deleteEntry(context, entry.id)
+                            history = HistoryManager.getHistory(context)
+                            entryToDelete = null
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text(stringResource(R.string.action_delete))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { entryToDelete = null }) {
                     Text(stringResource(R.string.action_cancel))
                 }
             }
@@ -433,7 +466,7 @@ private fun HistoryItem(
                     if (entry.outputFileName != null) {
                         val outputCount = entry.outputFileUris.size
                         val displayName = if (outputCount > 1) {
-                            "${entry.outputFileName} ($outputCount files)"
+                            stringResource(R.string.history_output_name_with_count, entry.outputFileName, outputCount)
                         } else {
                             entry.outputFileName
                         }
@@ -523,7 +556,7 @@ private fun HistoryItem(
                             }
                             
                             DropdownMenuItem(
-                                text = { Text(if (isImage) "Open in Gallery" else "Open File") },
+                                text = { Text(if (isImage) stringResource(R.string.history_open_in_gallery) else stringResource(R.string.history_open_file)) },
                                 leadingIcon = { 
                                     Icon(
                                         if (isImage) Icons.Default.Photo else Icons.Default.OpenInNew, 

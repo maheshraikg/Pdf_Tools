@@ -53,15 +53,18 @@ fun MultiOutputResultScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    
+    val shareFailedMessage = stringResource(R.string.share_failed)
+    val shareChooserTitle = stringResource(R.string.share_chooser_title)
+    val shareChooserTitleMultiple = stringResource(R.string.share_chooser_title_multiple)
+
     // Build file items list
     val fileItems = remember(outputUris) {
         outputUris.mapIndexed { index, uri ->
             val fileInfo = FileManager.getFileInfo(context, uri)
             OutputFileItem(
                 uri = uri,
-                name = fileInfo?.name ?: "File ${index + 1}",
-                size = fileInfo?.formattedSize ?: "Unknown size",
+                name = fileInfo?.name ?: context.getString(R.string.file_default_name, index + 1),
+                size = fileInfo?.formattedSize ?: context.getString(R.string.file_unknown_size),
                 index = index + 1
             )
         }
@@ -91,18 +94,18 @@ fun MultiOutputResultScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "${fileItems.size} files created",
+                        text = stringResource(R.string.multi_output_files_created, fileItems.size),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
-                    
+
                     Spacer(modifier = Modifier.height(8.dp))
-                    
+
                     Text(
-                        text = if (isImageOutput) 
-                            "All images have been saved to your gallery" 
-                        else 
-                            "All PDFs have been saved to the output folder",
+                        text = if (isImageOutput)
+                            stringResource(R.string.multi_output_images_saved)
+                        else
+                            stringResource(R.string.multi_output_pdfs_saved),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -131,14 +134,16 @@ fun MultiOutputResultScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            if (isImageOutput) "Open All in Gallery" 
-                            else "Open First PDF"
+                            if (isImageOutput) stringResource(R.string.action_open_all_gallery)
+                            else stringResource(R.string.action_open_first_pdf)
                         )
                     }
-                    
+
                     // Share all button
                     OutlinedButton(
-                        onClick = { shareMultipleFiles(context, outputUris) },
+                        onClick = {
+                            shareMultipleFiles(context, outputUris, shareChooserTitle, shareChooserTitleMultiple, shareFailedMessage)
+                        },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(
@@ -168,7 +173,7 @@ fun MultiOutputResultScreen(
                         ImageOutputCard(
                             item = item,
                             onOpen = { scope.launch(Dispatchers.IO) { FileOpener.openImage(context, item.uri) } },
-                            onShare = { shareFile(context, item.uri) }
+                            onShare = { shareFile(context, item.uri, shareChooserTitle, shareFailedMessage) }
                         )
                     }
                 }
@@ -186,7 +191,7 @@ fun MultiOutputResultScreen(
                         PdfOutputCard(
                             item = item,
                             onOpen = { scope.launch(Dispatchers.IO) { FileOpener.openPdf(context, item.uri) } },
-                            onShare = { shareFile(context, item.uri) }
+                            onShare = { shareFile(context, item.uri, shareChooserTitle, shareFailedMessage) }
                         )
                     }
                 }
@@ -374,28 +379,34 @@ private fun ImageOutputCard(
 }
 
 /**
- * Share a single file.
+ * Share a single file. Shows a toast if no app can handle the share intent.
  */
-private fun shareFile(context: android.content.Context, uri: Uri) {
+private fun shareFile(context: android.content.Context, uri: Uri, chooserTitle: String, failedMessage: String) {
     try {
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             type = context.contentResolver.getType(uri) ?: "*/*"
             putExtra(Intent.EXTRA_STREAM, uri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        val chooser = Intent.createChooser(shareIntent, "Share file")
+        val chooser = Intent.createChooser(shareIntent, chooserTitle)
         context.startActivity(chooser)
     } catch (e: Exception) {
-        // Ignore share errors
+        android.widget.Toast.makeText(context, failedMessage, android.widget.Toast.LENGTH_SHORT).show()
     }
 }
 
 /**
- * Share multiple files.
+ * Share multiple files. Shows a toast if no app can handle the share intent.
  */
-private fun shareMultipleFiles(context: android.content.Context, uris: List<Uri>) {
+private fun shareMultipleFiles(
+    context: android.content.Context,
+    uris: List<Uri>,
+    chooserTitle: String,
+    chooserTitleMultiple: String,
+    failedMessage: String
+) {
     if (uris.isEmpty()) return
-    
+
     try {
         val shareIntent = if (uris.size == 1) {
             Intent(Intent.ACTION_SEND).apply {
@@ -409,10 +420,10 @@ private fun shareMultipleFiles(context: android.content.Context, uris: List<Uri>
             }
         }
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        
-        val chooser = Intent.createChooser(shareIntent, "Share files")
+
+        val chooser = Intent.createChooser(shareIntent, if (uris.size == 1) chooserTitle else chooserTitleMultiple)
         context.startActivity(chooser)
     } catch (e: Exception) {
-        // Ignore share errors
+        android.widget.Toast.makeText(context, failedMessage, android.widget.Toast.LENGTH_SHORT).show()
     }
 }

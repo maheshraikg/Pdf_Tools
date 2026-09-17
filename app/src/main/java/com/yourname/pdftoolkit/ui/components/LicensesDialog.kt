@@ -49,7 +49,7 @@ fun LicensesDialog(
                     title = { Text(stringResource(R.string.licenses_title)) },
                     navigationIcon = {
                         IconButton(onClick = onDismiss) {
-                            Icon(Icons.Default.Close, "Close")
+                            Icon(Icons.Default.Close, stringResource(R.string.action_close))
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
