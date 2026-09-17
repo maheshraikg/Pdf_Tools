@@ -28,6 +28,7 @@ import com.maheshraikg.pdftoolkit.BuildConfig
 import com.maheshraikg.pdftoolkit.R
 import com.maheshraikg.pdftoolkit.data.SafUriManager
 import com.maheshraikg.pdftoolkit.ui.navigation.Screen
+import com.maheshraikg.pdftoolkit.util.FavoritesDataStore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -57,7 +58,8 @@ enum class ToolSection(val title: String) {
     CONVERT("Convert"),
     SECURITY("Security"),
     IMAGE_TOOLS("Image Tools"),
-    VIEW_EXPORT("View & Export")
+    VIEW_EXPORT("View & Export"),
+    BATCH_COMPARE("Batch & Compare")
 }
 
 /**
@@ -157,7 +159,32 @@ fun ToolsScreen(
     }
     
     val allTools = getAllTools()
-    
+    val favoriteIds by FavoritesDataStore.getFavoriteToolIds(context).collectAsState(initial = emptySet())
+
+    fun handleToolClick(tool: ToolItem) {
+        if (tool.screen == Screen.Home && tool.id == "view_pdf") {
+            // Special handling for View PDF
+            pdfPickerLauncher.safeLaunch(arrayOf("application/pdf"), context)
+        } else {
+            // Check if this is an image tool that needs special routing
+            val imageToolIds = listOf("image_compress", "image_resize", "image_convert", "image_metadata")
+            if (imageToolIds.contains(tool.id) && onNavigateToRoute != null) {
+                // Use route with operation parameter for image tools
+                val route = Screen.getRouteForToolId(tool.id)
+                onNavigateToRoute(route)
+            } else {
+                // Use screen object for other tools
+                onNavigateToScreen(tool.screen)
+            }
+        }
+    }
+
+    fun toggleFavorite(tool: ToolItem) {
+        scope.launch { FavoritesDataStore.toggleFavorite(context, tool.id) }
+    }
+
+    val favoriteTools = allTools.filter { it.id in favoriteIds }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -173,7 +200,22 @@ fun ToolsScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        
+
+        // Favorites (pinned tools) - shown first when non-empty
+        if (favoriteTools.isNotEmpty()) {
+            item {
+                SectionHeader(title = stringResource(R.string.category_favorites))
+            }
+            item {
+                ToolGrid(
+                    tools = favoriteTools,
+                    favoriteIds = favoriteIds,
+                    onToolClick = ::handleToolClick,
+                    onToggleFavorite = ::toggleFavorite
+                )
+            }
+        }
+
         // Sections
         ToolSection.entries.forEach { section ->
             val sectionTools = allTools.filter { it.section == section }
@@ -181,32 +223,18 @@ fun ToolsScreen(
                 item {
                     SectionHeader(title = getSectionTitle(section))
                 }
-                
+
                 item {
                     ToolGrid(
                         tools = sectionTools,
-                        onToolClick = { tool ->
-                            if (tool.screen == Screen.Home && tool.id == "view_pdf") {
-                                // Special handling for View PDF
-                                pdfPickerLauncher.safeLaunch(arrayOf("application/pdf"), context)
-                            } else {
-                                // Check if this is an image tool that needs special routing
-                                val imageToolIds = listOf("image_compress", "image_resize", "image_convert", "image_metadata")
-                                if (imageToolIds.contains(tool.id) && onNavigateToRoute != null) {
-                                    // Use route with operation parameter for image tools
-                                    val route = Screen.getRouteForToolId(tool.id)
-                                    onNavigateToRoute(route)
-                                } else {
-                                    // Use screen object for other tools
-                                    onNavigateToScreen(tool.screen)
-                                }
-                            }
-                        }
+                        favoriteIds = favoriteIds,
+                        onToolClick = ::handleToolClick,
+                        onToggleFavorite = ::toggleFavorite
                     )
                 }
             }
         }
-        
+
         // Bottom spacing
         item {
             Spacer(modifier = Modifier.height(80.dp))
@@ -226,6 +254,7 @@ private fun getSectionTitle(section: ToolSection): String {
         ToolSection.SECURITY -> stringResource(R.string.category_security)
         ToolSection.IMAGE_TOOLS -> stringResource(R.string.category_image_tools)
         ToolSection.VIEW_EXPORT -> stringResource(R.string.category_view_export)
+        ToolSection.BATCH_COMPARE -> stringResource(R.string.category_batch_compare)
     }
 }
 
@@ -252,11 +281,13 @@ private fun SectionHeader(title: String) {
 @Composable
 private fun ToolGrid(
     tools: List<ToolItem>,
-    onToolClick: (ToolItem) -> Unit
+    favoriteIds: Set<String>,
+    onToolClick: (ToolItem) -> Unit,
+    onToggleFavorite: (ToolItem) -> Unit
 ) {
     // Use a 3-column grid for compact display
     val rows = tools.chunked(3)
-    
+
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -268,7 +299,9 @@ private fun ToolGrid(
                 rowTools.forEach { tool ->
                     ToolCard(
                         tool = tool,
+                        isFavorite = tool.id in favoriteIds,
                         onClick = { onToolClick(tool) },
+                        onToggleFavorite = { onToggleFavorite(tool) },
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -285,63 +318,83 @@ private fun ToolGrid(
 @Composable
 private fun ToolCard(
     tool: ToolItem,
+    isFavorite: Boolean,
     onClick: () -> Unit,
+    onToggleFavorite: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isVisible by remember { mutableStateOf(false) }
-    
+
     LaunchedEffect(Unit) {
         isVisible = true
     }
-    
+
     val scale by animateFloatAsState(
         targetValue = if (isVisible) 1f else 0.9f,
         animationSpec = tween(durationMillis = 200),
         label = "tool_card_scale"
     )
-    
-    Card(
-        onClick = onClick,
-        modifier = modifier
-            .scale(scale)
-            .aspectRatio(1f),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
+
+    Box(modifier = modifier.scale(scale)) {
+        Card(
+            onClick = onClick,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .fillMaxWidth()
+                .aspectRatio(1f),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
-            Surface(
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier.size(40.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Icon(
-                    imageVector = tool.icon,
-                    contentDescription = tool.getTitle(),
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .size(24.dp)
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Icon(
+                        imageVector = tool.icon,
+                        contentDescription = tool.getTitle(),
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(24.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = tool.getTitle(),
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            Text(
-                text = tool.getTitle(),
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onSurface
+        }
+
+        IconButton(
+            onClick = onToggleFavorite,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .size(28.dp)
+        ) {
+            Icon(
+                imageVector = if (isFavorite) Icons.Default.Star else Icons.Default.StarBorder,
+                contentDescription = stringResource(
+                    if (isFavorite) R.string.action_unpin_favorite else R.string.action_pin_favorite
+                ),
+                tint = if (isFavorite) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(18.dp)
             )
         }
     }
@@ -571,5 +624,23 @@ fun getAllTools(): List<ToolItem> = listOf(
         icon = Icons.Default.Info,
         section = ToolSection.VIEW_EXPORT,
         screen = Screen.Metadata
+    ),
+
+    // SECTION 7: BATCH & COMPARE
+    ToolItem(
+        id = "batch_process",
+        titleResId = R.string.tool_batch_process,
+        descResId = R.string.desc_batch_process,
+        icon = Icons.Default.Queue,
+        section = ToolSection.BATCH_COMPARE,
+        screen = Screen.BatchProcess
+    ),
+    ToolItem(
+        id = "compare_pdfs",
+        titleResId = R.string.tool_compare_pdfs,
+        descResId = R.string.desc_compare_pdfs,
+        icon = Icons.Default.CompareArrows,
+        section = ToolSection.BATCH_COMPARE,
+        screen = Screen.ComparePdfs
     )
 )

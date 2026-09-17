@@ -2,10 +2,12 @@ package com.maheshraikg.pdftoolkit.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Brand palette: deep teal primary with an amber accent (distinct from the
+// default Material template purple and from the original app's blue).
+val Teal80 = Color(0xFF80CBC4)
+val TealGrey80 = Color(0xFFB2DFDB)
+val Amber80 = Color(0xFFFFCC80)
 
-val Purple40 = Color(0xFF6650A4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val Teal40 = Color(0xFF00695C)
+val TealGrey40 = Color(0xFF4A6963)
+val Amber40 = Color(0xFFEF6C00)

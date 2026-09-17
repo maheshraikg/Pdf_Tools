@@ -17,21 +17,23 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = Teal80,
+    secondary = TealGrey80,
+    tertiary = Amber80
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = Teal40,
+    secondary = TealGrey40,
+    tertiary = Amber40
 )
 
 @Composable
 fun PDFToolkitTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    // Default to the app's own brand palette rather than the device wallpaper's
+    // Material You colors, so the app has a consistent, distinctive identity.
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     // Determine the actual dark theme state based on AppCompatDelegate mode

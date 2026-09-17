@@ -61,7 +61,9 @@ sealed class Screen(val route: String) {
             return "image_tools?operation=$operation"
         }
     }
-    
+    object BatchProcess : Screen("batch_process")
+    object ComparePdfs : Screen("compare_pdfs")
+
     // Legacy compatibility
     object Home : Screen("tools")
     

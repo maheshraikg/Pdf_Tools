@@ -660,6 +660,14 @@ fun AppNavigation(
             composable(Screen.Metadata.route) {
                 MetadataScreen(onNavigateBack = { navController.popBackStack() })
             }
+
+            composable(Screen.BatchProcess.route) {
+                BatchProcessScreen(onNavigateBack = { navController.popBackStack() })
+            }
+
+            composable(Screen.ComparePdfs.route) {
+                ComparePdfsScreen(onNavigateBack = { navController.popBackStack() })
+            }
             
             composable(Screen.PageNumber.route) {
                 PageNumberScreen(onNavigateBack = { navController.popBackStack() })

@@ -31,6 +31,8 @@
     <string name="action_navigate">Navigate</string>
     <string name="action_move_up">Move up</string>
     <string name="action_move_down">Move down</string>
+    <string name="action_pin_favorite">Pin to favorites</string>
+    <string name="action_unpin_favorite">Remove from favorites</string>
 
     <!-- Navigation & Content Descriptions -->
     <string name="cd_open_pdf">Open PDF</string>
@@ -61,6 +63,8 @@
     <string name="category_quick_actions">Quick Actions</string>
     <string name="category_image_tools">Image Tools</string>
     <string name="category_view_export">View &amp; Export</string>
+    <string name="category_batch_compare">Batch &amp; Compare</string>
+    <string name="category_favorites">Favorites</string>
 
     <!-- Tool Names - Organize -->
     <string name="tool_merge_pdfs">Merge PDFs</string>
@@ -137,6 +141,34 @@
     <string name="desc_sign">Add your signature</string>
     <string name="desc_view_pdf">Open and view PDF</string>
     <string name="tool_view_pdf">View PDF</string>
+    <string name="tool_batch_process">Batch Process</string>
+    <string name="desc_batch_process">Run one operation across multiple PDFs at once</string>
+    <string name="tool_compare_pdfs">Compare PDFs</string>
+    <string name="desc_compare_pdfs">Find text differences between two PDFs</string>
+
+    <!-- Batch Processing -->
+    <string name="batch_title">Batch Process</string>
+    <string name="batch_subtitle">Run one operation across multiple PDFs at once</string>
+    <string name="batch_select_pdfs">Select PDFs</string>
+    <string name="batch_add_more_pdfs">Add More PDFs</string>
+    <string name="batch_choose_operation">Choose Operation</string>
+    <string name="batch_files_selected">%1$d files selected</string>
+    <string name="batch_start">Process %1$d Files</string>
+    <string name="batch_processing">Processing…</string>
+    <string name="batch_results_title">Batch Results</string>
+
+    <!-- PDF Comparison -->
+    <string name="compare_title">Compare PDFs</string>
+    <string name="compare_subtitle">Select two PDFs to find text differences between them</string>
+    <string name="compare_original_pdf">Original PDF</string>
+    <string name="compare_second_pdf">Compared PDF</string>
+    <string name="compare_no_file_selected">No file selected</string>
+    <string name="compare_change">Change</string>
+    <string name="compare_start">Compare</string>
+    <string name="compare_comparing">Comparing…</string>
+    <string name="compare_summary_pages">Original: %1$d pages · Compared: %2$d pages</string>
+    <string name="compare_summary_diff">%1$d lines added, %2$d lines removed</string>
+    <string name="compare_coarse_fallback_notice">These PDFs are large, so pages are compared as whole blocks instead of line-by-line.</string>
 
     <!-- Merge Screen -->
     <string name="merge_title">Merge PDFs</string>
