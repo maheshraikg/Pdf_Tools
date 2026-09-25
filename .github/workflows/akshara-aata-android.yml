@@ -1,0 +1,82 @@
+name: Akshara Aata (Flutter) Android build
+
+# Builds the Kannada varnamala kids app in akshara_aata/ into a Play Store
+# bundle (.aab) and an installable APK. Independent of the PDF Toolkit app.
+on:
+  push:
+    paths:
+      - 'akshara_aata/**'
+      - '.github/workflows/akshara-aata-android.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: akshara-aata-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: akshara_aata
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.5
+          cache: true
+
+      - name: Get packages
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+      # Play Console only accepts bundles signed with your upload key. Add these
+      # repository secrets to sign; without them the build uses debug keys
+      # (fine for testing on a phone, rejected by Play).
+      - name: Set up upload key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.AKSHARA_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.AKSHARA_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.AKSHARA_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.AKSHARA_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::warning::AKSHARA_KEYSTORE_BASE64 is not set, so this build is debug-signed and cannot be uploaded to Play."
+            exit 0
+          fi
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+          {
+            echo "storeFile=upload-keystore.jks"
+            echo "storePassword=$KEYSTORE_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPassword=$KEY_PASSWORD"
+          } > android/key.properties
+
+      - name: Build app bundle (Play Store)
+        run: flutter build appbundle --release
+
+      - name: Build APK (install on a phone)
+        run: flutter build apk --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: akshara-aata-release
+          path: |
+            akshara_aata/build/app/outputs/bundle/release/app-release.aab
+            akshara_aata/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
