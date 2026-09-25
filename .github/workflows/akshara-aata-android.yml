@@ -67,11 +67,33 @@ jobs:
             echo "keyPassword=$KEY_PASSWORD"
           } > android/key.properties
 
+      # AdMob IDs from repository secrets. Without them the app shows Google's
+      # test ads, which is right for testing but earns nothing.
+      - name: Check AdMob IDs
+        env:
+          ADMOB_APP_ID: ${{ secrets.ADMOB_APP_ID }}
+          ADMOB_BANNER_ID: ${{ secrets.ADMOB_BANNER_ID }}
+          ADMOB_INTERSTITIAL_ID: ${{ secrets.ADMOB_INTERSTITIAL_ID }}
+        run: |
+          if [ -z "$ADMOB_APP_ID" ] || [ -z "$ADMOB_BANNER_ID" ] || [ -z "$ADMOB_INTERSTITIAL_ID" ]; then
+            echo "::warning::ADMOB_APP_ID / ADMOB_BANNER_ID / ADMOB_INTERSTITIAL_ID not all set, so this build uses AdMob test ads."
+          fi
+
       - name: Build app bundle (Play Store)
-        run: flutter build appbundle --release
+        env:
+          ADMOB_APP_ID: ${{ secrets.ADMOB_APP_ID }}
+        run: >
+          flutter build appbundle --release
+          --dart-define=ADMOB_BANNER_ID=${{ secrets.ADMOB_BANNER_ID }}
+          --dart-define=ADMOB_INTERSTITIAL_ID=${{ secrets.ADMOB_INTERSTITIAL_ID }}
 
       - name: Build APK (install on a phone)
-        run: flutter build apk --release
+        env:
+          ADMOB_APP_ID: ${{ secrets.ADMOB_APP_ID }}
+        run: >
+          flutter build apk --release
+          --dart-define=ADMOB_BANNER_ID=${{ secrets.ADMOB_BANNER_ID }}
+          --dart-define=ADMOB_INTERSTITIAL_ID=${{ secrets.ADMOB_INTERSTITIAL_ID }}
 
       - uses: actions/upload-artifact@v4
         with:
