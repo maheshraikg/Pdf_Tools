@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#c8323c"/>
+  <circle cx="256" cy="256" r="186" fill="#f2b21b"/>
+  <circle cx="256" cy="256" r="150" fill="#fff7e8"/>
+  <text x="256" y="345" text-anchor="middle" font-family="'Baloo Tamma 2','Noto Sans Kannada',sans-serif" font-weight="800" font-size="230" fill="#1e6fb0">ಅ</text>
+</svg>
