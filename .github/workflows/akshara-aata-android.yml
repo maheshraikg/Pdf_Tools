@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write  # publish the test APK as a pre-release
 
 jobs:
   build:
@@ -102,3 +102,26 @@ jobs:
             akshara_aata/build/app/outputs/bundle/release/app-release.aab
             akshara_aata/build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
+
+      # A fixed pre-release gives testers a direct phone download link:
+      # https://github.com/<owner>/<repo>/releases/download/akshara-aata-keep/akshara-aata.apk
+      # "keep" in the tag stops manage-releases.yml from pruning it; it is
+      # never marked latest, so PDF Toolkit releases are unaffected.
+      - name: Prepare test download
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: cp build/app/outputs/flutter-apk/app-release.apk build/akshara-aata.apk
+
+      - name: Publish test APK
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: akshara-aata-keep
+          target_commitish: ${{ github.sha }}
+          name: Akshara Aata test build
+          body: |
+            Test build of the Akshara Aata Kannada varnamala app from ${{ github.sha }}.
+            Install akshara-aata.apk on an Android phone. Not for the Play Store.
+          prerelease: true
+          make_latest: false
+          overwrite_files: true
+          files: akshara_aata/build/akshara-aata.apk
