@@ -5,6 +5,10 @@ name: Akshara Aata Commons recordings
 # akshara-aata-voice-keep pre-release. The dev environment can't reach
 # Wikimedia directly.
 on:
+  push:
+    paths:
+      - '.github/workflows/akshara-aata-commons.yml'
+      - 'akshara_aata/tool/fetch_commons.py'
   workflow_dispatch:
     inputs:
       categories:
@@ -24,7 +28,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Download
         env:
-          CATS: ${{ inputs.categories }}
+          CATS: ${{ inputs.categories || 'Pronunciation of Kannada alphabet|Lingua Libre pronunciation-kan' }}
         run: |
           IFS='|' read -ra c <<< "$CATS"
           python3 tool/fetch_commons.py "${c[@]}"
