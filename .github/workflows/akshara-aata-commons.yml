@@ -1,0 +1,39 @@
+name: Akshara Aata Commons recordings
+
+# Downloads native-speaker Kannada pronunciation recordings (with licence
+# metadata) from Wikimedia Commons and attaches them to the
+# akshara-aata-voice-keep pre-release. The dev environment can't reach
+# Wikimedia directly.
+on:
+  workflow_dispatch:
+    inputs:
+      categories:
+        description: 'Commons categories, separated by |'
+        default: 'Pronunciation of Kannada alphabet|Lingua Libre pronunciation-kan'
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: akshara_aata
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download
+        env:
+          CATS: ${{ inputs.categories }}
+        run: |
+          IFS='|' read -ra c <<< "$CATS"
+          python3 tool/fetch_commons.py "${c[@]}"
+          tar czf ../commons-kannada.tgz commons
+      - name: Upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view akshara-aata-voice-keep -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 ||
+            gh release create akshara-aata-voice-keep -R "$GITHUB_REPOSITORY" --prerelease --latest=false \
+              --title "Akshara Aata voice samples" --notes "Generated Kannada voice files." || true
+          gh release upload akshara-aata-voice-keep ../commons-kannada.tgz --clobber -R "$GITHUB_REPOSITORY"
