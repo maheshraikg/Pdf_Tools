@@ -19,6 +19,21 @@ on:
       redo:
         description: 'Comma-separated Kannada texts to regenerate (mode=all)'
         default: ''
+      only:
+        description: 'mode=samples: comma-separated texts (default: sample set)'
+        default: ''
+      tag:
+        description: 'mode=samples: name for this sample set'
+        default: 'samples'
+      options:
+        description: 'mode=samples: extra tool flags, e.g. --no-dot'
+        default: ''
+      desc_extra:
+        description: 'mode=samples: extra words for the voice description'
+        default: ''
+      speakers:
+        description: 'mode=samples: JSON list of speakers'
+        default: '["Anu","Vidya","Suresh","Chetan"]'
 
 permissions:
   contents: write
@@ -30,7 +45,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        speaker: [Anu, Vidya, Suresh, Chetan]
+        speaker: ${{ fromJSON(inputs.speakers || '["Anu","Vidya","Suresh","Chetan"]') }}
     defaults:
       run:
         working-directory: akshara_aata
@@ -50,10 +65,14 @@ jobs:
       - name: Generate samples
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: >
-          python tool/parler_voice.py --speaker ${{ matrix.speaker }}
-          --out samples --prefix ${{ matrix.speaker }}_
-          --only "ಅ,ಆ,ಇ,ಕ,ಕಾ,ಕಿ,ಆನೆ,ನವಿಲು,ಗಡಿಯಾರ,ಒಂದು,ಶಭಾಷ್"
+          ONLY: ${{ inputs.only }}
+          DESC_EXTRA: ${{ inputs.desc_extra }}
+        run: |
+          only="${ONLY:-ಅ,ಆ,ಇ,ಕ,ಕಾ,ಕಿ,ಆನೆ,ನವಿಲು,ಗಡಿಯಾರ,ಒಂದು,ಶಭಾಷ್}"
+          python tool/parler_voice.py --speaker ${{ matrix.speaker }} \
+            --out samples --prefix ${{ matrix.speaker }}_ --only "$only" \
+            --desc-extra "$DESC_EXTRA" ${{ inputs.options }}
+          tar czf ../samples-${{ inputs.tag || 'samples' }}-${{ matrix.speaker }}.tgz samples
       - name: Join into one mp3
         run: |
           cd samples
@@ -70,7 +89,7 @@ jobs:
           gh release view akshara-aata-voice-keep -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 ||
             gh release create akshara-aata-voice-keep -R "$GITHUB_REPOSITORY" --prerelease --latest=false \
               --title "Akshara Aata voice samples" --notes "Generated Kannada voice files." || true
-          gh release upload akshara-aata-voice-keep voice-${{ matrix.speaker }}.mp3 --clobber -R "$GITHUB_REPOSITORY"
+          gh release upload akshara-aata-voice-keep voice-${{ matrix.speaker }}.mp3 ../samples-${{ inputs.tag || 'samples' }}-${{ matrix.speaker }}.tgz --clobber -R "$GITHUB_REPOSITORY"
 
   all:
     if: github.event_name == 'workflow_dispatch' && inputs.mode == 'all'
