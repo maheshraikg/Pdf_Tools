@@ -16,6 +16,9 @@ on:
       shards:
         description: 'Which of the 8 shards to run (JSON list), for re-runs'
         default: '[0,1,2,3,4,5,6,7]'
+      redo:
+        description: 'Comma-separated Kannada texts to regenerate (mode=all)'
+        default: ''
 
 permissions:
   contents: write
@@ -97,7 +100,8 @@ jobs:
         run: >
           python tool/parler_voice.py --speaker ${{ inputs.speaker }}
           --shard ${{ matrix.shard }}/8 --out wav
-      - run: tar czf ../voice-${{ inputs.speaker }}-shard-${{ matrix.shard }}.tgz wav
+          --redo "${{ inputs.redo }}"
+      - run: tar czf ../voice-${{ inputs.speaker }}-${{ inputs.redo != '' && 'redo' || 'shard' }}-${{ matrix.shard }}.tgz wav
       - name: Upload to the voice pre-release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -105,4 +109,4 @@ jobs:
           gh release view akshara-aata-voice-keep -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 ||
             gh release create akshara-aata-voice-keep -R "$GITHUB_REPOSITORY" --prerelease --latest=false \
               --title "Akshara Aata voice samples" --notes "Generated Kannada voice files." || true
-          gh release upload akshara-aata-voice-keep ../voice-${{ inputs.speaker }}-shard-${{ matrix.shard }}.tgz --clobber -R "$GITHUB_REPOSITORY"
+          gh release upload akshara-aata-voice-keep ../voice-${{ inputs.speaker }}-${{ inputs.redo != '' && 'redo' || 'shard' }}-${{ matrix.shard }}.tgz --clobber -R "$GITHUB_REPOSITORY"
