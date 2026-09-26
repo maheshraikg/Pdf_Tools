@@ -13,6 +13,9 @@ on:
       speaker:
         description: 'Speaker for mode=all (Anu, Vidya, Suresh, Chetan)'
         default: Anu
+      shards:
+        description: 'Which of the 8 shards to run (JSON list), for re-runs'
+        default: '[0,1,2,3,4,5,6,7]'
 
 permissions:
   contents: write
@@ -72,7 +75,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+        shard: ${{ fromJSON(inputs.shards || '[0,1,2,3,4,5,6,7]') }}
     defaults:
       run:
         working-directory: akshara_aata
