@@ -160,15 +160,9 @@ jobs:
       - name: Prepare test download
         run: cp "$(find artifact -name app-release.apk | head -1)" akshara-aata.apk
 
+      # Only swaps the asset: editing the release itself is refused to
+      # GITHUB_TOKEN here ("Resource not accessible by integration").
       - name: Publish test APK
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: akshara-aata-keep
-          name: Akshara Aata test build
-          body: |
-            Test build of the Akshara Aata Kannada varnamala app from ${{ github.sha }}.
-            Install akshara-aata.apk on an Android phone. Not for the Play Store.
-          prerelease: true
-          make_latest: false
-          overwrite_files: true
-          files: akshara-aata.apk
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload akshara-aata-keep akshara-aata.apk --clobber -R "$GITHUB_REPOSITORY"
