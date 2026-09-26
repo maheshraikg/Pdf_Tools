@@ -125,3 +125,40 @@ jobs:
           make_latest: false
           overwrite_files: true
           files: akshara_aata/build/akshara-aata.apk
+
+  # Opens the APK on an Android 10 (API 29) emulator and fails on a launch crash.
+  smoke-test:
+    needs: build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: akshara_aata
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: akshara-aata-release
+          path: akshara_aata/artifact
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          arch: x86_64
+          target: default
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          working-directory: akshara_aata
+          script: ./tool/smoke_test.sh $(find artifact -name app-release.apk | head -1)
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: akshara-aata-smoke-test
+          path: akshara_aata/smoke/
