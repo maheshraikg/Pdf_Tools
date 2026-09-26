@@ -61,14 +61,14 @@ jobs:
           filt=""; for i in $(seq 0 $((n-1))); do filt="$filt[$i:a]aresample=44100,aformat=channel_layouts=mono[a$i];"; done
           for i in $(seq 0 $((n-1))); do filt="$filt[a$i]"; done
           ffmpeg -y -loglevel error $args -filter_complex "${filt}concat=n=$n:v=0:a=1" -c:a libmp3lame -q:a 3 ../voice-${{ matrix.speaker }}.mp3
-      - uses: softprops/action-gh-release@v2
-        with:
-          tag_name: akshara-aata-voice-keep
-          name: Akshara Aata voice samples
-          prerelease: true
-          make_latest: false
-          overwrite_files: true
-          files: akshara_aata/voice-${{ matrix.speaker }}.mp3
+      - name: Upload to the voice pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view akshara-aata-voice-keep -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 ||
+            gh release create akshara-aata-voice-keep -R "$GITHUB_REPOSITORY" --prerelease --latest=false \
+              --title "Akshara Aata voice samples" --notes "Generated Kannada voice files." || true
+          gh release upload akshara-aata-voice-keep voice-${{ matrix.speaker }}.mp3 --clobber -R "$GITHUB_REPOSITORY"
 
   all:
     if: github.event_name == 'workflow_dispatch' && inputs.mode == 'all'
@@ -99,11 +99,11 @@ jobs:
           python tool/parler_voice.py --speaker ${{ inputs.speaker }}
           --shard ${{ matrix.shard }}/8 --out wav
       - run: tar czf ../voice-shard-${{ matrix.shard }}.tgz wav
-      - uses: softprops/action-gh-release@v2
-        with:
-          tag_name: akshara-aata-voice-keep
-          name: Akshara Aata voice samples
-          prerelease: true
-          make_latest: false
-          overwrite_files: true
-          files: voice-shard-${{ matrix.shard }}.tgz
+      - name: Upload to the voice pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view akshara-aata-voice-keep -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 ||
+            gh release create akshara-aata-voice-keep -R "$GITHUB_REPOSITORY" --prerelease --latest=false \
+              --title "Akshara Aata voice samples" --notes "Generated Kannada voice files." || true
+          gh release upload akshara-aata-voice-keep ../voice-shard-${{ matrix.shard }}.tgz --clobber -R "$GITHUB_REPOSITORY"
