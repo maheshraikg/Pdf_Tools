@@ -1,0 +1,103 @@
+name: Akshara Aata natural voice
+
+# Generates Kannada speech with AI4Bharat Indic Parler-TTS on GitHub's
+# runners (the model is too large for the dev environment). "samples" makes
+# a short comparison of speakers; "all" regenerates every app recording.
+# Results are attached to the akshara-aata-voice-keep pre-release.
+on:
+  push:
+    paths:
+      - 'akshara_aata/tool/parler_voice.py'
+      - '.github/workflows/akshara-aata-voice.yml'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'samples or all'
+        default: samples
+      speaker:
+        description: 'Speaker for mode=all (Anu, Vidya, Suresh, Chetan)'
+        default: Anu
+
+permissions:
+  contents: write
+
+jobs:
+  samples:
+    if: github.event_name == 'push' || inputs.mode == 'samples'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        speaker: [Anu, Vidya, Suresh, Chetan]
+    defaults:
+      run:
+        working-directory: akshara_aata
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Parler-TTS
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu torch
+          pip install git+https://github.com/huggingface/parler-tts.git soundfile
+          sudo apt-get install -y -qq ffmpeg
+      - name: Generate samples
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: >
+          python tool/parler_voice.py --speaker ${{ matrix.speaker }}
+          --out samples --prefix ${{ matrix.speaker }}_
+          --only "ಅ,ಆ,ಇ,ಕ,ಕಾ,ಕಿ,ಆನೆ,ನವಿಲು,ಗಡಿಯಾರ,ಒಂದು,ಶಭಾಷ್"
+      - name: Join into one mp3
+        run: |
+          cd samples
+          ls ${{ matrix.speaker }}_*.wav | sort > list.txt
+          args=""; n=0
+          for f in $(cat list.txt); do args="$args -i $f -f lavfi -t 0.5 -i anullsrc=r=44100:cl=mono"; n=$((n+2)); done
+          filt=""; for i in $(seq 0 $((n-1))); do filt="$filt[$i:a]aresample=44100,aformat=channel_layouts=mono[a$i];"; done
+          for i in $(seq 0 $((n-1))); do filt="$filt[a$i]"; done
+          ffmpeg -y -loglevel error $args -filter_complex "${filt}concat=n=$n:v=0:a=1" -c:a libmp3lame -q:a 3 ../voice-${{ matrix.speaker }}.mp3
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: akshara-aata-voice-keep
+          name: Akshara Aata voice samples
+          prerelease: true
+          make_latest: false
+          overwrite_files: true
+          files: akshara_aata/voice-${{ matrix.speaker }}.mp3
+
+  all:
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'all'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+    defaults:
+      run:
+        working-directory: akshara_aata
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Parler-TTS
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu torch
+          pip install git+https://github.com/huggingface/parler-tts.git soundfile
+      - name: Generate shard
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: >
+          python tool/parler_voice.py --speaker ${{ inputs.speaker }}
+          --shard ${{ matrix.shard }}/8 --out wav
+      - run: tar czf ../voice-shard-${{ matrix.shard }}.tgz wav
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: akshara-aata-voice-keep
+          name: Akshara Aata voice samples
+          prerelease: true
+          make_latest: false
+          overwrite_files: true
+          files: voice-shard-${{ matrix.shard }}.tgz
