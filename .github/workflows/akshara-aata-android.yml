@@ -154,7 +154,9 @@ jobs:
       # A fixed pre-release gives testers a direct phone download link:
       # https://github.com/<owner>/<repo>/releases/download/akshara-aata-keep/akshara-aata.apk
       # "keep" in the tag stops manage-releases.yml from pruning it; it is
-      # never marked latest, so PDF Toolkit releases are unaffected.
+      # never marked latest, so PDF Toolkit releases are unaffected. The tag
+      # itself is not moved (GITHUB_TOKEN may not point tags at commits that
+      # change workflows); the body records which commit the APK came from.
       - name: Prepare test download
         run: cp "$(find artifact -name app-release.apk | head -1)" akshara-aata.apk
 
@@ -162,7 +164,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: akshara-aata-keep
-          target_commitish: ${{ github.sha }}
           name: Akshara Aata test build
           body: |
             Test build of the Akshara Aata Kannada varnamala app from ${{ github.sha }}.
