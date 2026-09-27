@@ -49,6 +49,7 @@ jobs:
           SHARDS: 4
           ONLY: ${{ steps.cfg.outputs.ONLY }}
           SPEAKER: ${{ steps.cfg.outputs.SPEAKER }}
+          PASS: ${{ steps.cfg.outputs.PASS }}
         run: python3 tool/sarvam_kagunita.py out
       - name: Upload
         if: always()
@@ -56,5 +57,5 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p out
-          tar czf ../sarvam-${{ matrix.shard }}.tgz out
-          gh release upload akshara-aata-voice-keep ../sarvam-${{ matrix.shard }}.tgz --clobber -R "$GITHUB_REPOSITORY"
+          tar czf ../sarvam2-${{ matrix.shard }}.tgz out
+          gh release upload akshara-aata-voice-keep ../sarvam2-${{ matrix.shard }}.tgz --clobber -R "$GITHUB_REPOSITORY"
