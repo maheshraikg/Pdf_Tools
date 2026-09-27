@@ -15,7 +15,7 @@ permissions:
 jobs:
   speak:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 350
     strategy:
       fail-fast: false
       matrix:
@@ -49,6 +49,10 @@ jobs:
           SHARDS: 1
           ONLY: ${{ steps.cfg.outputs.ONLY }}
           VOICE: ${{ steps.cfg.outputs.VOICE }}
+          GH_TOKEN: ${{ github.token }}
+          PROGRESS_CMD: >-
+            tar czf ../gemini-${{ matrix.shard }}.tgz out &&
+            gh release upload akshara-aata-voice-keep ../gemini-${{ matrix.shard }}.tgz --clobber -R ${{ github.repository }} >/dev/null 2>&1
         run: python3 tool/gemini_kagunita.py out
       - name: Upload
         if: always()
