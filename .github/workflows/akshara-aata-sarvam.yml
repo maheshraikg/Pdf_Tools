@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+        shard: [0, 1]
     defaults:
       run:
         working-directory: akshara_aata
@@ -41,7 +41,7 @@ jobs:
           SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           SHARD: ${{ matrix.shard }}
-          SHARDS: 8
+          SHARDS: 2
           ONLY: ${{ steps.cfg.outputs.ONLY }}
           SPEAKER: ${{ steps.cfg.outputs.SPEAKER }}
         run: python3 tool/sarvam_kagunita.py out
