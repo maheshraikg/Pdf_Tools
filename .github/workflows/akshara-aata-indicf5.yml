@@ -48,6 +48,10 @@ jobs:
           SHARD: ${{ matrix.shard }}
           SHARDS: ${{ steps.cfg.outputs.SHARDS }}
           TEXTS: ${{ steps.cfg.outputs.TEXTS }}
+          GH_TOKEN: ${{ github.token }}
+          PROGRESS_CMD: >-
+            tar czf ../indicf5-${{ matrix.shard }}.tgz out &&
+            gh release upload akshara-aata-voice-keep ../indicf5-${{ matrix.shard }}.tgz --clobber -R ${{ github.repository }} >/dev/null 2>&1
         run: python3 tool/indicf5_kagunita.py out
       - name: Upload
         if: always() && matrix.shard < fromJSON(steps.cfg.outputs.SHARDS)
