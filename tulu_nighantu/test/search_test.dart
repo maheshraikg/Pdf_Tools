@@ -21,19 +21,19 @@ void main() {
 
   test('Kannada-script query matches Tulu word first', () {
     final r = state.search('ನೀರ್');
-    expect(r.first.roman, 'nīr');
+    expect(r.first.tulu, 'ನೀರ್');
   });
 
   test('Kannada meaning query matches', () {
-    expect(state.search('ತಾಯಿ').first.roman, 'appe');
+    expect(state.search('ತಾಯಿ').first.tulu, 'ಅಪ್ಪೆ');
   });
 
   test('Latin query collapses doubled letters', () {
-    expect(state.search('neer').first.roman, 'nīr');
+    expect(state.search('neer').first.tulu, 'ನೀರ್');
   });
 
   test('English meaning query matches', () {
-    expect(state.search('mother').first.roman, 'appe');
+    expect(state.search('mother').first.tulu, 'ಅಪ್ಪೆ');
   });
 
   test('category filter and empty query', () {

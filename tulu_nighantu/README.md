@@ -53,7 +53,7 @@ Edit `assets/data/words.json`:
   "note": "Sample list – verified by native speakers before publishing",
   "categories": [{ "id": "food", "kn": "ಆಹಾರ", "en": "Food" }],
   "words": [
-    { "id": "w015", "tulu": "ನೀರ್", "roman": "nīr", "kn": "ನೀರು", "en": "water", "cat": "food" }
+    { "id": "w025", "tulu": "ನೀರ್", "roman": "neer", "kn": "ನೀರು", "en": "water", "cat": "food" }
   ]
 }
 ```
