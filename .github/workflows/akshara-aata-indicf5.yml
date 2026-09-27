@@ -54,5 +54,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          mkdir -p out
           tar czf ../indicf5-${{ matrix.shard }}.tgz out
           gh release upload akshara-aata-voice-keep ../indicf5-${{ matrix.shard }}.tgz --clobber -R "$GITHUB_REPOSITORY"
