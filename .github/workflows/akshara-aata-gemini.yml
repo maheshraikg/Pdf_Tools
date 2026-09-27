@@ -43,7 +43,7 @@ jobs:
           pip install -c /tmp/pins.txt 'transformers<4.50' soundfile onnx onnxruntime
       - name: Speak and check
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.GEMINI_API_KEYP }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           SHARD: ${{ matrix.shard }}
           SHARDS: 1
