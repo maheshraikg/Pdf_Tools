@@ -272,12 +272,19 @@ class _WordOfTheDayCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              word.tulu,
-                              style: tt.headlineMedium?.copyWith(
-                                color: fg,
-                                fontWeight: FontWeight.w800,
-                              ),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    word.tulu,
+                                    style: tt.headlineMedium?.copyWith(
+                                      color: fg,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ),
+                                SpeakButton(word.tulu, color: fg),
+                              ],
                             ),
                             if (word.roman.isNotEmpty)
                               Text(

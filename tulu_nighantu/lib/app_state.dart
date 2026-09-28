@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'lipi/stroke_guide.dart';
 import 'lipi/tulu_lipi.dart';
 import 'models/word.dart';
 
@@ -29,6 +30,7 @@ class AppState extends ChangeNotifier {
   Future<void> load() async {
     final raw = await rootBundle.loadString('assets/data/words.json');
     loadFromJson(raw);
+    await StrokeGuide.load();
     try {
       _prefs = await SharedPreferences.getInstance();
       favourites.addAll(_prefs!.getStringList(_favKey) ?? const []);

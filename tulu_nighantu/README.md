@@ -8,12 +8,17 @@ includes a Kannada → Tulu lipi converter.
   romanised Tulu; categories; word of the day; favourites.
 - **ಲಿಪಿ · Lipi**: the alphabet grouped by vowels, yogavahas, the five vargas and
   avargiya consonants, with a barakhadi (ಕಾಗುಣಿತ) row for each consonant.
-- **ಬರೆಯಿರಿ · Trace**: trace or free-write any letter or word; the app scores
-  coverage and precision and gives 0–3 stars.
+- **ಬರೆಯಿರಿ · Writing tutorial**: for every letter, *Watch* an animated pen
+  write it (numbered strokes with direction arrows), then *Trace* over the
+  faint letter and *Free write* it; the app scores coverage and precision and
+  gives 0–3 stars. Words can be traced too.
+- **ಕೇಳಿ · Pronunciation**: listen buttons on letters, barakhadi tiles, words,
+  the word of the day and the converter.
 - **ಬದಲಿಸಿ · Converter**: live Kannada → Tulu-Tigalari with copy and share-as-image.
 - **ಉಳಿಸಿದವು · Saved**: favourites, progress and about.
 
-The app does not use the network. Everything is bundled.
+The app does not use the network. Everything is bundled; pronunciation uses the
+phone's own text-to-speech engine.
 
 ## Run
 
@@ -68,14 +73,38 @@ Edit `assets/data/words.json`:
 The bundled list is a small sample. **Have native speakers verify every entry
 before publishing.**
 
-## Adding audio later
+## Pronunciation (sound)
 
-1. Put native-speaker recordings in `assets/audio/<id>.opus` (one per word id).
+Listen buttons call `Speaker.instance.speak()` (`lib/audio/speaker.dart`), which
+uses Android text-to-speech via [`flutter_tts`](https://pub.dev/packages/flutter_tts)
+with a **Kannada (kn-IN)** voice. Because Tulu is stored in Kannada script, this
+gives a close but *approximate* pronunciation. If the phone has no Kannada voice
+the app shows how to install one (Settings › Text-to-speech › Speech Services by
+Google › Install voice data › ಕನ್ನಡ). Voices downloaded that way work offline.
+
+### Adding native-speaker recordings later
+
+1. Put recordings in `assets/audio/<id>.opus` (one per word id) and letters in
+   `assets/audio/letters/<kannada>.opus`.
 2. Add `assets/audio/` to `flutter: assets:` in `pubspec.yaml`.
-3. Add the [`audioplayers`](https://pub.dev/packages/audioplayers) package and a
-   play button on the word detail screen:
-   `AudioPlayer().play(AssetSource('audio/${word.id}.opus'))`.
-   Hide the button when the asset is missing.
+3. Add the [`audioplayers`](https://pub.dev/packages/audioplayers) package and,
+   in `Speaker.speak`, play the recording when it exists
+   (`AudioPlayer().play(AssetSource('audio/${word.id}.opus'))`), falling back
+   to text-to-speech.
+
+## Writing tutorial data
+
+The *Watch* animation uses `assets/data/strokes.json`, generated from the font
+by `tool/gen_strokes.py` (needs Python with pillow, scikit-image and numpy):
+
+```sh
+python3 tool/gen_strokes.py
+```
+
+Each glyph is rendered, thinned to its centre line and traced into pen strokes,
+ordered left to right. This is a helpful guide, **not** a verified traditional
+stroke order; to use expert data, replace the strokes for a letter in the JSON
+(points are normalised 0–1 to the glyph's ink box).
 
 ## Font and licence
 
@@ -95,14 +124,16 @@ family in `pubspec.yaml`; all Tulu text uses the single constant
 - **Short ಎ / ಒ**: Unicode 16 Tulu-Tigalari has no short E/O, so ಎ/ಏ both map to
   EE and ಒ/ಓ to OO (vowels and vowel signs).
 - Trace scoring compares shapes only; it does not check stroke order or direction.
+- Tutorial pen paths are auto-generated from the font, not expert-verified.
+- Pronunciation is an approximation by a Kannada text-to-speech voice.
 - The word list is a small, unverified sample.
 
 ## Roadmap (next phase)
 
-- Native-speaker audio for every word
+- Native-speaker audio for every word and letter
 - Phrasebook expansion
 - Proverbs (ಗಾದೆಗಳು) with share cards
-- Stroke-order animations (needs verified stroke data)
+- Expert-verified stroke order for the writing tutorial
 - Daily practice streaks
 - "Suggest a word" form
 - Remote word-list updates

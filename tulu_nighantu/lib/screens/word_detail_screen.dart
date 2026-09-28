@@ -67,6 +67,14 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
           Row(
             children: [
               Expanded(
+                child: _SmallAction(
+                  icon: Icons.volume_up_rounded,
+                  label: 'ಕೇಳಿ\nListen',
+                  onPressed: () => speakText(context, w.tulu),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
                 child: ListenableBuilder(
                   listenable: state,
                   builder: (context, _) {
@@ -83,7 +91,7 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
               Expanded(
                 child: _SmallAction(
                   icon: Icons.copy_rounded,
-                  label: 'ತುಳು ಲಿಪಿ ನಕಲಿಸಿ\nCopy Tulu lipi',
+                  label: 'ನಕಲಿಸಿ\nCopy lipi',
                   onPressed: () => copyText(context, w.lipi, 'ತುಳು ಲಿಪಿ'),
                 ),
               ),
@@ -91,7 +99,7 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
               Expanded(
                 child: _SmallAction(
                   icon: Icons.share_rounded,
-                  label: 'ಚಿತ್ರವಾಗಿ ಹಂಚಿ\nShare as image',
+                  label: 'ಹಂಚಿ\nShare',
                   onPressed: () =>
                       shareBoundaryAsImage(context, _cardKey, 'tulu_${w.id}'),
                 ),

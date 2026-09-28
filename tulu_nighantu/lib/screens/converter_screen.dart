@@ -122,7 +122,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
               Expanded(
                 child: _ActionButton(
                   icon: Icons.copy_rounded,
-                  label: 'ತುಳು ನಕಲಿಸಿ\nCopy Tulu text',
+                  label: 'ತುಳು ನಕಲಿಸಿ\nCopy Tulu',
                   primary: true,
                   onPressed: output.isEmpty
                       ? null
@@ -132,8 +132,18 @@ class _ConverterScreenState extends State<ConverterScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: _ActionButton(
+                  icon: Icons.volume_up_rounded,
+                  label: 'ಕೇಳಿ\nListen',
+                  onPressed: hasKannada
+                      ? () => speakText(context, input)
+                      : null,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _ActionButton(
                   icon: Icons.copy_all_rounded,
-                  label: 'ಕನ್ನಡ ನಕಲಿಸಿ\nCopy Kannada',
+                  label: 'ಕನ್ನಡ\nCopy Kannada',
                   onPressed: input.isEmpty
                       ? null
                       : () => copyText(context, input, 'ಕನ್ನಡ'),
@@ -143,7 +153,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
               Expanded(
                 child: _ActionButton(
                   icon: Icons.share_rounded,
-                  label: 'ಚಿತ್ರವಾಗಿ ಹಂಚಿ\nShare as image',
+                  label: 'ಹಂಚಿ\nShare image',
                   onPressed: output.isEmpty
                       ? null
                       : () => shareBoundaryAsImage(

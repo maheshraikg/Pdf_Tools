@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../app_state.dart';
+import '../audio/speaker.dart';
 import '../lipi/tulu_lipi.dart';
 import '../models/word.dart';
 import '../screens/word_detail_screen.dart';
@@ -36,6 +37,42 @@ class TuluText extends StatelessWidget {
       color: color,
     ),
   );
+}
+
+/// Speaks [text] (Kannada-script Tulu) with the device's Kannada voice.
+class SpeakButton extends StatelessWidget {
+  const SpeakButton(this.text, {super.key, this.size = 24, this.color});
+
+  final String text;
+  final double size;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) => IconButton(
+    tooltip: 'ಕೇಳಿ · Listen',
+    iconSize: size,
+    color: color ?? Theme.of(context).colorScheme.primary,
+    icon: const Icon(Icons.volume_up_rounded),
+    onPressed: () => speakText(context, text),
+  );
+}
+
+/// Speaks [text]; shows how to install a Kannada voice if none is present.
+Future<void> speakText(BuildContext context, String text) async {
+  final messenger = ScaffoldMessenger.of(context);
+  final ok = await Speaker.instance.speak(text);
+  if (!ok) {
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text(
+            'ಕನ್ನಡ ಧ್ವನಿ ಇಲ್ಲ · No Kannada voice found. Install it in '
+            'Settings › Text-to-speech › Speech Services by Google.',
+          ),
+        ),
+      );
+  }
 }
 
 /// A row of 0–3 stars.

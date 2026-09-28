@@ -62,10 +62,11 @@ class LipiScreen extends StatelessWidget {
   }
 }
 
-void _openTrace(BuildContext context, int index) {
+/// Opens practice at [index]; [watch] starts on the pen-animation tutorial.
+void _openTrace(BuildContext context, int index, {bool watch = true}) {
   Navigator.of(context).push(
     MaterialPageRoute<void>(
-      builder: (_) => TraceScreen.letters(startIndex: index),
+      builder: (_) => TraceScreen.letters(startIndex: index, watchFirst: watch),
     ),
   );
 }
@@ -249,10 +250,17 @@ void _showLetterSheet(BuildContext context, LipiLetter letter) {
                 ),
               ),
               const SizedBox(height: 12),
-              Text(
-                letter.label,
-                style: Theme.of(ctx).textTheme.headlineMedium
-                    ?.copyWith(fontWeight: FontWeight.w800),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    letter.label,
+                    style: Theme.of(ctx).textTheme.headlineMedium
+                        ?.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(width: 4),
+                  SpeakButton(letter.kannada, size: 28),
+                ],
               ),
               Text(
                 '${letter.roman} · ${letter.group.english}',
@@ -282,6 +290,22 @@ void _showLetterSheet(BuildContext context, LipiLetter letter) {
                   Navigator.of(ctx).pop();
                   _openTrace(context, kLipiLetters.indexOf(letter));
                 },
+                icon: const Icon(Icons.play_circle_outline),
+                label: const Text('ಬರೆಯುವ ವಿಧಾನ · How to write'),
+              ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(52),
+                ),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  _openTrace(
+                    context,
+                    kLipiLetters.indexOf(letter),
+                    watch: false,
+                  );
+                },
                 icon: const Icon(Icons.gesture),
                 label: const Text('ಈ ಅಕ್ಷರ ಬರೆಯಿರಿ · Trace this letter'),
               ),
@@ -310,21 +334,38 @@ class _Barakhadi extends StatelessWidget {
         separatorBuilder: (_, _) => const SizedBox(width: 6),
         itemBuilder: (_, i) {
           final kn = letter.kannada + kBarakhadiSigns[i];
-          return Container(
-            width: 66,
-            decoration: BoxDecoration(
-              color: i == 0 ? cs.primaryContainer : cs.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TuluText(TuluLipi.fromKannada(kn), size: 28, color: cs.primary),
-                Text(
-                  kn,
-                  style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
+          return Material(
+            color: i == 0 ? cs.primaryContainer : cs.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(16),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => speakText(context, kn),
+              child: SizedBox(
+                width: 66,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TuluText(
+                      TuluLipi.fromKannada(kn),
+                      size: 28,
+                      color: cs.primary,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          kn,
+                          style: TextStyle(
+                            color: cs.onSurfaceVariant,
+                            fontSize: 13,
+                          ),
+                        ),
+                        Icon(Icons.volume_up, size: 12, color: cs.primary),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           );
         },

@@ -29,7 +29,7 @@ void main() {
 
     await tester.tap(find.text('ಬದಲಿಸಿ'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('Copy Tulu text'), findsOneWidget);
+    expect(find.textContaining('Copy Tulu'), findsOneWidget);
 
     await tester.tap(find.text('ಉಳಿಸಿದವು'));
     await tester.pumpAndSettle();

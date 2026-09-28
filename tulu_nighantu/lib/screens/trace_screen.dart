@@ -5,6 +5,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 import '../app_state.dart';
+import '../audio/speaker.dart';
+import '../lipi/stroke_guide.dart';
 import '../lipi/tulu_lipi.dart';
 import '../models/word.dart';
 import '../widgets/common.dart';
@@ -16,6 +18,8 @@ class TraceTarget {
     required this.kannada,
     required this.roman,
     required this.starKey,
+    required this.speech,
+    this.strokeKey,
   });
 
   factory TraceTarget.letter(LipiLetter l) => TraceTarget(
@@ -23,6 +27,8 @@ class TraceTarget {
     kannada: l.label,
     roman: l.roman,
     starKey: l.starKey,
+    speech: l.kannada,
+    strokeKey: l.kannada,
   );
 
   factory TraceTarget.word(Word w) => TraceTarget(
@@ -30,38 +36,63 @@ class TraceTarget {
     kannada: w.tulu,
     roman: w.roman,
     starKey: w.starKey,
+    speech: w.tulu,
   );
 
   final String tulu;
   final String kannada;
   final String roman;
   final String starKey;
+
+  /// Kannada-script text read aloud by the listen button.
+  final String speech;
+
+  /// Key into [StrokeGuide] (letters only).
+  final String? strokeKey;
+
+  /// Whether a "Watch" pen animation exists for this target.
+  bool get hasGuide => StrokeGuide.forLetter(strokeKey) != null;
 }
 
 /// Finger-tracing practice with automatic scoring.
 class TraceScreen extends StatefulWidget {
   /// Practise the alphabet starting at [startIndex] of [kLipiLetters].
-  TraceScreen.letters({super.key, int startIndex = 0})
+  ///
+  /// With [watchFirst] each letter opens on the "Watch" writing tutorial.
+  TraceScreen.letters({super.key, int startIndex = 0, this.watchFirst = true})
     : targets = [for (final l in kLipiLetters) TraceTarget.letter(l)],
       initialIndex = startIndex;
 
   /// Practise a single dictionary word.
   TraceScreen.word({super.key, required Word word})
     : targets = [TraceTarget.word(word)],
-      initialIndex = 0;
+      initialIndex = 0,
+      watchFirst = false;
 
   final List<TraceTarget> targets;
   final int initialIndex;
+
+  /// Start on the pen-animation tutorial when available.
+  final bool watchFirst;
 
   @override
   State<TraceScreen> createState() => _TraceScreenState();
 }
 
-enum _Mode { trace, free }
+enum _Mode { watch, trace, free }
 
-class _TraceScreenState extends State<TraceScreen> {
+class _TraceScreenState extends State<TraceScreen>
+    with SingleTickerProviderStateMixin {
   late int _index = widget.initialIndex;
-  _Mode _mode = _Mode.trace;
+  late _Mode _mode = widget.watchFirst && _target.hasGuide
+      ? _Mode.watch
+      : _Mode.trace;
+  late final AnimationController _demo = AnimationController(vsync: this);
+
+  /// Tutorial strokes mapped onto the canvas, for [_guideKey].
+  List<List<Offset>>? _guide;
+  String? _guideKey;
+  double _canvasSize = 0;
   final List<List<Offset>> _strokes = [];
   int? _pointer;
   bool _drawing = false;
@@ -78,7 +109,42 @@ class _TraceScreenState extends State<TraceScreen> {
   void _go(int delta) => setState(() {
     _index = (_index + delta).clamp(0, widget.targets.length - 1);
     _reset();
+    if (_mode == _Mode.watch && !_target.hasGuide) _mode = _Mode.trace;
   });
+
+  @override
+  void dispose() {
+    _demo.dispose();
+    Speaker.instance.stop();
+    super.dispose();
+  }
+
+  /// Maps the tutorial strokes onto a canvas of [size] (async: needs the
+  /// glyph's ink bounds) and starts the demo in Watch mode.
+  void _ensureGuide(double size) {
+    _canvasSize = size;
+    final t = _target;
+    final key = '${t.strokeKey}@${size.round()}';
+    if (key == _guideKey) return;
+    _guideKey = key;
+    _guide = null;
+    final raw = StrokeGuide.forLetter(t.strokeKey);
+    if (raw == null) return;
+    GlyphScorer.inkBounds(t.tulu, size).then((box) {
+      if (!mounted || key != _guideKey || box == null) return;
+      setState(() => _guide = StrokeGuide.mapToRect(raw, box));
+      if (_mode == _Mode.watch) _playDemo();
+    });
+  }
+
+  void _playDemo() {
+    final g = _guide;
+    if (g == null) return;
+    _demo.duration = Duration(
+      milliseconds: StrokeDemoPainter.totalMs(g, _canvasSize).round(),
+    );
+    _demo.forward(from: 0);
+  }
 
   Future<void> _check(double size) async {
     if (_strokes.isEmpty || _checking) return;
@@ -116,6 +182,7 @@ class _TraceScreenState extends State<TraceScreen> {
       body: LayoutBuilder(
         builder: (context, box) {
           final size = math.min(box.maxWidth - 32, 440.0);
+          _ensureGuide(size);
           return SingleChildScrollView(
             physics: _drawing
                 ? const NeverScrollableScrollPhysics()
@@ -130,19 +197,23 @@ class _TraceScreenState extends State<TraceScreen> {
                     const SizedBox(height: 12),
                     _canvas(size),
                     const SizedBox(height: 12),
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 250),
-                      transitionBuilder: (child, a) => FadeTransition(
-                        opacity: a,
-                        child: ScaleTransition(
-                          scale: Tween(begin: 0.95, end: 1.0).animate(a),
-                          child: child,
+                    if (_mode == _Mode.watch)
+                      _watchControls()
+                    else ...[
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 250),
+                        transitionBuilder: (child, a) => FadeTransition(
+                          opacity: a,
+                          child: ScaleTransition(
+                            scale: Tween(begin: 0.95, end: 1.0).animate(a),
+                            child: child,
+                          ),
                         ),
+                        child: _resultRow(),
                       ),
-                      child: _resultRow(),
-                    ),
-                    const SizedBox(height: 12),
-                    _controls(size),
+                      const SizedBox(height: 12),
+                      _controls(size),
+                    ],
                     if (many) ...[const SizedBox(height: 12), _navRow()],
                   ],
                 ),
@@ -187,10 +258,17 @@ class _TraceScreenState extends State<TraceScreen> {
                     ],
                   ),
                 ),
-                ListenableBuilder(
-                  listenable: AppState.instance,
-                  builder: (_, _) =>
-                      StarRow(AppState.instance.starsFor(t.starKey), size: 20),
+                Column(
+                  children: [
+                    SpeakButton(t.speech),
+                    ListenableBuilder(
+                      listenable: AppState.instance,
+                      builder: (_, _) => StarRow(
+                        AppState.instance.starsFor(t.starKey),
+                        size: 18,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -201,23 +279,23 @@ class _TraceScreenState extends State<TraceScreen> {
           width: double.infinity,
           child: SegmentedButton<_Mode>(
             showSelectedIcon: false,
-            segments: const [
-              ButtonSegment(
+            segments: [
+              if (t.hasGuide)
+                const ButtonSegment(
+                  value: _Mode.watch,
+                  label: Text('ನೋಡಿ\nWatch', textAlign: TextAlign.center),
+                ),
+              const ButtonSegment(
                 value: _Mode.trace,
-                icon: Icon(Icons.gesture),
-                label: Text('ಅನುಸರಿಸಿ · Trace'),
+                label: Text('ಅನುಸರಿಸಿ\nTrace', textAlign: TextAlign.center),
               ),
-              ButtonSegment(
+              const ButtonSegment(
                 value: _Mode.free,
-                icon: Icon(Icons.edit_outlined),
-                label: Text('ಸ್ವತಂತ್ರ · Free'),
+                label: Text('ಸ್ವತಂತ್ರ\nFree', textAlign: TextAlign.center),
               ),
             ],
             selected: {_mode},
-            onSelectionChanged: (s) => setState(() {
-              _mode = s.first;
-              _reset();
-            }),
+            onSelectionChanged: (s) => _setMode(s.first),
           ),
         ),
         if (_mode == _Mode.free) ...[
@@ -241,11 +319,65 @@ class _TraceScreenState extends State<TraceScreen> {
     );
   }
 
+  void _setMode(_Mode m) {
+    setState(() {
+      _mode = m;
+      _reset();
+    });
+    if (m == _Mode.watch) {
+      _playDemo();
+    } else {
+      _demo.stop();
+    }
+  }
+
+  /// Replay / "your turn" buttons shown under the canvas in Watch mode.
+  Widget _watchControls() {
+    final cs = Theme.of(context).colorScheme;
+    return Column(
+      children: [
+        Row(
+          children: [
+            Icon(Icons.info_outline, size: 16, color: cs.onSurfaceVariant),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                'ಸಂಖ್ಯೆಯ ಕ್ರಮದಲ್ಲಿ ಬರೆಯಿರಿ · Follow the numbers. '
+                'Auto-generated pen path – not a verified stroke order.',
+                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12.5),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: _guide == null ? null : _playDemo,
+                icon: const Icon(Icons.replay_rounded),
+                label: const Text('ಮತ್ತೆ · Replay'),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: FilledButton.icon(
+                onPressed: () => _setMode(_Mode.trace),
+                icon: const Icon(Icons.gesture),
+                label: const Text('ನಿಮ್ಮ ಸರದಿ · Your turn'),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget _canvas(double size) {
     final cs = Theme.of(context).colorScheme;
     return Listener(
       onPointerDown: (e) {
-        if (_pointer != null) return;
+        if (_pointer != null || _mode == _Mode.watch) return;
         setState(() {
           _pointer = e.pointer;
           _drawing = true;
@@ -278,10 +410,20 @@ class _TraceScreenState extends State<TraceScreen> {
           borderRadius: BorderRadius.circular(22),
           child: CustomPaint(
             size: Size.square(size),
+            foregroundPainter: _guide == null || _mode == _Mode.free
+                ? null
+                : StrokeDemoPainter(
+                    strokes: _guide!,
+                    progress: _demo,
+                    animate: _mode == _Mode.watch,
+                    inkColor: cs.primary,
+                    markerColor: cs.tertiary,
+                    markerTextColor: cs.onTertiary,
+                  ),
             painter: TracePainter(
               text: _target.tulu,
               strokes: _strokes,
-              showGuide: _mode == _Mode.trace,
+              showGuide: _mode != _Mode.free,
               revealGuide: _result != null,
               background: Theme.of(context).brightness == Brightness.light
                   ? const Color(0xFFFFFBF3)
@@ -586,9 +728,12 @@ class TraceResult {
 
 /// Cell mask of a rendered glyph.
 class _GlyphMask {
-  _GlyphMask(this.cols, this.cell, this.on, this.dilated);
+  _GlyphMask(this.cols, this.cell, this.on, this.dilated, this.bounds);
 
   final int cols;
+
+  /// Pixel bounds of the glyph's ink, or null if nothing was drawn.
+  final Rect? bounds;
   final double cell;
   final List<bool> on;
   final List<bool> dilated;
@@ -641,6 +786,26 @@ class GlyphScorer {
       }
     }
 
+    var minX = px, minY = px, maxX = -1, maxY = -1;
+    for (var y = 0; y < px; y++) {
+      for (var x = 0; x < px; x++) {
+        if (rgba[(y * px + x) * 4 + 3] > 100) {
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+    final bounds = maxX < 0
+        ? null
+        : Rect.fromLTRB(
+            minX.toDouble(),
+            minY.toDouble(),
+            maxX + 1.0,
+            maxY + 1.0,
+          );
+
     final dilated = List<bool>.filled(cols * cols, false);
     for (var r = 0; r < cols; r++) {
       for (var c = 0; c < cols; c++) {
@@ -655,8 +820,12 @@ class GlyphScorer {
         }
       }
     }
-    return _cache[key] = _GlyphMask(cols, _cellPx, on, dilated);
+    return _cache[key] = _GlyphMask(cols, _cellPx, on, dilated, bounds);
   }
+
+  /// Ink bounds of [text] laid out on a [size]×[size] canvas.
+  static Future<Rect?> inkBounds(String text, double size) async =>
+      (await _mask(text, size)).bounds;
 
   /// Resamples strokes every [_sampleStep] px.
   static List<Offset> _samples(List<List<Offset>> strokes) {
@@ -721,4 +890,166 @@ class GlyphScorer {
     if (precision < 0.5) score *= 0.6;
     return TraceResult(coverage, precision, score);
   }
+}
+
+/// Draws the writing tutorial: numbered start points, direction arrows and
+/// (when [animate]) the pen drawing each stroke in turn.
+class StrokeDemoPainter extends CustomPainter {
+  StrokeDemoPainter({
+    required this.strokes,
+    required this.progress,
+    required this.animate,
+    required this.inkColor,
+    required this.markerColor,
+    required this.markerTextColor,
+  }) : super(repaint: progress);
+
+  final List<List<Offset>> strokes;
+  final Animation<double> progress;
+  final bool animate;
+  final Color inkColor, markerColor, markerTextColor;
+
+  static const double _pauseMs = 380;
+  static const double _minMs = 220;
+
+  /// Pen speed: 80% of the canvas side per second.
+  static double _durMs(List<Offset> s, double side) =>
+      math.max(_len(s) / (side * 0.8) * 1000, _minMs);
+
+  static double _len(List<Offset> s) {
+    var l = 0.0;
+    for (var i = 1; i < s.length; i++) {
+      l += (s[i] - s[i - 1]).distance;
+    }
+    return l;
+  }
+
+  /// Total animation length for [strokes] on a canvas of [side].
+  static double totalMs(List<List<Offset>> strokes, double side) =>
+      strokes.fold(0.0, (t, s) => t + _durMs(s, side) + _pauseMs);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final side = size.width;
+    final ink = Paint()
+      ..color = inkColor.withValues(alpha: 0.9)
+      ..strokeWidth = side * TracePainter.penFraction
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..style = PaintingStyle.stroke;
+    final now = animate
+        ? progress.value * totalMs(strokes, side)
+        : double.infinity;
+    var clock = 0.0;
+    for (var i = 0; i < strokes.length; i++) {
+      final s = strokes[i];
+      final dur = _durMs(s, side);
+      final start = clock;
+      clock += dur + _pauseMs;
+      if (!animate) {
+        _marker(canvas, s, i, side, 0.8);
+        continue;
+      }
+      if (now < start) break;
+      final frac = ((now - start) / dur).clamp(0.0, 1.0);
+      final tip = _drawPartial(canvas, s, frac, ink);
+      _marker(canvas, s, i, side, 1);
+      if (frac < 1) {
+        canvas.drawCircle(tip, side * 0.035, Paint()..color = markerColor);
+        canvas.drawCircle(
+          tip,
+          side * 0.035,
+          Paint()
+            ..color = inkColor
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2,
+        );
+      }
+    }
+  }
+
+  /// Draws the first [frac] of [s]; returns the pen position.
+  Offset _drawPartial(Canvas canvas, List<Offset> s, double frac, Paint ink) {
+    if (s.length == 1) {
+      canvas.drawCircle(
+        s.first,
+        ink.strokeWidth / 2,
+        Paint()..color = ink.color,
+      );
+      return s.first;
+    }
+    final target = _len(s) * frac;
+    final path = Path()..moveTo(s.first.dx, s.first.dy);
+    var done = 0.0;
+    var tip = s.first;
+    for (var i = 1; i < s.length; i++) {
+      final seg = (s[i] - s[i - 1]).distance;
+      if (done + seg >= target) {
+        final t = seg == 0 ? 0.0 : (target - done) / seg;
+        tip = Offset.lerp(s[i - 1], s[i], t)!;
+        path.lineTo(tip.dx, tip.dy);
+        break;
+      }
+      done += seg;
+      tip = s[i];
+      path.lineTo(tip.dx, tip.dy);
+    }
+    canvas.drawPath(path, ink);
+    return tip;
+  }
+
+  /// Numbered start dot plus a small arrow showing the first direction.
+  void _marker(Canvas canvas, List<Offset> s, int i, double side, double a) {
+    final p = s.first;
+    final r = side * 0.036;
+    if (s.length > 1) {
+      var q = s[1];
+      for (final c in s.skip(1)) {
+        q = c;
+        if ((c - p).distance > side * 0.08) break;
+      }
+      final d = q - p;
+      if (d.distance > 0) {
+        final u = d / d.distance;
+        final tipPt = p + u * (r * 2.6);
+        final n = Offset(-u.dy, u.dx);
+        final arrow = Path()
+          ..moveTo(tipPt.dx, tipPt.dy)
+          ..lineTo(
+            (tipPt - u * r * 0.9 + n * r * 0.6).dx,
+            (tipPt - u * r * 0.9 + n * r * 0.6).dy,
+          )
+          ..lineTo(
+            (tipPt - u * r * 0.9 - n * r * 0.6).dx,
+            (tipPt - u * r * 0.9 - n * r * 0.6).dy,
+          )
+          ..close();
+        canvas.drawPath(
+          arrow,
+          Paint()..color = markerColor.withValues(alpha: a),
+        );
+      }
+    }
+    canvas.drawCircle(p, r, Paint()..color = markerColor.withValues(alpha: a));
+    final tp = TextPainter(
+      text: TextSpan(
+        text: '${i + 1}',
+        style: TextStyle(
+          color: markerTextColor,
+          fontSize: r * 1.3,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, p - Offset(tp.width / 2, tp.height / 2));
+    tp.dispose();
+  }
+
+  @override
+  bool shouldRepaint(StrokeDemoPainter old) =>
+      old.strokes != strokes ||
+      old.animate != animate ||
+      old.inkColor != inkColor ||
+      old.markerColor != markerColor;
 }
