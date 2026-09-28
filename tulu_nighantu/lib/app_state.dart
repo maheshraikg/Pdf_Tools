@@ -4,9 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'ai/gemini_client.dart';
 import 'lipi/stroke_guide.dart';
 import 'lipi/tulu_lipi.dart';
 import 'models/word.dart';
+import 'translate/translator.dart';
 
 /// Global app state: word list, favourites and tracing progress.
 class AppState extends ChangeNotifier {
@@ -17,11 +19,38 @@ class AppState extends ChangeNotifier {
 
   static const _favKey = 'favourites';
   static const _starsKey = 'stars';
+  static const _customKey = 'custom_words';
+  static const _aiKeyKey = 'gemini_api_key';
+  static const _aiModelKey = 'gemini_model';
+
+  /// User's Gemini API key (stored only on this phone) and model name.
+  String aiKey = '';
+  String aiModel = kDefaultGeminiModel;
+
+  bool get hasAiKey => aiKey.trim().isNotEmpty;
+
+  /// Saves the AI settings.
+  void setAiSettings({required String key, required String model}) {
+    aiKey = key.trim();
+    aiModel = model.trim().isEmpty ? kDefaultGeminiModel : model.trim();
+    _save(() => _prefs?.setString(_aiKeyKey, aiKey));
+    _save(() => _prefs?.setString(_aiModelKey, aiModel));
+    notifyListeners();
+  }
+
+  /// A Gemini client for the saved key, or null when none is set.
+  GeminiClient? aiClient() =>
+      hasAiKey ? GeminiClient(apiKey: aiKey, model: aiModel) : null;
 
   SharedPreferences? _prefs;
 
   List<WordCategory> categories = const [];
+
+  /// Bundled words followed by the user's own words (new list instance
+  /// whenever either changes, so caches keyed on identity refresh).
   List<Word> words = const [];
+  List<Word> _bundled = const [];
+  List<Word> _custom = const [];
   String dataNote = '';
   final Set<String> favourites = {};
   final Map<String, int> stars = {};
@@ -40,6 +69,16 @@ class AppState extends ChangeNotifier {
           (k, v) => stars[k] = (v as num).toInt().clamp(0, 3),
         );
       }
+      aiKey = _prefs!.getString(_aiKeyKey) ?? '';
+      aiModel = _prefs!.getString(_aiModelKey) ?? kDefaultGeminiModel;
+      final c = _prefs!.getString(_customKey);
+      if (c != null) {
+        _custom = [
+          for (final w in jsonDecode(c) as List)
+            Word.fromJson({...w as Map<String, dynamic>, 'custom': true}),
+        ];
+        _rebuildWords();
+      }
     } catch (e) {
       debugPrint('Preferences unavailable: $e');
     }
@@ -55,10 +94,70 @@ class AppState extends ChangeNotifier {
       for (final c in j['categories'] as List)
         WordCategory.fromJson(c as Map<String, dynamic>),
     ];
-    words = [
+    _bundled = [
       for (final w in j['words'] as List)
         Word.fromJson(w as Map<String, dynamic>),
     ];
+    _rebuildWords();
+  }
+
+  void _rebuildWords() => words = [..._bundled, ..._custom];
+
+  // ------------------------------------------------------- user's own words
+
+  /// Words the user added on this phone.
+  List<Word> get customWords => List.unmodifiable(_custom);
+
+  /// Creates an id for a new user word.
+  static String newCustomId() => 'u:${DateTime.now().microsecondsSinceEpoch}';
+
+  /// Adds a user word (marked custom) and makes it searchable at once.
+  void addCustomWord(Word w) {
+    _custom = [..._custom, _asCustom(w)];
+    _customChanged();
+  }
+
+  /// Replaces the user word with the same id.
+  void updateCustomWord(Word w) {
+    _custom = [for (final c in _custom) c.id == w.id ? _asCustom(w) : c];
+    _customChanged();
+  }
+
+  /// Deletes a user word (and its favourite mark).
+  void deleteCustomWord(String id) {
+    _custom = _custom.where((c) => c.id != id).toList();
+    if (favourites.remove(id)) {
+      _save(() => _prefs?.setStringList(_favKey, favourites.toList()));
+    }
+    _customChanged();
+  }
+
+  /// The user's words as JSON entries, ready to merge into words.json.
+  String exportCustomWords() =>
+      const JsonEncoder.withIndent('  ')
+          .convert([for (final w in _custom) (w.toJson()..remove('custom'))]);
+
+  static Word _asCustom(Word w) => w.custom
+      ? w
+      : Word(
+          id: w.id,
+          tulu: w.tulu,
+          roman: w.roman,
+          kn: w.kn,
+          en: w.en,
+          cat: w.cat,
+          custom: true,
+        );
+
+  void _customChanged() {
+    _rebuildWords();
+    _save(
+      () => _prefs?.setString(
+        _customKey,
+        jsonEncode([for (final w in _custom) w.toJson()]),
+      ),
+    );
+    notifyListeners();
   }
 
   WordCategory? categoryById(String id) {
@@ -77,7 +176,7 @@ class AppState extends ChangeNotifier {
 
   /// Word of the day: a non-phrase word chosen by days since 2024-01-01.
   Word? get wordOfTheDay {
-    final pool = words.where((w) => !w.isPhrase).toList();
+    final pool = _bundled.where((w) => !w.isPhrase).toList();
     if (pool.isEmpty) return null;
     final now = DateTime.now();
     final days = DateTime.utc(
@@ -86,6 +185,19 @@ class AppState extends ChangeNotifier {
       now.day,
     ).difference(DateTime.utc(2024, 1, 1)).inDays;
     return pool[days % pool.length];
+  }
+
+  Translator? _translator;
+  List<Word>? _translatorWords;
+
+  /// Dictionary-based Kannada/English → Tulu translator (rebuilt if the
+  /// word list changes).
+  Translator get translator {
+    if (_translator == null || !identical(_translatorWords, words)) {
+      _translatorWords = words;
+      _translator = Translator(words);
+    }
+    return _translator!;
   }
 
   bool isFavourite(String id) => favourites.contains(id);
@@ -157,6 +269,12 @@ class AppState extends ChangeNotifier {
         .replaceAllMapped(RegExp(r'([a-z])\1+'), (m) => m[1]!);
   }
 
+  /// Drops one trailing vowel ("raje" → "raj").
+  static String _stem(String s) =>
+      s.length > 2 && 'aeiou'.contains(s[s.length - 1])
+      ? s.substring(0, s.length - 1)
+      : s;
+
   static int? _matchScore(String target, String q) {
     if (q.isEmpty || target.isEmpty) return null;
     if (target == q) return 0;
@@ -192,8 +310,15 @@ class AppState extends ChangeNotifier {
       if (nq.isEmpty) return const [];
       for (final w in pool) {
         final cands = <int>[];
-        final r = _matchScore(normalizeLatin(w.roman), nq);
-        if (r != null) cands.add(r);
+        final romanN = normalizeLatin(w.roman);
+        final r = _matchScore(romanN, nq);
+        if (r != null) {
+          cands.add(r);
+        } else if (_stem(romanN) == _stem(nq) && nq.length >= 3) {
+          // Tulu often ends in -e where Kannada/Hindi end in -a
+          // ("raja" ≈ raaje, "anna" ≈ anne): accept a different last vowel.
+          cands.add(2);
+        }
         final en = w.en.toLowerCase();
         if (en == lq) {
           cands.add(1);

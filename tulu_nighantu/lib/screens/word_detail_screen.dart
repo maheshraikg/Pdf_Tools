@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../app_state.dart';
 import '../models/word.dart';
 import '../widgets/common.dart';
+import 'add_word_screen.dart';
 import 'trace_screen.dart';
 
 /// Full entry for one word with share / copy / practise actions.
@@ -25,7 +26,23 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
     final cat = state.categoryById(w.cat);
 
     return Scaffold(
-      appBar: AppBar(title: Text(w.tulu), actions: [FavouriteButton(w.id)]),
+      appBar: AppBar(
+        title: Text(w.tulu),
+        actions: [
+          if (w.custom)
+            IconButton(
+              tooltip: 'ತಿದ್ದಿ · Edit',
+              icon: const Icon(Icons.edit_outlined),
+              onPressed: () async {
+                final nav = Navigator.of(context);
+                await openAddWord(context, initial: w);
+                // The entry changed or was deleted; go back to the list.
+                if (mounted) nav.pop();
+              },
+            ),
+          FavouriteButton(w.id),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -33,6 +50,25 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
             key: _cardKey,
             child: ShareCard(tulu: w.lipi, kannada: w.tulu, roman: w.roman),
           ),
+          if (w.custom) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(
+                  Icons.person_outline,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.tertiary,
+                ),
+                const SizedBox(width: 6),
+                const Expanded(
+                  child: Text(
+                    'ನೀವು ಸೇರಿಸಿದ ಪದ – ಪರಿಶೀಲಿಸಿಲ್ಲ · '
+                    'Your word – not yet verified',
+                  ),
+                ),
+              ],
+            ),
+          ],
           const SizedBox(height: 16),
           Card(
             margin: EdgeInsets.zero,

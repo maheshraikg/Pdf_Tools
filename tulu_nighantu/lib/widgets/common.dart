@@ -200,6 +200,7 @@ class WordTile extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
+                        if (word.custom) const _YoursChip(),
                         if (word.roman.isNotEmpty)
                           Text(
                             word.roman,
@@ -226,6 +227,27 @@ class WordTile extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Small "yours" label for words the user added.
+class _YoursChip extends StatelessWidget {
+  const _YoursChip();
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+      decoration: BoxDecoration(
+        color: cs.tertiary,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        'ನಿಮ್ಮದು · yours',
+        style: TextStyle(fontSize: 10.5, color: cs.onTertiary),
       ),
     );
   }
@@ -323,11 +345,14 @@ class ShareCard extends StatelessWidget {
                       children: [
                         Container(width: 18, height: 2, color: _yellow),
                         const SizedBox(width: 8),
-                        Text(
-                          'ತುಳು ನಿಘಂಟು · Tulu Nighantu',
-                          style: tt.labelSmall?.copyWith(
-                            color: _yellow,
-                            letterSpacing: 0.6,
+                        Flexible(
+                          child: Text(
+                            'ತುಳು ನಿಘಂಟು · Tulu Nighantu',
+                            textAlign: TextAlign.center,
+                            style: tt.labelSmall?.copyWith(
+                              color: _yellow,
+                              letterSpacing: 0.6,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 8),

@@ -14,7 +14,14 @@ includes a Kannada → Tulu lipi converter.
   gives 0–3 stars. Words can be traced too.
 - **ಕೇಳಿ · Pronunciation**: listen buttons on letters, barakhadi tiles, words,
   the word of the day and the converter.
-- **ಬದಲಿಸಿ · Converter**: live Kannada → Tulu-Tigalari with copy and share-as-image.
+- **ಬದಲಿಸಿ · Convert**:
+  - *ಅನುವಾದ · Translate*: type Kannada or English and get Tulu (Kannada script,
+    Tulu lipi and romanised), with listen / copy / share and a word-by-word
+    breakdown. Whole phrases from the dictionary are matched first; other text
+    is translated word by word (English plurals and common Kannada case endings
+    are handled). It is dictionary-based: no grammar or word-order changes, and
+    unknown words are highlighted.
+  - *ಲಿಪಿ · Script*: live Kannada → Tulu-Tigalari with copy and share-as-image.
 - **ಉಳಿಸಿದವು · Saved**: favourites, progress and about.
 
 The app does not use the network. Everything is bundled; pronunciation uses the
@@ -48,7 +55,36 @@ assets/data/words.json        dictionary data
 assets/fonts/                 Mallige Tulu-Tigalari font + OFL licence
 ```
 
-## Adding words
+## Ask AI (optional, Gemini)
+
+**Saved › ⚙ Settings**: paste your own Gemini API key (get one at
+aistudio.google.com › API keys). Then **AI ಸಹಾಯ · Ask AI** appears in
+Translate and on empty search results. The app sends the text, plus the
+matching verified dictionary words as a glossary, to Google's Gemini
+`generateContent` API. It shows the Tulu answer (Kannada script, Tulu lipi,
+roman, meanings, a note and the model's confidence), labelled
+**AI – not verified**, with Listen, Copy and **Add to my words**.
+
+- The key is stored only on the phone (never in the code or APK) and sent only
+  in the `x-goog-api-key` header to Google. The model name is editable
+  (default `gemini-flash-latest`).
+- AI is the only feature that uses the internet; everything else works offline.
+- AI models know little Tulu and can be wrong; answers are never added to the
+  dictionary automatically.
+- For a public release, don't ask users for keys: put the key behind a small
+  server (e.g. a Cloudflare Worker) and point `GeminiClient` at it.
+
+## Adding your own words (in the app)
+
+When a search finds nothing, tap **ಈ ಪದ ಸೇರಿಸಿ · Add "…"** (or the **+** in the
+dictionary header, or a red "tap to add" word in Translate). Enter the Tulu word
+in Kannada script plus a Kannada and/or English meaning. The word is saved on
+the phone, marked *yours / not verified*, and is immediately searchable and
+used by Translate. **Saved › My words › Export** shares the words as JSON in
+the `words.json` entry format, so they can be reviewed and merged into the
+bundled list for everyone.
+
+## Adding words (bundled list)
 
 Edit `assets/data/words.json`:
 
@@ -126,6 +162,9 @@ family in `pubspec.yaml`; all Tulu text uses the single constant
 - Trace scoring compares shapes only; it does not check stroke order or direction.
 - Tutorial pen paths are auto-generated from the font, not expert-verified.
 - Pronunciation is an approximation by a Kannada text-to-speech voice.
+- "Ask AI" answers are unverified and need internet.
+- Translation is word-for-word from the dictionary; it only knows the words in
+  `words.json` and does not apply Tulu grammar.
 - The word list is a small, unverified sample.
 
 ## Roadmap (next phase)
