@@ -15,8 +15,10 @@ class LipiScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('ತುಳು ಲಿಪಿ · Tulu Lipi')),
       floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: const Color(0xFFFFD54F),
+        foregroundColor: const Color(0xFF3D2E00),
         onPressed: () => _openTrace(context, 0),
-        icon: const Icon(Icons.play_arrow),
+        icon: const Icon(Icons.play_arrow_rounded),
         label: const Text('ಎಲ್ಲಾ ಅಭ್ಯಾಸ · Practise all'),
       ),
       body: ListenableBuilder(
@@ -35,14 +37,21 @@ class LipiScreen extends StatelessWidget {
   List<Widget> _group(BuildContext context, LetterGroup g, AppState state) {
     final letters = kLipiLetters.where((l) => l.group == g).toList();
     return [
-      SliverToBoxAdapter(child: SectionHeader(g.kannada, g.english)),
+      SliverToBoxAdapter(
+        child: SectionHeader(
+          g.kannada,
+          '${g.english} · '
+          '${letters.where((l) => state.starsFor(l.starKey) > 0).length}'
+          '/${letters.length}',
+        ),
+      ),
       SliverPadding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         sliver: SliverGrid.count(
           crossAxisCount: 4,
           mainAxisSpacing: 8,
           crossAxisSpacing: 8,
-          childAspectRatio: 0.8,
+          childAspectRatio: 0.82,
           children: [
             for (final l in letters)
               _LetterCell(letter: l, stars: state.starsFor(l.starKey)),
@@ -61,7 +70,7 @@ void _openTrace(BuildContext context, int index) {
   );
 }
 
-/// "x / N letters practised" with a progress bar and total stars.
+/// Progress ring with "x / N letters practised" and total stars.
 class _ProgressHeader extends StatelessWidget {
   const _ProgressHeader({required this.state});
 
@@ -71,38 +80,91 @@ class _ProgressHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final n = kLipiLetters.length;
     final done = state.lettersPractised;
-    return Card(
-      margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    final value = n == 0 ? 0.0 : done / n;
+    final tt = Theme.of(context).textTheme;
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFB3261E), Color(0xFF7A1410)],
+        ),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 76,
+            height: 76,
+            child: Stack(
+              fit: StackFit.expand,
               children: [
-                Expanded(
+                CircularProgressIndicator(
+                  value: value,
+                  strokeWidth: 8,
+                  strokeCap: StrokeCap.round,
+                  color: const Color(0xFFFFD54F),
+                  backgroundColor: Colors.white24,
+                ),
+                Center(
                   child: Text(
-                    '$done / $n ಅಕ್ಷರ ಅಭ್ಯಾಸ · letters practised',
-                    style: Theme.of(context).textTheme.titleSmall,
+                    '${(value * 100).round()}%',
+                    style: tt.titleMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ),
-                Icon(
-                  Icons.star_rounded,
-                  color: Theme.of(context).colorScheme.tertiary,
-                ),
-                Text(' ${state.letterStars} / ${n * 3}'),
               ],
             ),
-            const SizedBox(height: 8),
-            LinearProgressIndicator(value: n == 0 ? 0 : done / n),
-          ],
-        ),
+          ),
+          const SizedBox(width: 18),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '$done / $n ಅಕ್ಷರ ಅಭ್ಯಾಸ',
+                  style: tt.titleMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  'letters practised',
+                  style: tt.bodyMedium?.copyWith(color: Colors.white70),
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.star_rounded,
+                      color: Color(0xFFFFD54F),
+                      size: 20,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${state.letterStars} / ${n * 3}',
+                      style: tt.bodyLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-/// One alphabet cell: big Tulu glyph, Kannada label, stars.
+/// One alphabet cell: big Tulu glyph, Kannada label, stars. Practised
+/// letters are tinted; fully mastered ones get a gold outline.
 class _LetterCell extends StatelessWidget {
   const _LetterCell({required this.letter, required this.stars});
 
@@ -112,19 +174,41 @@ class _LetterCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return Card.outlined(
-      margin: EdgeInsets.zero,
+    final practised = stars > 0;
+    return Material(
+      color: practised ? cs.primaryContainer : cs.surfaceContainerLow,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: stars == 3
+            ? BorderSide(color: cs.tertiary, width: 2)
+            : BorderSide(color: cs.outlineVariant.withValues(alpha: 0.5)),
+      ),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => _showLetterSheet(context, letter),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FittedBox(
-              child: TuluText(letter.tulu, size: 34, color: cs.primary),
-            ),
-            Text(letter.label, maxLines: 1, overflow: TextOverflow.ellipsis),
-            StarRow(stars, size: 12),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: FittedBox(
+                  child: TuluText(
+                    letter.tulu,
+                    size: 34,
+                    color: practised ? cs.onPrimaryContainer : cs.primary,
+                  ),
+                ),
+              ),
+              Text(
+                letter.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              StarRow(stars, size: 12),
+            ],
+          ),
         ),
       ),
     );
@@ -145,17 +229,55 @@ void _showLetterSheet(BuildContext context, LipiLetter letter) {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TuluText(letter.tulu, size: 110, color: cs.primary),
+              Container(
+                width: 180,
+                height: 180,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: cs.primaryContainer,
+                  borderRadius: BorderRadius.circular(40),
+                ),
+                child: FittedBox(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: TuluText(
+                      letter.tulu,
+                      size: 110,
+                      color: cs.onPrimaryContainer,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
               Text(
-                '${letter.label} · ${letter.roman}',
-                style: Theme.of(ctx).textTheme.headlineSmall,
+                letter.label,
+                style: Theme.of(ctx).textTheme.headlineMedium
+                    ?.copyWith(fontWeight: FontWeight.w800),
+              ),
+              Text(
+                '${letter.roman} · ${letter.group.english}',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  color: cs.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 4),
+              ListenableBuilder(
+                listenable: AppState.instance,
+                builder: (_, _) => StarRow(
+                  AppState.instance.starsFor(letter.starKey),
+                  size: 22,
+                ),
               ),
               if (letter.isConsonant) ...[
-                SectionHeader('ಕಾಗುಣಿತ', 'Barakhadi'),
+                const SectionHeader('ಕಾಗುಣಿತ', 'Barakhadi'),
                 _Barakhadi(letter: letter),
               ],
               const SizedBox(height: 16),
               FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(52),
+                ),
                 onPressed: () {
                   Navigator.of(ctx).pop();
                   _openTrace(context, kLipiLetters.indexOf(letter));
@@ -181,7 +303,7 @@ class _Barakhadi extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return SizedBox(
-      height: 96,
+      height: 100,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: kBarakhadiSigns.length,
@@ -189,16 +311,19 @@ class _Barakhadi extends StatelessWidget {
         itemBuilder: (_, i) {
           final kn = letter.kannada + kBarakhadiSigns[i];
           return Container(
-            width: 64,
+            width: 66,
             decoration: BoxDecoration(
-              color: cs.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(12),
+              color: i == 0 ? cs.primaryContainer : cs.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TuluText(TuluLipi.fromKannada(kn), size: 28, color: cs.primary),
-                Text(kn),
+                Text(
+                  kn,
+                  style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
+                ),
               ],
             ),
           );

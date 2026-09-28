@@ -44,27 +44,12 @@ class _EmptyFavourites extends StatelessWidget {
   const _EmptyFavourites();
 
   @override
-  Widget build(BuildContext context) {
-    final outline = Theme.of(context).colorScheme.outline;
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          Icon(Icons.bookmark_border, size: 48, color: outline),
-          const SizedBox(height: 8),
-          const Text(
-            'ಇನ್ನೂ ಏನೂ ಉಳಿಸಿಲ್ಲ · Nothing saved yet',
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            'ಪದದ ಪಕ್ಕದ 🔖 ಒತ್ತಿ ಉಳಿಸಿ · Tap the bookmark next to a word to save it',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: outline),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => const EmptyState(
+    icon: Icons.bookmark_border,
+    title: 'ಇನ್ನೂ ಏನೂ ಉಳಿಸಿಲ್ಲ · Nothing saved yet',
+    subtitle:
+        'ಪದದ ಪಕ್ಕದ 🔖 ಒತ್ತಿ ಉಳಿಸಿ\nTap the bookmark next to a word to save it',
+  );
 }
 
 class _ProgressCard extends StatelessWidget {
@@ -75,23 +60,73 @@ class _ProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final n = kLipiLetters.length;
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
         children: [
-          ListTile(
-            leading: const Icon(Icons.draw),
-            title: const Text('ಅಭ್ಯಾಸ ಮಾಡಿದ ಅಕ್ಷರಗಳು · Letters practised'),
-            trailing: Text('${state.lettersPractised} / $n'),
-          ),
-          ListTile(
-            leading: Icon(
-              Icons.star_rounded,
-              color: Theme.of(context).colorScheme.tertiary,
+          Expanded(
+            child: _StatTile(
+              icon: Icons.draw_rounded,
+              value: '${state.lettersPractised}/$n',
+              label: 'ಅಕ್ಷರಗಳು\nLetters practised',
             ),
-            title: const Text('ನಕ್ಷತ್ರಗಳು · Stars'),
-            trailing: Text('${state.letterStars} / ${n * 3}'),
           ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: _StatTile(
+              icon: Icons.star_rounded,
+              value: '${state.letterStars}/${n * 3}',
+              label: 'ನಕ್ಷತ್ರಗಳು\nStars',
+              accent: true,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// A single statistic in a tinted tile.
+class _StatTile extends StatelessWidget {
+  const _StatTile({
+    required this.icon,
+    required this.value,
+    required this.label,
+    this.accent = false,
+  });
+
+  final IconData icon;
+  final String value;
+  final String label;
+  final bool accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final light = Theme.of(context).brightness == Brightness.light;
+    final bg = accent
+        ? (light ? const Color(0xFFFFF3C4) : const Color(0xFF3D2E00))
+        : cs.primaryContainer;
+    final fg = accent
+        ? (light ? const Color(0xFF3D2E00) : const Color(0xFFFFE08A))
+        : cs.onPrimaryContainer;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: fg),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.headlineSmall
+                ?.copyWith(color: fg, fontWeight: FontWeight.w800),
+          ),
+          Text(label, style: TextStyle(color: fg, height: 1.25)),
         ],
       ),
     );
@@ -108,10 +143,15 @@ class _AboutCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('ತುಳು ನಿಘಂಟು · Tulu Nighantu'),
-            subtitle: Text('Version $kAppVersion · ಆಫ್‌ಲೈನ್ · Works offline'),
+          ListTile(
+            leading: GlyphBadge(TuluLipi.fromKannada('ತ'), size: 44),
+            title: const Text(
+              'ತುಳು ನಿಘಂಟು · Tulu Nighantu',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+            subtitle: const Text(
+              'Version $kAppVersion · ಆಫ್‌ಲೈನ್ · Works offline',
+            ),
           ),
           const ListTile(
             leading: Icon(Icons.font_download_outlined),

@@ -33,7 +33,13 @@ void main() {
 
     await tester.tap(find.text('ಉಳಿಸಿದವು'));
     await tester.pumpAndSettle();
-    expect(find.text('Font: Mallige (SIL OFL 1.1)'), findsOneWidget);
+    final font = find.text('Font: Mallige (SIL OFL 1.1)');
+    await tester.scrollUntilVisible(
+      font,
+      200,
+      scrollable: find.byType(Scrollable).hitTestable().first,
+    );
+    expect(font, findsOneWidget);
   });
 
   testWidgets('scorer: empty strokes score zero, scribbling over the '

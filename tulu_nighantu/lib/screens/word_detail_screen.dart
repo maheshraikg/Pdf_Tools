@@ -35,54 +35,66 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
           ),
           const SizedBox(height: 16),
           Card(
+            margin: EdgeInsets.zero,
             child: Column(
               children: [
-                _row('ಕನ್ನಡ', w.kn),
-                const Divider(height: 1),
-                _row('English', w.en),
-                const Divider(height: 1),
+                _row(Icons.translate, 'ಕನ್ನಡ', w.kn),
+                const Divider(height: 1, indent: 56),
+                _row(Icons.language, 'English', w.en),
+                const Divider(height: 1, indent: 56),
                 _row(
+                  Icons.category_outlined,
                   'ವರ್ಗ · Category',
                   cat == null ? w.cat : '${cat.kn} · ${cat.en}',
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
+          const SizedBox(height: 20),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(54),
+            ),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => TraceScreen.word(word: w),
+              ),
+            ),
+            icon: const Icon(Icons.gesture),
+            label: const Text('ಬರೆದು ಅಭ್ಯಾಸ · Practise writing'),
+          ),
+          const SizedBox(height: 10),
+          Row(
             children: [
-              ListenableBuilder(
-                listenable: state,
-                builder: (context, _) {
-                  final fav = state.isFavourite(w.id);
-                  return FilledButton.tonalIcon(
-                    onPressed: () => state.toggleFavourite(w.id),
-                    icon: Icon(fav ? Icons.bookmark : Icons.bookmark_border),
-                    label: Text(fav ? 'ಉಳಿಸಲಾಗಿದೆ · Saved' : 'ಉಳಿಸಿ · Save'),
-                  );
-                },
-              ),
-              OutlinedButton.icon(
-                onPressed: () => copyText(context, w.lipi, 'ತುಳು ಲಿಪಿ'),
-                icon: const Icon(Icons.copy),
-                label: const Text('ತುಳು ಲಿಪಿ ನಕಲಿಸಿ · Copy Tulu lipi'),
-              ),
-              OutlinedButton.icon(
-                onPressed: () =>
-                    shareBoundaryAsImage(context, _cardKey, 'tulu_${w.id}'),
-                icon: const Icon(Icons.share),
-                label: const Text('ಚಿತ್ರವಾಗಿ ಹಂಚಿ · Share as image'),
-              ),
-              FilledButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => TraceScreen.word(word: w),
-                  ),
+              Expanded(
+                child: ListenableBuilder(
+                  listenable: state,
+                  builder: (context, _) {
+                    final fav = state.isFavourite(w.id);
+                    return _SmallAction(
+                      icon: fav ? Icons.bookmark : Icons.bookmark_border,
+                      label: fav ? 'ಉಳಿಸಲಾಗಿದೆ\nSaved' : 'ಉಳಿಸಿ\nSave',
+                      onPressed: () => state.toggleFavourite(w.id),
+                    );
+                  },
                 ),
-                icon: const Icon(Icons.gesture),
-                label: const Text('ಬರೆದು ಅಭ್ಯಾಸ · Practise writing'),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _SmallAction(
+                  icon: Icons.copy_rounded,
+                  label: 'ತುಳು ಲಿಪಿ ನಕಲಿಸಿ\nCopy Tulu lipi',
+                  onPressed: () => copyText(context, w.lipi, 'ತುಳು ಲಿಪಿ'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _SmallAction(
+                  icon: Icons.share_rounded,
+                  label: 'ಚಿತ್ರವಾಗಿ ಹಂಚಿ\nShare as image',
+                  onPressed: () =>
+                      shareBoundaryAsImage(context, _cardKey, 'tulu_${w.id}'),
+                ),
               ),
             ],
           ),
@@ -91,8 +103,42 @@ class _WordDetailScreenState extends State<WordDetailScreen> {
     );
   }
 
-  Widget _row(String label, String value) => ListTile(
+  Widget _row(IconData icon, String label, String value) => ListTile(
+    leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
     title: Text(label, style: Theme.of(context).textTheme.labelMedium),
     subtitle: Text(value, style: Theme.of(context).textTheme.bodyLarge),
+  );
+}
+
+/// Tonal button with an icon above a two-line label.
+class _SmallAction extends StatelessWidget {
+  const _SmallAction({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) => FilledButton.tonal(
+    style: FilledButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    ),
+    onPressed: onPressed,
+    child: Column(
+      children: [
+        Icon(icon),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 11.5, height: 1.25),
+        ),
+      ],
+    ),
   );
 }

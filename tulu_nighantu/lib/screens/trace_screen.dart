@@ -103,6 +103,15 @@ class _TraceScreenState extends State<TraceScreen> {
               ? 'ಬರೆಯಿರಿ · Trace (${_index + 1}/${widget.targets.length})'
               : 'ಬರೆಯಿರಿ · Trace',
         ),
+        bottom: many
+            ? PreferredSize(
+                preferredSize: const Size.fromHeight(4),
+                child: LinearProgressIndicator(
+                  value: (_index + 1) / widget.targets.length,
+                  minHeight: 4,
+                ),
+              )
+            : null,
       ),
       body: LayoutBuilder(
         builder: (context, box) {
@@ -118,13 +127,23 @@ class _TraceScreenState extends State<TraceScreen> {
                 child: Column(
                   children: [
                     _header(t),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
                     _canvas(size),
                     const SizedBox(height: 12),
-                    _resultRow(),
-                    const SizedBox(height: 8),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      transitionBuilder: (child, a) => FadeTransition(
+                        opacity: a,
+                        child: ScaleTransition(
+                          scale: Tween(begin: 0.95, end: 1.0).animate(a),
+                          child: child,
+                        ),
+                      ),
+                      child: _resultRow(),
+                    ),
+                    const SizedBox(height: 12),
                     _controls(size),
-                    if (many) ...[const SizedBox(height: 8), _navRow()],
+                    if (many) ...[const SizedBox(height: 12), _navRow()],
                   ],
                 ),
               ),
@@ -137,39 +156,87 @@ class _TraceScreenState extends State<TraceScreen> {
 
   Widget _header(TraceTarget t) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
     return Column(
       children: [
-        Wrap(
-          alignment: WrapAlignment.center,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 8,
-          children: [
-            Text(t.kannada, style: Theme.of(context).textTheme.headlineSmall),
-            Text(t.roman, style: const TextStyle(fontStyle: FontStyle.italic)),
-            ListenableBuilder(
-              listenable: AppState.instance,
-              builder: (_, _) =>
-                  StarRow(AppState.instance.starsFor(t.starKey), size: 18),
+        Card(
+          margin: EdgeInsets.zero,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                GlyphBadge(firstSyllable(t.tulu), size: 56),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        t.kannada,
+                        style: tt.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      Text(
+                        t.roman,
+                        style: tt.bodyMedium?.copyWith(
+                          fontStyle: FontStyle.italic,
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                ListenableBuilder(
+                  listenable: AppState.instance,
+                  builder: (_, _) =>
+                      StarRow(AppState.instance.starsFor(t.starKey), size: 20),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-        if (_mode == _Mode.free) TuluText(t.tulu, size: 40, color: cs.primary),
-        const SizedBox(height: 8),
-        SegmentedButton<_Mode>(
-          showSelectedIcon: false,
-          segments: const [
-            ButtonSegment(value: _Mode.trace, label: Text('ಅನುಸರಿಸಿ\nTrace')),
-            ButtonSegment(
-              value: _Mode.free,
-              label: Text('ಸ್ವತಂತ್ರ\nFree write'),
-            ),
-          ],
-          selected: {_mode},
-          onSelectionChanged: (s) => setState(() {
-            _mode = s.first;
-            _reset();
-          }),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: double.infinity,
+          child: SegmentedButton<_Mode>(
+            showSelectedIcon: false,
+            segments: const [
+              ButtonSegment(
+                value: _Mode.trace,
+                icon: Icon(Icons.gesture),
+                label: Text('ಅನುಸರಿಸಿ · Trace'),
+              ),
+              ButtonSegment(
+                value: _Mode.free,
+                icon: Icon(Icons.edit_outlined),
+                label: Text('ಸ್ವತಂತ್ರ · Free'),
+              ),
+            ],
+            selected: {_mode},
+            onSelectionChanged: (s) => setState(() {
+              _mode = s.first;
+              _reset();
+            }),
+          ),
         ),
+        if (_mode == _Mode.free) ...[
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'ನೋಡಿ ಬರೆಯಿರಿ · Copy this: ',
+                style: TextStyle(color: cs.onSurfaceVariant),
+              ),
+              Flexible(
+                child: FittedBox(
+                  child: TuluText(t.tulu, size: 40, color: cs.primary),
+                ),
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }
@@ -192,19 +259,39 @@ class _TraceScreenState extends State<TraceScreen> {
       },
       onPointerUp: (e) => _endStroke(e.pointer),
       onPointerCancel: (e) => _endStroke(e.pointer),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: CustomPaint(
-          size: Size.square(size),
-          painter: TracePainter(
-            text: _target.tulu,
-            strokes: _strokes,
-            showGuide: _mode == _Mode.trace,
-            revealGuide: _result != null,
-            background: cs.surfaceContainerLow,
-            gridColor: cs.outlineVariant,
-            guideColor: cs.primary,
-            inkColor: cs.onSurface,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: _drawing ? cs.primary : cs.outlineVariant,
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: cs.shadow.withValues(alpha: 0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(22),
+          child: CustomPaint(
+            size: Size.square(size),
+            painter: TracePainter(
+              text: _target.tulu,
+              strokes: _strokes,
+              showGuide: _mode == _Mode.trace,
+              revealGuide: _result != null,
+              background: Theme.of(context).brightness == Brightness.light
+                  ? const Color(0xFFFFFBF3)
+                  : cs.surfaceContainerLow,
+              gridColor: cs.outlineVariant,
+              guideColor: cs.primary,
+              inkColor: Theme.of(context).brightness == Brightness.light
+                  ? const Color(0xFF2B1B17)
+                  : cs.onSurface,
+            ),
           ),
         ),
       ),
@@ -221,39 +308,98 @@ class _TraceScreenState extends State<TraceScreen> {
 
   Widget _resultRow() {
     final r = _result;
-    if (_checking) return const LinearProgressIndicator();
-    if (r == null) {
-      return Text(
-        _mode == _Mode.trace
-            ? 'ಮಸುಕಾದ ಅಕ್ಷರದ ಮೇಲೆ ಬರೆಯಿರಿ · Trace over the faint letter'
-            : 'ಮೇಲಿನ ಅಕ್ಷರ ನೋಡಿ ಬರೆಯಿರಿ · Write the letter shown above',
-        textAlign: TextAlign.center,
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    if (_checking) {
+      return const Padding(
+        key: ValueKey('checking'),
+        padding: EdgeInsets.all(16),
+        child: LinearProgressIndicator(),
       );
     }
-    final msg = switch (r.stars) {
-      3 => 'ಅದ್ಭುತ! · Excellent!',
-      2 => 'ಚೆನ್ನಾಗಿದೆ · Good',
-      1 => 'ಪರವಾಗಿಲ್ಲ · Keep practising',
-      _ => 'ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ · Try again',
-    };
-    return Column(
-      children: [
-        StarRow(r.stars, size: 32),
-        Text(msg, style: Theme.of(context).textTheme.titleMedium),
-        Text(
-          'Coverage ${(r.coverage * 100).round()}% · '
-          'Precision ${(r.precision * 100).round()}%',
+    if (r == null) {
+      return Padding(
+        key: const ValueKey('hint'),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.touch_app_outlined,
+              size: 18,
+              color: cs.onSurfaceVariant,
+            ),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                _mode == _Mode.trace
+                    ? 'ಮಸುಕಾದ ಅಕ್ಷರದ ಮೇಲೆ ಬರೆಯಿರಿ · Trace over the faint letter'
+                    : 'ಮೇಲಿನ ಅಕ್ಷರ ನೋಡಿ ಬರೆಯಿರಿ · Write the letter shown above',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: cs.onSurfaceVariant),
+              ),
+            ),
+          ],
         ),
-      ],
+      );
+    }
+    final (msg, bg, fg) = switch (r.stars) {
+      3 => ('ಅದ್ಭುತ! · Excellent!', cs.tertiary, cs.onTertiary),
+      2 => ('ಚೆನ್ನಾಗಿದೆ · Good', cs.primaryContainer, cs.onPrimaryContainer),
+      1 => (
+        'ಪರವಾಗಿಲ್ಲ · Keep practising',
+        cs.secondaryContainer,
+        cs.onSecondaryContainer,
+      ),
+      _ => (
+        'ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ · Try again',
+        cs.surfaceContainerHighest,
+        cs.onSurface,
+      ),
+    };
+    return Container(
+      key: ValueKey('result$r'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var i = 0; i < 3; i++)
+                Icon(
+                  i < r.stars ? Icons.star_rounded : Icons.star_outline_rounded,
+                  size: 36,
+                  color: r.stars == 3 ? fg : cs.tertiary,
+                ),
+            ],
+          ),
+          Text(
+            msg,
+            style: tt.titleMedium?.copyWith(
+              color: fg,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            'Coverage ${(r.coverage * 100).round()}% · '
+            'Precision ${(r.precision * 100).round()}%',
+            style: tt.bodySmall?.copyWith(color: fg),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _controls(double size) => Wrap(
-    alignment: WrapAlignment.center,
-    spacing: 8,
-    runSpacing: 8,
+  Widget _controls(double size) => Row(
     children: [
-      OutlinedButton.icon(
+      IconButton.filledTonal(
+        tooltip: 'ರದ್ದು · Undo',
         onPressed: _strokes.isEmpty
             ? null
             : () => setState(() {
@@ -261,17 +407,21 @@ class _TraceScreenState extends State<TraceScreen> {
                 _result = null;
               }),
         icon: const Icon(Icons.undo),
-        label: const Text('ರದ್ದು · Undo'),
       ),
-      OutlinedButton.icon(
+      const SizedBox(width: 8),
+      IconButton.filledTonal(
+        tooltip: 'ಅಳಿಸಿ · Clear',
         onPressed: _strokes.isEmpty ? null : () => setState(_reset),
         icon: const Icon(Icons.delete_outline),
-        label: const Text('ಅಳಿಸಿ · Clear'),
       ),
-      FilledButton.icon(
-        onPressed: _strokes.isEmpty || _checking ? null : () => _check(size),
-        icon: const Icon(Icons.check),
-        label: const Text('ಪರಿಶೀಲಿಸಿ · Check'),
+      const SizedBox(width: 12),
+      Expanded(
+        child: FilledButton.icon(
+          style: FilledButton.styleFrom(minimumSize: const Size(0, 52)),
+          onPressed: _strokes.isEmpty || _checking ? null : () => _check(size),
+          icon: const Icon(Icons.check_rounded),
+          label: const Text('ಪರಿಶೀಲಿಸಿ · Check'),
+        ),
       ),
     ],
   );
@@ -279,14 +429,15 @@ class _TraceScreenState extends State<TraceScreen> {
   Widget _navRow() => Row(
     children: [
       Expanded(
-        child: TextButton.icon(
+        child: OutlinedButton.icon(
           onPressed: _index > 0 ? () => _go(-1) : null,
           icon: const Icon(Icons.chevron_left),
           label: const Text('ಹಿಂದೆ · Prev', overflow: TextOverflow.ellipsis),
         ),
       ),
+      const SizedBox(width: 12),
       Expanded(
-        child: TextButton.icon(
+        child: FilledButton.tonalIcon(
           onPressed: _index < widget.targets.length - 1 ? () => _go(1) : null,
           iconAlignment: IconAlignment.end,
           icon: const Icon(Icons.chevron_right),
@@ -355,9 +506,16 @@ class TracePainter extends CustomPainter {
       ..color = gridColor
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
-    canvas.drawRect(Rect.fromLTWH(1, 1, s - 2, s - 2), grid);
-    for (final f in [0.25, 0.5, 0.75]) {
-      grid.color = gridColor.withValues(alpha: f == 0.5 ? 0.8 : 0.35);
+    // Dashed centre cross + faint quarter lines.
+    grid.color = gridColor.withValues(alpha: 0.9);
+    const dash = 8.0, gap = 6.0;
+    for (var d = 0.0; d < s; d += dash + gap) {
+      final e = math.min(d + dash, s);
+      canvas.drawLine(Offset(s / 2, d), Offset(s / 2, e), grid);
+      canvas.drawLine(Offset(d, s / 2), Offset(e, s / 2), grid);
+    }
+    grid.color = gridColor.withValues(alpha: 0.3);
+    for (final f in [0.25, 0.75]) {
       canvas.drawLine(Offset(s * f, 0), Offset(s * f, s), grid);
       canvas.drawLine(Offset(0, s * f), Offset(s, s * f), grid);
     }
