@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'lipi/stroke_guide.dart';
 import 'lipi/tulu_lipi.dart';
 import 'models/word.dart';
+import 'translate/translator.dart';
 
 /// Global app state: word list, favourites and tracing progress.
 class AppState extends ChangeNotifier {
@@ -86,6 +87,19 @@ class AppState extends ChangeNotifier {
       now.day,
     ).difference(DateTime.utc(2024, 1, 1)).inDays;
     return pool[days % pool.length];
+  }
+
+  Translator? _translator;
+  List<Word>? _translatorWords;
+
+  /// Dictionary-based Kannada/English → Tulu translator (rebuilt if the
+  /// word list changes).
+  Translator get translator {
+    if (_translator == null || !identical(_translatorWords, words)) {
+      _translatorWords = words;
+      _translator = Translator(words);
+    }
+    return _translator!;
   }
 
   bool isFavourite(String id) => favourites.contains(id);

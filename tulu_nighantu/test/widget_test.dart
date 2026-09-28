@@ -29,7 +29,10 @@ void main() {
 
     await tester.tap(find.text('ಬದಲಿಸಿ'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('Copy Tulu'), findsOneWidget);
+    expect(find.textContaining('Translate to Tulu'), findsOneWidget);
+    await tester.tap(find.text('ಲಿಪಿ · Script'));
+    await tester.pumpAndSettle();
+    expect(find.text('ಕನ್ನಡ · Kannada'), findsOneWidget);
 
     await tester.tap(find.text('ಉಳಿಸಿದವು'));
     await tester.pumpAndSettle();
@@ -54,6 +57,24 @@ void main() {
     expect(find.text('hand · ಕೈ'), findsOneWidget);
   });
 
+  testWidgets('translate tab turns an English phrase into Tulu', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const TuluNighantuApp());
+    await tester.tap(find.text('ಬದಲಿಸಿ'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.descendant(
+        of: find.byType(TextField).hitTestable(),
+        matching: find.byType(EditableText),
+      ),
+      'How are you?',
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Phrase found'), findsOneWidget);
+    expect(find.text('ಎಂಚ ಉಲ್ಲರ್?'), findsWidgets);
+  });
+
   testWidgets('dictionary fits a small phone with large text', (tester) async {
     tester.view.physicalSize = const Size(720, 1480);
     tester.view.devicePixelRatio = 2;
@@ -69,6 +90,35 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('translate view fits a small phone with large text', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(720, 1480);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MediaQuery(
+        data: const MediaQueryData(
+          size: Size(360, 740),
+          textScaler: TextScaler.linear(1.4),
+        ),
+        child: const TuluNighantuApp(),
+      ),
+    );
+    await tester.tap(find.text('ಬದಲಿಸಿ'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.descendant(
+        of: find.byType(TextField).hitTestable(),
+        matching: find.byType(EditableText),
+      ),
+      'my elder brother drinks water',
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.textContaining('words found'), findsOneWidget);
   });
 
   testWidgets('scorer: empty strokes score zero, scribbling over the '

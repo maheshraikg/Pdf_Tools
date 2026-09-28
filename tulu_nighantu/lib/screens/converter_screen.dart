@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../lipi/tulu_lipi.dart';
 import '../widgets/common.dart';
+import 'translate_screen.dart';
 
-/// Converter tab: live Kannada → Tulu lipi with copy and share.
+/// Convert tab: Kannada/English → Tulu translation, and Kannada → Tulu lipi.
 class ConverterScreen extends StatefulWidget {
   const ConverterScreen({super.key});
 
@@ -12,6 +13,57 @@ class ConverterScreen extends StatefulWidget {
 }
 
 class _ConverterScreenState extends State<ConverterScreen> {
+  bool _translate = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ಬದಲಿಸಿ · Convert'),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: SizedBox(
+              width: double.infinity,
+              child: SegmentedButton<bool>(
+                showSelectedIcon: false,
+                segments: const [
+                  ButtonSegment(
+                    value: true,
+                    icon: Icon(Icons.translate),
+                    label: Text('ಅನುವಾದ · Translate'),
+                  ),
+                  ButtonSegment(
+                    value: false,
+                    icon: Icon(Icons.text_fields),
+                    label: Text('ಲಿಪಿ · Script'),
+                  ),
+                ],
+                selected: {_translate},
+                onSelectionChanged: (s) => setState(() => _translate = s.first),
+              ),
+            ),
+          ),
+        ),
+      ),
+      body: IndexedStack(
+        index: _translate ? 0 : 1,
+        children: const [TranslateView(), _ScriptView()],
+      ),
+    );
+  }
+}
+
+/// Kannada → Tulu lipi script converter with copy and share.
+class _ScriptView extends StatefulWidget {
+  const _ScriptView();
+
+  @override
+  State<_ScriptView> createState() => _ScriptViewState();
+}
+
+class _ScriptViewState extends State<_ScriptView> {
   final _controller = TextEditingController(text: 'ಜೈ ತುಳುನಾಡ್');
   final _cardKey = GlobalKey();
 
@@ -30,168 +82,160 @@ class _ConverterScreenState extends State<ConverterScreen> {
     final hasKannada = TuluLipi.hasKannada(input);
 
     final cs = Theme.of(context).colorScheme;
-    return Scaffold(
-      appBar: AppBar(title: const Text('ಲಿಪಿ ಬದಲಿಸಿ · Converter')),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-        children: [
-          const _StepLabel(
-            icon: Icons.keyboard_outlined,
-            text: 'ಕನ್ನಡ · Kannada',
-          ),
-          TextField(
-            controller: _controller,
-            minLines: 2,
-            maxLines: 6,
-            style: const TextStyle(fontSize: 18),
-            onChanged: (_) => setState(() {}),
-            decoration: InputDecoration(
-              hintText: 'ಕನ್ನಡ ಲಿಪಿಯಲ್ಲಿ ಬರೆಯಿರಿ · Type in Kannada script',
-              suffixIcon: input.isEmpty
-                  ? null
-                  : IconButton(
-                      tooltip: 'ಅಳಿಸಿ · Clear',
-                      icon: const Icon(Icons.close),
-                      onPressed: () => setState(_controller.clear),
-                    ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 40,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                for (final s in _samples)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: ActionChip(
-                      avatar: Icon(Icons.bolt, size: 16, color: cs.primary),
-                      label: Text(s),
-                      onPressed: () => setState(() => _controller.text = s),
-                    ),
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+      children: [
+        const _StepLabel(
+          icon: Icons.keyboard_outlined,
+          text: 'ಕನ್ನಡ · Kannada',
+        ),
+        TextField(
+          controller: _controller,
+          minLines: 2,
+          maxLines: 6,
+          style: const TextStyle(fontSize: 18),
+          onChanged: (_) => setState(() {}),
+          decoration: InputDecoration(
+            hintText: 'ಕನ್ನಡ ಲಿಪಿಯಲ್ಲಿ ಬರೆಯಿರಿ · Type in Kannada script',
+            suffixIcon: input.isEmpty
+                ? null
+                : IconButton(
+                    tooltip: 'ಅಳಿಸಿ · Clear',
+                    icon: const Icon(Icons.close),
+                    onPressed: () => setState(_controller.clear),
                   ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: 40,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              for (final s in _samples)
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: ActionChip(
+                    avatar: Icon(Icons.bolt, size: 16, color: cs.primary),
+                    label: Text(s),
+                    onPressed: () => setState(() => _controller.text = s),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        if (input.trim().isNotEmpty && !hasKannada)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Row(
+              children: [
+                Icon(Icons.warning_amber_rounded, size: 18, color: cs.error),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'ಕನ್ನಡ ಅಕ್ಷರಗಳು ಕಾಣುತ್ತಿಲ್ಲ · No Kannada letters found – '
+                    'type using a Kannada keyboard',
+                    style: TextStyle(color: cs.error),
+                  ),
+                ),
               ],
             ),
           ),
-          if (input.trim().isNotEmpty && !hasKannada)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Row(
-                children: [
-                  Icon(Icons.warning_amber_rounded, size: 18, color: cs.error),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      'ಕನ್ನಡ ಅಕ್ಷರಗಳು ಕಾಣುತ್ತಿಲ್ಲ · No Kannada letters found – '
-                      'type using a Kannada keyboard',
-                      style: TextStyle(color: cs.error),
-                    ),
-                  ),
-                ],
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: cs.tertiary,
+                shape: BoxShape.circle,
               ),
-            ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Center(
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: cs.tertiary,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.arrow_downward_rounded,
-                  color: cs.onTertiary,
-                  size: 20,
-                ),
+              child: Icon(
+                Icons.arrow_downward_rounded,
+                color: cs.onTertiary,
+                size: 20,
               ),
             ),
           ),
-          const _StepLabel(
-            icon: Icons.auto_awesome,
-            text: 'ತುಳು ಲಿಪಿ · Tulu lipi',
+        ),
+        const _StepLabel(
+          icon: Icons.auto_awesome,
+          text: 'ತುಳು ಲಿಪಿ · Tulu lipi',
+        ),
+        RepaintBoundary(
+          key: _cardKey,
+          child: ShareCard(tulu: output, kannada: input, tuluSize: 40),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _ActionButton(
+                icon: Icons.copy_rounded,
+                label: 'ತುಳು ನಕಲಿಸಿ\nCopy Tulu',
+                primary: true,
+                onPressed: output.isEmpty
+                    ? null
+                    : () => copyText(context, output, 'ತುಳು ಲಿಪಿ'),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _ActionButton(
+                icon: Icons.volume_up_rounded,
+                label: 'ಕೇಳಿ\nListen',
+                onPressed: hasKannada ? () => speakText(context, input) : null,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _ActionButton(
+                icon: Icons.copy_all_rounded,
+                label: 'ಕನ್ನಡ\nCopy Kannada',
+                onPressed: input.isEmpty
+                    ? null
+                    : () => copyText(context, input, 'ಕನ್ನಡ'),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _ActionButton(
+                icon: Icons.share_rounded,
+                label: 'ಹಂಚಿ\nShare image',
+                onPressed: output.isEmpty
+                    ? null
+                    : () =>
+                          shareBoundaryAsImage(context, _cardKey, 'tulu_lipi'),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: cs.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(16),
           ),
-          RepaintBoundary(
-            key: _cardKey,
-            child: ShareCard(tulu: output, kannada: input, tuluSize: 40),
-          ),
-          const SizedBox(height: 16),
-          Row(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Icon(Icons.info_outline, size: 18, color: cs.primary),
+              const SizedBox(width: 10),
               Expanded(
-                child: _ActionButton(
-                  icon: Icons.copy_rounded,
-                  label: 'ತುಳು ನಕಲಿಸಿ\nCopy Tulu',
-                  primary: true,
-                  onPressed: output.isEmpty
-                      ? null
-                      : () => copyText(context, output, 'ತುಳು ಲಿಪಿ'),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _ActionButton(
-                  icon: Icons.volume_up_rounded,
-                  label: 'ಕೇಳಿ\nListen',
-                  onPressed: hasKannada
-                      ? () => speakText(context, input)
-                      : null,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _ActionButton(
-                  icon: Icons.copy_all_rounded,
-                  label: 'ಕನ್ನಡ\nCopy Kannada',
-                  onPressed: input.isEmpty
-                      ? null
-                      : () => copyText(context, input, 'ಕನ್ನಡ'),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _ActionButton(
-                  icon: Icons.share_rounded,
-                  label: 'ಹಂಚಿ\nShare image',
-                  onPressed: output.isEmpty
-                      ? null
-                      : () => shareBoundaryAsImage(
-                          context,
-                          _cardKey,
-                          'tulu_lipi',
-                        ),
+                child: Text(
+                  'ಸೂಚನೆ: ಯೂನಿಕೋಡ್ ತುಳು ಲಿಪಿಯಲ್ಲಿ ಹ್ರಸ್ವ ಎ/ಒ ಇಲ್ಲ, ಆದ್ದರಿಂದ ಅವನ್ನು '
+                  'ಏ/ಓ ಆಗಿ ಬರೆಯಲಾಗುತ್ತದೆ. ಒತ್ತಕ್ಷರಗಳು ವಿರಾಮದೊಂದಿಗೆ ಕಾಣುತ್ತವೆ.\n'
+                  'Note: short ಎ/ಒ are written as ಏ/ಓ in Unicode Tulu lipi. '
+                  'Conjuncts are shown with a visible virama.',
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: cs.onSurfaceVariant),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: cs.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(Icons.info_outline, size: 18, color: cs.primary),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'ಸೂಚನೆ: ಯೂನಿಕೋಡ್ ತುಳು ಲಿಪಿಯಲ್ಲಿ ಹ್ರಸ್ವ ಎ/ಒ ಇಲ್ಲ, ಆದ್ದರಿಂದ ಅವನ್ನು '
-                    'ಏ/ಓ ಆಗಿ ಬರೆಯಲಾಗುತ್ತದೆ. ಒತ್ತಕ್ಷರಗಳು ವಿರಾಮದೊಂದಿಗೆ ಕಾಣುತ್ತವೆ.\n'
-                    'Note: short ಎ/ಒ are written as ಏ/ಓ in Unicode Tulu lipi. '
-                    'Conjuncts are shown with a visible virama.',
-                    style: Theme.of(context).textTheme.bodySmall
-                        ?.copyWith(color: cs.onSurfaceVariant),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

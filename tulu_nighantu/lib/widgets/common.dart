@@ -323,11 +323,14 @@ class ShareCard extends StatelessWidget {
                       children: [
                         Container(width: 18, height: 2, color: _yellow),
                         const SizedBox(width: 8),
-                        Text(
-                          'ತುಳು ನಿಘಂಟು · Tulu Nighantu',
-                          style: tt.labelSmall?.copyWith(
-                            color: _yellow,
-                            letterSpacing: 0.6,
+                        Flexible(
+                          child: Text(
+                            'ತುಳು ನಿಘಂಟು · Tulu Nighantu',
+                            textAlign: TextAlign.center,
+                            style: tt.labelSmall?.copyWith(
+                              color: _yellow,
+                              letterSpacing: 0.6,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 8),

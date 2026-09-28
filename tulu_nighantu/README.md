@@ -14,7 +14,14 @@ includes a Kannada → Tulu lipi converter.
   gives 0–3 stars. Words can be traced too.
 - **ಕೇಳಿ · Pronunciation**: listen buttons on letters, barakhadi tiles, words,
   the word of the day and the converter.
-- **ಬದಲಿಸಿ · Converter**: live Kannada → Tulu-Tigalari with copy and share-as-image.
+- **ಬದಲಿಸಿ · Convert**:
+  - *ಅನುವಾದ · Translate*: type Kannada or English and get Tulu (Kannada script,
+    Tulu lipi and romanised), with listen / copy / share and a word-by-word
+    breakdown. Whole phrases from the dictionary are matched first; other text
+    is translated word by word (English plurals and common Kannada case endings
+    are handled). It is dictionary-based: no grammar or word-order changes, and
+    unknown words are highlighted.
+  - *ಲಿಪಿ · Script*: live Kannada → Tulu-Tigalari with copy and share-as-image.
 - **ಉಳಿಸಿದವು · Saved**: favourites, progress and about.
 
 The app does not use the network. Everything is bundled; pronunciation uses the
@@ -126,6 +133,8 @@ family in `pubspec.yaml`; all Tulu text uses the single constant
 - Trace scoring compares shapes only; it does not check stroke order or direction.
 - Tutorial pen paths are auto-generated from the font, not expert-verified.
 - Pronunciation is an approximation by a Kannada text-to-speech voice.
+- Translation is word-for-word from the dictionary; it only knows the words in
+  `words.json` and does not apply Tulu grammar.
 - The word list is a small, unverified sample.
 
 ## Roadmap (next phase)
