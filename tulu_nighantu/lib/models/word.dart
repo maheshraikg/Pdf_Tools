@@ -24,6 +24,7 @@ class Word {
     required this.kn,
     required this.en,
     required this.cat,
+    this.custom = false,
   }) : lipi = TuluLipi.fromKannada(tulu);
 
   factory Word.fromJson(Map<String, dynamic> j) => Word(
@@ -33,7 +34,19 @@ class Word {
     kn: (j['kn'] as String?) ?? '',
     en: (j['en'] as String?) ?? '',
     cat: (j['cat'] as String?) ?? 'words',
+    custom: j['custom'] == true,
   );
+
+  /// JSON in the `words.json` entry format ([custom] only when true).
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'tulu': tulu,
+    'roman': roman,
+    'kn': kn,
+    'en': en,
+    'cat': cat,
+    if (custom) 'custom': true,
+  };
 
   final String id;
 
@@ -51,6 +64,9 @@ class Word {
 
   /// Category id.
   final String cat;
+
+  /// True for words the user added on this phone (not verified).
+  final bool custom;
 
   /// Tulu word in Tulu-Tigalari script (derived).
   final String lipi;

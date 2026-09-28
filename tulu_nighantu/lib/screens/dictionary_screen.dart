@@ -5,6 +5,7 @@ import '../app_state.dart';
 import '../lipi/tulu_lipi.dart';
 import '../models/word.dart';
 import '../widgets/common.dart';
+import 'add_word_screen.dart';
 
 /// Icon for each category id.
 const Map<String, IconData> kCategoryIcons = {
@@ -55,6 +56,7 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
           SliverToBoxAdapter(
             child: _HeroHeader(
               controller: _controller,
+              onAdd: () => _addWord(null),
               // A text search always covers every category.
               onChanged: () => setState(() {
                 if (_controller.text.trim().isNotEmpty) _category = null;
@@ -71,11 +73,27 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
             ),
           ),
           if (results.isEmpty)
-            const SliverToBoxAdapter(
-              child: EmptyState(
-                icon: Icons.search_off,
-                title: 'No match – try another spelling',
-                subtitle: 'ಬೇರೆ ಕಾಗುಣಿತದಲ್ಲಿ ಹುಡುಕಿ',
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  const EmptyState(
+                    icon: Icons.search_off,
+                    title: 'No match – try another spelling',
+                    subtitle: 'ಬೇರೆ ಕಾಗುಣಿತದಲ್ಲಿ ಹುಡುಕಿ',
+                  ),
+                  if (query.trim().isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: FilledButton.icon(
+                        onPressed: () => _addWord(query.trim()),
+                        icon: const Icon(Icons.add),
+                        label: Text(
+                          'ಈ ಪದ ಸೇರಿಸಿ · Add "${query.trim()}"',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             )
           else
@@ -88,6 +106,12 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
         ],
       ),
     );
+  }
+
+  /// Opens the add-word form; refreshes results when a word was saved.
+  Future<void> _addWord(String? prefill) async {
+    final saved = await openAddWord(context, prefill: prefill);
+    if (saved != null && mounted) setState(() {});
   }
 
   Widget _categoryChips(AppState state) => SizedBox(
@@ -123,10 +147,15 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
 
 /// Gradient header with the app title and the search field.
 class _HeroHeader extends StatelessWidget {
-  const _HeroHeader({required this.controller, required this.onChanged});
+  const _HeroHeader({
+    required this.controller,
+    required this.onChanged,
+    required this.onAdd,
+  });
 
   final TextEditingController controller;
   final VoidCallback onChanged;
+  final VoidCallback onAdd;
 
   @override
   Widget build(BuildContext context) {
@@ -178,6 +207,12 @@ class _HeroHeader extends StatelessWidget {
                       TuluLipi.fromKannada('ತುಳು'),
                       size: 34,
                       color: Colors.white.withValues(alpha: 0.85),
+                    ),
+                    const SizedBox(width: 4),
+                    IconButton.filledTonal(
+                      tooltip: 'ಪದ ಸೇರಿಸಿ · Add a word',
+                      onPressed: onAdd,
+                      icon: const Icon(Icons.add),
                     ),
                   ],
                 ),

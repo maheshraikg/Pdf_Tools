@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../app_state.dart';
 import '../lipi/tulu_lipi.dart';
+
+import 'package:share_plus/share_plus.dart';
+
 import '../widgets/common.dart';
+import 'add_word_screen.dart';
 
 /// App version shown in the About card (keep in sync with pubspec.yaml).
 const String kAppVersion = '1.0.0';
@@ -27,6 +31,8 @@ class SavedScreen extends StatelessWidget {
                 const _EmptyFavourites()
               else
                 for (final w in favs) WordTile(w),
+              const SectionHeader('ನನ್ನ ಪದಗಳು', 'My words'),
+              _MyWords(state: state),
               const SectionHeader('ಪ್ರಗತಿ', 'Progress'),
               _ProgressCard(state: state),
               const SectionHeader('ಬಗ್ಗೆ', 'About'),
@@ -36,6 +42,63 @@ class SavedScreen extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+/// Words the user added, with add and export/share buttons.
+class _MyWords extends StatelessWidget {
+  const _MyWords({required this.state});
+
+  final AppState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final mine = state.customWords;
+    final cs = Theme.of(context).colorScheme;
+    return Column(
+      children: [
+        if (mine.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Text(
+              'ಸಿಗದ ಪದಗಳನ್ನು ನೀವೇ ಸೇರಿಸಿ · Add words the dictionary is '
+              'missing – they become searchable and translatable at once.',
+              style: TextStyle(color: cs.onSurfaceVariant),
+            ),
+          )
+        else
+          for (final w in mine) WordTile(w),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: Row(
+            children: [
+              Expanded(
+                child: FilledButton.tonalIcon(
+                  onPressed: () => openAddWord(context),
+                  icon: const Icon(Icons.add),
+                  label: const Text('ಸೇರಿಸಿ · Add'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: mine.isEmpty
+                      ? null
+                      : () => SharePlus.instance.share(
+                          ShareParams(
+                            subject: 'Tulu Nighantu – new words',
+                            text: state.exportCustomWords(),
+                          ),
+                        ),
+                  icon: const Icon(Icons.ios_share),
+                  label: const Text('Export'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

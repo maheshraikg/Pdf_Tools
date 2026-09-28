@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tulu_nighantu/app_state.dart';
 import 'package:tulu_nighantu/main.dart';
+import 'package:tulu_nighantu/screens/add_word_screen.dart';
 import 'package:tulu_nighantu/screens/trace_screen.dart';
 
 void main() {
@@ -73,6 +74,52 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('Phrase found'), findsOneWidget);
     expect(find.text('ಎಂಚ ಉಲ್ಲರ್?'), findsWidgets);
+  });
+
+  testWidgets('missing word can be added from search and is then found', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 2340);
+    tester.view.devicePixelRatio = 2.625;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(const TuluNighantuApp());
+    await tester.enterText(find.byType(TextField), 'qwertyking');
+    await tester.pump();
+    await tester.tap(find.textContaining('Add "qwertyking"'));
+    await tester.pumpAndSettle();
+    // English meaning is prefilled from the search.
+    expect(find.text('qwertyking'), findsWidgets);
+    await tester.enterText(
+      find.widgetWithText(
+        TextFormField,
+        'ತುಳು ಪದ (ಕನ್ನಡ ಲಿಪಿಯಲ್ಲಿ) · Tulu word *',
+      ),
+      'ಪರೀಕ್ಷೆ',
+    );
+    await tester.tap(find.text('ಸೇರಿಸಿ · Save word'));
+    await tester.pumpAndSettle();
+    expect(find.text('No match – try another spelling'), findsNothing);
+    expect(find.textContaining('yours'), findsOneWidget);
+    AppState.instance.deleteCustomWord(AppState.instance.customWords.last.id);
+  });
+
+  testWidgets('add-word form fits a small phone with large text', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(720, 1480);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      const MediaQuery(
+        data: MediaQueryData(
+          size: Size(360, 740),
+          textScaler: TextScaler.linear(1.4),
+        ),
+        child: MaterialApp(home: AddWordScreen(prefill: 'king')),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('dictionary fits a small phone with large text', (tester) async {

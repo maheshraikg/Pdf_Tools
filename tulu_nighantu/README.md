@@ -55,7 +55,17 @@ assets/data/words.json        dictionary data
 assets/fonts/                 Mallige Tulu-Tigalari font + OFL licence
 ```
 
-## Adding words
+## Adding your own words (in the app)
+
+When a search finds nothing, tap **ಈ ಪದ ಸೇರಿಸಿ · Add "…"** (or the **+** in the
+dictionary header, or a red "tap to add" word in Translate). Enter the Tulu word
+in Kannada script plus a Kannada and/or English meaning. The word is saved on
+the phone, marked *yours / not verified*, and is immediately searchable and
+used by Translate. **Saved › My words › Export** shares the words as JSON in
+the `words.json` entry format, so they can be reviewed and merged into the
+bundled list for everyone.
+
+## Adding words (bundled list)
 
 Edit `assets/data/words.json`:
 

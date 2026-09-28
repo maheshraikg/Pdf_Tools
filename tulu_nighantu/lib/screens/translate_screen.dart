@@ -4,6 +4,7 @@ import '../app_state.dart';
 import '../models/word.dart';
 import '../translate/translator.dart';
 import '../widgets/common.dart';
+import 'add_word_screen.dart';
 
 /// Translate view: type Kannada or English, get Tulu (dictionary-based).
 class TranslateView extends StatefulWidget {
@@ -145,7 +146,15 @@ class _TranslateViewState extends State<TranslateView> {
     }
     return [
       for (final p in r.pieces)
-        _PieceTile(source: p.source, word: p.word, approximate: p.approximate),
+        _PieceTile(
+          source: p.source,
+          word: p.word,
+          approximate: p.approximate,
+          onAdd: () async {
+            final saved = await openAddWord(context, prefill: p.source);
+            if (saved != null && mounted) setState(() {});
+          },
+        ),
     ];
   }
 
@@ -233,7 +242,11 @@ class _PieceTile extends StatelessWidget {
     required this.source,
     required this.word,
     this.approximate = false,
+    this.onAdd,
   });
+
+  /// Called when an unknown word is tapped (to add it).
+  final VoidCallback? onAdd;
 
   final String source;
   final Word? word;
@@ -247,7 +260,7 @@ class _PieceTile extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 4),
       color: w == null ? cs.errorContainer.withValues(alpha: 0.5) : null,
       child: ListTile(
-        onTap: w == null ? null : () => openWord(context, w),
+        onTap: w == null ? onAdd : () => openWord(context, w),
         title: Row(
           children: [
             Flexible(
@@ -263,7 +276,7 @@ class _PieceTile extends StatelessWidget {
             ),
             Flexible(
               child: Text(
-                w == null ? 'ಸಿಗಲಿಲ್ಲ · not found' : w.tulu,
+                w == null ? 'ಸೇರಿಸಿ · tap to add' : w.tulu,
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   color: w == null ? cs.error : cs.onSurface,
