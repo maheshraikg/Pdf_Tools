@@ -1,0 +1,42 @@
+name: Tulu Nighantu (Flutter)
+
+on:
+  push:
+    branches: [ master, main ]
+    paths: [ 'tulu_nighantu/**', '.github/workflows/tulu-nighantu.yml' ]
+  pull_request:
+    paths: [ 'tulu_nighantu/**', '.github/workflows/tulu-nighantu.yml' ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Analyze, test and build debug APK
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tulu_nighantu
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build apk --debug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: tulu-nighantu-debug-apk
+          path: tulu_nighantu/build/app/outputs/flutter-apk/app-debug.apk
