@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../widgets/common.dart';
 import 'add_word_screen.dart';
+import 'settings_screen.dart';
 
 /// App version shown in the About card (keep in sync with pubspec.yaml).
 const String kAppVersion = '1.0.0';
@@ -19,7 +20,18 @@ class SavedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = AppState.instance;
     return Scaffold(
-      appBar: AppBar(title: const Text('ಉಳಿಸಿದವು · Saved')),
+      appBar: AppBar(
+        title: const Text('ಉಳಿಸಿದವು · Saved'),
+        actions: [
+          IconButton(
+            tooltip: 'ಸೆಟ್ಟಿಂಗ್ಸ್ · Settings',
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
+            ),
+          ),
+        ],
+      ),
       body: ListenableBuilder(
         listenable: state,
         builder: (context, _) {
@@ -213,7 +225,7 @@ class _AboutCard extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.w700),
             ),
             subtitle: const Text(
-              'Version $kAppVersion · ಆಫ್‌ಲೈನ್ · Works offline',
+              'Version $kAppVersion · ಆಫ್‌ಲೈನ್ · Works offline (AI optional)',
             ),
           ),
           const ListTile(

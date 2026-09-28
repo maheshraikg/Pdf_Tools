@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'ai/gemini_client.dart';
 import 'lipi/stroke_guide.dart';
 import 'lipi/tulu_lipi.dart';
 import 'models/word.dart';
@@ -19,6 +20,27 @@ class AppState extends ChangeNotifier {
   static const _favKey = 'favourites';
   static const _starsKey = 'stars';
   static const _customKey = 'custom_words';
+  static const _aiKeyKey = 'gemini_api_key';
+  static const _aiModelKey = 'gemini_model';
+
+  /// User's Gemini API key (stored only on this phone) and model name.
+  String aiKey = '';
+  String aiModel = kDefaultGeminiModel;
+
+  bool get hasAiKey => aiKey.trim().isNotEmpty;
+
+  /// Saves the AI settings.
+  void setAiSettings({required String key, required String model}) {
+    aiKey = key.trim();
+    aiModel = model.trim().isEmpty ? kDefaultGeminiModel : model.trim();
+    _save(() => _prefs?.setString(_aiKeyKey, aiKey));
+    _save(() => _prefs?.setString(_aiModelKey, aiModel));
+    notifyListeners();
+  }
+
+  /// A Gemini client for the saved key, or null when none is set.
+  GeminiClient? aiClient() =>
+      hasAiKey ? GeminiClient(apiKey: aiKey, model: aiModel) : null;
 
   SharedPreferences? _prefs;
 
@@ -47,6 +69,8 @@ class AppState extends ChangeNotifier {
           (k, v) => stars[k] = (v as num).toInt().clamp(0, 3),
         );
       }
+      aiKey = _prefs!.getString(_aiKeyKey) ?? '';
+      aiModel = _prefs!.getString(_aiModelKey) ?? kDefaultGeminiModel;
       final c = _prefs!.getString(_customKey);
       if (c != null) {
         _custom = [

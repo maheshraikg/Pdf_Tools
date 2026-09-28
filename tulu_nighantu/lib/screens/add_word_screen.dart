@@ -8,7 +8,7 @@ import '../widgets/common.dart';
 /// Add (or edit) a word of the user's own; saved on the phone and
 /// searchable/translatable immediately.
 class AddWordScreen extends StatefulWidget {
-  const AddWordScreen({super.key, this.initial, this.prefill});
+  const AddWordScreen({super.key, this.initial, this.prefill, this.draft});
 
   /// Existing user word to edit.
   final Word? initial;
@@ -16,6 +16,9 @@ class AddWordScreen extends StatefulWidget {
   /// Text the user searched for: English fills the English meaning,
   /// Kannada fills the Kannada meaning.
   final String? prefill;
+
+  /// Pre-filled new word (e.g. an AI suggestion) saved as a new entry.
+  final Word? draft;
 
   @override
   State<AddWordScreen> createState() => _AddWordScreenState();
@@ -31,7 +34,7 @@ class _AddWordScreenState extends State<AddWordScreen> {
   @override
   void initState() {
     super.initState();
-    final w = widget.initial;
+    final w = widget.initial ?? widget.draft;
     final p = widget.prefill?.trim() ?? '';
     final pKannada = p.isNotEmpty && TuluLipi.hasKannada(p);
     _tulu = TextEditingController(text: w?.tulu ?? '');
@@ -217,8 +220,10 @@ Future<Word?> openAddWord(
   BuildContext context, {
   Word? initial,
   String? prefill,
+  Word? draft,
 }) => Navigator.of(context).push<Word>(
   MaterialPageRoute(
-    builder: (_) => AddWordScreen(initial: initial, prefill: prefill),
+    builder: (_) =>
+        AddWordScreen(initial: initial, prefill: prefill, draft: draft),
   ),
 );

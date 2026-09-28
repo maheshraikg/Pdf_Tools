@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../app_state.dart';
 import '../models/word.dart';
 import '../translate/translator.dart';
+import '../widgets/ai_answer_sheet.dart';
 import '../widgets/common.dart';
 import 'add_word_screen.dart';
 
@@ -102,6 +103,8 @@ class _TranslateViewState extends State<TranslateView> {
           ),
           const SizedBox(height: 12),
           _actions(result),
+          const SizedBox(height: 8),
+          AskAiButton(input),
           const SectionHeader('ಪದ-ಪದವಾಗಿ', 'Word by word'),
           ..._breakdown(result),
         ],

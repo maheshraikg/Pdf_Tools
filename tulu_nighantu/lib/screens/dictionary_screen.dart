@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../app_state.dart';
 import '../lipi/tulu_lipi.dart';
 import '../models/word.dart';
+import '../widgets/ai_answer_sheet.dart';
 import '../widgets/common.dart';
 import 'add_word_screen.dart';
 
@@ -92,6 +93,11 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                    ),
+                  if (query.trim().isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
+                      child: AskAiButton(query),
                     ),
                 ],
               ),

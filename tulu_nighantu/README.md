@@ -55,6 +55,25 @@ assets/data/words.json        dictionary data
 assets/fonts/                 Mallige Tulu-Tigalari font + OFL licence
 ```
 
+## Ask AI (optional, Gemini)
+
+**Saved › ⚙ Settings**: paste your own Gemini API key (get one at
+aistudio.google.com › API keys). Then **AI ಸಹಾಯ · Ask AI** appears in
+Translate and on empty search results. The app sends the text, plus the
+matching verified dictionary words as a glossary, to Google's Gemini
+`generateContent` API. It shows the Tulu answer (Kannada script, Tulu lipi,
+roman, meanings, a note and the model's confidence), labelled
+**AI – not verified**, with Listen, Copy and **Add to my words**.
+
+- The key is stored only on the phone (never in the code or APK) and sent only
+  in the `x-goog-api-key` header to Google. The model name is editable
+  (default `gemini-flash-latest`).
+- AI is the only feature that uses the internet; everything else works offline.
+- AI models know little Tulu and can be wrong; answers are never added to the
+  dictionary automatically.
+- For a public release, don't ask users for keys: put the key behind a small
+  server (e.g. a Cloudflare Worker) and point `GeminiClient` at it.
+
 ## Adding your own words (in the app)
 
 When a search finds nothing, tap **ಈ ಪದ ಸೇರಿಸಿ · Add "…"** (or the **+** in the
@@ -143,6 +162,7 @@ family in `pubspec.yaml`; all Tulu text uses the single constant
 - Trace scoring compares shapes only; it does not check stroke order or direction.
 - Tutorial pen paths are auto-generated from the font, not expert-verified.
 - Pronunciation is an approximation by a Kannada text-to-speech voice.
+- "Ask AI" answers are unverified and need internet.
 - Translation is word-for-word from the dictionary; it only knows the words in
   `words.json` and does not apply Tulu grammar.
 - The word list is a small, unverified sample.
