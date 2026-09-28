@@ -55,7 +55,10 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
           SliverToBoxAdapter(
             child: _HeroHeader(
               controller: _controller,
-              onChanged: () => setState(() {}),
+              // A text search always covers every category.
+              onChanged: () => setState(() {
+                if (_controller.text.trim().isNotEmpty) _category = null;
+              }),
             ),
           ),
           SliverToBoxAdapter(child: _categoryChips(state)),
@@ -244,71 +247,80 @@ class _WordOfTheDayCard extends StatelessWidget {
             onTap: () => openWord(context, word),
             child: Padding(
               padding: const EdgeInsets.all(18),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                  Row(
+                    children: [
+                      Icon(Icons.wb_sunny_outlined, size: 16, color: fg),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          'ಇಂದಿನ ಪದ · Word of the Day',
+                          style: tt.labelLarge?.copyWith(
+                            color: fg,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.wb_sunny_outlined, size: 16, color: fg),
-                            const SizedBox(width: 6),
                             Text(
-                              'ಇಂದಿನ ಪದ · Word of the Day',
-                              style: tt.labelLarge?.copyWith(
+                              word.tulu,
+                              style: tt.headlineMedium?.copyWith(
                                 color: fg,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w800,
                               ),
+                            ),
+                            if (word.roman.isNotEmpty)
+                              Text(
+                                word.roman,
+                                style: tt.bodyMedium?.copyWith(
+                                  fontStyle: FontStyle.italic,
+                                  color: fg.withValues(alpha: 0.8),
+                                ),
+                              ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '${word.en} · ${word.kn}',
+                              style: tt.bodyLarge?.copyWith(color: fg),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
-                        Text(
-                          word.tulu,
-                          style: tt.headlineMedium?.copyWith(
-                            color: fg,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        if (word.roman.isNotEmpty)
-                          Text(
-                            word.roman,
-                            style: tt.bodyMedium?.copyWith(
-                              fontStyle: FontStyle.italic,
-                              color: fg.withValues(alpha: 0.8),
-                            ),
-                          ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '${word.en} · ${word.kn}',
-                          style: tt.bodyLarge?.copyWith(color: fg),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Container(
-                    constraints: const BoxConstraints(
-                      minWidth: 88,
-                      maxWidth: 130,
-                      minHeight: 88,
-                    ),
-                    padding: const EdgeInsets.all(10),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: light ? 0.6 : 0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: FittedBox(
-                      child: TuluText(
-                        word.lipi,
-                        size: 44,
-                        color: light
-                            ? const Color(0xFFB3261E)
-                            : const Color(0xFFFFD54F),
                       ),
-                    ),
+                      const SizedBox(width: 12),
+                      Container(
+                        constraints: const BoxConstraints(
+                          minWidth: 88,
+                          maxWidth: 130,
+                          minHeight: 88,
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(
+                            alpha: light ? 0.6 : 0.1,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: FittedBox(
+                          child: TuluText(
+                            word.lipi,
+                            size: 44,
+                            color: light
+                                ? const Color(0xFFB3261E)
+                                : const Color(0xFFFFD54F),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

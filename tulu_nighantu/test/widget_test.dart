@@ -42,6 +42,35 @@ void main() {
     expect(font, findsOneWidget);
   });
 
+  testWidgets('typing a search ignores a previously selected category', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const TuluNighantuApp());
+    await tester.tap(find.textContaining('Family'));
+    await tester.pump();
+    await tester.enterText(find.byType(TextField), 'hand');
+    await tester.pump();
+    expect(find.text('No match – try another spelling'), findsNothing);
+    expect(find.text('hand · ಕೈ'), findsOneWidget);
+  });
+
+  testWidgets('dictionary fits a small phone with large text', (tester) async {
+    tester.view.physicalSize = const Size(720, 1480);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MediaQuery(
+        data: const MediaQueryData(
+          size: Size(360, 740),
+          textScaler: TextScaler.linear(1.4),
+        ),
+        child: const TuluNighantuApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('scorer: empty strokes score zero, scribbling over the '
       'whole canvas gives full coverage but low precision', (tester) async {
     await tester.runAsync(() async {
