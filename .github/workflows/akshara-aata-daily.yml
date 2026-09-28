@@ -46,7 +46,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           test -s out/pack.json || { echo "::warning::No pack made"; exit 0; }
-          python3 -c "import json,sys; sys.exit(0 if json.load(open('out/pack.json'))['stories'] else 1)"
+          python3 -c "import json,sys; sys.exit(0 if json.load(open('out/pack.json'))['stories'] else 1)" || { echo "::warning::No stories made"; exit 0; }
           (cd out && zip -q -r ../daily.zip .)
           gh release view akshara-aata-online -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 ||
             gh release create akshara-aata-online -R "$GITHUB_REPOSITORY" --prerelease \
