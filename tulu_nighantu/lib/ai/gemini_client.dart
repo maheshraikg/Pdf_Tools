@@ -9,6 +9,11 @@ import '../models/word.dart';
 /// Default Gemini model; users can change it in Settings.
 const String kDefaultGeminiModel = 'gemini-flash-latest';
 
+/// Built-in AI server (the Cloudflare Worker in backend/ai-worker), set at
+/// build time: `flutter build apk --dart-define=AI_PROXY_URL=https://…`.
+/// Empty means no built-in AI; users can still add their own key.
+const String kAiProxyUrl = String.fromEnvironment('AI_PROXY_URL');
+
 /// An AI (unverified) Tulu answer.
 class AiAnswer {
   const AiAnswer({
@@ -60,16 +65,26 @@ class AiException implements Exception {
 /// The key is supplied by the user at runtime (Settings) and sent only to
 /// Google's API. Nothing is sent unless the user taps "Ask AI".
 class GeminiClient {
+  /// Calls Gemini directly with the user's own [apiKey].
   GeminiClient({
-    required this.apiKey,
+    required String this.apiKey,
     this.model = kDefaultGeminiModel,
     http.Client? client,
-  }) : _client = client ?? http.Client();
+  }) : proxyUrl = null,
+       _client = client ?? http.Client();
 
-  final String apiKey;
+  /// Calls the built-in AI server, which holds the key.
+  GeminiClient.proxy({required String this.proxyUrl, http.Client? client})
+    : apiKey = null,
+      model = kDefaultGeminiModel,
+      _client = client ?? http.Client();
+
+  final String? apiKey;
+  final String? proxyUrl;
   final String model;
   final http.Client _client;
 
+  // Keep in sync with SYSTEM_PROMPT in backend/ai-worker/src/index.js.
   static const _system =
       'You are a careful Tulu language assistant for a Tulu–Kannada–English '
       'dictionary app. Tulu must be written in Kannada script (never in '
@@ -100,40 +115,54 @@ class GeminiClient {
     String text, {
     List<Word> glossary = const [],
   }) async {
-    final uri = Uri.https(
-      'generativelanguage.googleapis.com',
-      '/v1beta/models/$model:generateContent',
-    );
-    final body = jsonEncode({
-      'systemInstruction': {
-        'parts': [
-          {'text': _system},
+    final proxy = proxyUrl;
+    final Uri uri;
+    final Map<String, String> headers;
+    final String body;
+    if (proxy != null) {
+      // The server builds the prompt and adds the key.
+      uri = Uri.parse(
+        '${proxy.endsWith('/') ? proxy.substring(0, proxy.length - 1) : proxy}'
+        '/translate',
+      );
+      headers = {'Content-Type': 'application/json'};
+      body = jsonEncode({
+        'text': text,
+        'glossary': [
+          for (final w in glossary.take(20))
+            {'tulu': w.tulu, 'roman': w.roman, 'en': w.en, 'kn': w.kn},
         ],
-      },
-      'contents': [
-        {
-          'role': 'user',
+      });
+    } else {
+      uri = Uri.https(
+        'generativelanguage.googleapis.com',
+        '/v1beta/models/$model:generateContent',
+      );
+      headers = {'Content-Type': 'application/json', 'x-goog-api-key': apiKey!};
+      body = jsonEncode({
+        'systemInstruction': {
           'parts': [
-            {'text': buildPrompt(text, glossary)},
+            {'text': _system},
           ],
         },
-      ],
-      'generationConfig': {
-        'temperature': 0.2,
-        'responseMimeType': 'application/json',
-      },
-    });
+        'contents': [
+          {
+            'role': 'user',
+            'parts': [
+              {'text': buildPrompt(text, glossary)},
+            ],
+          },
+        ],
+        'generationConfig': {
+          'temperature': 0.2,
+          'responseMimeType': 'application/json',
+        },
+      });
+    }
     final http.Response res;
     try {
       res = await _client
-          .post(
-            uri,
-            headers: {
-              'Content-Type': 'application/json',
-              'x-goog-api-key': apiKey,
-            },
-            body: body,
-          )
+          .post(uri, headers: headers, body: body)
           .timeout(const Duration(seconds: 30));
     } on TimeoutException {
       throw const AiException('AI took too long. Please try again.');
@@ -159,7 +188,7 @@ class GeminiClient {
           'The Gemini API key is not valid. Check it in Settings.',
         401 || 403 => 'The Gemini API key was rejected. Check it in Settings.',
         404 => 'Model not found. Check the model name in Settings.',
-        429 => 'Gemini quota reached. Try again later.',
+        429 => msg.isNotEmpty ? msg : 'AI limit reached. Try again later.',
         _ => 'AI error ($status). ${msg.isEmpty ? '' : msg}'.trim(),
       });
     }

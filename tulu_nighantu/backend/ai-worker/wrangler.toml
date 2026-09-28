@@ -1,0 +1,16 @@
+# Cloudflare Worker for Tulu Nighantu "Ask AI".
+# Deployed by .github/workflows/tulu-nighantu-ai-worker.yml (or `npx wrangler deploy`).
+name = "tulu-nighantu-ai"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+workers_dev = true
+
+[vars]
+GEMINI_MODEL = "gemini-flash-latest"
+DAILY_LIMIT = "60"
+
+# Optional per-user daily limit. Create a KV namespace
+# (`npx wrangler kv namespace create RATE_KV`) and uncomment with its id:
+# [[kv_namespaces]]
+# binding = "RATE_KV"
+# id = "<your-namespace-id>"

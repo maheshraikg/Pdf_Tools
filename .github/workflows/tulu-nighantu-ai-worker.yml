@@ -1,0 +1,52 @@
+name: Tulu Nighantu AI server (deploy)
+
+# Deploys tulu_nighantu/backend/ai-worker to Cloudflare Workers and stores the
+# Gemini key as a Worker secret. Needs these repository secrets:
+#   CLOUDFLARE_API_TOKEN   (Cloudflare token with "Edit Cloudflare Workers")
+#   CLOUDFLARE_ACCOUNT_ID
+#   GEMINI_API_KEY
+# The key is never written to the repository or the app.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master, main ]
+    paths: [ 'tulu_nighantu/backend/ai-worker/**', '.github/workflows/tulu-nighantu-ai-worker.yml' ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tulu_nighantu/backend/ai-worker
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Test worker
+        run: npm test
+
+      - name: Check secrets
+        id: check
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ] || [ -z "$GEMINI_API_KEY" ]; then
+            echo "::notice::AI server not deployed: add CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID and GEMINI_API_KEY repository secrets (see tulu_nighantu/backend/ai-worker/README.md)."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy worker
+        if: steps.check.outputs.ready == 'true'
+        run: npx --yes wrangler@4 deploy
+
+      - name: Store Gemini key as a Worker secret
+        if: steps.check.outputs.ready == 'true'
+        run: printf '%s' "$GEMINI_API_KEY" | npx --yes wrangler@4 secret put GEMINI_API_KEY

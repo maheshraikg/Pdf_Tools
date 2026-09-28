@@ -38,9 +38,19 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// A Gemini client for the saved key, or null when none is set.
-  GeminiClient? aiClient() =>
-      hasAiKey ? GeminiClient(apiKey: aiKey, model: aiModel) : null;
+  /// True when the app was built with the built-in AI server.
+  static bool get hasBuiltInAi => kAiProxyUrl.isNotEmpty;
+
+  /// Whether "Ask AI" can work (own key or built-in server).
+  bool get hasAi => hasAiKey || hasBuiltInAi;
+
+  /// A Gemini client: the user's own key if set, otherwise the built-in
+  /// server; null when neither is available.
+  GeminiClient? aiClient() {
+    if (hasAiKey) return GeminiClient(apiKey: aiKey, model: aiModel);
+    if (hasBuiltInAi) return GeminiClient.proxy(proxyUrl: kAiProxyUrl);
+    return null;
+  }
 
   SharedPreferences? _prefs;
 
