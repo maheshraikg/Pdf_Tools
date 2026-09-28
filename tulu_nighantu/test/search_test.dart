@@ -36,6 +36,12 @@ void main() {
     expect(state.search('mother').first.tulu, 'ಅಪ್ಪೆ');
   });
 
+  test('expanded list: new entries are searchable', () {
+    expect(state.words.length, greaterThanOrEqualTo(200));
+    expect(state.search('elephant').first.tulu, 'ಆನೆ');
+    expect(state.search('ಹನ್ನೊಂದು').first.tulu, 'ಪದ್ನೊಂಜಿ');
+  });
+
   test('category filter and empty query', () {
     final nums = state.search('', category: 'numbers');
     expect(nums, isNotEmpty);
