@@ -33,7 +33,18 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
-      - run: flutter build apk --debug
+
+      - name: Test AI worker
+        working-directory: tulu_nighantu/backend/ai-worker
+        run: npm test
+
+      # AI_PROXY_URL is a repository variable (Settings › Secrets and
+      # variables › Actions › Variables) holding the deployed Worker URL.
+      # When it is empty the app is built without built-in AI.
+      - name: Build debug APK
+        env:
+          AI_PROXY_URL: ${{ vars.AI_PROXY_URL }}
+        run: flutter build apk --debug --dart-define=AI_PROXY_URL="$AI_PROXY_URL"
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4

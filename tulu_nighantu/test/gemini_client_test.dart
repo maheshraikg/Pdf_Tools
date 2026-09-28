@@ -61,6 +61,39 @@ void main() {
     expect(a.lipi, isNotEmpty);
   });
 
+  test('proxy mode posts text + glossary to the server, no key', () async {
+    late http.Request sent;
+    final client = GeminiClient.proxy(
+      proxyUrl: 'https://ai.example.workers.dev/',
+      client: MockClient((req) async {
+        sent = req;
+        return http.Response.bytes(
+          utf8.encode(_geminiBody({'tulu': 'ರಾಜೆ', 'confidence': 'medium'})),
+          200,
+        );
+      }),
+    );
+    final a = await client.translate('king');
+    expect(sent.url.toString(), 'https://ai.example.workers.dev/translate');
+    expect(sent.headers.containsKey('x-goog-api-key'), isFalse);
+    final body = jsonDecode(sent.body) as Map<String, dynamic>;
+    expect(body['text'], 'king');
+    expect(body['glossary'], isA<List>());
+    expect(a.tulu, 'ರಾಜೆ');
+  });
+
+  test('server limit message is shown', () {
+    expect(
+      () => GeminiClient.parseResponse(
+        429,
+        '{"error":{"message":"Daily AI limit reached. Try again tomorrow."}}',
+      ),
+      throwsA(
+        isA<AiException>().having((e) => e.message, 'm', contains('Daily')),
+      ),
+    );
+  });
+
   test('friendly errors', () {
     expect(
       () => GeminiClient.parseResponse(403, '{"error":{"message":"denied"}}'),

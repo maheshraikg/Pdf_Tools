@@ -73,11 +73,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
           const SizedBox(height: 8),
+          if (AppState.hasBuiltInAi)
+            Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: cs.primaryContainer,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.check_circle, color: cs.onPrimaryContainer),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'AI is built in – no key needed. ಕೀ ಬೇಕಾಗಿಲ್ಲ.',
+                      style: TextStyle(color: cs.onPrimaryContainer),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           Text(
-            'Optional. Paste your own Gemini API key to get AI Tulu '
-            'translations when the dictionary has no answer. The key is '
-            'stored only on this phone and sent only to Google\'s Gemini API '
-            'when you tap "Ask AI". Get a key at aistudio.google.com › API keys.',
+            AppState.hasBuiltInAi
+                ? 'Optional: use your own Gemini API key instead of the '
+                      'built-in AI (e.g. if the daily limit is reached). The key '
+                      'is stored only on this phone.'
+                : 'Optional. Paste your own Gemini API key to get AI Tulu '
+                      'translations when the dictionary has no answer. The key '
+                      'is stored only on this phone and sent only to Google\'s '
+                      'Gemini API when you tap "Ask AI". Get a key at '
+                      'aistudio.google.com › API keys.',
             style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
           ),
           const SizedBox(height: 16),

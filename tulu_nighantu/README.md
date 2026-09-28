@@ -71,8 +71,12 @@ roman, meanings, a note and the model's confidence), labelled
 - AI is the only feature that uses the internet; everything else works offline.
 - AI models know little Tulu and can be wrong; answers are never added to the
   dictionary automatically.
-- For a public release, don't ask users for keys: put the key behind a small
-  server (e.g. a Cloudflare Worker) and point `GeminiClient` at it.
+- **Built-in AI for everyone:** deploy the small server in
+  `backend/ai-worker` (a Cloudflare Worker that holds the key) and set the
+  `AI_PROXY_URL` repository variable. CI then builds the APK with
+  `--dart-define=AI_PROXY_URL=…`, and every user gets Ask AI with no key.
+  A user's own key in Settings still takes priority. Step-by-step setup:
+  [backend/ai-worker/README.md](backend/ai-worker/README.md).
 
 ## Adding your own words (in the app)
 
