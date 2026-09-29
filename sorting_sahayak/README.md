@@ -53,18 +53,20 @@ The address scanner bundles **only the English (Latin) ML Kit model**; the
 Hindi (Devanagari) model was dropped to save space, because addresses are
 mainly written in English.
 
-First CI measurement (`flutter build apk --release --split-per-abi`), taken
-**with the Hindi model still included** and only a 27-row test directory:
+Measured by CI (`flutter build apk --release --split-per-abi`) with the real
+all-India directory (157,000 offices, 27.3 MB on disk) and only the Latin
+OCR model:
 
 | APK | Size |
 |---|---|
-| `app-arm64-v8a-release.apk` | 35.5 MB |
-| `app-armeabi-v7a-release.apk` | 29.3 MB |
-| `app-x86_64-release.apk` | 37.5 MB |
+| `app-arm64-v8a-release.apk` (most phones) | **44.4 MB** |
+| `app-armeabi-v7a-release.apk` | 38.2 MB |
+| `app-x86_64-release.apk` | 46.5 MB |
 
-The app now bundles the real all-India directory (27.3 MB on disk,
-157,000 offices). Each CI run prints the current APK sizes in its job
-summary. A Karnataka-only directory would be ~1.5 MB instead. Further ways
+For comparison, the first build (27-row test directory, Latin + Hindi OCR)
+was 35.5 MB for arm64. Each CI run prints the current sizes in its job
+summary. A Karnataka-only directory (~1.5 MB on disk) would save roughly
+9 MB. Further ways
 to shrink:
 
 * build a state-only DB: `dart run tool/build_directory_db.dart --state Karnataka`;
