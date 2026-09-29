@@ -30,11 +30,13 @@ class _SchemesScreenState extends State<SchemesScreen> {
   }
 
   Future<void> _load() async {
+    if (!mounted) return;
     final s = await context.services.schemes.schemes();
     if (mounted) setState(() => _schemes = s);
   }
 
   Future<void> _afterChange() async {
+    if (!mounted) return;
     await context.services.reloadActive();
     await _load();
   }

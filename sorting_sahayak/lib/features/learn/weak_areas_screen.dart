@@ -24,6 +24,7 @@ class _WeakAreasScreenState extends State<WeakAreasScreen> {
   }
 
   Future<void> _load() async {
+    if (!mounted) return;
     final s = context.services;
     final a = await s.user.weakAreas(s.active?.scheme.id);
     final h = await s.user.quizHistory(schemeId: s.active?.scheme.id);

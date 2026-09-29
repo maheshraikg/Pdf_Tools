@@ -23,6 +23,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
   }
 
   Future<void> _load() async {
+    if (!mounted) return;
     final f = await context.services.user.favourites();
     if (mounted) setState(() => _favs = f);
   }

@@ -46,8 +46,8 @@ class Office {
     district: r['district'] as String? ?? '',
     state: r['state'] as String? ?? '',
     taluk: r['taluk'] as String? ?? '',
-    latitude: (r['latitude'] as num?)?.toDouble(),
-    longitude: (r['longitude'] as num?)?.toDouble(),
+    latitude: (r['lat_e5'] as int?) == null ? null : (r['lat_e5'] as int) / 100000,
+    longitude: (r['lng_e5'] as int?) == null ? null : (r['lng_e5'] as int) / 100000,
   );
 
   @override

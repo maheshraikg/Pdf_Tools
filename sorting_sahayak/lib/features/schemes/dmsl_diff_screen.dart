@@ -32,6 +32,7 @@ class _DmslDiffScreenState extends State<DmslDiffScreen> {
   }
 
   Future<void> _load() async {
+    if (!mounted) return;
     final s = context.services;
     final versions = await s.schemes.dmslVersions(widget.schemeId);
     _oldName = versions.where((v) => v.id == widget.oldVersionId).firstOrNull?.versionName ?? '';

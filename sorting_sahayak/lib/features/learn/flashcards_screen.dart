@@ -39,6 +39,7 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
   }
 
   Future<void> _load() async {
+    if (!mounted) return;
     final s = context.services;
     final scheme = s.active;
     if (scheme == null) {

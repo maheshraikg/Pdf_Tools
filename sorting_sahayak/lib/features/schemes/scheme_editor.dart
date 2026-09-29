@@ -40,6 +40,7 @@ class _SchemeEditorState extends State<SchemeEditor> {
   }
 
   Future<void> _load() async {
+    if (!mounted) return;
     final r = context.services.schemes;
     final s = await r.scheme(widget.schemeId);
     final rules = await r.rules(widget.schemeId);
@@ -57,6 +58,7 @@ class _SchemeEditorState extends State<SchemeEditor> {
   }
 
   Future<void> _changed() async {
+    if (!mounted) return;
     await _load();
     if (mounted) await context.services.reloadActive();
   }
@@ -407,6 +409,7 @@ class _RuleDialogState extends State<_RuleDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             DropdownButtonFormField<RuleType>(
+              isExpanded: true,
               initialValue: _type,
               decoration: InputDecoration(labelText: l.fType),
               items: [for (final t in RuleType.values) DropdownMenuItem(value: t, child: Text(ruleTypeLabel(l, t)))],
@@ -448,6 +451,7 @@ class _RuleDialogState extends State<_RuleDialog> {
             TextField(controller: _section, decoration: InputDecoration(labelText: l.fSection)),
             TextField(controller: _remarks, decoration: InputDecoration(labelText: l.fRemarks)),
             DropdownButtonFormField<String?>(
+              isExpanded: true,
               initialValue: widget.categories.contains(_category) ? _category : null,
               decoration: InputDecoration(labelText: l.fCategory),
               items: [
@@ -457,6 +461,7 @@ class _RuleDialogState extends State<_RuleDialog> {
               onChanged: (v) => setState(() => _category = v),
             ),
             DropdownButtonFormField<Connectivity?>(
+              isExpanded: true,
               initialValue: _conn,
               decoration: InputDecoration(labelText: l.fConnectivity),
               items: [

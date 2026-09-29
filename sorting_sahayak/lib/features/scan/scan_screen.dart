@@ -49,6 +49,7 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
   List<String> _placeCandidates = [];
   SortResult? _result;
   bool _scanned = false;
+  bool _started = false;
 
   @override
   void initState() {
@@ -59,7 +60,8 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_camera == null && _cameraError == null) {
+    if (!_started) {
+      _started = true;
       _script = context.settings.scanScript;
       _initCamera();
     }

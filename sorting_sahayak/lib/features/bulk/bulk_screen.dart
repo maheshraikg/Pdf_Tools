@@ -34,6 +34,7 @@ class _BulkScreenState extends State<BulkScreen> {
   }
 
   Future<void> _load() async {
+    if (!mounted) return;
     final s = await context.services.user.sessions();
     if (mounted) setState(() => _sessions = s);
   }
@@ -60,6 +61,7 @@ class _BulkScreenState extends State<BulkScreen> {
               Text('${l.date}: $date'),
               Text('${l.scheme}: ${services.active?.scheme.name ?? l.none}'),
               DropdownButtonFormField<String>(
+                isExpanded: true,
                 initialValue: category,
                 decoration: InputDecoration(labelText: l.fCategory),
                 items: [for (final c in services.categories) DropdownMenuItem(value: c, child: Text(categoryLabel(l, c)))],
@@ -156,6 +158,7 @@ class _BulkSessionScreenState extends State<BulkSessionScreen> {
   }
 
   Future<void> _load() async {
+    if (!mounted) return;
     final u = context.services.user;
     final s = await u.session(widget.sessionId);
     final e = await u.entries(widget.sessionId);
@@ -301,8 +304,10 @@ class _BulkSessionScreenState extends State<BulkSessionScreen> {
               child: Row(
                 children: [
                   Text(l.totalN(sum.total), style: Theme.of(context).textTheme.titleMedium),
-                  const Spacer(),
-                  if (s != null) Text(categoryLabel(l, s.category)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(s == null ? '' : categoryLabel(l, s.category), textAlign: TextAlign.end, overflow: TextOverflow.ellipsis),
+                  ),
                   IconButton(
                     tooltip: l.scanAddress,
                     icon: const Icon(Icons.document_scanner_outlined),
@@ -391,6 +396,7 @@ class _BulkSummaryScreenState extends State<BulkSummaryScreen> {
   }
 
   Future<void> _load() async {
+    if (!mounted) return;
     final u = context.services.user;
     final s = await u.session(widget.sessionId);
     final e = await u.entries(widget.sessionId);

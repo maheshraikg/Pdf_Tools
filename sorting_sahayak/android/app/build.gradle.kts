@@ -15,11 +15,11 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.sortingsahayak.sorting_sahayak"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // ML Kit text recognition v2 and camera need API 21+; Flutter needs 24+.
+        minSdk = maxOf(flutter.minSdkVersion, 24)
         targetSdk = flutter.targetSdkVersion
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
         // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)
@@ -31,11 +31,18 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            // Sign with your own key for distribution (see README). Debug keys
+            // are used so `flutter build apk --release` works out of the box.
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+}
+
+dependencies {
+    // Bundled on-device Devanagari (Hindi) text recogniser for address scans.
+    // Latin is bundled by google_mlkit_text_recognition itself. ML Kit has no
+    // Kannada model.
+    implementation("com.google.mlkit:text-recognition-devanagari:16.0.1")
 }
 
 kotlin {

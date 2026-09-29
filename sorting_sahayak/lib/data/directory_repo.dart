@@ -5,6 +5,7 @@ library;
 import 'package:sqflite_common/sqlite_api.dart';
 
 import '../core/fuzzy.dart';
+import 'directory_builder.dart' show kOfficeFrom, kOfficeSelect;
 import 'models/office.dart';
 
 class SearchHit {
@@ -53,8 +54,13 @@ class DirectoryRepo implements DirectorySource {
   bool? _fts;
   Map<String, List<String>>? _keyBuckets;
 
-  static const String _cols =
-      'id, pincode, office_name, office_type, delivery, division, region, circle, district, state, taluk, latitude, longitude';
+
+  bool? _taluk;
+
+  /// Taluk is only indexed when the source CSV had a taluk column.
+  Future<bool> get _hasTaluk async => _taluk ??= (await db.rawQuery(
+    "SELECT 1 FROM sqlite_master WHERE type = 'index' AND name = 'idx_offices_taluk_norm'",
+  )).isNotEmpty;
 
   Future<bool> get ftsAvailable async {
     if (_fts != null) return _fts!;
@@ -71,8 +77,8 @@ class DirectoryRepo implements DirectorySource {
   @override
   Future<List<Office>> officesForPin(int pin) async {
     final rows = await db.rawQuery(
-      'SELECT $_cols FROM offices WHERE pincode = ? '
-      "ORDER BY CASE office_type WHEN 'HO' THEN 0 WHEN 'SO' THEN 1 WHEN 'PO' THEN 2 ELSE 3 END, office_name",
+      'SELECT $kOfficeSelect FROM $kOfficeFrom WHERE o.pincode = ? '
+      "ORDER BY CASE o.office_type WHEN 'HO' THEN 0 WHEN 'SO' THEN 1 WHEN 'PO' THEN 2 ELSE 3 END, o.office_name",
       [pin],
     );
     return rows.map(Office.fromRow).toList();
@@ -106,14 +112,14 @@ class DirectoryRepo implements DirectorySource {
     final parts = <String>[];
     final args = <Object?>[];
     if (f.state != null) {
-      parts.add('state = ?');
+      parts.add('o.state = ?');
       args.add(f.state);
     }
     if (f.district != null) {
-      parts.add('district = ?');
+      parts.add('o.district = ?');
       args.add(f.district);
     }
-    if (f.deliveryOnly) parts.add("delivery = 'Delivery'");
+    if (f.deliveryOnly) parts.add("o.delivery = 'Delivery'");
     return (parts.isEmpty ? '' : ' AND ${parts.join(' AND ')}', args);
   }
 
@@ -135,7 +141,8 @@ class DirectoryRepo implements DirectorySource {
 
     Future<void> add(String where, List<Object?> args, {int lim = 150}) async {
       final rows = await db.rawQuery(
-        'SELECT $_cols, office_name_norm, name_key, district_norm, taluk_norm FROM offices '
+        'SELECT $kOfficeSelect, o.office_name_norm AS office_name_norm, o.name_key AS name_key, '
+        'o.district_norm AS district_norm, o.taluk_norm AS taluk_norm FROM $kOfficeFrom '
         'WHERE ($where)$fSql LIMIT $lim',
         [...args, ...fArgs],
       );
@@ -148,28 +155,29 @@ class DirectoryRepo implements DirectorySource {
 
     // 1. Exact / prefix on the normalised name (index range scans).
     for (final v in variants) {
-      await add('office_name_norm >= ? AND office_name_norm < ?', [v, upper(v)]);
+      await add('o.office_name_norm >= ? AND o.office_name_norm < ?', [v, upper(v)]);
     }
     // 2. Same phonetic key.
-    if (qk.length >= 2) await add('name_key = ?', [qk]);
+    if (qk.length >= 2) await add('o.name_key = ?', [qk]);
     // 3. Word / substring match via FTS5, or LIKE when FTS5 is unavailable.
     if (words.isNotEmpty && words.join().length >= 3) {
       if (await ftsAvailable) {
         final match = words.map((w) => '"${w.replaceAll('"', '')}"*').join(' ');
-        await add('id IN (SELECT rowid FROM offices_fts WHERE offices_fts MATCH ?)', [match]);
+        await add('o.id IN (SELECT rowid FROM offices_fts WHERE offices_fts MATCH ?)', [match]);
       } else {
-        await add(words.map((_) => 'office_words LIKE ?').join(' AND '), [for (final w in words) '%$w%']);
+        await add(words.map((_) => 'o.office_words LIKE ?').join(' AND '), [for (final w in words) '%$w%']);
       }
     }
     // 4. District / taluk names ("Udupi", "Puttur taluk").
     for (final v in variants) {
-      await add('district_norm = ? OR taluk_norm = ?', [v, v], lim: 100);
+      await add('o.district_norm = ?', [v], lim: 100);
+      if (await _hasTaluk) await add('o.taluk_norm = ?', [v], lim: 100);
     }
     // 5. Typos: edit distance on phonetic keys (in-memory bucket scan).
     if (byId.length < 20 && qk.length >= 3) {
       final keys = await _fuzzyKeys(qk);
       if (keys.isNotEmpty) {
-        await add('name_key IN (${List.filled(keys.length, '?').join(',')})', keys, lim: 200);
+        await add('o.name_key IN (${List.filled(keys.length, '?').join(',')})', keys, lim: 200);
       }
     }
 
@@ -259,7 +267,7 @@ class DirectoryRepo implements DirectorySource {
   @override
   Future<List<Office>> randomOffices(int n, {String? state}) async {
     final rows = await db.rawQuery(
-      "SELECT $_cols FROM offices WHERE delivery = 'Delivery'${state != null ? ' AND state = ?' : ''} "
+      "SELECT $kOfficeSelect FROM $kOfficeFrom WHERE o.delivery = 'Delivery'${state != null ? ' AND o.state = ?' : ''} "
       'ORDER BY RANDOM() LIMIT ?',
       [?state, n],
     );
@@ -283,7 +291,7 @@ class DirectoryRepo implements DirectorySource {
   /// Offices (distinct PINs) in a normalised district.
   Future<List<Office>> officesInDistrict(String districtNorm, {int limit = 200}) async {
     final rows = await db.rawQuery(
-      'SELECT $_cols FROM offices WHERE district_norm = ? GROUP BY pincode ORDER BY pincode LIMIT ?',
+      'SELECT $kOfficeSelect FROM $kOfficeFrom WHERE o.district_norm = ? GROUP BY o.pincode ORDER BY o.pincode LIMIT ?',
       [districtNorm, limit],
     );
     return rows.map(Office.fromRow).toList();

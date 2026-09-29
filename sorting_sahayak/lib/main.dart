@@ -33,10 +33,21 @@ class SortingSahayakApp extends StatefulWidget {
 }
 
 class _SortingSahayakAppState extends State<SortingSahayakApp> {
-  late final Future<AppServices> _services = widget.open();
+  AppServices? _services;
+  Object? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.open().then(
+      (s) => setState(() => _services = s),
+      onError: (Object e) => setState(() => _error = e),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final services = _services;
     return ListenableBuilder(
       listenable: widget.settings,
       builder: (context, _) => MaterialApp(
@@ -59,16 +70,14 @@ class _SortingSahayakAppState extends State<SortingSahayakApp> {
           }
           return const Locale('en');
         },
-        home: FutureBuilder<AppServices>(
-          future: _services,
-          builder: (context, snap) {
-            if (snap.hasError) {
-              return Scaffold(body: Center(child: Padding(padding: const EdgeInsets.all(24), child: Text('${snap.error}'))));
-            }
-            if (!snap.hasData) return const _Splash();
-            return AppScope(settings: widget.settings, services: snap.data!, child: const HomeShell());
-          },
-        ),
+        // AppScope wraps the Navigator so every pushed route can reach it.
+        builder: (context, child) =>
+            services == null ? child! : AppScope(settings: widget.settings, services: services, child: child!),
+        home: _error != null
+            ? Scaffold(body: Center(child: Padding(padding: const EdgeInsets.all(24), child: Text('$_error'))))
+            : services == null
+            ? const _Splash()
+            : HomeShell(key: HomeShell.shellKey),
       ),
     );
   }

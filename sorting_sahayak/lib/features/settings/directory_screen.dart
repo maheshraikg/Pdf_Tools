@@ -34,6 +34,7 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
   }
 
   Future<void> _load() async {
+    if (!mounted) return;
     final m = await context.services.directory.meta();
     if (mounted) setState(() => _meta = m);
   }

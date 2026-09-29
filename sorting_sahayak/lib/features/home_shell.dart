@@ -11,7 +11,11 @@ import 'settings/more_screen.dart';
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
 
-  static HomeShellState? of(BuildContext context) => context.findAncestorStateOfType<HomeShellState>();
+  /// Global key so pushed routes (Favourites, Find PIN sheets) can switch tabs.
+  static final GlobalKey<HomeShellState> shellKey = GlobalKey<HomeShellState>();
+
+  static HomeShellState? of(BuildContext context) =>
+      shellKey.currentState ?? context.findAncestorStateOfType<HomeShellState>();
 
   @override
   State<HomeShell> createState() => HomeShellState();

@@ -243,6 +243,7 @@ class _ImportWizardState extends State<ImportWizard> {
         Text(_file?.name ?? '', style: Theme.of(context).textTheme.titleMedium),
         if ((_table?.sheetNames.length ?? 0) > 1)
           DropdownButtonFormField<String>(
+            isExpanded: true,
             initialValue: _sheet,
             decoration: InputDecoration(labelText: l.sheet),
             items: [for (final s in _table!.sheetNames) DropdownMenuItem(value: s, child: Text(s))],
@@ -253,6 +254,7 @@ class _ImportWizardState extends State<ImportWizard> {
           ),
         const SizedBox(height: 8),
         DropdownButtonFormField<int>(
+          isExpanded: true,
           initialValue: _headerRow,
           decoration: InputDecoration(labelText: l.headerRow),
           items: [

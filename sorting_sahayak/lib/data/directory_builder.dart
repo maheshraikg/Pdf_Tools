@@ -213,17 +213,33 @@ CREATE TABLE offices(
   name_key TEXT NOT NULL,
   office_type TEXT,
   delivery TEXT,
-  division TEXT,
-  region TEXT,
-  circle TEXT,
+  unit_id INTEGER,
   district TEXT,
   district_norm TEXT,
   taluk TEXT,
   taluk_norm TEXT,
   state TEXT,
-  latitude REAL,
-  longitude REAL
+  lat_e5 INTEGER,
+  lng_e5 INTEGER
 )''';
+
+/// Division → region → circle, stored once per division to keep the DB small.
+const String _createUnits = '''
+CREATE TABLE units(
+  id INTEGER PRIMARY KEY,
+  circle TEXT,
+  region TEXT,
+  division TEXT
+)''';
+
+/// Columns of an office row as the app reads them (joins the units table).
+const String kOfficeSelect =
+    'o.id AS id, o.pincode AS pincode, o.office_name AS office_name, o.office_type AS office_type, '
+    'o.delivery AS delivery, u.division AS division, u.region AS region, u.circle AS circle, '
+    'o.district AS district, o.state AS state, o.taluk AS taluk, o.lat_e5 AS lat_e5, o.lng_e5 AS lng_e5';
+const String kOfficeFrom = 'offices o LEFT JOIN units u ON u.id = o.unit_id';
+
+int? _e5(double? v) => v == null ? null : (v * 100000).round();
 
 /// Creates the schema (dropping any previous tables) and inserts [records].
 /// Tries to build an FTS5 index; when the SQLite build has no FTS5, search
@@ -237,10 +253,23 @@ Future<bool> writeDirectoryDb(
 }) async {
   await db.execute('DROP TABLE IF EXISTS offices_fts');
   await db.execute('DROP TABLE IF EXISTS offices');
+  await db.execute('DROP TABLE IF EXISTS units');
   await db.execute('DROP TABLE IF EXISTS meta');
   await db.execute(_createOffices);
+  await db.execute(_createUnits);
   await db.execute('CREATE TABLE meta(key TEXT PRIMARY KEY, value TEXT)');
 
+  final units = <String, int>{};
+  final unitBatch = db.batch();
+  for (final r in records) {
+    final k = '${r.circle}|${r.region}|${r.division}';
+    if (units.containsKey(k)) continue;
+    units[k] = units.length + 1;
+    unitBatch.insert('units', {'id': units[k], 'circle': r.circle, 'region': r.region, 'division': r.division});
+  }
+  await unitBatch.commit(noResult: true);
+
+  var anyTaluk = false;
   const chunk = 2000;
   for (var start = 0; start < records.length; start += chunk) {
     final batch = db.batch();
@@ -248,14 +277,16 @@ Future<bool> writeDirectoryDb(
     for (var i = start; i < end; i++) {
       final r = records[i];
       final norm = normalizePlace(r.officeName);
+      if (r.taluk.isNotEmpty) anyTaluk = true;
       batch.rawInsert(
         'INSERT INTO offices(pincode, office_name, office_name_norm, office_words, name_key, office_type, delivery, '
-        'division, region, circle, district, district_norm, taluk, taluk_norm, state, latitude, longitude) '
-        'VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+        'unit_id, district, district_norm, taluk, taluk_norm, state, lat_e5, lng_e5) '
+        'VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
         [
           r.pincode, r.officeName, norm, placeWords(r.officeName).join(' '), phoneticKey(norm), //
-          r.officeType, r.delivery, r.division, r.region, r.circle, r.district, normalizePlace(r.district), //
-          r.taluk, normalizePlace(r.taluk), r.state, r.latitude, r.longitude,
+          r.officeType, r.delivery, units['${r.circle}|${r.region}|${r.division}'], r.district, //
+          normalizePlace(r.district), r.taluk.isEmpty ? null : r.taluk, r.taluk.isEmpty ? null : normalizePlace(r.taluk), //
+          r.state, _e5(r.latitude), _e5(r.longitude),
         ],
       );
     }
@@ -266,13 +297,14 @@ Future<bool> writeDirectoryDb(
   await db.execute('CREATE INDEX idx_offices_name_norm ON offices(office_name_norm)');
   await db.execute('CREATE INDEX idx_offices_name_key ON offices(name_key)');
   await db.execute('CREATE INDEX idx_offices_district_norm ON offices(district_norm)');
-  await db.execute('CREATE INDEX idx_offices_taluk_norm ON offices(taluk_norm)');
+  if (anyTaluk) await db.execute('CREATE INDEX idx_offices_taluk_norm ON offices(taluk_norm)');
 
   var fts = false;
   if (tryFts) {
     try {
       await db.execute(
-        "CREATE VIRTUAL TABLE offices_fts USING fts5(office_words, district_norm, content='offices', content_rowid='id')",
+        "CREATE VIRTUAL TABLE offices_fts USING fts5(office_words, district_norm, content='offices', "
+        "content_rowid='id', columnsize=0, detail=none)",
       );
       await db.execute("INSERT INTO offices_fts(offices_fts) VALUES('rebuild')");
       fts = true;

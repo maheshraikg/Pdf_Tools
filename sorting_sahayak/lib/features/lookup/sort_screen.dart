@@ -34,6 +34,7 @@ class SortScreenState extends State<SortScreen> {
   final _place = TextEditingController();
   bool _placeOpen = false;
   String _lastSpoken = '';
+  Object? _schemeSeen;
 
   @override
   void didChangeDependencies() {
@@ -44,6 +45,13 @@ class SortScreenState extends State<SortScreen> {
       _loadRecents();
     }
     _placeOpen = _placeOpen || context.settings.showMismatchField;
+    // Re-resolve when the active scheme changes (import, edit, switch).
+    final scheme = context.services.active;
+    if (!identical(scheme, _schemeSeen)) {
+      final first = _schemeSeen == null && scheme == null;
+      _schemeSeen = scheme;
+      if (!first && _digits.isNotEmpty) _resolve();
+    }
   }
 
   @override
