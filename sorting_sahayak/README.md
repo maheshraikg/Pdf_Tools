@@ -49,27 +49,30 @@ box. For distribution, create a keystore and set `signingConfig` in
 
 ### APK size
 
-These numbers are estimates. The container used for development had no Android
-SDK access (Google's download host was blocked), so no APK was built there.
+Measured by CI (`.github/workflows/sorting-sahayak.yml`, `flutter build apk --release --split-per-abi`)
+with the **27-row placeholder directory**:
 
-| Part | Approx. (compressed in the APK) |
+| APK | Size |
 |---|---|
-| Flutter engine + app code (per ABI) | ~7–9 MB |
-| ML Kit Latin text recognition (bundled) | ~4 MB per ABI |
-| ML Kit Devanagari text recognition (bundled) | ~4 MB per ABI |
-| Full-India PIN directory DB (~165k offices, ~26 MB on disk) | ~11.5 MB |
-| Karnataka-only DB (~10k offices, ~1.5 MB on disk) | ~0.7 MB |
+| `app-arm64-v8a-release.apk` | **35.5 MB** |
+| `app-armeabi-v7a-release.apk` | 29.3 MB |
+| `app-x86_64-release.apk` | 37.5 MB |
 
-With `--split-per-abi` and the full-India DB, expect roughly **27–30 MB** for
-arm64. That is over the 25 MB mark, so a Karnataka-only DB is supported, but the
-full DB stays the default. A universal APK (3 ABIs) is much larger. If the
-arm64 APK must stay under 25 MB:
+Most of this is the two bundled on-device ML Kit text recognisers (Latin +
+Devanagari) and the Flutter engine. The real directory adds roughly
+**+11.5 MB** for all of India (~26 MB on disk, estimated from a synthetic
+165k-row build) or **+0.7 MB** for Karnataka only (~1.5 MB on disk), so a
+full-India arm64 APK is expected at about **47 MB**, well above the 30 MB
+target. Ways to shrink it:
 
-* build a state-only DB: `dart run tool/build_directory_db.dart --state Karnataka`, or
+* build a state-only DB: `dart run tool/build_directory_db.dart --state Karnataka`;
 * remove the Devanagari recogniser (delete the `text-recognition-devanagari`
-  line in `android/app/build.gradle.kts`; Hindi scans then fall back to Latin).
+  line in `android/app/build.gradle.kts`; Hindi scans then use Latin only);
+* publish an App Bundle (`flutter build appbundle`) so each phone downloads
+  only its own ABI.
 
-After you build, check the real size with `ls -lh build/app/outputs/flutter-apk/`.
+The CI job also checks that the merged release manifest has no INTERNET
+permission (passes).
 
 ---
 
