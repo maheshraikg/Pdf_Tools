@@ -118,6 +118,19 @@
   "rename": "Rename",
   "sheet": "Sheet",
   "validate": "Check",
+  "catTD": "TD",
+  "catNonTD": "Non-TD",
+  "otherModeHint": "This PIN is in {mode}: {bag}",
+  "@otherModeHint": {
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      },
+      "bag": {
+        "type": "String"
+      }
+    }
+  },
   "enterPin": "Enter PIN",
   "backspace": "Delete last digit",
   "voiceInput": "Voice input",
@@ -227,6 +240,9 @@
   "sayPin": "Say the PIN digits",
   "voiceUnavailable": "Speech recognition is not available on this phone",
   "unresolved": "Unresolved",
+  "noSchemeShort": "No sorting scheme yet",
+  "importShort": "Import",
+  "sampleShort": "Sample",
   "findPinHint": "Office, village, city, taluk or district",
   "findPinTip": "Type in English, ಕನ್ನಡ or हिन्दी. Spelling mistakes are fine: \"Puttoor\", \"Putur\" and \"ಪುತ್ತೂರು\" all find Puttur.",
   "allStates": "All states",
@@ -657,8 +673,8 @@
   "help1": "More → Sorting schemes → Add. Pick your office's Excel/CSV, check the columns and save. No file yet? Download the template, or try the SAMPLE scheme (fake data).",
   "help2Title": "Sort by PIN",
   "help2": "Type the PIN on the big keypad. After 3 digits you see the sorting district and likely bag; after 6 digits the final bag in its colour. Typing the next digit starts a new PIN. Long-press ⌫ to clear.",
-  "help3Title": "Parcels and air parcels",
-  "help3": "Choose the mail category at the top. In Air Parcel mode the air label code is shown in huge letters, with the YELLOW AIR / BLUE SURFACE badge, the L2 → L1 hub route and the bag. Use \"Label view\" to show or share a big label.",
+  "help3Title": "TD and Non-TD",
+  "help3": "Choose TD or Non-TD at the top of the Sort screen. Each rule in your scheme can be marked TD or Non-TD in the Category column (blank = both). If a PIN only has a rule in the other mode, the app tells you which mode and bag.",
   "help4Title": "No PIN on the article?",
   "help4": "Find PIN: type the office, village, city, taluk or district in English, Kannada or Hindi. Spelling mistakes are tolerated. Each result shows its bag.",
   "help5Title": "Catch wrong PINs",

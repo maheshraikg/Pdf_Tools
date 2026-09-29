@@ -17,6 +17,8 @@ String ruleTypeLabel(AppLocalizations l, RuleType t) => switch (t) {
 };
 
 String categoryLabel(AppLocalizations l, String c) => switch (c) {
+  kCatTD => l.catTD,
+  kCatNonTD => l.catNonTD,
   kCatLetters => l.catLetters,
   kCatParcel => l.catParcel,
   kCatAirParcel => l.catAirParcel,

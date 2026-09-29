@@ -309,8 +309,12 @@ class PinBreakdownView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: 64,
-                      child: Text(r.$1, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18, fontFeatures: [FontFeature.tabularFigures()])),
+                      width: 72,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(r.$1, maxLines: 1, softWrap: false, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18, fontFeatures: [FontFeature.tabularFigures()])),
+                      ),
                     ),
                     Expanded(child: Text('${r.$2}: ${r.$3}')),
                   ],
@@ -358,7 +362,7 @@ class SampleChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Chip(
     label: Text(AppLocalizations.of(context).sampleBadge, style: const TextStyle(fontWeight: FontWeight.w800, color: Colors.black)),
-    backgroundColor: kAccentAmber,
+    backgroundColor: kAmber,
     visualDensity: VisualDensity.compact,
   );
 }

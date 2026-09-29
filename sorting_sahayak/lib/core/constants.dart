@@ -12,12 +12,18 @@ const String kDisclaimerEn =
 const String kDataCreditEn =
     'PIN data: data.gov.in, Government of India, Open Government Data Licence';
 
-/// Built-in mail categories. Users can add more in Settings → Categories.
+/// Built-in sorting modes: TD and Non-TD. Users can add more in
+/// Settings → Categories (e.g. "Air Parcel", which turns on air codes and
+/// parcel hub routes).
+const String kCatTD = 'TD';
+const String kCatNonTD = 'Non-TD';
+const List<String> kBuiltInCategories = [kCatTD, kCatNonTD];
+
+/// Optional custom categories understood by the parcel / air features.
 const String kCatLetters = 'Ordinary/Letters';
 const String kCatParcel = 'Parcel (surface)';
 const String kCatAirParcel = 'Air Parcel';
 const String kCatSpeedPost = 'Speed Post';
-const List<String> kBuiltInCategories = [kCatLetters, kCatParcel, kCatAirParcel, kCatSpeedPost];
 
 /// Categories where parcel hub routes (DMSL) and the Air/Surface badge apply.
 /// Custom categories count as parcel / air when their name says so.

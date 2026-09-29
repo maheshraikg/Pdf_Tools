@@ -28,7 +28,7 @@ void main() {
     await settle(tester);
     await tester.pumpAndSettle();
     expect(find.textContaining('Rules ('), findsOneWidget);
-    expect(find.textContaining('Air codes (12)'), findsOneWidget);
+    expect(find.textContaining('Air codes (0)'), findsOneWidget);
     await tester.pageBack();
     await tester.pumpAndSettle();
     await tester.pageBack();
@@ -94,6 +94,6 @@ void main() {
     await settle(tester);
     await tester.pumpAndSettle();
     expect(find.text('Summary'), findsOneWidget);
-    expect(find.text('Bag 12 – Puttur SO'), findsOneWidget);
+    expect(find.text('Bag 12 – Puttur Line'), findsOneWidget);
   });
 }

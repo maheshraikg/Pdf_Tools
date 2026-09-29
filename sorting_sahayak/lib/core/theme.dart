@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 
-const Color kSeedRed = Color(0xFFC62828);
-const Color kAccentAmber = Color(0xFFFFC107);
+/// Brand palette: deep navy + teal, with amber for highlights. Chosen for
+/// strong contrast in poor light and to stay clear of any organisation's
+/// branding.
+const Color kNavy = Color(0xFF1E3A8A);
+const Color kTeal = Color(0xFF0F766E);
+const Color kAmber = Color(0xFFF59E0B);
+
+// Kept for older call sites.
+const Color kSeedRed = kNavy;
+const Color kAccentAmber = kAmber;
 
 /// Label badge colours for the parcel bag pattern.
 const Color kAirYellow = Color(0xFFFFD600);
@@ -9,23 +17,38 @@ const Color kSurfaceBlue = Color(0xFF1565C0);
 
 /// Warning / success colours with good contrast in both themes.
 Color warningColor(BuildContext context) =>
-    Theme.of(context).brightness == Brightness.dark ? const Color(0xFFFFB74D) : const Color(0xFFB45309);
+    Theme.of(context).brightness == Brightness.dark ? const Color(0xFFFBBF24) : const Color(0xFFB45309);
 Color okColor(BuildContext context) =>
-    Theme.of(context).brightness == Brightness.dark ? const Color(0xFF81C784) : const Color(0xFF1B5E20);
+    Theme.of(context).brightness == Brightness.dark ? const Color(0xFF4ADE80) : const Color(0xFF15803D);
 
 ThemeData buildTheme(Brightness brightness) {
-  final scheme = ColorScheme.fromSeed(
-    seedColor: kSeedRed,
-    brightness: brightness,
-  ).copyWith(
-    secondary: brightness == Brightness.light ? const Color(0xFF7A5900) : kAccentAmber,
-    secondaryContainer: brightness == Brightness.light ? const Color(0xFFFFE08A) : const Color(0xFF5C4300),
-    tertiary: kAccentAmber,
+  final dark = brightness == Brightness.dark;
+  final scheme = ColorScheme.fromSeed(seedColor: kNavy, brightness: brightness).copyWith(
+    primary: dark ? const Color(0xFF93B4FF) : kNavy,
+    onPrimary: dark ? const Color(0xFF0B1B4D) : Colors.white,
+    primaryContainer: dark ? const Color(0xFF1E3A8A) : const Color(0xFFDCE6FF),
+    onPrimaryContainer: dark ? const Color(0xFFDCE6FF) : const Color(0xFF0B1B4D),
+    secondary: dark ? const Color(0xFF5EEAD4) : kTeal,
+    onSecondary: dark ? const Color(0xFF042F2E) : Colors.white,
+    secondaryContainer: dark ? const Color(0xFF134E4A) : const Color(0xFFCCFBF1),
+    onSecondaryContainer: dark ? const Color(0xFFCCFBF1) : const Color(0xFF042F2E),
+    tertiary: kAmber,
+    surface: dark ? const Color(0xFF0F172A) : const Color(0xFFF5F7FB),
+    onSurface: dark ? const Color(0xFFE2E8F0) : const Color(0xFF0F172A),
+    onSurfaceVariant: dark ? const Color(0xFF94A3B8) : const Color(0xFF475569),
+    surfaceContainerLowest: dark ? const Color(0xFF0B1220) : Colors.white,
+    surfaceContainerLow: dark ? const Color(0xFF131C31) : Colors.white,
+    surfaceContainer: dark ? const Color(0xFF172036) : Colors.white,
+    surfaceContainerHigh: dark ? const Color(0xFF1E293B) : const Color(0xFFE9EEF7),
+    surfaceContainerHighest: dark ? const Color(0xFF273449) : const Color(0xFFDFE6F2),
+    outline: dark ? const Color(0xFF475569) : const Color(0xFF94A3B8),
+    outlineVariant: dark ? const Color(0xFF334155) : const Color(0xFFD5DCE8),
   );
   final base = ThemeData(
     useMaterial3: true,
     colorScheme: scheme,
     brightness: brightness,
+    scaffoldBackgroundColor: scheme.surface,
     visualDensity: VisualDensity.standard,
     materialTapTargetSize: MaterialTapTargetSize.padded,
   );
@@ -40,26 +63,75 @@ ThemeData buildTheme(Brightness brightness) {
     titleMedium: t.titleMedium?.copyWith(fontSize: 18, fontWeight: FontWeight.w600),
     titleLarge: t.titleLarge?.copyWith(fontSize: 24, fontWeight: FontWeight.w700),
   );
+  final radius = BorderRadius.circular(16);
   return base.copyWith(
     textTheme: text,
     appBarTheme: AppBarTheme(
       centerTitle: false,
-      backgroundColor: scheme.primary,
-      foregroundColor: scheme.onPrimary,
-      titleTextStyle: text.titleLarge?.copyWith(color: scheme.onPrimary, fontSize: 22),
+      elevation: 0,
+      scrolledUnderElevation: 2,
+      backgroundColor: dark ? const Color(0xFF0B1220) : kNavy,
+      foregroundColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
+      titleTextStyle: text.titleLarge?.copyWith(color: Colors.white, fontSize: 21, fontWeight: FontWeight.w800),
+      iconTheme: const IconThemeData(color: Colors.white),
+      actionsIconTheme: const IconThemeData(color: Colors.white),
+    ),
+    cardTheme: CardThemeData(
+      color: scheme.surfaceContainerLowest,
+      elevation: 0,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: radius, side: BorderSide(color: scheme.outlineVariant)),
+      margin: const EdgeInsets.symmetric(vertical: 4),
     ),
     navigationBarTheme: NavigationBarThemeData(
-      height: 72,
-      labelTextStyle: WidgetStatePropertyAll(text.labelMedium?.copyWith(fontSize: 13, fontWeight: FontWeight.w600)),
+      height: 70,
+      backgroundColor: scheme.surfaceContainerLowest,
+      surfaceTintColor: Colors.transparent,
+      indicatorColor: scheme.primaryContainer,
+      elevation: 3,
+      iconTheme: WidgetStateProperty.resolveWith(
+        (s) => IconThemeData(color: s.contains(WidgetState.selected) ? scheme.primary : scheme.onSurfaceVariant, size: 26),
+      ),
+      labelTextStyle: WidgetStateProperty.resolveWith(
+        (s) => text.labelMedium?.copyWith(
+          fontSize: 13,
+          fontWeight: s.contains(WidgetState.selected) ? FontWeight.w800 : FontWeight.w600,
+          color: s.contains(WidgetState.selected) ? scheme.primary : scheme.onSurfaceVariant,
+        ),
+      ),
     ),
     filledButtonTheme: FilledButtonThemeData(
-      style: FilledButton.styleFrom(minimumSize: const Size(64, 52), textStyle: text.labelLarge),
+      style: FilledButton.styleFrom(
+        minimumSize: const Size(64, 52),
+        textStyle: text.labelLarge,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
-      style: OutlinedButton.styleFrom(minimumSize: const Size(64, 52), textStyle: text.labelLarge),
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size(64, 52),
+        textStyle: text.labelLarge,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      ),
     ),
-    inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder()),
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: scheme.secondary,
+      foregroundColor: scheme.onSecondary,
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: scheme.surfaceContainerLowest,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: scheme.outlineVariant)),
+      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: scheme.outlineVariant)),
+      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: scheme.primary, width: 2)),
+    ),
+    chipTheme: base.chipTheme.copyWith(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      side: BorderSide(color: scheme.outlineVariant),
+    ),
     listTileTheme: const ListTileThemeData(minVerticalPadding: 10),
+    dividerTheme: DividerThemeData(color: scheme.outlineVariant),
   );
 }
 

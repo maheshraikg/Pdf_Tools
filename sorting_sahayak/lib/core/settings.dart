@@ -59,7 +59,7 @@ class Settings extends ChangeNotifier {
   }
 
   /// Last mail category chosen on the Sort screen.
-  String get category => _prefs.getString('category') ?? kCatLetters;
+  String get category => _prefs.getString('category') ?? kCatTD;
 
   set category(String v) {
     _prefs.setString('category', v);

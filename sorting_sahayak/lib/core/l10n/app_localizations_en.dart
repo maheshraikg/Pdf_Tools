@@ -207,15 +207,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Checks PIN against the city/office written on the article';
 
   @override
-  String get defaultScanMode => 'Default scan script';
-
-  @override
-  String get scriptLatin => 'English (Latin)';
-
-  @override
-  String get scriptDevanagari => 'Hindi (Devanagari)';
-
-  @override
   String get categories => 'Mail categories';
 
   @override
@@ -305,6 +296,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get validate => 'Check';
+
+  @override
+  String get catTD => 'TD';
+
+  @override
+  String get catNonTD => 'Non-TD';
+
+  @override
+  String otherModeHint(String mode, String bag) {
+    return 'This PIN is in $mode: $bag';
+  }
 
   @override
   String get enterPin => 'Enter PIN';
@@ -496,6 +498,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unresolved => 'Unresolved';
 
   @override
+  String get noSchemeShort => 'No sorting scheme yet';
+
+  @override
+  String get importShort => 'Import';
+
+  @override
+  String get sampleShort => 'Sample';
+
+  @override
   String get findPinHint => 'Office, village, city, taluk or district';
 
   @override
@@ -579,9 +590,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get torch => 'Torch';
 
   @override
-  String get scanScript => 'Text script';
-
-  @override
   String cameraUnavailable(String error) {
     return 'Camera not available: $error';
   }
@@ -607,7 +615,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scanPrivacy =>
-      'Text is read on the phone with ML Kit. The photo is deleted right after reading. ML Kit reads English and Hindi script; for Kannada addresses the PIN digits are used and you can search the place by hand.';
+      'Text is read on the phone with ML Kit (English / Latin script). The photo is deleted right after reading. For Kannada or Hindi addresses the PIN digits are used and you can search the place by hand.';
 
   @override
   String get noOpenSession =>
@@ -1213,11 +1221,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Type the PIN on the big keypad. After 3 digits you see the sorting district and likely bag; after 6 digits the final bag in its colour. Typing the next digit starts a new PIN. Long-press ⌫ to clear.';
 
   @override
-  String get help3Title => 'Parcels and air parcels';
+  String get help3Title => 'TD and Non-TD';
 
   @override
   String get help3 =>
-      'Choose the mail category at the top. In Air Parcel mode the air label code is shown in huge letters, with the YELLOW AIR / BLUE SURFACE badge, the L2 → L1 hub route and the bag. Use \"Label view\" to show or share a big label.';
+      'Choose TD or Non-TD at the top of the Sort screen. Each rule in your scheme can be marked TD or Non-TD in the Category column (blank = both). If a PIN only has a rule in the other mode, the app tells you which mode and bag.';
 
   @override
   String get help4Title => 'No PIN on the article?';

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import '../../core/app_scope.dart';
 import '../../core/feedback.dart';
 import '../../core/l10n/app_localizations.dart';
+import '../../core/labels.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../data/user_repo.dart';
@@ -154,7 +155,7 @@ class _QuizScreenState extends State<QuizScreen> {
             const SizedBox(height: 8),
             Text('${_i + 1} / ${qs.length} · ${l.scoreN(_score)}', textAlign: TextAlign.center),
             const SizedBox(height: 16),
-            Text(question, style: t.titleMedium, textAlign: TextAlign.center),
+            Text(q.card.category == null ? question : '$question · ${categoryLabel(l, q.card.category!)}', style: t.titleMedium, textAlign: TextAlign.center),
             FittedBox(child: Text(q.card.prompt, style: t.displayMedium?.copyWith(fontWeight: FontWeight.w900, letterSpacing: q.card.isPin ? 4 : 0))),
             const SizedBox(height: 16),
             for (final o in q.options)

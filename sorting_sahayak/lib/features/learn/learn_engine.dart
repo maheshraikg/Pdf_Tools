@@ -10,7 +10,18 @@ import '../../data/scheme_repo.dart';
 enum FlashMode { bag, air, hub }
 
 class LearnCard {
-  const LearnCard({required this.key, required this.prompt, required this.answer, this.answerDetail = '', this.prefix, this.isPin = true});
+  const LearnCard({
+    required this.key,
+    required this.prompt,
+    required this.answer,
+    this.answerDetail = '',
+    this.prefix,
+    this.isPin = true,
+    this.category,
+  });
+
+  /// Mode the question is asked in (TD / Non-TD); null = any.
+  final String? category;
 
   /// Stable id for Leitner boxes, e.g. "bag:574201".
   final String key;
@@ -99,23 +110,24 @@ class LearnEngine {
     return pool.take(n).toList();
   }
 
-  ResolveQuery _q(int pin) {
+  ResolveQuery _q(int pin, String? category) {
     final r = _regions[pin];
-    return ResolveQuery(pin: pin, districtNorms: r?.districts ?? const [], stateNorms: r?.states ?? const []);
+    return ResolveQuery(pin: pin, districtNorms: r?.districts ?? const [], stateNorms: r?.states ?? const [], category: category);
   }
 
   List<LearnCard> cards(FlashMode mode, {Set<int>? onlyPins}) {
     final out = <String, LearnCard>{};
-    void addPin(int pin) {
-      final key = '${mode.name}:$pin';
+    // A card is asked in the mode (TD / Non-TD / …) of the rule it came from.
+    void addPin(int pin, [String? category]) {
+      final key = '${mode.name}:${category ?? ''}:$pin';
       if (out.containsKey(key)) return;
-      final q = _q(pin);
+      final q = _q(pin, category);
       switch (mode) {
         case FlashMode.bag:
           final r = scheme.bagResolver.resolve(q);
           if (r == null || r.level == RuleType.fallback) return;
           final bag = scheme.bagFor(r.rule);
-          out[key] = LearnCard(key: key, prompt: '$pin', answer: bag.code, answerDetail: bag.name, prefix: '$pin'.substring(0, 3));
+          out[key] = LearnCard(key: key, prompt: '$pin', answer: bag.code, answerDetail: bag.name, prefix: '$pin'.substring(0, 3), category: category);
         case FlashMode.air:
           final r = scheme.airResolver.resolve(q);
           if (r == null) return;
@@ -140,9 +152,9 @@ class LearnEngine {
     };
     for (final Matchable r in rules) {
       final m = r.match;
-      if (r.category != null && r.category!.isNotEmpty) continue;
+      final cat = r.category == null || r.category!.isEmpty ? null : r.category;
       for (final p in _samplePins(m)) {
-        addPin(p);
+        addPin(p, cat);
       }
       // Name-based rules: office / district / state prompts.
       final name = switch (r) {
@@ -152,14 +164,14 @@ class LearnEngine {
         _ => null,
       };
       if (name != null && (m.type == RuleType.office || m.type == RuleType.district || m.type == RuleType.state)) {
-        final key = '${mode.name}:${m.key}';
+        final key = '${mode.name}:${cat ?? ''}:${m.key}';
         final answer = switch (r) {
           BagRule b => (scheme.bagFor(b).code, scheme.bagFor(b).name),
           AirCodeRule a => (a.airCode, a.stationName),
           HubRule h => (h.route, h.remarks),
           _ => ('', ''),
         };
-        out[key] = LearnCard(key: key, prompt: name, answer: answer.$1, answerDetail: answer.$2, isPin: false);
+        out[key] = LearnCard(key: key, prompt: name, answer: answer.$1, answerDetail: answer.$2, isPin: false, category: cat);
       }
     }
     return out.values.toList();

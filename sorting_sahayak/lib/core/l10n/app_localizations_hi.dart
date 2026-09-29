@@ -208,15 +208,6 @@ class AppLocalizationsHi extends AppLocalizations {
       'वस्तु पर लिखे शहर/डाकघर से पिन की जाँच करता है';
 
   @override
-  String get defaultScanMode => 'डिफ़ॉल्ट स्कैन लिपि';
-
-  @override
-  String get scriptLatin => 'अंग्रेज़ी (लैटिन)';
-
-  @override
-  String get scriptDevanagari => 'हिन्दी (देवनागरी)';
-
-  @override
   String get categories => 'डाक श्रेणियाँ';
 
   @override
@@ -306,6 +297,17 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get validate => 'जाँचें';
+
+  @override
+  String get catTD => 'TD';
+
+  @override
+  String get catNonTD => 'नॉन-TD';
+
+  @override
+  String otherModeHint(String mode, String bag) {
+    return 'यह पिन $mode में है: $bag';
+  }
 
   @override
   String get enterPin => 'पिन दर्ज करें';
@@ -496,6 +498,15 @@ class AppLocalizationsHi extends AppLocalizations {
   String get unresolved => 'अनसुलझा';
 
   @override
+  String get noSchemeShort => 'अभी कोई सॉर्टिंग स्कीम नहीं';
+
+  @override
+  String get importShort => 'आयात';
+
+  @override
+  String get sampleShort => 'नमूना';
+
+  @override
   String get findPinHint => 'डाकघर, गाँव, शहर, तहसील या ज़िला';
 
   @override
@@ -578,9 +589,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get torch => 'टॉर्च';
 
   @override
-  String get scanScript => 'टेक्स्ट लिपि';
-
-  @override
   String cameraUnavailable(String error) {
     return 'कैमरा उपलब्ध नहीं: $error';
   }
@@ -606,7 +614,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get scanPrivacy =>
-      'टेक्स्ट फ़ोन पर ML Kit से पढ़ा जाता है। पढ़ते ही फ़ोटो हटा दी जाती है। ML Kit अंग्रेज़ी और हिन्दी लिपि पढ़ता है; कन्नड़ पतों के लिए पिन अंक उपयोग होते हैं और स्थान हाथ से खोज सकते हैं।';
+      'टेक्स्ट फ़ोन पर ML Kit से पढ़ा जाता है (अंग्रेज़ी / लैटिन लिपि)। पढ़ते ही फ़ोटो हटा दी जाती है। कन्नड़ या हिन्दी पतों के लिए पिन अंक उपयोग होते हैं और स्थान हाथ से खोज सकते हैं।';
 
   @override
   String get noOpenSession =>
@@ -1214,11 +1222,11 @@ class AppLocalizationsHi extends AppLocalizations {
       'बड़े कीपैड पर पिन टाइप करें। 3 अंकों के बाद सॉर्टिंग ज़िला और संभावित बैग; 6 अंकों के बाद अंतिम बैग उसके रंग में। अगला अंक टाइप करते ही नया पिन शुरू। साफ़ करने के लिए ⌫ देर तक दबाएं।';
 
   @override
-  String get help3Title => 'पार्सल और एयर पार्सल';
+  String get help3Title => 'TD और नॉन-TD';
 
   @override
   String get help3 =>
-      'ऊपर डाक श्रेणी चुनें। एयर पार्सल मोड में एयर लेबल कोड बहुत बड़े अक्षरों में, पीला AIR / नीला SURFACE बैज, L2 → L1 हब मार्ग और बैग दिखता है। बड़ा लेबल दिखाने या शेयर करने के लिए \"लेबल दृश्य\" उपयोग करें।';
+      'सॉर्ट स्क्रीन के ऊपर TD या नॉन-TD चुनें। आपकी स्कीम का हर नियम Category कॉलम में TD या Non-TD चिह्नित किया जा सकता है (खाली = दोनों)। अगर पिन का नियम केवल दूसरे मोड में है, तो ऐप बताता है कि कौन सा मोड और बैग।';
 
   @override
   String get help4Title => 'वस्तु पर पिन नहीं?';

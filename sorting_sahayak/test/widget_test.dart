@@ -53,7 +53,7 @@ void main() {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 2.5;
     addTearDown(tester.view.reset);
-    final h = await Harness.create(tester, prefs: {'category': kCatAirParcel});
+    final h = await Harness.create(tester, parcelExtras: true, prefs: {'category': kCatAirParcel});
     await tester.pumpWidget(h.wrap(const SortScreen()));
     await settle(tester);
     await typePin(tester, '560001');
@@ -63,7 +63,6 @@ void main() {
     expect(badge.connectivity.label, 'Air');
     expect(find.text('AIR'), findsOneWidget);
     expect(find.textContaining('Direct to L1 hub: Bengaluru L1 (demo)'), findsOneWidget);
-    expect(find.text('AP-01'), findsOneWidget);
 
     // No air code → clear warning; Surface badge from DMSL.
     await typePin(tester, '574201');
@@ -71,12 +70,19 @@ void main() {
     expect(find.text('SURFACE'), findsOneWidget);
     expect(find.textContaining('L2: Puttur L2 (demo)'), findsOneWidget);
 
-    // Switch category to Letters: no air code card.
-    await tester.tap(find.text('Ordinary/Letters'));
+    // Switch to TD: no air code card; TD bag shown.
+    await tester.tap(find.byKey(const ValueKey('mode_TD')));
     await settle(tester);
     expect(find.text('Air label code'), findsNothing);
     expect(find.text('No air code – check with supervisor'), findsNothing);
-    expect(h.settings.category, kCatLetters);
+    expect(h.settings.category, kCatTD);
+    expect(find.text('Bag 12'), findsWidgets);
+    // Non-TD PIN in TD mode names the other mode.
+    await typePin(tester, '560001');
+    expect(find.text('This PIN is in Non-TD: NT-40 – Bengaluru'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('mode_Non-TD')));
+    await settle(tester);
+    expect(find.text('NT-40'), findsWidgets);
   });
 
   testWidgets('Sort screen: Kannada UI and no-scheme warning', (tester) async {
@@ -87,7 +93,9 @@ void main() {
     await tester.pumpWidget(h.wrap(const SortScreen(), locale: const Locale('kn')));
     await settle(tester);
     expect(find.text('ಸಾರ್ಟ್'), findsOneWidget);
-    expect(find.textContaining('ಯಾವುದೇ ಸಾರ್ಟಿಂಗ್ ಸ್ಕೀಮ್ ಸಕ್ರಿಯವಾಗಿಲ್ಲ'), findsWidgets);
+    expect(find.text('ಇನ್ನೂ ಸಾರ್ಟಿಂಗ್ ಸ್ಕೀಮ್ ಇಲ್ಲ'), findsOneWidget);
+    expect(find.text('TD'), findsOneWidget);
+    expect(find.text('ನಾನ್-TD'), findsOneWidget);
   });
 
   testWidgets('Find PIN: fuzzy / Kannada search shows offices with bags', (tester) async {
@@ -103,7 +111,7 @@ void main() {
     await settle(tester);
     expect(find.text('Puttur SO'), findsWidgets);
     expect(find.textContaining('574201'), findsWidgets);
-    expect(find.textContaining('Bag: Bag 12 – Puttur SO'), findsOneWidget);
+    expect(find.textContaining('Bag: Bag 12 – Puttur Line'), findsWidgets);
 
     await tester.enterText(find.byType(TextField).first, 'ಪುತ್ತೂರು');
     await tester.pump(const Duration(milliseconds: 200));

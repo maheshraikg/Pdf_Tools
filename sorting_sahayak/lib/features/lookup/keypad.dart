@@ -18,25 +18,28 @@ class NumericKeypad extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final h = 58.0 * scale;
+    final cs = Theme.of(context).colorScheme;
     Widget key(String label, {VoidCallback? onTap, Widget? child, String? semantics, Color? bg}) => Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(3),
+        padding: const EdgeInsets.all(4),
         child: Semantics(
           button: true,
           label: semantics ?? label,
           child: Material(
-            color: bg ?? Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
+            color: bg ?? cs.surfaceContainerLowest,
+            elevation: 1,
+            shadowColor: Colors.black26,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14), side: BorderSide(color: cs.outlineVariant)),
             child: InkWell(
               key: ValueKey('key_$label'),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
               onTap: onTap ?? () => onDigit(label),
               onLongPress: label == '⌫' ? onClear : null,
               child: SizedBox(
                 height: h,
                 child: Center(
                   child: child ??
-                      Text(label, style: TextStyle(fontSize: 30 * scale.clamp(0.8, 1.3), fontWeight: FontWeight.w700)),
+                      Text(label, style: TextStyle(fontSize: 30 * scale.clamp(0.8, 1.3), fontWeight: FontWeight.w800, color: cs.primary)),
                 ),
               ),
             ),
@@ -51,11 +54,11 @@ class NumericKeypad extends StatelessWidget {
           Row(children: [for (final d in row) key(d)]),
         Row(
           children: [
-            key('C', onTap: onClear, semantics: l.clear, bg: Theme.of(context).colorScheme.secondaryContainer,
-                child: Text(l.clear, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700))),
+            key('C', onTap: onClear, semantics: l.clear, bg: cs.secondaryContainer,
+                child: Text(l.clear, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: cs.onSecondaryContainer))),
             key('0'),
-            key('⌫', onTap: onBackspace, semantics: l.backspace, bg: Theme.of(context).colorScheme.secondaryContainer,
-                child: const Icon(Icons.backspace_outlined, size: 30)),
+            key('⌫', onTap: onBackspace, semantics: l.backspace, bg: cs.secondaryContainer,
+                child: Icon(Icons.backspace_outlined, size: 30, color: cs.onSecondaryContainer)),
           ],
         ),
       ],
@@ -89,7 +92,7 @@ class PinDisplay extends StatelessWidget {
               ),
               child: Text(
                 i < digits.length ? digits[i] : '',
-                style: TextStyle(fontSize: 38, fontWeight: FontWeight.w900, color: error ? c.error : null),
+                style: TextStyle(fontSize: 38, fontWeight: FontWeight.w900, color: error ? c.error : c.primary),
               ),
             ),
             if (i == 2) const SizedBox(width: 14) else const SizedBox(width: 4),

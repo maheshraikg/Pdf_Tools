@@ -64,7 +64,7 @@ const Map<ImportField, List<String>> kHeaderSynonyms = {
   ImportField.office: ['office', 'officename', 'postoffice', 'po', 'place', 'destination', 'ಕಚೇರಿ', 'ಅಂಚೆಕಚೇರಿ', 'ಸ್ಥಳ', 'कार्यालय', 'डाकघर', 'स्थान'],
   ImportField.district: ['district', 'districtname', 'dist', 'ಜಿಲ್ಲೆ', 'जिला'],
   ImportField.state: ['state', 'statename', 'ರಾಜ್ಯ', 'राज्य'],
-  ImportField.bagCode: ['bag', 'bagno', 'bagnumber', 'bagcode', 'bagnum', 'bagid', 'ಚೀಲ', 'ಚೀಲಸಂಖ್ಯೆ', 'ಬ್ಯಾಗ್', 'बैग', 'थैला', 'थैलासंख्या', 'बैगनं'],
+  ImportField.bagCode: ['bag', 'bagno', 'bagnumber', 'bagcode', 'bagnum', 'bagid', 'line', 'linename', 'route', 'beat', 'sortingline', 'ಚೀಲ', 'ಚೀಲಸಂಖ್ಯೆ', 'ಬ್ಯಾಗ್', 'बैग', 'थैला', 'थैलासंख्या', 'बैगनं'],
   ImportField.bagName: ['bagname', 'bagdescription', 'bagtitle', 'closedto', 'ಚೀಲಹೆಸರು', 'ಬ್ಯಾಗ್ಹೆಸರು', 'बैगकानाम', 'थैलेकानाम'],
   ImportField.section: ['section', 'sectionno', 'set', 'ವಿಭಾಗ', 'सेक्शन', 'अनुभाग'],
   ImportField.remarks: ['remarks', 'remark', 'notes', 'note', 'comments', 'ಷರಾ', 'ಟಿಪ್ಪಣಿ', 'टिप्पणी', 'अभ्युक्ति'],
@@ -279,6 +279,11 @@ _MatchCells _parseMatch(String Function(ImportField) cell, {required bool allowO
   if (fromRaw.isNotEmpty || toRaw.isNotEmpty) {
     final r = range(fromRaw, toRaw);
     return r != null ? _MatchCells(r, null) : _MatchCells(null, 'Invalid PIN range "$fromRaw" – "$toRaw"');
+  }
+  // Office names typed into the PIN column ("Sampaje" under "Pincode").
+  if (pinRaw.isNotEmpty && !isDefaultWord(pinRaw) && RegExp(r'[A-Za-z\u0C80-\u0CFF\u0900-\u097F]{3}').hasMatch(pinRaw) &&
+      allowOffice && !RegExp(r'\d{3}').hasMatch(pinRaw)) {
+    return _MatchCells(MatchSpec(type: RuleType.office, officeNorm: normalizePlace(pinRaw)), null, officeName: pinRaw);
   }
   if (pinRaw.isNotEmpty && !isDefaultWord(pinRaw)) {
     final rm = _pinRange.firstMatch(pinRaw);

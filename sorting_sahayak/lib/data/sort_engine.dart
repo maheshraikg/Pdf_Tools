@@ -26,7 +26,9 @@ class SortResult {
     this.hub,
     this.connectivity,
     this.connectivityDefaulted = false,
-    this.category = kCatLetters,
+    this.category = kCatTD,
+    this.otherBag,
+    this.otherCategory,
   });
 
   final String digits;
@@ -50,6 +52,12 @@ class SortResult {
   /// True when no rule gave Air/Surface and Surface was assumed.
   final bool connectivityDefaulted;
   final String category;
+
+  /// When the chosen mode (TD / Non-TD) has no rule for this PIN but the
+  /// other mode does: that bag, so the screen can say "this is a Non-TD
+  /// article → Bag X".
+  final Bag? otherBag;
+  final String? otherCategory;
 
   bool get complete => digits.length == 6;
   bool get valid => PinUtils.isValid(digits);
@@ -122,6 +130,25 @@ class SortEngine {
     final s = scheme;
     if (s == null) return SortResult(digits: digits, breakdown: bd, offices: offices, category: category);
     final bag = s.bagResolver.resolve(q);
+    Bag? otherBag;
+    String? otherCategory;
+    if (bag == null || bag.level == RuleType.fallback) {
+      for (final c in kBuiltInCategories) {
+        if (c == category) continue;
+        final r = s.bagResolver.resolve(ResolveQuery(
+          pin: q.pin,
+          officeNorms: q.officeNorms,
+          districtNorms: q.districtNorms,
+          stateNorms: q.stateNorms,
+          category: c,
+        ));
+        if (r != null && (r.rule.category == c) && (bag == null || r.level != RuleType.fallback)) {
+          otherBag = s.bagFor(r.rule);
+          otherCategory = c;
+          break;
+        }
+      }
+    }
     final parcel = isParcelCategory(category);
     final air = isAirCategory(category) ? s.airResolver.resolve(q) : null;
     final hub = parcel ? s.hubResolver.resolve(q) : null;
@@ -146,6 +173,8 @@ class SortEngine {
       connectivity: conn,
       connectivityDefaulted: defaulted,
       category: category,
+      otherBag: otherBag,
+      otherCategory: otherCategory,
     );
   }
 }

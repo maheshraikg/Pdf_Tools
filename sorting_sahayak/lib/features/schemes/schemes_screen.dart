@@ -188,8 +188,6 @@ class _SchemesScreenState extends State<SchemesScreen> {
                             },
                             itemBuilder: (_) => [
                               if (!s.active) PopupMenuItem(value: 'active', child: Text(l.setActive)),
-                              PopupMenuItem(value: 'air', child: Text(l.importAirCodes)),
-                              PopupMenuItem(value: 'dmsl', child: Text(l.importDmsl)),
                               PopupMenuItem(value: 'xlsx', child: Text(l.exportXlsx)),
                               PopupMenuItem(value: 'csv', child: Text(l.exportCsv)),
                               PopupMenuItem(value: 'delete', child: Text(l.delete)),

@@ -472,24 +472,6 @@ abstract class AppLocalizations {
   /// **'Checks PIN against the city/office written on the article'**
   String get mismatchFieldSettingSub;
 
-  /// No description provided for @defaultScanMode.
-  ///
-  /// In en, this message translates to:
-  /// **'Default scan script'**
-  String get defaultScanMode;
-
-  /// No description provided for @scriptLatin.
-  ///
-  /// In en, this message translates to:
-  /// **'English (Latin)'**
-  String get scriptLatin;
-
-  /// No description provided for @scriptDevanagari.
-  ///
-  /// In en, this message translates to:
-  /// **'Hindi (Devanagari)'**
-  String get scriptDevanagari;
-
   /// No description provided for @categories.
   ///
   /// In en, this message translates to:
@@ -657,6 +639,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Check'**
   String get validate;
+
+  /// No description provided for @catTD.
+  ///
+  /// In en, this message translates to:
+  /// **'TD'**
+  String get catTD;
+
+  /// No description provided for @catNonTD.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-TD'**
+  String get catNonTD;
+
+  /// No description provided for @otherModeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This PIN is in {mode}: {bag}'**
+  String otherModeHint(String mode, String bag);
 
   /// No description provided for @enterPin.
   ///
@@ -1000,6 +1000,24 @@ abstract class AppLocalizations {
   /// **'Unresolved'**
   String get unresolved;
 
+  /// No description provided for @noSchemeShort.
+  ///
+  /// In en, this message translates to:
+  /// **'No sorting scheme yet'**
+  String get noSchemeShort;
+
+  /// No description provided for @importShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get importShort;
+
+  /// No description provided for @sampleShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample'**
+  String get sampleShort;
+
   /// No description provided for @findPinHint.
   ///
   /// In en, this message translates to:
@@ -1150,12 +1168,6 @@ abstract class AppLocalizations {
   /// **'Torch'**
   String get torch;
 
-  /// No description provided for @scanScript.
-  ///
-  /// In en, this message translates to:
-  /// **'Text script'**
-  String get scanScript;
-
   /// No description provided for @cameraUnavailable.
   ///
   /// In en, this message translates to:
@@ -1201,7 +1213,7 @@ abstract class AppLocalizations {
   /// No description provided for @scanPrivacy.
   ///
   /// In en, this message translates to:
-  /// **'Text is read on the phone with ML Kit. The photo is deleted right after reading. ML Kit reads English and Hindi script; for Kannada addresses the PIN digits are used and you can search the place by hand.'**
+  /// **'Text is read on the phone with ML Kit (English / Latin script). The photo is deleted right after reading. For Kannada or Hindi addresses the PIN digits are used and you can search the place by hand.'**
   String get scanPrivacy;
 
   /// No description provided for @noOpenSession.
@@ -2269,13 +2281,13 @@ abstract class AppLocalizations {
   /// No description provided for @help3Title.
   ///
   /// In en, this message translates to:
-  /// **'Parcels and air parcels'**
+  /// **'TD and Non-TD'**
   String get help3Title;
 
   /// No description provided for @help3.
   ///
   /// In en, this message translates to:
-  /// **'Choose the mail category at the top. In Air Parcel mode the air label code is shown in huge letters, with the YELLOW AIR / BLUE SURFACE badge, the L2 → L1 hub route and the bag. Use \"Label view\" to show or share a big label.'**
+  /// **'Choose TD or Non-TD at the top of the Sort screen. Each rule in your scheme can be marked TD or Non-TD in the Category column (blank = both). If a PIN only has a rule in the other mode, the app tells you which mode and bag.'**
   String get help3;
 
   /// No description provided for @help4Title.

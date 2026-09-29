@@ -136,7 +136,7 @@ class _SchemeEditorState extends State<SchemeEditor> {
             isScrollable: true,
             labelColor: Theme.of(context).colorScheme.onPrimary,
             unselectedLabelColor: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.7),
-            indicatorColor: kAccentAmber,
+            indicatorColor: kAmber,
             tabs: [
               Tab(text: '${l.rules} (${_rules.length})'),
               Tab(text: '${l.bags} (${_bags.length})'),

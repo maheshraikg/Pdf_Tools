@@ -162,36 +162,32 @@ class SortScreenState extends State<SortScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Mail category toggle.
-            SizedBox(
-              height: 52,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                children: [
-                  for (final c in services.categories)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 6),
-                      child: ChoiceChip(
-                        label: Text(categoryLabel(l, c)),
-                        selected: settings.category == c,
-                        onSelected: (_) {
-                          settings.category = c;
-                          _lastSpoken = '';
-                          _resolve();
-                        },
-                      ),
-                    ),
-                ],
+            // TD / Non-TD (plus any custom categories).
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
+              child: _ModeSwitch(
+                modes: services.categories,
+                selected: services.categories.contains(settings.category) ? settings.category : services.categories.first,
+                onChanged: (c) {
+                  settings.category = c;
+                  _lastSpoken = '';
+                  _resolve();
+                },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+            Container(
+              margin: const EdgeInsets.fromLTRB(12, 6, 12, 0),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+              ),
               child: Row(
                 children: [
-                  IconButton.filledTonal(iconSize: 30, tooltip: l.voiceInput, onPressed: _voice, icon: const Icon(Icons.mic)),
+                  IconButton.filledTonal(iconSize: 28, tooltip: l.voiceInput, onPressed: _voice, icon: const Icon(Icons.mic)),
                   Expanded(child: FittedBox(fit: BoxFit.scaleDown, child: PinDisplay(digits: _digits, error: r != null && r.complete && !r.valid))),
-                  IconButton.filledTonal(iconSize: 30, tooltip: l.scanAddress, onPressed: _scan, icon: const Icon(Icons.document_scanner_outlined)),
+                  IconButton.filledTonal(iconSize: 28, tooltip: l.scanAddress, onPressed: _scan, icon: const Icon(Icons.document_scanner_outlined)),
                 ],
               ),
             ),
@@ -215,8 +211,10 @@ class SortScreenState extends State<SortScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(12),
                 children: [
-                  if (scheme == null && _digits.isEmpty)
-                    WarningBanner(text: l.noActiveScheme, icon: Icons.rule_folder_outlined),
+                  if (scheme == null) ...[
+                    const NoSchemeBar(),
+                    const SizedBox(height: 10),
+                  ],
                   if (_placeOpen && _digits.length == 6 && _place.text.trim().length >= 2) ...[
                     MismatchView(pin: _digits, place: _place.text, onPickPin: (o) => setPin(o.pin)),
                     const SizedBox(height: 10),
@@ -265,6 +263,62 @@ class SortScreenState extends State<SortScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Big segmented TD / Non-TD switch; scrolls when custom categories exist.
+class _ModeSwitch extends StatelessWidget {
+  const _ModeSwitch({required this.modes, required this.selected, required this.onChanged});
+
+  final List<String> modes;
+  final String selected;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final c = Theme.of(context).colorScheme;
+    Widget seg(String m) {
+      final on = m == selected;
+      return Semantics(
+        selected: on,
+        button: true,
+        label: categoryLabel(l, m),
+        child: Material(
+          color: on ? c.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          child: InkWell(
+            key: ValueKey('mode_$m'),
+            borderRadius: BorderRadius.circular(12),
+            onTap: () => onChanged(m),
+            child: Container(
+              height: 46,
+              padding: const EdgeInsets.symmetric(horizontal: 18),
+              alignment: Alignment.center,
+              child: Text(
+                categoryLabel(l, m),
+                maxLines: 1,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: on ? c.onPrimary : c.onSurfaceVariant),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    final box = BoxDecoration(color: c.surfaceContainerHigh, borderRadius: BorderRadius.circular(14));
+    if (modes.length <= 3) {
+      return Container(
+        padding: const EdgeInsets.all(4),
+        decoration: box,
+        child: Row(children: [for (final m in modes) Expanded(child: seg(m))]),
+      );
+    }
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: box,
+      child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: [for (final m in modes) seg(m)])),
     );
   }
 }

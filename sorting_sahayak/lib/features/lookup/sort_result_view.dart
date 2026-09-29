@@ -8,9 +8,15 @@ import '../../core/app_scope.dart';
 import '../../core/constants.dart';
 import '../../core/feedback.dart';
 import '../../core/l10n/app_localizations.dart';
+import '../../core/labels.dart';
 import '../../core/pin_utils.dart';
 import '../../core/widgets.dart';
+import '../../core/files.dart';
+import '../../data/import/scheme_import.dart';
+import '../../data/import/scheme_io.dart';
+import '../../data/models/office.dart';
 import '../../data/sort_engine.dart';
+import '../schemes/import_wizard.dart';
 
 class SortResultView extends StatelessWidget {
   const SortResultView({super.key, required this.result, this.showBreakdown = true});
@@ -74,13 +80,24 @@ class SortResultView extends StatelessWidget {
         children.add(gap);
       }
       if (scheme == null) {
-        children.add(WarningBanner(text: l.noActiveScheme, icon: Icons.rule_folder_outlined));
-        children.add(gap);
+        // No scheme yet: the delivery office is the main answer.
+        final o = r.offices.firstOrNull;
+        if (o != null) {
+          children.add(OfficeHeadline(office: o, more: r.offices.length - 1));
+          children.add(gap);
+        }
       } else if (r.bag != null) {
         children.add(BagCard(bag: r.bag!, rule: r.bagRule, level: r.bagLevel));
         children.add(gap);
-      } else {
+      } else if (r.otherBag == null) {
         children.add(WarningBanner(text: l.noBagRule));
+        children.add(gap);
+      }
+      if (scheme != null && r.otherBag != null) {
+        children.add(WarningBanner(
+          text: l.otherModeHint(categoryLabel(l, r.otherCategory!), r.otherBag!.label),
+          icon: Icons.swap_horiz,
+        ));
         children.add(gap);
       }
       if (r.notInDirectory) {
@@ -117,4 +134,73 @@ String spokenResult(AppLocalizations l, SortResult r) {
   if (r.bag != null) parts.add(AppFeedback.spellDigits(r.bag!.code));
   if (r.bag == null && r.air == null && PinUtils.isValid(r.digits)) parts.add(l.noBagRule);
   return parts.join('. ');
+}
+
+/// Big office name + district for a PIN (used when no scheme is active).
+class OfficeHeadline extends StatelessWidget {
+  const OfficeHeadline({super.key, required this.office, this.more = 0});
+
+  final Office office;
+  final int more;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final c = Theme.of(context).colorScheme;
+    final t = Theme.of(context).textTheme;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [c.primary, Color.lerp(c.primary, c.secondary, 0.6)!]),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text('${office.officeName} ${office.officeType}',
+                style: t.headlineMedium?.copyWith(color: c.onPrimary, fontWeight: FontWeight.w900)),
+          ),
+          Text('${office.district}, ${office.state}', style: t.titleMedium?.copyWith(color: c.onPrimary)),
+          if (more > 0) Text(l.andMore(more), style: t.bodyMedium?.copyWith(color: c.onPrimary.withValues(alpha: 0.85))),
+        ],
+      ),
+    );
+  }
+}
+
+/// Compact "no scheme" bar with direct actions.
+class NoSchemeBar extends StatelessWidget {
+  const NoSchemeBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final c = Theme.of(context).colorScheme;
+    final services = context.services;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
+      decoration: BoxDecoration(color: c.secondaryContainer, borderRadius: BorderRadius.circular(14)),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline, color: c.onSecondaryContainer),
+          const SizedBox(width: 8),
+          Expanded(child: Text(l.noSchemeShort, style: TextStyle(color: c.onSecondaryContainer, fontWeight: FontWeight.w700))),
+          TextButton(
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ImportWizard(kind: ImportKind.bagRules))),
+            child: Text(l.importShort),
+          ),
+          TextButton(
+            onPressed: () async {
+              await installSampleScheme(services.schemes, loadAssetBytes);
+              await services.reloadActive();
+            },
+            child: Text(l.sampleShort),
+          ),
+        ],
+      ),
+    );
+  }
 }

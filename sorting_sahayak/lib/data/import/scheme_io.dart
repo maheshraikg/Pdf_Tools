@@ -22,15 +22,19 @@ List<String> get _palette => kBagPalette.map(colourToHex).toList();
 
 /// Installs the bundled SAMPLE scheme (bag rules, air codes, DMSL).
 /// [loadAsset] returns the bytes of an asset path.
-Future<int> installSampleScheme(SchemeRepo repo, Future<Uint8List> Function(String path) loadAsset) async {
+/// [withParcelExtras] also installs the SAMPLE air code sheet and DMSL
+/// (only useful with custom parcel / air categories).
+Future<int> installSampleScheme(
+  SchemeRepo repo,
+  Future<Uint8List> Function(String path) loadAsset, {
+  bool withParcelExtras = false,
+}) async {
   List<List<String>> sheet(Uint8List b, String name) {
     final t = readTable(b, name);
     return t.sheets[t.defaultSheet]!;
   }
 
   final scheme = autoImport<BagRule>(sheet(await loadAsset('assets/samples/sample_scheme.csv'), 'x.csv'), ImportKind.bagRules);
-  final air = autoImport<AirCodeRule>(sheet(await loadAsset('assets/samples/sample_air_codes.csv'), 'x.csv'), ImportKind.airCodes);
-  final dmsl = autoImport<HubRule>(sheet(await loadAsset('assets/samples/sample_dmsl.csv'), 'x.csv'), ImportKind.dmsl);
   final id = await repo.saveScheme(
     const Scheme(
       name: '$kSampleMarker – demo scheme',
@@ -41,8 +45,12 @@ Future<int> installSampleScheme(SchemeRepo repo, Future<Uint8List> Function(Stri
     scheme.rules,
     completeBags(scheme.rules, scheme.bags, _palette),
   );
-  await repo.replaceAirCodes(id, air.rules);
-  await repo.addDmslVersion(id, 'SAMPLE-2026-10', DateTime(2026, 10, 7), dmsl.rules);
+  if (withParcelExtras) {
+    final air = autoImport<AirCodeRule>(sheet(await loadAsset('assets/samples/sample_air_codes.csv'), 'x.csv'), ImportKind.airCodes);
+    final dmsl = autoImport<HubRule>(sheet(await loadAsset('assets/samples/sample_dmsl.csv'), 'x.csv'), ImportKind.dmsl);
+    await repo.replaceAirCodes(id, air.rules);
+    await repo.addDmslVersion(id, 'SAMPLE-2026-10', DateTime(2026, 10, 7), dmsl.rules);
+  }
   return id;
 }
 

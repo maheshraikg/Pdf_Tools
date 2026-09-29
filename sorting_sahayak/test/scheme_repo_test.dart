@@ -16,7 +16,7 @@ void main() {
 
   setUp(() async {
     repo = SchemeRepo(await memoryUserDb());
-    await installSampleScheme(repo, (p) async => File(p).readAsBytesSync());
+    await installSampleScheme(repo, (p) async => File(p).readAsBytesSync(), withParcelExtras: true);
     engine = SortEngine(await fixtureRepo(), await repo.loadActive());
   });
 
@@ -28,22 +28,34 @@ void main() {
     expect((await repo.dmslVersions(s.single.id!)).single.active, isTrue);
   });
 
-  test('sort engine: letters', () async {
-    final r = await engine.resolvePin('574201', category: kCatLetters);
+  test('sort engine: TD / Non-TD', () async {
+    final r = await engine.resolvePin('574201', category: kCatTD);
     expect(r.bag!.code, 'Bag 12');
     expect(r.bag!.colour, '#D32F2F');
     expect(r.bagLevel, RuleType.exact);
     expect(r.offices.single.officeName, 'Puttur');
     expect(r.connectivity, isNull);
-    expect((await engine.resolvePin('574215', category: kCatLetters)).bag!.code, 'Bag 15');
-    expect((await engine.resolvePin('671121', category: kCatLetters)).bag!.code, 'Bag 60');
-    expect((await engine.resolvePin('110001', category: kCatLetters)).bag!.code, 'Bag 99');
-    final nf = await engine.resolvePin('574999', category: kCatLetters);
+    expect((await engine.resolvePin('574215', category: kCatTD)).bag!.code, 'Bag 15');
+    expect((await engine.resolvePin('671121', category: kCatNonTD)).bag!.code, 'NT-61');
+    expect((await engine.resolvePin('110001', category: kCatNonTD)).bag!.code, 'NT-11');
+    expect((await engine.resolvePin('999999', category: kCatNonTD)).bag!.code, 'NT-99');
+    // A Non-TD PIN typed in TD mode: no TD bag, but the other mode is named.
+    final other = await engine.resolvePin('560001', category: kCatTD);
+    expect(other.bag, isNull);
+    expect(other.otherBag!.code, 'NT-40');
+    expect(other.otherCategory, kCatNonTD);
+    // A PIN only the Non-TD default covers points to its TD bag instead.
+    final back = await engine.resolvePin('576101', category: kCatNonTD);
+    expect(back.bag!.code, 'NT-30'); // prefix 57
+    expect(back.otherBag, isNull);
+    final dflt = await engine.resolvePin('900001', category: kCatNonTD);
+    expect(dflt.bag!.code, 'NT-99');
+    final nf = await engine.resolvePin('574999', category: kCatTD);
     expect(nf.notInDirectory, isTrue);
   });
 
   test('sort engine: partial PIN gives likely bag', () async {
-    final r = await engine.resolvePin('576', category: kCatLetters);
+    final r = await engine.resolvePin('576', category: kCatTD);
     expect(r.likelyBag!.code, 'Bag 20');
     expect(r.prefixSummary!.districts, contains('Udupi'));
     expect(r.possibleBags.map((b) => b.code), containsAll(['Bag 21', 'Bag 22', 'Bag 24']));
@@ -56,7 +68,6 @@ void main() {
     expect(r.hub!.rule.l1Hub, contains('Bengaluru L1'));
     expect(r.connectivity, Connectivity.air);
     expect(r.connectivityDefaulted, isFalse);
-    expect(r.bag!.code, 'AP-01');
     final noAir = await engine.resolvePin('574201', category: kCatAirParcel);
     expect(noAir.air, isNull);
   });
@@ -65,9 +76,6 @@ void main() {
     final r = await engine.resolvePin('574201', category: kCatParcel);
     expect(r.connectivity, Connectivity.surface);
     expect(r.hub!.rule.l2Hub, contains('Puttur L2'));
-    expect(r.bag!.code, 'Bag 12'); // exact letters rule beats the parcel prefix rule
-    final p = await engine.resolvePin('574220', category: kCatParcel);
-    expect(p.bag!.code, 'Bag 12'); // range 574201–574299
     final dflt = await engine.resolvePin('400001', category: kCatParcel);
     expect(dflt.connectivityDefaulted, isTrue);
     expect(dflt.connectivity, Connectivity.surface);
@@ -78,7 +86,7 @@ void main() {
   test('resolveOffice for articles without PIN', () async {
     final dir = await fixtureRepo();
     final hits = await dir.search('Sullia');
-    final r = engine.resolveOffice(hits.first.office, category: kCatLetters);
+    final r = engine.resolveOffice(hits.first.office, category: kCatTD);
     expect(r.bag!.code, 'Bag 14');
   });
 

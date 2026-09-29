@@ -19,36 +19,37 @@ void main() {
     final db = await memoryUserDb();
     final repo = SchemeRepo(db);
     user = UserRepo(db);
-    await installSampleScheme(repo, (p) async => File(p).readAsBytesSync());
+    await installSampleScheme(repo, (p) async => File(p).readAsBytesSync(), withParcelExtras: true);
     scheme = (await repo.loadActive())!;
     engine = SortEngine(await fixtureRepo(), scheme);
   });
 
   test('counts per bag, unresolved entries, undo', () async {
-    final id = await user.startSession(name: 'Morning', date: '2026-09-29', category: kCatLetters);
+    final id = await user.startSession(name: 'Morning', date: '2026-09-29', category: kCatTD);
     for (final p in ['574201', '574202', '576101', '12345', '574201', '999999']) {
-      await user.addEntry(id, await makeBulkEntry(engine, p, kCatLetters));
+      await user.addEntry(id, await makeBulkEntry(engine, p, kCatTD));
     }
     var entries = await user.entries(id);
     var s = summarize(entries, bagOrder: scheme.bagOrder);
     expect(s.total, 6);
     expect(s.byBag['Bag 12'], 3);
     expect(s.byBag['Bag 21'], 1);
-    expect(s.byBag['Bag 99'], 1); // 999999: no PIN rule → default
-    expect(s.unresolved.single.raw, '12345');
+    // 12345 is not a PIN; 999999 has no TD rule (it is Non-TD).
+    expect(s.unresolved.map((e) => e.raw), ['12345', '999999']);
     // undo last
     await user.deleteEntry(entries.last.id!);
     entries = await user.entries(id);
     s = summarize(entries, bagOrder: scheme.bagOrder);
     expect(s.total, 5);
+    expect(s.unresolved.single.raw, '12345');
     final sessions = await user.sessions();
     expect(sessions.single.count, 5);
     final text = summaryText(sessions.single, s, bags: scheme.bags, labels: const {
       'title': 'Session', 'date': 'Date', 'scheme': 'Scheme', 'category': 'Category', 'total': 'Total', //
       'unresolved': 'Unresolved', 'bags': 'Bags', 'air': 'Air', 'connectivity': 'Conn', 'hubs': 'Hubs',
     });
-    expect(text, contains('Bag 12 – Puttur SO'));
-    expect(summaryCsv(entries, s, scheme.bags), contains('Bag 12,Puttur SO,3'));
+    expect(text, contains('Bag 12 – Puttur Line'));
+    expect(summaryCsv(entries, s, scheme.bags), contains('Bag 12,Puttur Line,3'));
   });
 
   test('air parcel mode counts per air code, hub and Air/Surface', () async {

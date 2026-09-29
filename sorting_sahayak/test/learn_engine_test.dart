@@ -12,7 +12,7 @@ void main() {
   late LearnEngine engine;
   setUp(() async {
     final repo = SchemeRepo(await memoryUserDb());
-    await installSampleScheme(repo, (p) async => File(p).readAsBytesSync());
+    await installSampleScheme(repo, (p) async => File(p).readAsBytesSync(), withParcelExtras: true);
     final dir = await fixtureRepo();
     final regions = await dir.pinRegions();
     engine = LearnEngine((await repo.loadActive())!, directoryPins: regions.keys, regions: regions, random: Random(3));

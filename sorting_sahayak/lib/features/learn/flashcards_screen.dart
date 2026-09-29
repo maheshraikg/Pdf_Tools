@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../../core/app_scope.dart';
 import '../../core/feedback.dart';
 import '../../core/l10n/app_localizations.dart';
+import '../../core/labels.dart';
 import '../../core/widgets.dart';
 import 'learn_engine.dart';
 
@@ -150,7 +151,7 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(_flipped ? l.answer : question, style: t.titleMedium),
+                            Text(_flipped ? l.answer : c.category == null ? question : '$question · ${categoryLabel(l, c.category!)}', style: t.titleMedium),
                             const SizedBox(height: 12),
                             FittedBox(
                               child: Text(_flipped ? c.answer : c.prompt,

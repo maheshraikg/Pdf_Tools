@@ -20,13 +20,13 @@ class Harness {
   final Settings settings;
   final AppServices services;
 
-  static Future<Harness> create(WidgetTester tester, {bool sample = true, Map<String, Object> prefs = const {}}) async {
+  static Future<Harness> create(WidgetTester tester, {bool sample = true, bool parcelExtras = false, Map<String, Object> prefs = const {}}) async {
     SharedPreferences.setMockInitialValues(prefs);
     late Harness h;
     await tester.runAsync(() async {
       final settings = await Settings.load();
       final userDb = await memoryUserDb();
-      if (sample) await installSampleScheme(SchemeRepo(userDb), (p) async => File(p).readAsBytesSync());
+      if (sample) await installSampleScheme(SchemeRepo(userDb), (p) async => File(p).readAsBytesSync(), withParcelExtras: parcelExtras);
       final services = AppServices(directoryDb: await fixtureDirectoryDb(), userDb: userDb);
       await services.reloadActive();
       h = Harness(settings, services);

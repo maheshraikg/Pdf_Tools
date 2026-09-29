@@ -36,7 +36,20 @@ class _AirportsScreenState extends State<AirportsScreen> {
               itemBuilder: (_, i) {
                 final a = list[i];
                 return ListTile(
-                  leading: SizedBox(width: 64, child: Text(a.iata, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 2))),
+                  // One line, scaled down if the phone uses large text.
+                  leading: SizedBox(
+                    width: 84,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        a.iata,
+                        maxLines: 1,
+                        softWrap: false,
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 2, color: Theme.of(context).colorScheme.primary),
+                      ),
+                    ),
+                  ),
                   title: Text(a.city, style: const TextStyle(fontWeight: FontWeight.w700)),
                   subtitle: Text('${a.airport} · ${a.state}'),
                 );

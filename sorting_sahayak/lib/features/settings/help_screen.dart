@@ -11,9 +11,9 @@ class HelpScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final steps = <(IconData, Color, String, String)>[
-      (Icons.rule_folder_outlined, kSeedRed, l.help1Title, l.help1),
-      (Icons.dialpad, kSeedRed, l.help2Title, l.help2),
-      (Icons.flight, kAirYellow, l.help3Title, l.help3),
+      (Icons.rule_folder_outlined, kNavy, l.help1Title, l.help1),
+      (Icons.dialpad, kTeal, l.help2Title, l.help2),
+      (Icons.swap_horiz, kAmber, l.help3Title, l.help3),
       (Icons.travel_explore, kSurfaceBlue, l.help4Title, l.help4),
       (Icons.fact_check_outlined, Colors.green, l.help5Title, l.help5),
       (Icons.document_scanner_outlined, Colors.teal, l.help6Title, l.help6),

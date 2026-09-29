@@ -1,5 +1,5 @@
 ﻿Type,PIN,PIN From,PIN To,Prefix,Office,District,State,Bag No,Bag Name,Section,Remarks,Category,Connectivity,Colour
-PIN,574201,,,,,,,Bag 12,Puttur SO,A,example row – delete,,,#D32F2F
-Range,,574201,574299,,,,,Bag 12,,,example row – delete,,,
-Prefix,,,,575,,,,Bag 02,Mangaluru NSH,,example row – delete,,,
-Default,,,,,,,,Bag 99,All other,,example row – delete,,,
+PIN,574201,,,,,,,Bag 12,Puttur Line,12,example row – delete,TD,,#D32F2F
+Office,,,,,Sampaje,,,Bag 12,Puttur Line,1,example row – delete,TD,,
+Prefix,,,,560,,,,BANGALORE,Karnataka,,example row – delete,Non-TD,,
+Default,,,,,,,,Bag 99,All other,,example row – delete,Non-TD,,

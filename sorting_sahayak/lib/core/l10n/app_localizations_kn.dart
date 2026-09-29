@@ -208,15 +208,6 @@ class AppLocalizationsKn extends AppLocalizations {
       'ವಸ್ತುವಿನ ಮೇಲೆ ಬರೆದ ನಗರ/ಕಚೇರಿಯೊಂದಿಗೆ ಪಿನ್ ಪರಿಶೀಲಿಸುತ್ತದೆ';
 
   @override
-  String get defaultScanMode => 'ಡೀಫಾಲ್ಟ್ ಸ್ಕ್ಯಾನ್ ಲಿಪಿ';
-
-  @override
-  String get scriptLatin => 'ಇಂಗ್ಲಿಷ್ (ಲ್ಯಾಟಿನ್)';
-
-  @override
-  String get scriptDevanagari => 'ಹಿಂದಿ (ದೇವನಾಗರಿ)';
-
-  @override
   String get categories => 'ಅಂಚೆ ವರ್ಗಗಳು';
 
   @override
@@ -306,6 +297,17 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get validate => 'ಪರಿಶೀಲಿಸಿ';
+
+  @override
+  String get catTD => 'TD';
+
+  @override
+  String get catNonTD => 'ನಾನ್-TD';
+
+  @override
+  String otherModeHint(String mode, String bag) {
+    return 'ಈ ಪಿನ್ $mode ನಲ್ಲಿದೆ: $bag';
+  }
 
   @override
   String get enterPin => 'ಪಿನ್ ನಮೂದಿಸಿ';
@@ -496,6 +498,15 @@ class AppLocalizationsKn extends AppLocalizations {
   String get unresolved => 'ಪರಿಹರಿಸದ';
 
   @override
+  String get noSchemeShort => 'ಇನ್ನೂ ಸಾರ್ಟಿಂಗ್ ಸ್ಕೀಮ್ ಇಲ್ಲ';
+
+  @override
+  String get importShort => 'ಆಮದು';
+
+  @override
+  String get sampleShort => 'ಮಾದರಿ';
+
+  @override
   String get findPinHint => 'ಕಚೇರಿ, ಗ್ರಾಮ, ನಗರ, ತಾಲ್ಲೂಕು ಅಥವಾ ಜಿಲ್ಲೆ';
 
   @override
@@ -581,9 +592,6 @@ class AppLocalizationsKn extends AppLocalizations {
   String get torch => 'ಟಾರ್ಚ್';
 
   @override
-  String get scanScript => 'ಪಠ್ಯ ಲಿಪಿ';
-
-  @override
   String cameraUnavailable(String error) {
     return 'ಕ್ಯಾಮೆರಾ ಲಭ್ಯವಿಲ್ಲ: $error';
   }
@@ -609,7 +617,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get scanPrivacy =>
-      'ಪಠ್ಯವನ್ನು ಫೋನಿನಲ್ಲೇ ML Kit ಮೂಲಕ ಓದಲಾಗುತ್ತದೆ. ಓದಿದ ತಕ್ಷಣ ಫೋಟೋ ಅಳಿಸಲಾಗುತ್ತದೆ. ML Kit ಇಂಗ್ಲಿಷ್ ಮತ್ತು ಹಿಂದಿ ಲಿಪಿ ಓದುತ್ತದೆ; ಕನ್ನಡ ವಿಳಾಸಗಳಿಗೆ ಪಿನ್ ಅಂಕಿಗಳನ್ನು ಬಳಸಲಾಗುತ್ತದೆ ಮತ್ತು ಸ್ಥಳವನ್ನು ಕೈಯಿಂದ ಹುಡುಕಬಹುದು.';
+      'ಪಠ್ಯವನ್ನು ಫೋನಿನಲ್ಲೇ ML Kit ಮೂಲಕ ಓದಲಾಗುತ್ತದೆ (ಇಂಗ್ಲಿಷ್ / ಲ್ಯಾಟಿನ್ ಲಿಪಿ). ಓದಿದ ತಕ್ಷಣ ಫೋಟೋ ಅಳಿಸಲಾಗುತ್ತದೆ. ಕನ್ನಡ ಅಥವಾ ಹಿಂದಿ ವಿಳಾಸಗಳಿಗೆ ಪಿನ್ ಅಂಕಿಗಳನ್ನು ಬಳಸಲಾಗುತ್ತದೆ ಮತ್ತು ಸ್ಥಳವನ್ನು ಕೈಯಿಂದ ಹುಡುಕಬಹುದು.';
 
   @override
   String get noOpenSession =>
@@ -1216,11 +1224,11 @@ class AppLocalizationsKn extends AppLocalizations {
       'ದೊಡ್ಡ ಕೀಪ್ಯಾಡ್‌ನಲ್ಲಿ ಪಿನ್ ಟೈಪ್ ಮಾಡಿ. 3 ಅಂಕಿಗಳ ನಂತರ ಸಾರ್ಟಿಂಗ್ ಜಿಲ್ಲೆ ಮತ್ತು ಸಂಭವನೀಯ ಚೀಲ; 6 ಅಂಕಿಗಳ ನಂತರ ಅಂತಿಮ ಚೀಲ ಅದರ ಬಣ್ಣದಲ್ಲಿ. ಮುಂದಿನ ಅಂಕಿ ಟೈಪ್ ಮಾಡಿದರೆ ಹೊಸ ಪಿನ್ ಪ್ರಾರಂಭ. ಅಳಿಸಲು ⌫ ದೀರ್ಘವಾಗಿ ಒತ್ತಿ.';
 
   @override
-  String get help3Title => 'ಪಾರ್ಸೆಲ್ ಮತ್ತು ಏರ್ ಪಾರ್ಸೆಲ್';
+  String get help3Title => 'TD ಮತ್ತು ನಾನ್-TD';
 
   @override
   String get help3 =>
-      'ಮೇಲ್ಭಾಗದಲ್ಲಿ ಅಂಚೆ ವರ್ಗ ಆಯ್ಕೆಮಾಡಿ. ಏರ್ ಪಾರ್ಸೆಲ್ ಮೋಡ್‌ನಲ್ಲಿ ವಾಯು ಲೇಬಲ್ ಕೋಡ್ ದೊಡ್ಡ ಅಕ್ಷರಗಳಲ್ಲಿ, ಹಳದಿ AIR / ನೀಲಿ SURFACE ಬ್ಯಾಡ್ಜ್, L2 → L1 ಹಬ್ ಮಾರ್ಗ ಮತ್ತು ಚೀಲ ತೋರಿಸಲಾಗುತ್ತದೆ. ದೊಡ್ಡ ಲೇಬಲ್ ತೋರಿಸಲು ಅಥವಾ ಹಂಚಲು \"ಲೇಬಲ್ ನೋಟ\" ಬಳಸಿ.';
+      'ಸಾರ್ಟ್ ಪರದೆಯ ಮೇಲ್ಭಾಗದಲ್ಲಿ TD ಅಥವಾ ನಾನ್-TD ಆಯ್ಕೆಮಾಡಿ. ನಿಮ್ಮ ಸ್ಕೀಮ್‌ನ ಪ್ರತಿ ನಿಯಮವನ್ನು Category ಕಾಲಂನಲ್ಲಿ TD ಅಥವಾ Non-TD ಎಂದು ಗುರುತಿಸಬಹುದು (ಖಾಲಿ = ಎರಡೂ). ಪಿನ್‌ಗೆ ಇನ್ನೊಂದು ಮೋಡ್‌ನಲ್ಲಿ ಮಾತ್ರ ನಿಯಮವಿದ್ದರೆ, ಆ್ಯಪ್ ಯಾವ ಮೋಡ್ ಮತ್ತು ಚೀಲ ಎಂದು ತಿಳಿಸುತ್ತದೆ.';
 
   @override
   String get help4Title => 'ವಸ್ತುವಿನಲ್ಲಿ ಪಿನ್ ಇಲ್ಲವೇ?';
