@@ -1,0 +1,49 @@
+{
+  "@@locale": "en",
+  "appTitle": "Sorting Sahayak",
+  "navSort": "Sort",
+  "navFindPin": "Find PIN",
+  "navBulk": "Bulk",
+  "navLearn": "Learn",
+  "navMore": "More",
+  "disclaimer": "Independent helper tool for postal staff. Not an official Department of Posts app.",
+  "dataCredit": "PIN data: data.gov.in, Government of India, Open Government Data Licence",
+  "ok": "OK",
+  "cancel": "Cancel",
+  "save": "Save",
+  "delete": "Delete",
+  "edit": "Edit",
+  "add": "Add",
+  "close": "Close",
+  "clear": "Clear",
+  "copy": "Copy",
+  "copied": "Copied",
+  "share": "Share",
+  "search": "Search",
+  "next": "Next",
+  "back": "Back",
+  "done": "Done",
+  "yes": "Yes",
+  "no": "No",
+  "undo": "Undo",
+  "loading": "Loading…",
+  "error": "Error: {message}",
+  "@error": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDelete": "Delete \"{name}\"?",
+  "@confirmDelete": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sampleBadge": "SAMPLE – not real",
+  "noActiveScheme": "No sorting scheme active. Import your office's scheme in More → Schemes (or use the sample).",
+  "useSample": "Use sample scheme"
+}
