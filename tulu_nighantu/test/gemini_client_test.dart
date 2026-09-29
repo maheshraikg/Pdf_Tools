@@ -82,6 +82,45 @@ void main() {
     expect(a.tulu, 'ರಾಜೆ');
   });
 
+  test('proxy mode retries through the fallback when blocked', () async {
+    Uri? retried;
+    final client = GeminiClient.proxy(
+      proxyUrl: 'https://ai.example.workers.dev',
+      client: MockClient(
+        (_) async => throw http.ClientException('Failed host lookup'),
+      ),
+      fallbackPost: (uri, headers, body) async {
+        retried = uri;
+        return http.Response.bytes(
+          utf8.encode(_geminiBody({'tulu': 'ನೀರ್', 'confidence': 'high'})),
+          200,
+        );
+      },
+    );
+    final a = await client.translate('water');
+    expect(retried.toString(), 'https://ai.example.workers.dev/translate');
+    expect(a.tulu, 'ನೀರ್');
+  });
+
+  test('unreachable server shows details', () async {
+    final client = GeminiClient.proxy(
+      proxyUrl: 'https://ai.example.workers.dev',
+      client: MockClient(
+        (_) async => throw http.ClientException('Failed host lookup'),
+      ),
+      fallbackPost: (uri, headers, body) async =>
+          throw http.ClientException('Connection reset'),
+    );
+    expect(
+      () => client.translate('water'),
+      throwsA(
+        isA<AiException>()
+            .having((e) => e.message, 'm', contains('AI server'))
+            .having((e) => e.message, 'm', contains('Connection reset')),
+      ),
+    );
+  });
+
   test('server limit message is shown', () {
     expect(
       () => GeminiClient.parseResponse(
