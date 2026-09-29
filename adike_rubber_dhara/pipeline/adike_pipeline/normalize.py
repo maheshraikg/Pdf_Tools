@@ -96,8 +96,14 @@ def normalize(raw: RawRow, norm: Normalizer, trust: str, collected_time: str,
     """Returns (row, flags). row is None when the row is unusable (no crop / no numbers / no date)."""
     flags: list[str] = []
     crop = (raw.crop or default_crop or "").lower()
-    if crop not in ("arecanut", "rubber"):
-        return None, ["unknown_crop"]
+    if crop and crop not in ("arecanut", "rubber"):
+        return None, ["unknown_crop"]  # another commodity (pepper, …)
+    if not crop:
+        # infer from an unambiguous variety name (e.g. "RSS-4" -> rubber)
+        hits = {c for c in ("arecanut", "rubber") if norm.variety_id(c, raw.variety_raw)}
+        if len(hits) != 1:
+            return None, ["unknown_crop"]
+        crop = hits.pop()
     if raw.min is None and raw.max is None and raw.modal is None:
         return None, ["no_values"]
 

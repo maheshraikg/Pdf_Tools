@@ -65,3 +65,10 @@ def test_unit_unknown_flag_for_ai_rows(normalizer):
 def test_rows_without_values_or_crop_are_dropped(normalizer):
     assert normalize(raw(min=None, max=None, modal=None), normalizer, "official", T)[0] is None
     assert normalize(raw(crop="pepper"), normalizer, "official", T)[0] is None
+
+
+def test_crop_inferred_from_variety(normalizer):
+    r, _ = normalize(raw(crop=None, variety_raw="RSS-4", market_raw="Kottayam", unit_raw="Rs/kg",
+                         min=188, max=192, modal=190), normalizer, "partner", T)
+    assert r.crop == "rubber" and r.variety == "rss4"
+    assert normalize(raw(crop=None, variety_raw="Mystery"), normalizer, "partner", T)[0] is None
