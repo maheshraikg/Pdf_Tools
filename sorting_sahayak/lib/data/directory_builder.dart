@@ -276,7 +276,10 @@ Future<bool> writeDirectoryDb(
     final end = start + chunk > records.length ? records.length : start + chunk;
     for (var i = start; i < end; i++) {
       final r = records[i];
-      final norm = normalizePlace(r.officeName);
+      // "Puttur(D.K.)" → index as "puttur" (the qualifier stays searchable
+      // through office_words).
+      final bare = r.officeName.replaceAll(RegExp(r'\(.*?\)'), ' ').trim();
+      final norm = normalizePlace(bare.isEmpty ? r.officeName : bare);
       if (r.taluk.isNotEmpty) anyTaluk = true;
       batch.rawInsert(
         'INSERT INTO offices(pincode, office_name, office_name_norm, office_words, name_key, office_type, delivery, '

@@ -54,7 +54,7 @@ Hindi (Devanagari) model was dropped to save space, because addresses are
 mainly written in English.
 
 First CI measurement (`flutter build apk --release --split-per-abi`), taken
-**with the Hindi model still included** and the 27-row placeholder directory:
+**with the Hindi model still included** and only a 27-row test directory:
 
 | APK | Size |
 |---|---|
@@ -62,10 +62,10 @@ First CI measurement (`flutter build apk --release --split-per-abi`), taken
 | `app-armeabi-v7a-release.apk` | 29.3 MB |
 | `app-x86_64-release.apk` | 37.5 MB |
 
-Each CI run prints the current sizes in its job summary. The real directory
-adds roughly **+11.5 MB** for all of India (~26 MB on disk, estimated from a
-synthetic 165k-row build) or **+0.7 MB** for Karnataka only. Further ways to
-shrink:
+The app now bundles the real all-India directory (27.3 MB on disk,
+157,000 offices). Each CI run prints the current APK sizes in its job
+summary. A Karnataka-only directory would be ~1.5 MB instead. Further ways
+to shrink:
 
 * build a state-only DB: `dart run tool/build_directory_db.dart --state Karnataka`;
 * publish an App Bundle (`flutter build appbundle`) so each phone downloads
@@ -96,10 +96,13 @@ Source: **"All India Pincode Directory"** open dataset, data.gov.in
    This writes `assets/db/pincode_directory.db`. If you ship a newer DB in an
    app update, bump `kBundledDirectoryVersion` in `lib/data/db.dart`.
 
-> **The repository currently ships a 27-row placeholder DB** built from
-> `test/fixtures/directory.csv`, because the real CSV was not available during
-> development. Build the real one before release. The app warns about it in
-> More → PIN directory.
+> **Bundled data:** `assets/db/pincode_directory.db` was built from the
+> data.gov.in "All India Pincode Directory" file as republished unchanged at
+> <https://github.com/dropdevrahul/pincodes-india> (`pincode.csv`, committed
+> 2024-05-05; 157,126 rows → 157,000 unique offices, 19,300 PINs), because
+> data.gov.in itself was not reachable from the build machine. To refresh it,
+> download the latest CSV from data.gov.in and rebuild with the command above
+> (or import it in the app).
 
 The builder does the following:
 
@@ -252,8 +255,9 @@ and templates with `dart run tool/make_samples.dart`.
   by hand. Kannada/Devanagari digits are converted automatically. Only the
   English (Latin) recogniser is bundled, so Hindi-script addresses work the
   same way (PIN digits + manual search; typed Hindi search still works).
-* The **bundled directory is a placeholder** until you build it from the real
-  CSV (see above).
+* The bundled directory is the May 2024 data.gov.in release. Offices opened or
+  closed since then are missing or stale until you update it (More → PIN
+  directory).
 * Circle names from the first two PIN digits are approximate where small
   circles share digits (Goa, Chandigarh, Sikkim, … are refined by three digits).
 * The transliteration is a simple table-based scheme tuned for place names,

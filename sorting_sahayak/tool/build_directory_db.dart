@@ -4,7 +4,7 @@
 //   dart run tool/build_directory_db.dart \
 //       [--input data/pincode_directory.csv] \
 //       [--output assets/db/pincode_directory.db] \
-//       [--state Karnataka] [--no-fts]
+//       [--state Karnataka] [--no-fts] [--file-date YYYY-MM-DD] [--source text]
 //
 // Uses sqflite_common_ffi (desktop SQLite), so it runs without a device.
 import 'dart:io';
@@ -45,7 +45,7 @@ Future<void> main(List<String> args) async {
   out.parent.createSync(recursive: true);
   sqfliteFfiInit();
   final db = await databaseFactoryFfi.openDatabase(out.absolute.path);
-  final modified = file.lastModifiedSync().toIso8601String().substring(0, 10);
+  final modified = opt('file-date', file.lastModifiedSync().toIso8601String().substring(0, 10));
   final hasFts = await writeDirectoryDb(
     db,
     records,
