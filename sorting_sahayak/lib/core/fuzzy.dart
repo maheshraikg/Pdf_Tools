@@ -109,7 +109,7 @@ String phoneticKey(String norm) {
   }
   s = sb.toString();
   // Drop trailing vowels (Kannada/Hindi endings: -u, -a, -e).
-  while (s.length > 3 && 'aeiouy'.contains(s[s.length - 1])) {
+  while (s.length > 4 && 'aeiouy'.contains(s[s.length - 1])) {
     s = s.substring(0, s.length - 1);
   }
   return s;
