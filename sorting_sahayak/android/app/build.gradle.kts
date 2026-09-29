@@ -34,6 +34,7 @@ android {
             // Sign with your own key for distribution (see README). Debug keys
             // are used so `flutter build apk --release` works out of the box.
             signingConfig = signingConfigs.getByName("debug")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 }
