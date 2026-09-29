@@ -39,13 +39,6 @@ android {
     }
 }
 
-dependencies {
-    // Bundled on-device Devanagari (Hindi) text recogniser for address scans.
-    // Latin is bundled by google_mlkit_text_recognition itself. ML Kit has no
-    // Kannada model.
-    implementation("com.google.mlkit:text-recognition-devanagari:16.0.1")
-}
-
 kotlin {
     compilerOptions {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17

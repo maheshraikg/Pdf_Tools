@@ -49,25 +49,25 @@ box. For distribution, create a keystore and set `signingConfig` in
 
 ### APK size
 
-Measured by CI (`.github/workflows/sorting-sahayak.yml`, `flutter build apk --release --split-per-abi`)
-with the **27-row placeholder directory**:
+The address scanner bundles **only the English (Latin) ML Kit model**; the
+Hindi (Devanagari) model was dropped to save space, because addresses are
+mainly written in English.
+
+First CI measurement (`flutter build apk --release --split-per-abi`), taken
+**with the Hindi model still included** and the 27-row placeholder directory:
 
 | APK | Size |
 |---|---|
-| `app-arm64-v8a-release.apk` | **35.5 MB** |
+| `app-arm64-v8a-release.apk` | 35.5 MB |
 | `app-armeabi-v7a-release.apk` | 29.3 MB |
 | `app-x86_64-release.apk` | 37.5 MB |
 
-Most of this is the two bundled on-device ML Kit text recognisers (Latin +
-Devanagari) and the Flutter engine. The real directory adds roughly
-**+11.5 MB** for all of India (~26 MB on disk, estimated from a synthetic
-165k-row build) or **+0.7 MB** for Karnataka only (~1.5 MB on disk), so a
-full-India arm64 APK is expected at about **47 MB**, well above the 30 MB
-target. Ways to shrink it:
+Each CI run prints the current sizes in its job summary. The real directory
+adds roughly **+11.5 MB** for all of India (~26 MB on disk, estimated from a
+synthetic 165k-row build) or **+0.7 MB** for Karnataka only. Further ways to
+shrink:
 
 * build a state-only DB: `dart run tool/build_directory_db.dart --state Karnataka`;
-* remove the Devanagari recogniser (delete the `text-recognition-devanagari`
-  line in `android/app/build.gradle.kts`; Hindi scans then use Latin only);
 * publish an App Bundle (`flutter build appbundle`) so each phone downloads
   only its own ABI.
 
@@ -249,8 +249,9 @@ and templates with `dart run tool/make_samples.dart`.
 
 * **Kannada OCR:** ML Kit has no Kannada model. For Kannada-script
   addresses the scanner relies on the PIN digits, and you search the place
-  by hand. Kannada/Devanagari digits are converted automatically. Hindi
-  addresses: switch the scanner to Devanagari.
+  by hand. Kannada/Devanagari digits are converted automatically. Only the
+  English (Latin) recogniser is bundled, so Hindi-script addresses work the
+  same way (PIN digits + manual search; typed Hindi search still works).
 * The **bundled directory is a placeholder** until you build it from the real
   CSV (see above).
 * Circle names from the first two PIN digits are approximate where small

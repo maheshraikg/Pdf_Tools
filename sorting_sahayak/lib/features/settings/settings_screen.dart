@@ -59,17 +59,6 @@ class SettingsScreen extends StatelessWidget {
             SwitchListTile(value: s.ttsEnabled, onChanged: (v) => s.ttsEnabled = v, title: Text(l.ttsSetting), subtitle: Text(l.ttsSettingSub)),
             SwitchListTile(value: s.hapticsEnabled, onChanged: (v) => s.hapticsEnabled = v, title: Text(l.hapticsSetting)),
             SwitchListTile(value: s.showMismatchField, onChanged: (v) => s.showMismatchField = v, title: Text(l.mismatchFieldSetting), subtitle: Text(l.mismatchFieldSettingSub)),
-            ListTile(
-              title: Text(l.defaultScanMode),
-              trailing: DropdownButton<String>(
-                value: s.scanScript,
-                items: [
-                  DropdownMenuItem(value: 'latin', child: Text(l.scriptLatin)),
-                  DropdownMenuItem(value: 'devanagari', child: Text(l.scriptDevanagari)),
-                ],
-                onChanged: (v) => s.scanScript = v ?? 'latin',
-              ),
-            ),
             const Divider(),
             ListTile(
               title: Text(l.categories, style: const TextStyle(fontWeight: FontWeight.w700)),

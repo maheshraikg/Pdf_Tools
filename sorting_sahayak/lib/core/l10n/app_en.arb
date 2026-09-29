@@ -76,9 +76,6 @@
   "hapticsSetting": "Vibrate on each result",
   "mismatchFieldSetting": "Show \"place on address\" field",
   "mismatchFieldSettingSub": "Checks PIN against the city/office written on the article",
-  "defaultScanMode": "Default scan script",
-  "scriptLatin": "English (Latin)",
-  "scriptDevanagari": "Hindi (Devanagari)",
   "categories": "Mail categories",
   "categoriesSub": "Shown as the toggle on the Sort screen",
   "addCategory": "Add category",
@@ -275,7 +272,6 @@
   "scanHint": "Point at the address (with the PIN) and tap capture. Nothing is saved.",
   "capture": "Capture",
   "torch": "Torch",
-  "scanScript": "Text script",
   "cameraUnavailable": "Camera not available: {error}",
   "@cameraUnavailable": {
     "placeholders": {
@@ -290,7 +286,7 @@
   "useThisPin": "Use this PIN",
   "addToBulk": "Add to bulk count",
   "scanAgain": "Scan again",
-  "scanPrivacy": "Text is read on the phone with ML Kit. The photo is deleted right after reading. ML Kit reads English and Hindi script; for Kannada addresses the PIN digits are used and you can search the place by hand.",
+  "scanPrivacy": "Text is read on the phone with ML Kit (English / Latin script). The photo is deleted right after reading. For Kannada or Hindi addresses the PIN digits are used and you can search the place by hand.",
   "noOpenSession": "No bulk session in progress – start one in the Bulk tab",
   "addedToBulk": "Added: {bag}",
   "@addedToBulk": {

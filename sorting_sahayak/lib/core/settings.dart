@@ -58,14 +58,6 @@ class Settings extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 'latin' or 'devanagari' — which ML Kit recogniser the scanner starts with.
-  String get scanScript => _prefs.getString('scanScript') ?? 'latin';
-
-  set scanScript(String v) {
-    _prefs.setString('scanScript', v);
-    notifyListeners();
-  }
-
   /// Last mail category chosen on the Sort screen.
   String get category => _prefs.getString('category') ?? kCatLetters;
 

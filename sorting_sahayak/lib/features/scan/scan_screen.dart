@@ -41,7 +41,6 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
   String? _cameraError;
   bool _busy = false;
   bool _torch = false;
-  late String _script;
 
   final _pin = TextEditingController();
   final _place = TextEditingController();
@@ -62,7 +61,6 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     super.didChangeDependencies();
     if (!_started) {
       _started = true;
-      _script = context.settings.scanScript;
       _initCamera();
     }
   }
@@ -117,7 +115,8 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     String text = '';
     try {
       shot = await c.takePicture();
-      recognizer = TextRecognizer(script: _script == 'devanagari' ? TextRecognitionScript.devanagiri : TextRecognitionScript.latin);
+      // Only the Latin (English) model is bundled, to keep the APK small.
+      recognizer = TextRecognizer(script: TextRecognitionScript.latin);
       final r = await recognizer.processImage(InputImage.fromFilePath(shot.path));
       text = r.text;
     } on Object catch (e) {
@@ -204,21 +203,6 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     return Scaffold(
       appBar: AppBar(
         title: Text(l.scanAddress),
-        actions: [
-          PopupMenuButton<String>(
-            tooltip: l.scanScript,
-            icon: const Icon(Icons.translate),
-            initialValue: _script,
-            onSelected: (v) {
-              setState(() => _script = v);
-              context.settings.scanScript = v;
-            },
-            itemBuilder: (_) => [
-              PopupMenuItem(value: 'latin', child: Text(l.scriptLatin)),
-              PopupMenuItem(value: 'devanagari', child: Text(l.scriptDevanagari)),
-            ],
-          ),
-        ],
       ),
       body: _scanned ? _review(l) : _preview(l),
     );
