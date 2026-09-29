@@ -45,5 +45,632 @@
   },
   "sampleBadge": "SAMPLE – not real",
   "noActiveScheme": "No sorting scheme active. Import your office's scheme in More → Schemes (or use the sample).",
-  "useSample": "Use sample scheme"
+  "useSample": "Use sample scheme",
+  "about": "About",
+  "aboutSub": "Disclaimer, privacy, data source, version",
+  "active": "Active",
+  "schemes": "Sorting schemes",
+  "schemesSub": "Import, create, export, choose active scheme",
+  "pinDirectory": "PIN directory",
+  "pinDirectorySub": "Offline all-India office list, update from CSV",
+  "favourites": "Favourites",
+  "favouritesSub": "Saved offices and PINs",
+  "airportCodes": "Airport codes",
+  "airportCodesSub": "Public IATA code reference (not sorting rules)",
+  "airportDisclaimer": "Public reference only. Air label codes always come from your office's imported air code sheet.",
+  "airportSearchHint": "City, airport, code or state",
+  "settings": "Settings",
+  "settingsSub": "Language, theme, keypad, read-out, haptics",
+  "help": "Help",
+  "helpSub": "Short guide",
+  "preparingDirectory": "Preparing offline PIN directory…",
+  "language": "Language",
+  "languageDevice": "Device language",
+  "theme": "Theme",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "keypadSize": "Keypad size",
+  "ttsSetting": "Read out bag / air code",
+  "ttsSettingSub": "Uses the phone's offline text-to-speech voice",
+  "hapticsSetting": "Vibrate on each result",
+  "mismatchFieldSetting": "Show \"place on address\" field",
+  "mismatchFieldSettingSub": "Checks PIN against the city/office written on the article",
+  "defaultScanMode": "Default scan script",
+  "scriptLatin": "English (Latin)",
+  "scriptDevanagari": "Hindi (Devanagari)",
+  "categories": "Mail categories",
+  "categoriesSub": "Shown as the toggle on the Sort screen",
+  "addCategory": "Add category",
+  "catLetters": "Ordinary/Letters",
+  "catParcel": "Parcel (surface)",
+  "catAirParcel": "Air Parcel",
+  "catSpeedPost": "Speed Post",
+  "versionN": "Version {version}",
+  "@versionN": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "privacyTitle": "Privacy",
+  "privacyText": "Everything works offline. No login, no ads, no analytics, no internet permission. Camera scans are processed on the phone and the photo is deleted immediately — nothing is stored or uploaded. Your schemes, sessions and progress stay only on this phone.",
+  "dataTitle": "Data",
+  "schemeDataNote": "Sorting schemes, air code sheets and DMSLs are department documents: the app ships with none. Each user imports their own file; the bundled sample is fake.",
+  "licenceTitle": "Licence",
+  "licenceText": "Free app. Airport codes are public IATA information.",
+  "openSourceLicences": "Open-source licences",
+  "none": "None",
+  "unknown": "Unknown",
+  "notSet": "Not set",
+  "note": "Note",
+  "date": "Date",
+  "total": "Total",
+  "totalN": "Total: {count}",
+  "@totalN": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "start": "Start",
+  "summary": "Summary",
+  "again": "Again",
+  "rename": "Rename",
+  "sheet": "Sheet",
+  "validate": "Check",
+  "enterPin": "Enter PIN",
+  "backspace": "Delete last digit",
+  "voiceInput": "Voice input",
+  "scanAddress": "Scan address",
+  "checkPlace": "PIN vs place check",
+  "placeOnAddress": "City / office on the address",
+  "recentLookups": "Recent lookups",
+  "sortHint": "Type a PIN on the keypad. The bag appears as you type.",
+  "bag": "Bag",
+  "bags": "Bags",
+  "section": "Section",
+  "matchedBy": "Matched by {type}: {key}",
+  "@matchedBy": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "key": {
+        "type": "String"
+      }
+    }
+  },
+  "likelyBag": "Likely bag (from prefix)",
+  "possibleBags": "Possible bags",
+  "sortingDistrictN": "Sorting district {code}",
+  "@sortingDistrictN": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "prefixNotInDirectory": "No offices with this prefix in the directory",
+  "pinNotInDirectory": "PIN not in directory – check the address",
+  "invalidPin": "Invalid PIN (6 digits, first digit 1–9)",
+  "noBagRule": "No bag rule for this PIN – check with supervisor",
+  "deliveryOfficesN": "Delivery office(s): {count}",
+  "@deliveryOfficesN": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "andMore": "…and {count} more",
+  "@andMore": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "delivery": "Delivery",
+  "nonDelivery": "Non-delivery",
+  "typeHO": "Head Office",
+  "typeSO": "Sub Office",
+  "typeBO": "Branch Office",
+  "typePO": "Post Office",
+  "pinStructure": "PIN structure",
+  "pinZone": "Postal zone",
+  "pinCircle": "Postal circle",
+  "pinSortingDistrict": "Sorting district",
+  "pinSortingDistrictHelp": "first 3 digits",
+  "pinDeliveryOffice": "Delivery post office",
+  "pinDeliveryOfficeHelp": "last 3 digits",
+  "airLabelCode": "Air label code",
+  "noAirCode": "No air code – check with supervisor",
+  "readAloud": "Read aloud",
+  "via": "Via",
+  "badgeAir": "AIR",
+  "badgeSurface": "SURFACE",
+  "labelBadge": "Label colour: {text}",
+  "@labelBadge": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "labelBadgeShort": "Label",
+  "connectivityDefaulted": "Connectivity not given in the rule – assumed Surface. Check with supervisor.",
+  "connAir": "Air",
+  "connSurface": "Surface",
+  "hubRoute": "Parcel hub route",
+  "directToL1": "Direct to L1 hub: {hub}",
+  "@directToL1": {
+    "placeholders": {
+      "hub": {
+        "type": "String"
+      }
+    }
+  },
+  "noDmsl": "No DMSL imported for this scheme",
+  "noHubRoute": "No hub rule for this PIN in the DMSL",
+  "dmslVersionLabel": "DMSL {version}",
+  "@dmslVersionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "labelView": "Label view",
+  "shareImage": "Share as image",
+  "shareText": "Share as text",
+  "listening": "Listening…",
+  "sayPin": "Say the PIN digits",
+  "voiceUnavailable": "Speech recognition is not available on this phone",
+  "unresolved": "Unresolved",
+  "findPinHint": "Office, village, city, taluk or district",
+  "findPinTip": "Type in English, ಕನ್ನಡ or हिन्दी. Spelling mistakes are fine: \"Puttoor\", \"Putur\" and \"ಪುತ್ತೂರು\" all find Puttur.",
+  "allStates": "All states",
+  "allDistricts": "All districts",
+  "deliveryOnly": "Delivery offices only",
+  "noResults": "No matching office found",
+  "taluk": "Taluk",
+  "division": "Division",
+  "sortThisPin": "Sort this PIN",
+  "copyPin": "Copy PIN",
+  "addFavourite": "Add to favourites",
+  "removeFavourite": "Remove from favourites",
+  "noFavourites": "No favourites yet. Add offices from Find PIN.",
+  "mismatchChecker": "PIN ↔ place check",
+  "mismatchCheckerSub": "Catch wrong PINs before missorting",
+  "mmMatch": "✅ Place matches this PIN",
+  "mmSameDistrict": "⚠️ Same district, but a different PIN",
+  "mmDifferent": "❌ Place is in a different district/state – likely wrong PIN",
+  "mmUnknownPlace": "Place not found in the directory – check spelling",
+  "mmPinIs": "PIN {pin} is {office}",
+  "@mmPinIs": {
+    "placeholders": {
+      "pin": {
+        "type": "String"
+      },
+      "office": {
+        "type": "String"
+      }
+    }
+  },
+  "mmPlaceIs": "\"{place}\" is in {district}",
+  "@mmPlaceIs": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      },
+      "district": {
+        "type": "String"
+      }
+    }
+  },
+  "suggestedPins": "Suggested PINs:",
+  "scanHint": "Point at the address (with the PIN) and tap capture. Nothing is saved.",
+  "capture": "Capture",
+  "torch": "Torch",
+  "scanScript": "Text script",
+  "cameraUnavailable": "Camera not available: {error}",
+  "@cameraUnavailable": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noPinDetected": "No PIN found in the text – type it or search the place",
+  "detectedPin": "Detected PIN (edit if wrong)",
+  "detectedPlace": "Detected city / office",
+  "useThisPin": "Use this PIN",
+  "addToBulk": "Add to bulk count",
+  "scanAgain": "Scan again",
+  "scanPrivacy": "Text is read on the phone with ML Kit. The photo is deleted right after reading. ML Kit reads English and Hindi script; for Kannada addresses the PIN digits are used and you can search the place by hand.",
+  "noOpenSession": "No bulk session in progress – start one in the Bulk tab",
+  "addedToBulk": "Added: {bag}",
+  "@addedToBulk": {
+    "placeholders": {
+      "bag": {
+        "type": "String"
+      }
+    }
+  },
+  "bulkTitle": "Bulk sorting",
+  "bulkEmpty": "Count articles bag-wise: start a session, enter PINs quickly, then share the tally.",
+  "startSession": "Start session",
+  "sessionName": "Session name",
+  "sessionDefaultName": "Session {time}",
+  "@sessionDefaultName": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "scheme": "Scheme",
+  "inProgress": "in progress",
+  "undoLast": "Undo last",
+  "endSession": "End",
+  "unresolvedEntries": "Unresolved / invalid: {count} (tap to fix)",
+  "@unresolvedEntries": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fixEntry": "Fix \"{raw}\"",
+  "@fixEntry": {
+    "placeholders": {
+      "raw": {
+        "type": "String"
+      }
+    }
+  },
+  "shareCsv": "Share CSV",
+  "sharePrintable": "Share printable text file",
+  "continueSession": "Continue counting",
+  "learnNeedsScheme": "Practice uses the active scheme. Import your office scheme, or try the sample.",
+  "learnFromScheme": "Questions come from this scheme",
+  "flashcards": "Bag flashcards",
+  "flashcardsSub": "PIN → which bag? Spaced repetition",
+  "timedQuiz": "Timed sorting quiz",
+  "timedQuizSub": "20 articles, 4 choices, score and speed",
+  "airFlashcards": "Air code flashcards",
+  "airFlashcardsSub": "PIN / district → air code",
+  "airQuiz": "Air code quiz",
+  "airQuizSub": "Needs an imported air code sheet",
+  "hubFlashcards": "Parcel hub flashcards",
+  "hubFlashcardsSub": "PIN → L2 / L1 hub from the active DMSL",
+  "weakAreas": "Weak areas",
+  "weakAreasSub": "Bags and PIN series you get wrong most",
+  "pinBasics": "PIN basics",
+  "pinBasicsSub": "Zone, circle, sorting district, delivery office",
+  "noCards": "No cards: the scheme has no rules for this practice yet.",
+  "flashDone": "Round done! Knew: {known}, didn't know: {unknown}",
+  "@flashDone": {
+    "placeholders": {
+      "known": {
+        "type": "int"
+      },
+      "unknown": {
+        "type": "int"
+      }
+    }
+  },
+  "leitnerBox": "Box {box} of 5",
+  "@leitnerBox": {
+    "placeholders": {
+      "box": {
+        "type": "int"
+      }
+    }
+  },
+  "qWhichBagPin": "Which bag for PIN",
+  "qWhichBagPlace": "Which bag for",
+  "qWhichAirCode": "Which air code for",
+  "qWhichHub": "Which parcel hub route for PIN",
+  "answer": "Answer",
+  "tapToFlip": "Tap the card to flip",
+  "showAnswer": "Show answer",
+  "knewIt": "I knew it",
+  "didntKnow": "Didn't know",
+  "scoreN": "Score {score}",
+  "@scoreN": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "quizScore": "{score} / {total}",
+  "@quizScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "quizStats": "{seconds} s · {apm} articles per minute",
+  "@quizStats": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      },
+      "apm": {
+        "type": "String"
+      }
+    }
+  },
+  "history": "Score history",
+  "historyNeedsMore": "Take one more quiz to see a chart",
+  "noWeakAreas": "No mistakes recorded yet – practise first.",
+  "weakBags": "Bags most often wrong",
+  "weakPrefixes": "PIN series most often wrong",
+  "wrongTimes": "Wrong {count} times",
+  "@wrongTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quizzesTaken": "Quizzes taken: {count}",
+  "@quizzesTaken": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "averageScore": "Average score: {percent}%",
+  "@averageScore": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "resetProgress": "Reset progress",
+  "resetProgressConfirm": "Delete quiz history, mistakes and flashcard boxes?",
+  "pinBasicsIntro": "A PIN (Postal Index Number) has 6 digits. Each part narrows down where the article goes:",
+  "pinBasicsDigits": "Digit 1 = postal zone/region. Digits 1–2 = postal circle. Digits 1–3 = sorting district (the sorting office handling the mail). Last 3 digits = the delivery post office. Example 574201: 5 = Southern zone, 57 = Karnataka, 574 = sorting district, 201 = delivery office.",
+  "pinZones": "Zones (first digit)",
+  "circleTable": "Circles (first two digits)",
+  "pinBasicsNote": "Circle boundaries are approximate; some small circles share digits with neighbours (see the list above). Always follow your office's sorting scheme.",
+  "noSchemes": "No schemes yet. Import your office's sorting scheme (Excel/CSV), create one, or try the SAMPLE.",
+  "schemesPrivacy": "Schemes are department documents: they stay on this phone. Share only with your team.",
+  "importScheme": "Import scheme",
+  "importSchemeSub": "Excel (.xlsx) or CSV",
+  "importAirCodes": "Import air code sheet",
+  "importDmsl": "Import DMSL (parcel hubs)",
+  "createManually": "Create scheme in the app",
+  "installSample": "Add SAMPLE scheme (not real)",
+  "downloadTemplate": "Download template",
+  "downloadSampleFile": "Save SAMPLE scheme file",
+  "templateSaved": "Saved",
+  "newScheme": "New scheme",
+  "schemeName": "Scheme name",
+  "officeName": "Office",
+  "setActive": "Set as active",
+  "exportXlsx": "Export / share as Excel",
+  "exportCsv": "Export / share as CSV",
+  "rules": "Rules",
+  "airCodes": "Air codes",
+  "rulesCount": "{count} rules",
+  "@rulesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filterRules": "Filter rules",
+  "addRule": "Add rule",
+  "editRule": "Edit rule",
+  "addBag": "Add bag",
+  "editBag": "Edit bag",
+  "deleteBagConfirm": "Delete bag {code} and all its rules?",
+  "@deleteBagConfirm": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "invalidRuleKey": "Check the PIN / range / prefix / name for this rule type",
+  "allCategories": "All categories",
+  "noAirCodes": "No air codes. Import your office's air code sheet (Air Parcel mode shows the code in big letters).",
+  "dmslHelp": "The Due Mail Sorting List maps PINs to L2 → L1 parcel hubs. Hub lists change (e.g. 7 Oct 2026 rationalisation), so import each new version; tap a version to make it active.",
+  "validFromDate": "valid from {date}",
+  "@validFromDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "compareWithPrevious": "Changes vs previous version",
+  "dmslChanges": "DMSL changes",
+  "dmslCompare": "{from} → {to}",
+  "@dmslCompare": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "dmslChangedCount": "{count} PINs changed hub",
+  "@dmslChangedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dmslNoChanges": "No PIN changed hub between these versions.",
+  "practiseChanged": "Practise only the changed PINs",
+  "dmslVersionName": "Version name",
+  "validFrom": "Valid from",
+  "stepFile": "File",
+  "stepPreview": "Preview",
+  "stepMapping": "Columns",
+  "stepReport": "Check & save",
+  "chooseFile": "Choose Excel / CSV file",
+  "importSchemeHelp": "One row per rule. Columns (any order, English/Kannada/Hindi headers): PIN, PIN From, PIN To, Prefix, Office, District, State, Bag No, Bag Name, Section, Remarks, Category, Connectivity (Air/Surface), Colour. A row with no PIN/office/district is the \"All other\" (default) bag.",
+  "importAirHelp": "Columns: PIN, PIN From, PIN To, Prefix, District, State, Air Code, Station, Via, Remarks. Codes are checked against the airport list; unknown codes are kept with a warning.",
+  "importDmslHelp": "Columns: PIN / PIN From / PIN To / Prefix / Office, L2 Hub, L1 Hub, Direct closure (Y/N), Connectivity (Air/Surface), Remarks. After import you see which PINs changed hub.",
+  "importPrivacy": "The file is read on the phone only.",
+  "headerRow": "Header row",
+  "previewRows": "Showing {shown} of {total} rows",
+  "@previewRows": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mappingHelp": "Check which column holds each field. Auto-detected from the headers; change if wrong.",
+  "notMapped": "— not in file —",
+  "reportRulesOk": "{count} rules ready",
+  "@reportRulesOk": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportSummary": "{errors} rows skipped · {warnings} warnings",
+  "@reportSummary": {
+    "placeholders": {
+      "errors": {
+        "type": "int"
+      },
+      "warnings": {
+        "type": "int"
+      }
+    }
+  },
+  "bagsFound": "{count} bags found",
+  "@bagsFound": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "airReplaceNote": "Saving replaces this scheme's current air code table.",
+  "rowN": "Row {row}",
+  "@rowN": {
+    "placeholders": {
+      "row": {
+        "type": "int"
+      }
+    }
+  },
+  "saveRules": "Save {count}",
+  "@saveRules": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importSaved": "Imported {count} rules",
+  "@importSaved": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "issueBadPin": "Bad PIN / range / prefix",
+  "issueNoBag": "Row has no bag / code / hub",
+  "issueNoMatch": "No PIN / office / district",
+  "issueDuplicate": "Duplicate rules",
+  "issueConflict": "Conflicting rules (same key, different result)",
+  "issueOverlap": "Overlapping PIN ranges",
+  "issueNested": "Nested ranges (smaller wins)",
+  "issueUnknownAir": "Air codes not in airport list (kept)",
+  "issueNoConnectivity": "Connectivity blank (Surface assumed)",
+  "issueDefault": "Rows treated as \"All other\"",
+  "issueBadColour": "Unknown colours",
+  "ruleExact": "Exact PIN",
+  "ruleRange": "PIN range",
+  "rulePrefix": "Prefix",
+  "ruleOffice": "Office name",
+  "ruleDistrict": "District",
+  "ruleState": "State",
+  "ruleDefault": "All other (default)",
+  "fType": "Rule type",
+  "fPin": "PIN",
+  "fPinFrom": "PIN from",
+  "fPinTo": "PIN to",
+  "fPrefix": "Prefix (first 1–5 digits)",
+  "fOffice": "Office",
+  "fDistrict": "District",
+  "fState": "State",
+  "fBagCode": "Bag no. / code",
+  "fBagName": "Bag name",
+  "fSection": "Section",
+  "fRemarks": "Remarks",
+  "fCategory": "Mail category",
+  "fConnectivity": "Connectivity (Air/Surface)",
+  "fColour": "Bag colour",
+  "fAirCode": "Air code",
+  "fStation": "Air station",
+  "fVia": "Via hub",
+  "fL2Hub": "L2 hub",
+  "fL1Hub": "L1 hub",
+  "fDirect": "Direct closure (Y/N)",
+  "dirSource": "Source",
+  "dirRows": "Offices",
+  "dirFileDate": "Data file date",
+  "dirBuilt": "Built on",
+  "dirStateFilter": "State filter",
+  "dirSearchIndex": "Search index",
+  "dirPlaceholderWarning": "This is only a small test directory. Import the full \"All India Pincode Directory\" CSV from data.gov.in below.",
+  "dirUpdateHelp": "Download the newer \"All India Pincode Directory\" CSV from data.gov.in on any computer or phone, copy it to this phone, then import it here. Leave the state empty for all of India.",
+  "dirStateOnly": "Only this state (optional)",
+  "updateDirectory": "Update PIN directory from CSV",
+  "dirParsing": "Reading and cleaning the CSV…",
+  "dirWriting": "Building the offline database…",
+  "directoryUpdated": "Directory updated: {count} offices",
+  "@directoryUpdated": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "help1Title": "Import your scheme",
+  "help1": "More → Sorting schemes → Add. Pick your office's Excel/CSV, check the columns and save. No file yet? Download the template, or try the SAMPLE scheme (fake data).",
+  "help2Title": "Sort by PIN",
+  "help2": "Type the PIN on the big keypad. After 3 digits you see the sorting district and likely bag; after 6 digits the final bag in its colour. Typing the next digit starts a new PIN. Long-press ⌫ to clear.",
+  "help3Title": "Parcels and air parcels",
+  "help3": "Choose the mail category at the top. In Air Parcel mode the air label code is shown in huge letters, with the YELLOW AIR / BLUE SURFACE badge, the L2 → L1 hub route and the bag. Use \"Label view\" to show or share a big label.",
+  "help4Title": "No PIN on the article?",
+  "help4": "Find PIN: type the office, village, city, taluk or district in English, Kannada or Hindi. Spelling mistakes are tolerated. Each result shows its bag.",
+  "help5Title": "Catch wrong PINs",
+  "help5": "Turn on the place check (✓ icon on Sort) and type the city written on the article. ✅ match, ⚠️ same district but different PIN, ❌ different district/state – with suggested PINs.",
+  "help6Title": "Scan the address",
+  "help6": "Tap the scan icon, point the camera at the address and capture. The PIN and city are read on the phone; the photo is deleted immediately.",
+  "help7Title": "Count articles per bag",
+  "help7": "Bulk → Start session. Enter PINs one after another; each one flashes its bag colour and adds to the count. Undo the last entry, fix unresolved ones, then share the summary to tally with the manifest.",
+  "help8Title": "Practise",
+  "help8": "Learn: flashcards with spaced repetition, a timed 20-article quiz, weak areas, and a PIN basics lesson. After a new DMSL, practise only the PINs whose hub changed."
 }

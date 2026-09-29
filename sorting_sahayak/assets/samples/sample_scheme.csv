@@ -1,0 +1,35 @@
+﻿SAMPLE – not real. Demo sorting scheme for practice only – replace with your office scheme.,,,,,,,,,,,,,,
+Type,PIN,PIN From,PIN To,Prefix,Office,District,State,Bag No,Bag Name,Section,Remarks,Category,Connectivity,Colour
+PIN,574201,,,,,,,Bag 12,Puttur SO,A,,,,#D32F2F
+PIN,574202,,,,,,,Bag 12,Puttur SO,A,,,,
+PIN,574239,,,,,,,Bag 14,Sullia SO,A,,,,#2E7D32
+PIN,574241,,,,,,,Bag 13,Uppinangady SO,A,,,,#1565C0
+PIN,575001,,,,,,,Bag 01,Mangaluru HO,B,,,,#6A1B9A
+PIN,576101,,,,,,,Bag 21,Udupi HO,C,,,,#EF6C00
+PIN,576104,,,,,,,Bag 22,Manipal SO,C,,,,#00796B
+PIN,574104,,,,,,,Bag 23,Karkala SO,C,,,,#6D4C41
+PIN,560001,,,,,,,SP-BLR,Speed Post Bengaluru,,,Speed Post,Air,#F9A825
+Range,,574201,574299,,,,,Bag 12,Puttur SO,,Puttur group,,,
+Range,,574210,574219,,,,,Bag 15,Bantwal / Belthangady,A,,,,#D81B60
+Range,,575001,575030,,,,,Bag 01,Mangaluru HO,,City delivery,,,
+Range,,576101,576125,,,,,Bag 21,Udupi HO,,,,,
+Range,,576201,576299,,,,,Bag 24,Kundapura SO,C,,,,#455A64
+Prefix,,,,574,,,,Bag 10,Puttur Division (other),A,,,,#880E4F
+Prefix,,,,575,,,,Bag 02,Mangaluru NSH,B,,,,#0097A7
+Prefix,,,,576,,,,Bag 20,Udupi Division,C,,,,#EF6C00
+Prefix,,,,57,,,,Bag 30,Karnataka – other,D,,,,#616161
+Prefix,,,,56,,,,Bag 40,Bengaluru NSH,D,,,,#1565C0
+Prefix,,,,5,,,,Bag 50,Southern states,E,,,,#2E7D32
+Prefix,,,,671,,,,Bag 60,Kasaragod (Kerala),E,,,,#00796B
+Office,,,,,Puttur,,,Bag 12,Puttur SO,,Articles without PIN,,,
+Office,,,,,Sullia,,,Bag 14,Sullia SO,,,,,
+Office,,,,,Manipal,,,Bag 22,Manipal SO,,,,,
+Office,,,,,Kasaragod,,,Bag 60,Kasaragod (Kerala),,,,,
+District,,,,,,Dakshina Kannada,,Bag 10,Puttur Division (other),,,,,
+District,,,,,,Udupi,,Bag 20,Udupi Division,,,,,
+District,,,,,,Hassan,,Bag 31,Hassan HO,,,,,#6D4C41
+State,,,,,,,Kerala,Bag 61,Kerala – other,,,,,#0097A7
+Prefix,,,,574,,,,P-01,Parcel – Puttur Division,,,Parcel (surface),Surface,#795548
+Prefix,,,,56,,,,AP-01,Air parcel – Bengaluru,,,Air Parcel,Air,#FBC02D
+Prefix,,,,60,,,,AP-02,Air parcel – Chennai,,,Air Parcel,Air,#FFA000
+Default,,,,,,,,Bag 99,All other – send to TMO,Z,Out of circle,,,#212121

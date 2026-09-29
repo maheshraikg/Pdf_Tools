@@ -266,6 +266,20 @@ class DirectoryRepo implements DirectorySource {
     return rows.map(Office.fromRow).toList();
   }
 
+  /// Every PIN with its normalised district(s) and state(s), for DMSL diffs.
+  Future<Map<int, ({List<String> districts, List<String> states})>> pinRegions() async {
+    final rows = await db.rawQuery('SELECT DISTINCT pincode, district_norm, state FROM offices');
+    final out = <int, ({List<String> districts, List<String> states})>{};
+    for (final r in rows) {
+      final e = out.putIfAbsent(r['pincode'] as int, () => (districts: <String>[], states: <String>[]));
+      final d = r['district_norm'] as String? ?? '';
+      final st = normalizePlace(r['state'] as String? ?? '');
+      if (d.isNotEmpty && !e.districts.contains(d)) e.districts.add(d);
+      if (st.isNotEmpty && !e.states.contains(st)) e.states.add(st);
+    }
+    return out;
+  }
+
   /// Offices (distinct PINs) in a normalised district.
   Future<List<Office>> officesInDistrict(String districtNorm, {int limit = 200}) async {
     final rows = await db.rawQuery(

@@ -1,31 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'core/app_scope.dart';
 import 'core/l10n/app_localizations.dart';
 import 'core/settings.dart';
 import 'core/theme.dart';
+import 'data/app_services.dart';
+import 'data/db.dart';
+import 'features/home_shell.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final settings = await Settings.load();
-  runApp(SortingSahayakApp(settings: settings));
+  runApp(SortingSahayakApp(settings: settings, open: _openServices));
 }
 
-class SortingSahayakApp extends StatelessWidget {
-  const SortingSahayakApp({super.key, required this.settings});
+Future<AppServices> _openServices() async {
+  final dbs = await AppDatabases.open();
+  final s = AppServices(directoryDb: dbs.directory, userDb: dbs.user);
+  await s.init();
+  return s;
+}
+
+class SortingSahayakApp extends StatefulWidget {
+  const SortingSahayakApp({super.key, required this.settings, required this.open});
 
   final Settings settings;
+  final Future<AppServices> Function() open;
+
+  @override
+  State<SortingSahayakApp> createState() => _SortingSahayakAppState();
+}
+
+class _SortingSahayakAppState extends State<SortingSahayakApp> {
+  late final Future<AppServices> _services = widget.open();
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: settings,
+      listenable: widget.settings,
       builder: (context, _) => MaterialApp(
+        debugShowCheckedModeBanner: false,
         onGenerateTitle: (c) => AppLocalizations.of(c).appTitle,
         theme: buildTheme(Brightness.light),
         darkTheme: buildTheme(Brightness.dark),
-        themeMode: settings.themeMode,
-        locale: settings.locale,
+        themeMode: widget.settings.themeMode,
+        locale: widget.settings.locale,
         supportedLocales: AppLocalizations.supportedLocales,
         localizationsDelegates: const [
           AppLocalizations.delegate,
@@ -39,18 +59,42 @@ class SortingSahayakApp extends StatelessWidget {
           }
           return const Locale('en');
         },
-        home: const _Placeholder(),
+        home: FutureBuilder<AppServices>(
+          future: _services,
+          builder: (context, snap) {
+            if (snap.hasError) {
+              return Scaffold(body: Center(child: Padding(padding: const EdgeInsets.all(24), child: Text('${snap.error}'))));
+            }
+            if (!snap.hasData) return const _Splash();
+            return AppScope(settings: widget.settings, services: snap.data!, child: const HomeShell());
+          },
+        ),
       ),
     );
   }
 }
 
-class _Placeholder extends StatelessWidget {
-  const _Placeholder();
+class _Splash extends StatelessWidget {
+  const _Splash();
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return Scaffold(appBar: AppBar(title: Text(l.appTitle)), body: Center(child: Text(l.disclaimer)));
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.local_post_office_outlined, size: 72, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(height: 16),
+            Text(l.appTitle, style: Theme.of(context).textTheme.headlineSmall),
+            const SizedBox(height: 24),
+            const CircularProgressIndicator(),
+            const SizedBox(height: 12),
+            Text(l.preparingDirectory),
+          ],
+        ),
+      ),
+    );
   }
 }

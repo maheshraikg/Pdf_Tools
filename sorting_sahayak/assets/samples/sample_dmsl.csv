@@ -1,0 +1,14 @@
+﻿"SAMPLE – not real. Demo DMSL, version SAMPLE-2026-10, valid from 2026-10-07.",,,,,,,,,,,,
+Type,PIN,PIN From,PIN To,Prefix,Office,District,State,L2 Hub,L1 Hub,Direct closure (Y/N),Connectivity,Remarks
+PIN,574201,,,,,,,Puttur L2 (demo),Mangaluru L1 (demo),N,Surface,SAMPLE – not real
+PIN,574239,,,,,,,,Mangaluru L1 (demo),Y,Surface,SAMPLE – not real; direct closure
+Prefix,,,,574,,,,Puttur L2 (demo),Mangaluru L1 (demo),N,Surface,SAMPLE – not real
+Prefix,,,,575,,,,Mangaluru L2 (demo),Mangaluru L1 (demo),N,Surface,SAMPLE – not real
+Prefix,,,,576,,,,Udupi L2 (demo),Mangaluru L1 (demo),N,Surface,SAMPLE – not real
+Prefix,,,,56,,,,,Bengaluru L1 (demo),Y,Air,SAMPLE – not real
+Prefix,,,,60,,,,,Chennai L1 (demo),Y,Air,SAMPLE – not real
+Prefix,,,,11,,,,,Delhi L1 (demo),Y,Air,SAMPLE – not real
+Range,,671100,671599,,,,,Kasaragod L2 (demo),Kannur L1 (demo),N,Surface,SAMPLE – not real; other circle
+Office,,,,,Sullia,,,,Mangaluru L1 (demo),Y,Surface,SAMPLE – not real
+District,,,,,,Hassan,,Hassan L2 (demo),Mysuru L1 (demo),N,Surface,SAMPLE – not real
+Default,,,,,,,,,Mangaluru L1 (demo),N,,SAMPLE – not real; connectivity left blank on purpose

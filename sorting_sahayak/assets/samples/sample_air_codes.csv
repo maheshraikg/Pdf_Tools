@@ -1,0 +1,14 @@
+﻿SAMPLE – not real. Demo air code sheet – your office decides the real codes.,,,,,,,,,,
+Type,PIN,PIN From,PIN To,Prefix,District,State,Air Code,Station,Via,Remarks
+PIN,110001,,,,,,DEL,Delhi (demo),,SAMPLE – not real
+Range,,700001,700099,,,,CCU,Kolkata (demo),,SAMPLE – not real
+Prefix,,,,56,,,BLR,Bengaluru (demo),,SAMPLE – not real
+Prefix,,,,575,,,IXE,Mangaluru (demo),Mangaluru hub (demo),SAMPLE – not real
+Prefix,,,,60,,,MAA,Chennai (demo),,SAMPLE – not real
+Prefix,,,,11,,,DEL,Delhi (demo),,SAMPLE – not real
+Prefix,,,,40,,,BOM,Mumbai (demo),,SAMPLE – not real
+Prefix,,,,50,,,HYD,Hyderabad (demo),,SAMPLE – not real
+Prefix,,,,68,,,COK,Kochi (demo),,SAMPLE – not real
+District,,,,,Mysuru,,MYQ,Mysuru (demo),Bengaluru (demo),SAMPLE – not real
+State,,,,,,Kerala,TRV,Thiruvananthapuram (demo),,SAMPLE – not real
+Prefix,,,,79,,,ZZQ,Unknown code demo,,SAMPLE – not real; shows the unknown-code warning

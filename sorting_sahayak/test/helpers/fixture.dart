@@ -26,4 +26,7 @@ Future<Database> fixtureDirectoryDb({bool fts = true}) async {
 Future<DirectoryRepo> fixtureRepo({bool fts = true}) async =>
     DirectoryRepo(await fixtureDirectoryDb(fts: fts), useFts: fts);
 
-Future<Database> memoryUserDb() => openUserDb(ffiFactory(), inMemoryDatabasePath);
+int _memCounter = 0;
+
+/// Fresh in-memory user DB (a unique name so tests never share one).
+Future<Database> memoryUserDb() => openUserDb(ffiFactory(), 'file:mem${_memCounter++}?mode=memory&cache=private');
