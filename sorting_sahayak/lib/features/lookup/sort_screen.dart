@@ -20,6 +20,7 @@ import '../../data/scheme_repo.dart';
 import '../../data/sort_engine.dart';
 import '../find_pin/mismatch_view.dart';
 import '../scan/scan_screen.dart';
+import '../schemes/scheme_editor.dart';
 import 'label_view.dart';
 import 'sort_result_view.dart';
 
@@ -131,6 +132,65 @@ class SortScreenState extends State<SortScreen> {
     _focus.requestFocus();
   }
 
+  /// Tapped office / PIN in the live list: show its line / bag box.
+  Future<void> _showBox(ActiveScheme scheme, LiveMatch m) async {
+    final l = AppLocalizations.of(context);
+    final id = scheme.scheme.id;
+    final isPin = m.rule.match.type == RuleType.exact;
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (c) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(m.key, style: Theme.of(c).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900)),
+              const SizedBox(height: 10),
+              BagCard(bag: scheme.bagFor(m.rule), rule: m.rule, level: m.rule.match.type),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  if (isPin)
+                    FilledButton.icon(
+                      onPressed: () => Navigator.pop(c, 'open'),
+                      icon: const Icon(Icons.search),
+                      label: Text(l.openThisPin),
+                    ),
+                  if (id != null)
+                    OutlinedButton.icon(
+                      key: const ValueKey('box_edit'),
+                      onPressed: () => Navigator.pop(c, 'edit'),
+                      icon: const Icon(Icons.edit_outlined),
+                      label: Text(l.editRule),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (!mounted) return;
+    if (action == 'open') setPin(m.key);
+    if (action == 'edit' && id != null) {
+      if (await editRuleFor(context, schemeId: id, rule: m.rule) && mounted) toast(context, l.savedSortingUpdated);
+    }
+  }
+
+  /// "+ Add office" on a line: new office rule on that line / bag.
+  Future<void> _addOffice(ActiveScheme scheme, Bag bag) async {
+    final id = scheme.scheme.id;
+    if (id == null) return;
+    final l = AppLocalizations.of(context);
+    final ok = await editRuleFor(context, schemeId: id, category: context.settings.category, bagCode: bag.code, type: RuleType.office);
+    if (ok && mounted) toast(context, l.savedSortingUpdated);
+  }
+
   void _toggleKeyboard() {
     setState(() => _letters = !_letters);
     // Re-open the keyboard with the new layout.
@@ -187,14 +247,32 @@ class SortScreenState extends State<SortScreen> {
     final services = context.services;
     final scheme = services.active;
     final r = _result;
-    final matches = scheme == null ? const <LiveMatch>[] : liveMatches(scheme.rules, _query, category: settings.category);
+    final matches = scheme == null ? const <LiveMatch>[] : liveMatches(scheme.rules, _query, category: settings.category, limit: 400);
     return Scaffold(
       appBar: AppBar(
-        title: Text(l.appTitle),
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(l.appTitle),
+              if (scheme?.scheme.isSample ?? false) ...[const SizedBox(width: 8), const SampleChip()],
+            ],
+          ),
+        ),
         scrolledUnderElevation: 0,
+        actionsPadding: const EdgeInsets.only(right: 4),
         actions: [
-          if (scheme?.scheme.isSample ?? false) const Padding(padding: EdgeInsets.only(right: 4), child: SampleChip()),
+          IconButton(tooltip: l.voiceInput, visualDensity: VisualDensity.compact, onPressed: _voice, icon: const Icon(Icons.mic_none)),
           IconButton(
+            tooltip: l.scanAddress,
+            visualDensity: VisualDensity.compact,
+            onPressed: _scan,
+            icon: const Icon(Icons.document_scanner_outlined),
+          ),
+          IconButton(
+            visualDensity: VisualDensity.compact,
             tooltip: l.checkPlace,
             icon: Icon(_placeOpen ? Icons.location_off_outlined : Icons.fact_check_outlined),
             onPressed: () => setState(() {
@@ -204,6 +282,7 @@ class SortScreenState extends State<SortScreen> {
           ),
           if (r != null && r.complete && r.valid)
             IconButton(
+              visualDensity: VisualDensity.compact,
               tooltip: l.labelView,
               icon: const Icon(Icons.label_outline),
               onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => LabelViewScreen(result: r))),
@@ -240,8 +319,6 @@ class SortScreenState extends State<SortScreen> {
                     error: r != null && r.complete && !r.valid,
                     onChanged: _onChanged,
                     onClear: _clear,
-                    onVoice: _voice,
-                    onScan: _scan,
                     onToggleKeyboard: _toggleKeyboard,
                   ),
                 ],
@@ -282,9 +359,8 @@ class SortScreenState extends State<SortScreen> {
                         matches: matches,
                         scheme: scheme,
                         query: _query,
-                        onPick: (m) {
-                          if (m.rule.match.type == RuleType.exact) setPin(m.key);
-                        },
+                        onPick: (m) => _showBox(scheme, m),
+                        onAdd: (bag) => _addOffice(scheme, bag),
                       ),
                     // Partial PIN without list entries: sorting district / likely bag.
                     if (r != null && r.digits == _digits && _digits.isNotEmpty && matches.isEmpty) SortResultView(result: r),
@@ -340,8 +416,6 @@ class _SearchField extends StatelessWidget {
     required this.error,
     required this.onChanged,
     required this.onClear,
-    required this.onVoice,
-    required this.onScan,
     required this.onToggleKeyboard,
   });
 
@@ -351,59 +425,68 @@ class _SearchField extends StatelessWidget {
   final bool error;
   final ValueChanged<String> onChanged;
   final VoidCallback onClear;
-  final VoidCallback onVoice;
-  final VoidCallback onScan;
   final VoidCallback onToggleKeyboard;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final c = Theme.of(context).colorScheme;
-    return TextField(
-      key: const ValueKey('pin_field'),
-      controller: controller,
-      focusNode: focusNode,
-      autofocus: true,
-      keyboardType: letters ? TextInputType.text : TextInputType.number,
-      textInputAction: TextInputAction.search,
-      inputFormatters: letters ? null : [FilteringTextInputFormatter.allow(RegExp(r'[0-9०-९೦-೯ ]'))],
-      style: TextStyle(
-        fontSize: letters ? 26 : 38,
-        fontWeight: FontWeight.w900,
-        letterSpacing: letters ? 0 : 6,
-        color: error ? c.error : c.primary,
-      ),
-      onChanged: onChanged,
-      onTap: () {
-        // Tap selects everything so the next PIN simply replaces it.
-        if (controller.text.isNotEmpty) controller.selection = TextSelection(baseOffset: 0, extentOffset: controller.text.length);
-      },
-      decoration: InputDecoration(
-        hintText: letters ? l.officeNameHint : l.pinHint,
-        hintStyle: TextStyle(fontSize: 22, letterSpacing: 0, fontWeight: FontWeight.w600, color: c.onSurfaceVariant),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: c.primary, width: 2),
+    // The digits are already large: don't let big system text push the
+    // 6th digit out of view.
+    return MediaQuery.withClampedTextScaling(
+      maxScaleFactor: 1.1,
+      child: TextField(
+        key: const ValueKey('pin_field'),
+        controller: controller,
+        focusNode: focusNode,
+        autofocus: true,
+        keyboardType: letters ? TextInputType.text : TextInputType.number,
+        textInputAction: TextInputAction.search,
+        inputFormatters: letters ? null : [FilteringTextInputFormatter.allow(RegExp(r'[0-9०-९೦-೯ ]'))],
+        style: TextStyle(
+          fontSize: letters ? 26 : 36,
+          fontWeight: FontWeight.w900,
+          letterSpacing: letters ? 0 : 4,
+          color: error ? c.error : c.primary,
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: c.primary, width: 3),
-        ),
-        prefixIcon: IconButton(tooltip: l.voiceInput, onPressed: onVoice, icon: const Icon(Icons.mic)),
-        suffixIcon: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (controller.text.isNotEmpty)
-              IconButton(key: const ValueKey('clear_field'), tooltip: l.clear, onPressed: onClear, icon: const Icon(Icons.close)),
-            IconButton(
-              key: const ValueKey('kb_toggle'),
-              tooltip: l.switchKeyboard,
-              onPressed: onToggleKeyboard,
-              icon: Icon(letters ? Icons.dialpad : Icons.abc),
-            ),
-            IconButton(tooltip: l.scanAddress, onPressed: onScan, icon: const Icon(Icons.document_scanner_outlined)),
-          ],
+        onChanged: onChanged,
+        onTap: () {
+          // Tap selects everything so the next PIN simply replaces it.
+          if (controller.text.isNotEmpty) controller.selection = TextSelection(baseOffset: 0, extentOffset: controller.text.length);
+        },
+        decoration: InputDecoration(
+          hintText: letters ? l.officeNameHint : l.pinHint,
+          hintStyle: TextStyle(fontSize: 22, letterSpacing: 0, fontWeight: FontWeight.w600, color: c.onSurfaceVariant),
+          contentPadding: const EdgeInsets.fromLTRB(16, 14, 4, 14),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: c.primary, width: 2),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: c.primary, width: 3),
+          ),
+          suffixIcon: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (controller.text.isNotEmpty)
+                IconButton(
+                  key: const ValueKey('clear_field'),
+                  tooltip: l.clear,
+                  visualDensity: VisualDensity.compact,
+                  onPressed: onClear,
+                  icon: const Icon(Icons.close),
+                ),
+              IconButton(
+                key: const ValueKey('kb_toggle'),
+                tooltip: l.switchKeyboard,
+                visualDensity: VisualDensity.compact,
+                onPressed: onToggleKeyboard,
+                icon: Icon(letters ? Icons.dialpad : Icons.abc),
+              ),
+              const SizedBox(width: 4),
+            ],
+          ),
         ),
       ),
     );
@@ -413,12 +496,13 @@ class _SearchField extends StatelessWidget {
 /// Printed-list style results, grouped by bag / line:
 /// "KOZHIKODE · Kerala  [673] [674] [675] [676]".
 class _LiveList extends StatelessWidget {
-  const _LiveList({required this.matches, required this.scheme, required this.query, required this.onPick});
+  const _LiveList({required this.matches, required this.scheme, required this.query, required this.onPick, required this.onAdd});
 
   final List<LiveMatch> matches;
   final ActiveScheme scheme;
   final String query;
   final ValueChanged<LiveMatch> onPick;
+  final ValueChanged<Bag> onAdd;
 
   @override
   Widget build(BuildContext context) {
@@ -442,7 +526,14 @@ class _LiveList extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           for (final (i, e) in entries.indexed) ...[
-            _LiveGroup(bag: scheme.bagFor(e.value.first.rule), matches: e.value, highlight: i == 0 && e.value.first.covers, onPick: onPick),
+            _LiveGroup(
+              key: ValueKey('group_${e.key}'),
+              bag: scheme.bagFor(e.value.first.rule),
+              matches: e.value,
+              highlight: i == 0 && e.value.first.covers,
+              onPick: onPick,
+              onAdd: () => onAdd(scheme.bagFor(e.value.first.rule)),
+            ),
             const SizedBox(height: 8),
           ],
         ],
@@ -451,16 +542,39 @@ class _LiveList extends StatelessWidget {
   }
 }
 
-class _LiveGroup extends StatelessWidget {
-  const _LiveGroup({required this.bag, required this.matches, required this.highlight, required this.onPick});
+class _LiveGroup extends StatefulWidget {
+  const _LiveGroup({
+    super.key,
+    required this.bag,
+    required this.matches,
+    required this.highlight,
+    required this.onPick,
+    required this.onAdd,
+  });
 
   final Bag bag;
   final List<LiveMatch> matches;
   final bool highlight;
   final ValueChanged<LiveMatch> onPick;
+  final VoidCallback onAdd;
+
+  @override
+  State<_LiveGroup> createState() => _LiveGroupState();
+}
+
+class _LiveGroupState extends State<_LiveGroup> {
+  static const _collapsed = 24;
+  bool _all = false;
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final bag = widget.bag;
+    final matches = widget.matches;
+    final highlight = widget.highlight;
+    final onPick = widget.onPick;
+    final shown = _all ? matches : matches.take(_collapsed).toList();
+    final hidden = matches.length - shown.length;
     final t = Theme.of(context).textTheme;
     final c = Theme.of(context).colorScheme;
     final colour = bagColour(context, bag);
@@ -506,8 +620,20 @@ class _LiveGroup extends StatelessWidget {
                       spacing: 6,
                       runSpacing: 6,
                       children: [
-                        for (final m in matches.take(24)) _KeyChip(match: m, colour: colour, onDark: highlight, onTap: () => onPick(m)),
-                        if (matches.length > 24) Text('+${matches.length - 24}', style: t.titleMedium?.copyWith(color: fg)),
+                        for (final m in shown) _KeyChip(match: m, colour: colour, onDark: highlight, onTap: () => onPick(m)),
+                        if (hidden > 0)
+                          ActionChip(
+                            key: const ValueKey('show_all'),
+                            avatar: const Icon(Icons.expand_more),
+                            label: Text(l.showAllN(matches.length), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+                            onPressed: () => setState(() => _all = true),
+                          ),
+                        ActionChip(
+                          key: const ValueKey('add_office'),
+                          avatar: const Icon(Icons.add),
+                          label: Text(l.addOffice, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+                          onPressed: widget.onAdd,
+                        ),
                       ],
                     ),
                   ],

@@ -742,6 +742,24 @@ abstract class AppLocalizations {
   /// **'No airport found'**
   String get noAirportFound;
 
+  /// No description provided for @showAllN.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all {count}'**
+  String showAllN(int count);
+
+  /// No description provided for @addOffice.
+  ///
+  /// In en, this message translates to:
+  /// **'Add office'**
+  String get addOffice;
+
+  /// No description provided for @openThisPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Open this PIN'**
+  String get openThisPin;
+
   /// No description provided for @restoreDefault.
   ///
   /// In en, this message translates to:
@@ -925,7 +943,7 @@ abstract class AppLocalizations {
   /// No description provided for @section.
   ///
   /// In en, this message translates to:
-  /// **'Section'**
+  /// **'Position'**
   String get section;
 
   /// No description provided for @matchedBy.
@@ -2341,7 +2359,7 @@ abstract class AppLocalizations {
   /// No description provided for @fSection.
   ///
   /// In en, this message translates to:
-  /// **'Section'**
+  /// **'Position / section no.'**
   String get fSection;
 
   /// No description provided for @fRemarks.

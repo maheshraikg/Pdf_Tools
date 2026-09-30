@@ -360,6 +360,17 @@ class AppLocalizationsKn extends AppLocalizations {
   String get noAirportFound => 'ಯಾವುದೇ ವಿಮಾನ ನಿಲ್ದಾಣ ಸಿಗಲಿಲ್ಲ';
 
   @override
+  String showAllN(int count) {
+    return 'ಎಲ್ಲ $count ತೋರಿಸಿ';
+  }
+
+  @override
+  String get addOffice => 'ಕಚೇರಿ ಸೇರಿಸಿ';
+
+  @override
+  String get openThisPin => 'ಈ ಪಿನ್ ತೆರೆಯಿರಿ';
+
+  @override
   String get restoreDefault => 'ಡೀಫಾಲ್ಟ್ ಮಂಗಳೂರು ಸ್ಕೀಮ್ ಮರುಸ್ಥಾಪಿಸಿ';
 
   @override
@@ -458,7 +469,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get bags => 'ಲೈನ್‌ಗಳು / ಚೀಲಗಳು';
 
   @override
-  String get section => 'ವಿಭಾಗ';
+  String get section => 'ಸ್ಥಾನ';
 
   @override
   String matchedBy(String type, String key) {
@@ -1263,7 +1274,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get fBagName => 'ಹೆಚ್ಚುವರಿ ಹೆಸರು (ಉದಾ. ರಾಜ್ಯ)';
 
   @override
-  String get fSection => 'ವಿಭಾಗ';
+  String get fSection => 'ಸ್ಥಾನ / ವಿಭಾಗ ಸಂಖ್ಯೆ';
 
   @override
   String get fRemarks => 'ಷರಾ';

@@ -26,6 +26,7 @@ Future<bool> editRuleFor(
   String? pin,
   String? category,
   String? bagCode,
+  RuleType? type,
 }) async {
   final services = context.services;
   final repo = services.schemes;
@@ -40,6 +41,7 @@ Future<bool> editRuleFor(
       initialPin: pin,
       initialCategory: category,
       initialBag: bagCode,
+      initialType: type,
     ),
   );
   if (r == null) return false;
@@ -407,6 +409,7 @@ class RuleDialog extends StatefulWidget {
     this.initialPin,
     this.initialCategory,
     this.initialBag,
+    this.initialType,
   });
 
   final BagRule? rule;
@@ -417,13 +420,14 @@ class RuleDialog extends StatefulWidget {
   final String? initialPin;
   final String? initialCategory;
   final String? initialBag;
+  final RuleType? initialType;
 
   @override
   State<RuleDialog> createState() => _RuleDialogState();
 }
 
 class _RuleDialogState extends State<RuleDialog> {
-  late RuleType _type = widget.rule?.match.type ?? RuleType.exact;
+  late RuleType _type = widget.rule?.match.type ?? widget.initialType ?? RuleType.exact;
   late final _a = TextEditingController(text: _initialA());
   late final _b = TextEditingController(text: widget.rule?.match.pinTo?.toString() ?? '');
   late final _bag = TextEditingController(text: widget.rule?.bagCode ?? widget.initialBag ?? '');

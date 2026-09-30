@@ -360,6 +360,17 @@ class AppLocalizationsHi extends AppLocalizations {
   String get noAirportFound => 'कोई हवाई अड्डा नहीं मिला';
 
   @override
+  String showAllN(int count) {
+    return 'सभी $count दिखाएँ';
+  }
+
+  @override
+  String get addOffice => 'डाकघर जोड़ें';
+
+  @override
+  String get openThisPin => 'यह पिन खोलें';
+
+  @override
   String get restoreDefault => 'डिफ़ॉल्ट मंगलुरु स्कीम वापस लाएँ';
 
   @override
@@ -457,7 +468,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get bags => 'लाइनें / बैग';
 
   @override
-  String get section => 'अनुभाग';
+  String get section => 'क्रम';
 
   @override
   String matchedBy(String type, String key) {
@@ -1262,7 +1273,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get fBagName => 'अतिरिक्त नाम (जैसे राज्य)';
 
   @override
-  String get fSection => 'अनुभाग';
+  String get fSection => 'क्रम / अनुभाग सं.';
 
   @override
   String get fRemarks => 'टिप्पणी';

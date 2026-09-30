@@ -359,6 +359,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noAirportFound => 'No airport found';
 
   @override
+  String showAllN(int count) {
+    return 'Show all $count';
+  }
+
+  @override
+  String get addOffice => 'Add office';
+
+  @override
+  String get openThisPin => 'Open this PIN';
+
+  @override
   String get restoreDefault => 'Restore default Mangaluru scheme';
 
   @override
@@ -457,7 +468,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bags => 'Lines / Bags';
 
   @override
-  String get section => 'Section';
+  String get section => 'Position';
 
   @override
   String matchedBy(String type, String key) {
@@ -1260,7 +1271,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fBagName => 'Extra name (e.g. state)';
 
   @override
-  String get fSection => 'Section';
+  String get fSection => 'Position / section no.';
 
   @override
   String get fRemarks => 'Remarks';

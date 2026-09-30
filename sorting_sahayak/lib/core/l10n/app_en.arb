@@ -166,6 +166,16 @@
   },
   "typeFullPinForAir": "Type all 6 digits of the PIN",
   "noAirportFound": "No airport found",
+  "showAllN": "Show all {count}",
+  "@showAllN": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addOffice": "Add office",
+  "openThisPin": "Open this PIN",
   "restoreDefault": "Restore default Mangaluru scheme",
   "defaultRestored": "Default scheme restored",
   "legalTitle": "Disclaimer & privacy policy",
@@ -196,7 +206,7 @@
   "sortHint": "Type a PIN on the keypad. The bag appears as you type.",
   "bag": "Line / Bag",
   "bags": "Lines / Bags",
-  "section": "Section",
+  "section": "Position",
   "matchedBy": "Matched by {type}: {key}",
   "@matchedBy": {
     "placeholders": {
@@ -697,7 +707,7 @@
   "fState": "State",
   "fBagCode": "Line / bag (e.g. Puttur Line, BANGALORE)",
   "fBagName": "Extra name (e.g. state)",
-  "fSection": "Section",
+  "fSection": "Position / section no.",
   "fRemarks": "Remarks",
   "fCategory": "Mail category",
   "fConnectivity": "Connectivity (Air/Surface)",

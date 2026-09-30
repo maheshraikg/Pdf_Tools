@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sorting_sahayak/core/constants.dart';
+import 'package:sorting_sahayak/data/import/scheme_io.dart';
 import 'package:sorting_sahayak/core/widgets.dart';
 import 'package:sorting_sahayak/features/find_pin/find_pin_screen.dart';
 import 'package:sorting_sahayak/features/lookup/sort_screen.dart';
@@ -96,6 +99,51 @@ void main() {
     await settle(tester);
     expect(find.text('Sullia'), findsWidgets);
     expect(find.text('Bag 14'), findsWidgets);
+  });
+
+  testWidgets('Sort screen: line box shows all offices, office box, add office', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.5;
+    addTearDown(tester.view.reset);
+    final h = await Harness.create(tester, sample: false);
+    await tester.runAsync(() async {
+      final id = await installDefaultScheme(h.services.schemes, (p) async => File(p).readAsBytesSync());
+      await h.services.schemes.setActive(id);
+      await h.services.reloadActive();
+    });
+    h.settings.category = kCatTD;
+    await tester.pumpWidget(h.wrap(const SortScreen()));
+    await settle(tester);
+    await tester.tap(find.byKey(const ValueKey('kb_toggle')));
+    await settle(tester);
+    await tester.enterText(find.byKey(const ValueKey('pin_field')), 'belm');
+    await settle(tester);
+    // More than 24 entries on Belman Line: "Show all" reveals the rest.
+    final showAll = find.byKey(const ValueKey('show_all'));
+    expect(showAll, findsOneWidget);
+    await tester.ensureVisible(showAll);
+    await tester.pumpAndSettle();
+    await tester.tap(showAll);
+    await settle(tester);
+    expect(find.byKey(const ValueKey('show_all')), findsNothing);
+    // Tapping an office opens its box with line and section.
+    await tester.ensureVisible(find.text('Kulur').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Kulur').first);
+    await tester.pumpAndSettle();
+    expect(find.text('Belman Line'), findsWidgets);
+    expect(find.text('16'), findsOneWidget);
+    await tester.tapAt(const Offset(10, 10));
+    await tester.pumpAndSettle();
+    // "+ Add office" opens the rule form on this line, type Office.
+    await tester.ensureVisible(find.byKey(const ValueKey('add_office')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('add_office')));
+    await settle(tester);
+    await tester.pumpAndSettle();
+    expect(find.text('Add rule'), findsOneWidget);
+    expect(tester.widgetList<TextField>(find.byType(TextField)).any((f) => f.controller?.text == 'Belman Line'), isTrue);
+    expect(find.text('Office'), findsWidgets);
   });
 
   testWidgets('Sort screen: change bag for this PIN updates the result', (tester) async {
