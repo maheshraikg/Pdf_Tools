@@ -19,7 +19,6 @@ import '../../data/models/office.dart';
 import '../../data/models/scheme.dart';
 import '../../data/scheme_repo.dart';
 import '../../data/sort_engine.dart';
-import '../find_pin/mismatch_view.dart';
 import '../scan/scan_screen.dart';
 import '../schemes/scheme_editor.dart';
 import 'label_view.dart';
@@ -42,8 +41,9 @@ class SortScreenState extends State<SortScreen> {
   int _seq = 0;
   List<int> _recents = [];
   int _recentsVersion = -1;
-  final _place = TextEditingController();
-  bool _placeOpen = false;
+
+  /// Place from a scanned address (used to pick the office rule; no UI).
+  String _scannedPlace = '';
   String _lastSpoken = '';
   Object? _schemeSeen;
   List<_PlaceHit> _places = [];
@@ -57,7 +57,6 @@ class SortScreenState extends State<SortScreen> {
       _recentsVersion = v;
       _loadRecents();
     }
-    _placeOpen = _placeOpen || context.settings.showMismatchField;
     // Re-resolve when the active scheme changes (import, edit, switch).
     final scheme = context.services.active;
     if (!identical(scheme, _schemeSeen)) {
@@ -72,7 +71,6 @@ class SortScreenState extends State<SortScreen> {
   void dispose() {
     _input.dispose();
     _focus.dispose();
-    _place.dispose();
     super.dispose();
   }
 
@@ -84,8 +82,7 @@ class SortScreenState extends State<SortScreen> {
   /// Sets a complete PIN from outside (Find PIN, favourites, scan).
   void setPin(String pin, {String? place}) {
     if (place != null) {
-      _place.text = place;
-      _placeOpen = true;
+      _scannedPlace = place;
     }
     _letters = false;
     _setText(PinUtils.digitsOnly(pin));
@@ -241,7 +238,11 @@ class SortScreenState extends State<SortScreen> {
       setState(() => _result = null);
       return;
     }
-    final r = await services.engine.resolvePin(_digits, category: settings.category, officeName: _placeOpen ? _place.text : null);
+    final r = await services.engine.resolvePin(
+      _digits,
+      category: settings.category,
+      officeName: _scannedPlace.isEmpty ? null : _scannedPlace,
+    );
     if (!mounted || seq != _seq) return;
     setState(() => _result = r);
     if (r.complete && r.valid) {
@@ -302,15 +303,6 @@ class SortScreenState extends State<SortScreen> {
             onPressed: _scan,
             icon: const Icon(Icons.document_scanner_outlined),
           ),
-          IconButton(
-            visualDensity: VisualDensity.compact,
-            tooltip: l.checkPlace,
-            icon: Icon(_placeOpen ? Icons.location_off_outlined : Icons.fact_check_outlined),
-            onPressed: () => setState(() {
-              _placeOpen = !_placeOpen;
-              settings.showMismatchField = _placeOpen;
-            }),
-          ),
           if (r != null && r.complete && r.valid)
             IconButton(
               visualDensity: VisualDensity.compact,
@@ -349,41 +341,16 @@ class SortScreenState extends State<SortScreen> {
                     focusNode: _focus,
                     letters: _letters,
                     error: r != null && r.complete && !r.valid,
-                    onChanged: _onChanged,
+                    onChanged: (v) {
+                      _scannedPlace = '';
+                      _onChanged(v);
+                    },
                     onClear: _clear,
                     onToggleKeyboard: _toggleKeyboard,
                   ),
                 ],
               ),
             ),
-            if (_placeOpen)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 6, 12, 0),
-                child: TextField(
-                  controller: _place,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    labelText: l.placeOnAddress,
-                    prefixIcon: const Icon(Icons.place_outlined),
-                    suffixIcon: _place.text.isEmpty
-                        ? null
-                        : IconButton(tooltip: l.clear, icon: const Icon(Icons.close), onPressed: () => setState(_place.clear)),
-                  ),
-                  onChanged: (_) => setState(() {}),
-                ),
-              ),
-            if (_placeOpen && _place.text.trim().length >= 2 && _digits.length < 6)
-              Padding(
-                key: const ValueKey('place_needs_pin'),
-                padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
-                child: Row(
-                  children: [
-                    Icon(Icons.info_outline, size: 18, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                    const SizedBox(width: 6),
-                    Expanded(child: Text(l.placeCheckNeedsPin, style: Theme.of(context).textTheme.bodyMedium)),
-                  ],
-                ),
-              ),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
@@ -392,10 +359,6 @@ class SortScreenState extends State<SortScreen> {
                   if (scheme == null) ...[const NoSchemeBar(), const SizedBox(height: 10)],
                   // Main answer first: the big bag card.
                   if (r != null && r.digits == _digits && r.complete) ...[
-                    if (_placeOpen && _place.text.trim().length >= 2) ...[
-                      MismatchView(pin: _digits, place: _place.text, onPickPin: (o) => setPin(o.pin)),
-                      const SizedBox(height: 10),
-                    ],
                     SortResultView(result: r),
                   ] else ...[
                     if (_places.isNotEmpty && _digits.isEmpty) ...[

@@ -236,29 +236,6 @@ void main() {
     expect(find.text('No matching office found'), findsOneWidget);
   });
 
-  testWidgets('Sort screen: typed PIN + typed place runs the address check', (tester) async {
-    tester.view.physicalSize = const Size(1080, 2400);
-    tester.view.devicePixelRatio = 2.5;
-    addTearDown(tester.view.reset);
-    final h = await Harness.create(tester);
-    await tester.pumpWidget(h.wrap(const SortScreen()));
-    await settle(tester);
-    await tester.tap(find.byTooltip('PIN vs place check'));
-    await tester.pumpAndSettle();
-    // Place first, no PIN yet: a hint says the PIN is needed.
-    await tester.enterText(find.widgetWithText(TextField, 'City / office on the address'), 'Manipal');
-    await tester.pump();
-    expect(find.byKey(const ValueKey('place_needs_pin')), findsOneWidget);
-    await tester.enterText(find.byKey(const ValueKey('pin_field')), '574201');
-    await settle(tester, rounds: 6);
-    await tester.enterText(find.widgetWithText(TextField, 'City / office on the address'), 'Manipal');
-    await settle(tester, rounds: 10);
-    expect(find.textContaining('different district/state'), findsOneWidget);
-    await tester.enterText(find.widgetWithText(TextField, 'City / office on the address'), 'Puttur');
-    await settle(tester, rounds: 10);
-    expect(find.text('✅ Place matches this PIN'), findsOneWidget);
-  });
-
   testWidgets('Find PIN: mismatch checker', (tester) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 2.5;

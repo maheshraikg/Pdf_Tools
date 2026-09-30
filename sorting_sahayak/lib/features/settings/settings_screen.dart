@@ -19,19 +19,25 @@ class SettingsScreen extends StatelessWidget {
         appBar: AppBar(title: Text(l.settings)),
         body: ListView(
           children: [
-            ListTile(title: Text(l.language, style: const TextStyle(fontWeight: FontWeight.w700))),
+            ListTile(
+              title: Text(l.language, style: const TextStyle(fontWeight: FontWeight.w700)),
+            ),
             RadioGroup<String>(
               groupValue: s.locale?.languageCode ?? '',
               onChanged: (v) => s.locale = v == null || v.isEmpty ? null : Locale(v),
-              child: Column(children: [
-                RadioListTile<String>(value: '', title: Text(l.languageDevice)),
-                const RadioListTile<String>(value: 'kn', title: Text('ಕನ್ನಡ (Kannada)')),
-                const RadioListTile<String>(value: 'en', title: Text('English')),
-                const RadioListTile<String>(value: 'hi', title: Text('हिन्दी (Hindi)')),
-              ]),
+              child: Column(
+                children: [
+                  RadioListTile<String>(value: '', title: Text(l.languageDevice)),
+                  const RadioListTile<String>(value: 'kn', title: Text('ಕನ್ನಡ (Kannada)')),
+                  const RadioListTile<String>(value: 'en', title: Text('English')),
+                  const RadioListTile<String>(value: 'hi', title: Text('हिन्दी (Hindi)')),
+                ],
+              ),
             ),
             const Divider(),
-            ListTile(title: Text(l.theme, style: const TextStyle(fontWeight: FontWeight.w700))),
+            ListTile(
+              title: Text(l.theme, style: const TextStyle(fontWeight: FontWeight.w700)),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: SegmentedButton<ThemeMode>(
@@ -45,9 +51,13 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
             const Divider(),
-            SwitchListTile(value: s.ttsEnabled, onChanged: (v) => s.ttsEnabled = v, title: Text(l.ttsSetting), subtitle: Text(l.ttsSettingSub)),
+            SwitchListTile(
+              value: s.ttsEnabled,
+              onChanged: (v) => s.ttsEnabled = v,
+              title: Text(l.ttsSetting),
+              subtitle: Text(l.ttsSettingSub),
+            ),
             SwitchListTile(value: s.hapticsEnabled, onChanged: (v) => s.hapticsEnabled = v, title: Text(l.hapticsSetting)),
-            SwitchListTile(value: s.showMismatchField, onChanged: (v) => s.showMismatchField = v, title: Text(l.mismatchFieldSetting), subtitle: Text(l.mismatchFieldSettingSub)),
             const Divider(),
             ListTile(
               title: Text(l.categories, style: const TextStyle(fontWeight: FontWeight.w700)),
@@ -61,7 +71,11 @@ class SettingsScreen extends StatelessWidget {
                     context: context,
                     builder: (d) => AlertDialog(
                       title: Text(l.addCategory),
-                      content: TextField(controller: c, autofocus: true, decoration: InputDecoration(labelText: l.fCategory)),
+                      content: TextField(
+                        controller: c,
+                        autofocus: true,
+                        decoration: InputDecoration(labelText: l.fCategory),
+                      ),
                       actions: [
                         TextButton(onPressed: () => Navigator.pop(d), child: Text(l.cancel)),
                         FilledButton(onPressed: () => Navigator.pop(d, c.text), child: Text(l.add)),
