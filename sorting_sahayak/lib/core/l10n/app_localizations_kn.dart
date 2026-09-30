@@ -448,6 +448,11 @@ class AppLocalizationsKn extends AppLocalizations {
       'ಆ್ಯಪ್‌ನ ಹೊಸ ಆವೃತ್ತಿಗಳೊಂದಿಗೆ ಈ ನೀತಿ ನವೀಕರಿಸಬಹುದು. ಆ್ಯಪ್ ಬಳಸುವ ಮೂಲಕ ನೀವು ಈ ಹಕ್ಕು ನಿರಾಕರಣೆ ಮತ್ತು ನೀತಿಗೆ ಒಪ್ಪುತ್ತೀರಿ.';
 
   @override
+  String fullLineN(int count) {
+    return 'ಪೂರ್ಣ ಲೈನ್ ($count)';
+  }
+
+  @override
   String get enterPin => 'ಪಿನ್ ನಮೂದಿಸಿ';
 
   @override

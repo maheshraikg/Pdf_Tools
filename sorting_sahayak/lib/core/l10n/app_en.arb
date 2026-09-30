@@ -199,6 +199,14 @@
   "legal6": "PIN directory: data.gov.in, Government of India, Open Government Data Licence – India. Airport codes are public IATA codes. The default Mangaluru scheme was compiled from lists shared by postal staff and may differ from your office's current scheme.",
   "legalH7": "Changes",
   "legal7": "This policy may be updated with new versions of the app. By using the app you agree to this disclaimer and policy.",
+  "fullLineN": "Full line ({count})",
+  "@fullLineN": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "enterPin": "Enter PIN",
   "backspace": "Delete last digit",
   "voiceInput": "Voice input",

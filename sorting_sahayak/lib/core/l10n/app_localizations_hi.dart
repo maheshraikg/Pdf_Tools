@@ -448,6 +448,11 @@ class AppLocalizationsHi extends AppLocalizations {
       'ऐप के नए संस्करणों के साथ यह नीति अपडेट हो सकती है। ऐप का उपयोग करके आप इस अस्वीकरण और नीति से सहमत होते हैं।';
 
   @override
+  String fullLineN(int count) {
+    return 'पूरी लाइन ($count)';
+  }
+
+  @override
   String get enterPin => 'पिन दर्ज करें';
 
   @override

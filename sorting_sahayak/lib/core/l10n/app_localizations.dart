@@ -898,6 +898,12 @@ abstract class AppLocalizations {
   /// **'This policy may be updated with new versions of the app. By using the app you agree to this disclaimer and policy.'**
   String get legal7;
 
+  /// No description provided for @fullLineN.
+  ///
+  /// In en, this message translates to:
+  /// **'Full line ({count})'**
+  String fullLineN(int count);
+
   /// No description provided for @enterPin.
   ///
   /// In en, this message translates to:

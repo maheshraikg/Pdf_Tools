@@ -447,6 +447,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'This policy may be updated with new versions of the app. By using the app you agree to this disclaimer and policy.';
 
   @override
+  String fullLineN(int count) {
+    return 'Full line ($count)';
+  }
+
+  @override
   String get enterPin => 'Enter PIN';
 
   @override
