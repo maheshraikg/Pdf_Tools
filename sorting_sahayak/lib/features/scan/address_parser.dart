@@ -19,7 +19,8 @@ final RegExp _junk = RegExp(r'(p\.?\s?i\.?\s?n\.?(\s?code)?|pincode|ಪಿನ್
 String _clean(String line) => PinUtils.normalizeDigits(line)
     .replaceAll(RegExp(r'[0-9OIlSB]{3}[\s\-]?[0-9OIlSB]{3}'), ' ')
     .replaceAll(_junk, ' ')
-    .replaceAll(RegExp(r'[^\p{L}\s]', unicode: true), ' ')
+    // Keep letters and their vowel signs (Devanagari / Kannada matras).
+    .replaceAll(RegExp(r'[^\p{L}\p{M}\s]', unicode: true), ' ')
     .replaceAll(RegExp(r'\s+'), ' ')
     .trim();
 

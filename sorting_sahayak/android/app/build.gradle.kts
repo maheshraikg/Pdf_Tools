@@ -48,3 +48,9 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // Hindi (Devanagari) text recognition for address scans; bundled model,
+    // works offline. Latin (English) comes with the plugin.
+    implementation("com.google.mlkit:text-recognition-devanagari:16.0.1")
+}

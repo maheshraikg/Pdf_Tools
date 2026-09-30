@@ -246,9 +246,12 @@ and templates with `dart run tool/make_samples.dart`.
   `tools:node="remove"`. Only the debug build keeps INTERNET, for Flutter
   tooling.
 * Camera scans are processed on-device by ML Kit (bundled models, no
-  download). The scan reads live camera frames in memory (no photo is taken);
-  the PIN and office names show their line as soon as they are read, offices
-  nearest the sorting office first. Nothing is stored or uploaded.
+  download; English and Hindi / Devanagari). The scan reads live camera
+  frames in memory, so the PIN and office names show their line as soon as
+  they are read, best match first. The capture button takes one
+  full-resolution photo for handwriting or small print; it is deleted right
+  after reading. Kannada script is not supported by ML Kit; the PIN digits
+  and the English / Hindi text are used. Nothing is stored or uploaded.
 * The app ships with one default scheme, **Mangaluru – default (TD /
   Non-TD)** (`assets/schemes/mangaluru_default.csv`), installed and made
   active on first launch. Users can edit it, delete it (it is not re-added),

@@ -1519,7 +1519,7 @@ abstract class AppLocalizations {
   /// No description provided for @scanPrivacy.
   ///
   /// In en, this message translates to:
-  /// **'Text is read live on the phone with ML Kit (English / Latin script). Camera frames stay in memory only while being read; no photo is taken or saved. For Kannada or Hindi addresses the PIN digits are used.'**
+  /// **'Text is read on the phone with ML Kit (English and Hindi). Live camera frames stay in memory only while being read; a captured photo is deleted right after reading. Kannada script cannot be read yet – the PIN digits and English / Hindi text are used.'**
   String get scanPrivacy;
 
   /// No description provided for @noOpenSession.
@@ -1621,7 +1621,7 @@ abstract class AppLocalizations {
   /// No description provided for @scanLiveHint.
   ///
   /// In en, this message translates to:
-  /// **'Hold the camera over the address – it reads the PIN and office names by itself.'**
+  /// **'Hold the camera over the address – it reads the PIN and office names by itself. For handwriting or small print tap the camera button.'**
   String get scanLiveHint;
 
   /// No description provided for @scanLooking.
@@ -1654,11 +1654,11 @@ abstract class AppLocalizations {
   /// **'Next article'**
   String get scanNext;
 
-  /// No description provided for @scanOfficesNearest.
+  /// No description provided for @scanOfficesBest.
   ///
   /// In en, this message translates to:
-  /// **'Offices on the address – nearest first'**
-  String get scanOfficesNearest;
+  /// **'Offices on the address – best match first'**
+  String get scanOfficesBest;
 
   /// No description provided for @scanNothingYet.
   ///

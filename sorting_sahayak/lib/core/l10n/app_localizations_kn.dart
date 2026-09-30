@@ -794,7 +794,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get scanPrivacy =>
-      'ಪಠ್ಯವನ್ನು ಫೋನಿನಲ್ಲೇ ML Kit ಮೂಲಕ ನೇರವಾಗಿ ಓದಲಾಗುತ್ತದೆ (ಇಂಗ್ಲಿಷ್ / ಲ್ಯಾಟಿನ್ ಲಿಪಿ). ಕ್ಯಾಮೆರಾ ಚಿತ್ರಗಳು ಓದುವಾಗ ಮಾತ್ರ ಮೆಮೊರಿಯಲ್ಲಿರುತ್ತವೆ; ಫೋಟೋ ತೆಗೆಯುವುದಿಲ್ಲ, ಉಳಿಸುವುದಿಲ್ಲ. ಕನ್ನಡ ಅಥವಾ ಹಿಂದಿ ವಿಳಾಸಗಳಿಗೆ ಪಿನ್ ಅಂಕಿಗಳನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.';
+      'ಪಠ್ಯವನ್ನು ಫೋನಿನಲ್ಲೇ ML Kit ಮೂಲಕ ಓದಲಾಗುತ್ತದೆ (ಇಂಗ್ಲಿಷ್ ಮತ್ತು ಹಿಂದಿ). ನೇರ ಕ್ಯಾಮೆರಾ ಚಿತ್ರಗಳು ಓದುವಾಗ ಮಾತ್ರ ಮೆಮೊರಿಯಲ್ಲಿರುತ್ತವೆ; ಕ್ಯಾಪ್ಚರ್ ಮಾಡಿದ ಫೋಟೋ ಓದಿದ ತಕ್ಷಣ ಅಳಿಸಲಾಗುತ್ತದೆ. ಕನ್ನಡ ಲಿಪಿಯನ್ನು ಇನ್ನೂ ಓದಲಾಗುವುದಿಲ್ಲ – ಪಿನ್ ಅಂಕಿಗಳು ಮತ್ತು ಇಂಗ್ಲಿಷ್ / ಹಿಂದಿ ಪಠ್ಯ ಬಳಸಲಾಗುತ್ತದೆ.';
 
   @override
   String get noOpenSession =>
@@ -856,7 +856,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get scanLiveHint =>
-      'ವಿಳಾಸದ ಮೇಲೆ ಕ್ಯಾಮೆರಾ ಹಿಡಿಯಿರಿ – ಪಿನ್ ಮತ್ತು ಕಚೇರಿ ಹೆಸರನ್ನು ತಾನೇ ಓದುತ್ತದೆ.';
+      'ವಿಳಾಸದ ಮೇಲೆ ಕ್ಯಾಮೆರಾ ಹಿಡಿಯಿರಿ – ಪಿನ್ ಮತ್ತು ಕಚೇರಿ ಹೆಸರನ್ನು ತಾನೇ ಓದುತ್ತದೆ. ಕೈಬರಹ ಅಥವಾ ಸಣ್ಣ ಅಕ್ಷರಗಳಿಗೆ ಕ್ಯಾಮೆರಾ ಬಟನ್ ಒತ್ತಿ.';
 
   @override
   String get scanLooking => 'ಪಿನ್ / ಕಚೇರಿ ಹೆಸರು ಹುಡುಕುತ್ತಿದೆ…';
@@ -874,7 +874,8 @@ class AppLocalizationsKn extends AppLocalizations {
   String get scanNext => 'ಮುಂದಿನ ಅಂಚೆ';
 
   @override
-  String get scanOfficesNearest => 'ವಿಳಾಸದಲ್ಲಿನ ಕಚೇರಿಗಳು – ಹತ್ತಿರದ್ದು ಮೊದಲು';
+  String get scanOfficesBest =>
+      'ವಿಳಾಸದಲ್ಲಿನ ಕಚೇರಿಗಳು – ಸರಿಯಾಗಿ ಹೊಂದುವುದು ಮೊದಲು';
 
   @override
   String get scanNothingYet =>

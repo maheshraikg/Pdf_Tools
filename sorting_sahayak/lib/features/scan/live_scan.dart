@@ -1,10 +1,9 @@
 /// Helpers for the live camera scan: a PIN is accepted only when OCR reads
 /// the same one on consecutive frames, and office names found on the
-/// address are ranked nearest first from the sorting office.
+/// address are ranked best match first.
 library;
 
 import '../../core/fuzzy.dart';
-import '../../data/airports.dart' show distanceKm;
 import '../../data/directory_repo.dart';
 import '../../data/models/office.dart';
 import '../../data/sort_engine.dart';
@@ -36,33 +35,20 @@ class PinStabilizer {
     return false;
   }
 
+  /// Accepts [pin] at once (a captured photo is read carefully once).
+  bool force(String pin) {
+    _last = pin;
+    _count = needed;
+    if (pin == stable) return false;
+    stable = pin;
+    return true;
+  }
+
   void reset() {
     _last = null;
     _count = 0;
     stable = null;
   }
-}
-
-typedef GeoPoint = ({double lat, double lng});
-
-/// Location of the sorting office the scheme belongs to ("Mangaluru"),
-/// used to rank offices nearest first. Prefers the HO, then any office with
-/// coordinates. Null when the scheme names no office or it is not found.
-Future<GeoPoint?> homePoint(DirectorySource dir, String schemeOffice) async {
-  final q = schemeOffice.trim();
-  if (normalizePlace(q).length < 3) return null;
-  final hits = await dir.search(q, limit: 30);
-  Office? pick;
-  for (final h in hits) {
-    final o = h.office;
-    if (o.latitude == null || o.longitude == null || h.score < 0.8) continue;
-    if (o.officeType == 'HO') {
-      pick = o;
-      break;
-    }
-    pick ??= o;
-  }
-  return pick == null ? null : (lat: pick.latitude!, lng: pick.longitude!);
 }
 
 /// Common address words that are also the name of some office somewhere
@@ -75,7 +61,15 @@ const _addressWords = {
 };
 
 class ScanOfficeHit {
-  const ScanOfficeHit({required this.office, required this.result, required this.score, this.km, this.samePin = false});
+  const ScanOfficeHit({
+    required this.office,
+    required this.result,
+    required this.score,
+    this.rank = 0,
+    this.samePin = false,
+    this.sameArea = false,
+    this.support = 0,
+  });
 
   final Office office;
   final SortResult result;
@@ -83,61 +77,95 @@ class ScanOfficeHit {
   /// 0..1 similarity of the text on the address to this office's name.
   final double score;
 
-  /// Distance from the sorting office, when both have coordinates.
-  final double? km;
+  /// Position of the matching text among the address candidates (0 = the
+  /// line with the PIN / just above it, the most likely office line).
+  final int rank;
 
   /// The office carries the PIN read on the address.
   final bool samePin;
+
+  /// Same sorting district (first 3 PIN digits) as the PIN read.
+  final bool sameArea;
+
+  /// How many other names on the address point to the same sorting district
+  /// ("Kankanady, Mangalore" → both 575): the right "Mangalore" among many.
+  final int support;
+
+  ScanOfficeHit withPin(String? pin) => copy(
+    samePin: pin != null && office.pin == pin,
+    sameArea: pin != null && office.pin.substring(0, 3) == pin.substring(0, 3),
+  );
+
+  ScanOfficeHit copy({bool? samePin, bool? sameArea, int? support}) => ScanOfficeHit(
+    office: office,
+    result: result,
+    score: score,
+    rank: rank,
+    samePin: samePin ?? this.samePin,
+    sameArea: sameArea ?? this.sameArea,
+    support: support ?? this.support,
+  );
 }
 
-/// Offices whose name appears on the address. Offices with the PIN read on
-/// the address come first; the rest nearest first from [home], then by how
-/// well the name matched. Near-miss spellings are kept only within
-/// [fuzzyKm] of [home] (OCR noise like "Car" → "Carmona" far away).
+/// Offices whose name appears on the address, best match first: the office
+/// with the PIN read on the address, then offices in the same sorting
+/// district, then by how exactly the name matched and how many other names
+/// on the address agree on the area. Near-miss spellings from other areas
+/// are dropped (OCR noise like "Car" → "Carmona").
 Future<List<ScanOfficeHit>> officesOnAddress(
   DirectorySource dir,
   SortEngine engine,
   List<String> places, {
   required String category,
   String? pin,
-  GeoPoint? home,
   int limit = 8,
   double minScore = 0.85,
-  double fuzzyKm = 100,
 }) async {
-  final seen = <String>{};
+  // Every address candidate that matched an office (not only the first).
+  final ranksOf = <String, Set<int>>{};
   final out = <ScanOfficeHit>[];
-  for (final c in places.take(8)) {
+  final cands = places.take(8).toList();
+  for (var i = 0; i < cands.length; i++) {
+    final c = cands[i];
     final norm = normalizePlace(c);
     if (norm.length < 4 || _addressWords.contains(norm)) continue;
     final hits = await dir.search(c, limit: 10);
     for (final h in hits) {
       if (h.score < minScore) continue;
       final o = h.office;
-      final key = '${o.pincode}|${o.officeName}|${o.officeType}';
-      if (!seen.add(key)) continue;
-      final km = home == null || o.latitude == null || o.longitude == null ? null : distanceKm(home.lat, home.lng, o.latitude!, o.longitude!);
-      final samePin = pin != null && o.pin == pin;
-      final exact = h.score >= 0.99;
-      if (!samePin && !exact && home != null && (km == null || km > fuzzyKm)) continue;
-      out.add(ScanOfficeHit(
-        office: o,
-        result: engine.resolveOffice(o, category: category),
-        score: h.score,
-        km: km,
-        samePin: samePin,
-      ));
+      final key = _key(o);
+      final seenBefore = ranksOf.containsKey(key);
+      (ranksOf[key] ??= {}).add(i);
+      if (seenBefore) continue;
+      final hit = ScanOfficeHit(office: o, result: engine.resolveOffice(o, category: category), score: h.score, rank: i).withPin(pin);
+      if (!hit.samePin && !hit.sameArea && h.score < 0.92) continue;
+      out.add(hit);
     }
   }
-  out.sort(compareScanHits);
-  return out.take(limit).toList();
+  // Names from different address lines that share a sorting district back
+  // each other up.
+  final ranksByArea = <String, Set<int>>{};
+  for (final h in out) {
+    (ranksByArea[h.office.pin.substring(0, 3)] ??= {}).addAll(ranksOf[_key(h.office)]!);
+  }
+  final ranked = [
+    for (final h in out) h.copy(support: ranksByArea[h.office.pin.substring(0, 3)]!.difference(ranksOf[_key(h.office)]!).length),
+  ]..sort(compareScanHits);
+  return ranked.take(limit).toList();
 }
+
+String _key(Office o) => '${o.pincode}|${o.officeName}|${o.officeType}';
+
+const _headTypes = {'HO', 'SO', 'PO'};
 
 int compareScanHits(ScanOfficeHit a, ScanOfficeHit b) {
   if (a.samePin != b.samePin) return a.samePin ? -1 : 1;
-  final ka = a.km, kb = b.km;
-  if (ka != null && kb != null && (ka - kb).abs() > 0.5) return ka.compareTo(kb);
-  if (ka != null && kb == null) return -1;
-  if (ka == null && kb != null) return 1;
-  return b.score.compareTo(a.score);
+  if (a.sameArea != b.sameArea) return a.sameArea ? -1 : 1;
+  final s = b.score.compareTo(a.score);
+  if ((a.score - b.score).abs() > 0.02) return s;
+  if (a.support != b.support) return b.support.compareTo(a.support);
+  final ha = _headTypes.contains(a.office.officeType), hb = _headTypes.contains(b.office.officeType);
+  if (ha != hb) return ha ? -1 : 1;
+  if (a.rank != b.rank) return a.rank.compareTo(b.rank);
+  return s;
 }

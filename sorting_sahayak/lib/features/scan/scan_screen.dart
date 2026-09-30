@@ -1,7 +1,8 @@
-/// Live camera address scan with on-device ML Kit text recognition. Frames
-/// are read straight from the camera stream (no photo is taken): the PIN and
-/// office names on the address show their line as soon as they are read.
-/// Frames stay in memory only while being read; nothing is stored.
+/// Live camera address scan with on-device ML Kit text recognition (English
+/// and Hindi / Devanagari). Frames are read straight from the camera stream:
+/// the PIN and office names on the address show their line as soon as they
+/// are read. Capture takes one full-resolution photo for hard addresses
+/// (handwriting, small print); it is deleted right after reading.
 library;
 
 import 'dart:io';
@@ -41,13 +42,18 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
   static const _frameGap = Duration(milliseconds: 450);
 
   CameraController? _camera;
+  CameraDescription? _desc;
   String? _cameraError;
+  bool _capturing = false;
   bool _torch = false;
   bool _paused = false;
   bool _started = false;
 
-  // Only the Latin (English) model is bundled, to keep the APK small.
-  final _recognizer = TextRecognizer(script: TextRecognitionScript.latin);
+  // English (Latin) and Hindi (Devanagari) models are bundled; live frames
+  // alternate between them, a captured photo is read with both.
+  final _latin = TextRecognizer(script: TextRecognitionScript.latin);
+  final _deva = TextRecognizer(script: TextRecognitionScript.devanagiri);
+  int _frameNo = 0;
   bool _reading = false;
   DateTime _lastFrame = DateTime.fromMillisecondsSinceEpoch(0);
 
@@ -57,8 +63,6 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
   List<ScanOfficeHit> _offices = [];
   List<String> _places = [];
   String _placesKey = '';
-  GeoPoint? _home;
-  bool _homeLoaded = false;
   bool _sawText = false;
 
   @override
@@ -73,18 +77,7 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     if (!_started) {
       _started = true;
       _initCamera();
-      _loadHome();
     }
-  }
-
-  Future<void> _loadHome() async {
-    final services = context.services;
-    final office = services.active?.scheme.office ?? '';
-    final home = await homePoint(services.directory, office.isEmpty ? 'Mangaluru' : office);
-    if (!mounted) return;
-    _home = home;
-    _homeLoaded = true;
-    if (_places.isNotEmpty) await _findOffices(_places);
   }
 
   Future<void> _initCamera() async {
@@ -102,7 +95,8 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
         await c.dispose();
         return;
       }
-      await c.startImageStream((img) => _onFrame(img, back.sensorOrientation));
+      _desc = back;
+      if (!_paused) await _startStream(c);
       if (!mounted) {
         await c.dispose();
         return;
@@ -110,6 +104,63 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
       setState(() => _camera = c);
     } on Object catch (e) {
       if (mounted) setState(() => _cameraError = '$e');
+    }
+  }
+
+  Future<void> _startStream(CameraController c) async {
+    if (c.value.isStreamingImages) return;
+    final o = _desc?.sensorOrientation ?? 90;
+    await c.startImageStream((img) => _onFrame(img, o));
+  }
+
+  Future<void> _setPaused(bool paused) async {
+    setState(() => _paused = paused);
+    final c = _camera;
+    if (!paused && c != null) {
+      try {
+        await _startStream(c);
+      } on Object catch (e) {
+        if (mounted) toast(context, AppLocalizations.of(context).error('$e'));
+      }
+    }
+  }
+
+  /// One careful read of a full-resolution photo: for handwriting and small
+  /// print. The photo is deleted straight after.
+  Future<void> _capture() async {
+    final c = _camera;
+    if (c == null || _capturing) return;
+    final l = AppLocalizations.of(context);
+    setState(() {
+      _capturing = true;
+      _paused = true;
+    });
+    XFile? shot;
+    var text = '';
+    try {
+      if (c.value.isStreamingImages) await c.stopImageStream();
+      shot = await c.takePicture();
+      final input = InputImage.fromFilePath(shot.path);
+      final a = await _latin.processImage(input);
+      final b = await _deva.processImage(input);
+      text = '${a.text}\n${b.text}';
+    } on Object catch (e) {
+      if (mounted) toast(context, l.error('$e'));
+    } finally {
+      if (shot != null) {
+        try {
+          await File(shot.path).delete();
+        } on Object {
+          // Already gone.
+        }
+      }
+    }
+    if (!mounted) return;
+    setState(() => _capturing = false);
+    await _handleText(text, captured: true);
+    if (mounted && _pin == null && _offices.isEmpty) {
+      AppFeedback.warning(context.settings);
+      toast(context, l.noPinDetected);
     }
   }
 
@@ -141,7 +192,8 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _stopCamera();
-    _recognizer.close();
+    _latin.close();
+    _deva.close();
     super.dispose();
   }
 
@@ -180,7 +232,9 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     try {
       final input = _toInputImage(img, sensorOrientation);
       if (input == null) return;
-      final r = await _recognizer.processImage(input);
+      final recognizer = _frameNo.isEven ? _latin : _deva;
+      _frameNo++;
+      final r = await recognizer.processImage(input);
       if (!mounted || _paused) return;
       await _handleText(r.text);
     } on Object {
@@ -190,14 +244,15 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _handleText(String text) async {
+  Future<void> _handleText(String text, {bool captured = false}) async {
     if (text.trim().isNotEmpty && !_sawText) setState(() => _sawText = true);
     final cand = parseAddress(text);
-    if (_stabilizer.add(cand.pins.firstOrNull)) {
+    final first = cand.pins.firstOrNull;
+    if (captured && first != null ? _stabilizer.force(first) : _stabilizer.add(first)) {
       await _resolvePin(_stabilizer.stable!);
     }
     final key = cand.places.take(8).join('|');
-    if (cand.places.isNotEmpty && key != _placesKey) {
+    if (cand.places.isNotEmpty && (captured || key != _placesKey)) {
       _placesKey = key;
       _places = cand.places;
       await _findOffices(cand.places);
@@ -216,15 +271,12 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     setState(() {
       _pin = pin;
       _result = r;
-      _offices = [
-        for (final h in _offices) ScanOfficeHit(office: h.office, result: h.result, score: h.score, km: h.km, samePin: h.office.pin == pin),
-      ]..sort(compareScanHits);
+      _offices = [for (final h in _offices) h.withPin(pin)]..sort(compareScanHits);
     });
     if (isNew) AppFeedback.success(settings);
   }
 
   Future<void> _findOffices(List<String> places) async {
-    if (!_homeLoaded) return;
     final services = context.services;
     final hits = await officesOnAddress(
       services.directory,
@@ -232,7 +284,6 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
       places,
       category: context.settings.category,
       pin: _pin,
-      home: _home,
     );
     if (!mounted || hits.isEmpty) return;
     setState(() => _offices = hits);
@@ -256,8 +307,8 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
       _places = [];
       _placesKey = '';
       _sawText = false;
-      _paused = false;
     });
+    _setPaused(false);
   }
 
   void _use(String pin, String? place) => Navigator.pop(context, ScanOutcome(pin, place));
@@ -344,9 +395,17 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
             children: [
               Expanded(child: Align(alignment: Alignment.centerLeft, child: _statusPill(l))),
               const SizedBox(width: 8),
+              FloatingActionButton(
+                key: const ValueKey('scan_capture'),
+                heroTag: null,
+                tooltip: l.capture,
+                onPressed: _capturing ? null : _capture,
+                child: _capturing ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 3)) : const Icon(Icons.camera_alt, size: 30),
+              ),
+              const SizedBox(width: 8),
               FilledButton.tonalIcon(
                 key: const ValueKey('scan_pause'),
-                onPressed: () => setState(() => _paused = !_paused),
+                onPressed: _capturing ? null : () => _setPaused(!_paused),
                 icon: Icon(_paused ? Icons.play_arrow : Icons.pause),
                 label: Text(_paused ? l.scanResume : l.scanPause),
               ),
@@ -417,7 +476,7 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
           const SizedBox(height: 12),
         ],
         if (_offices.isNotEmpty) ...[
-          Text(l.scanOfficesNearest, style: t.titleMedium?.copyWith(fontWeight: FontWeight.w900)),
+          Text(l.scanOfficesBest, style: t.titleMedium?.copyWith(fontWeight: FontWeight.w900)),
           const SizedBox(height: 6),
           for (final h in _offices) _ScanOfficeCard(hit: h, onTap: () => _use(h.office.pin, h.office.officeName)),
           const SizedBox(height: 8),
@@ -463,7 +522,6 @@ class _ScanOfficeCard extends StatelessWidget {
     final bag = r.bag;
     final colour = bag == null ? c.outlineVariant : bagColour(context, bag);
     final section = r.bagRule?.section ?? '';
-    final km = hit.km;
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       clipBehavior: Clip.antiAlias,
@@ -487,7 +545,7 @@ class _ScanOfficeCard extends StatelessWidget {
                         ],
                       ),
                       Text(
-                        [o.pin, if (o.district.isNotEmpty) o.district, if (km != null) l.kmAway(km.round().toString())].join(' · '),
+                        [o.pin, if (o.district.isNotEmpty) o.district].join(' · '),
                         style: t.titleSmall?.copyWith(fontWeight: FontWeight.w700, color: c.onSurfaceVariant),
                       ),
                       if (bag == null && r.otherBag != null)
