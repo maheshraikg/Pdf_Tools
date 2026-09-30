@@ -1519,7 +1519,7 @@ abstract class AppLocalizations {
   /// No description provided for @scanPrivacy.
   ///
   /// In en, this message translates to:
-  /// **'Text is read on the phone with ML Kit (English / Latin script). The photo is deleted right after reading. For Kannada or Hindi addresses the PIN digits are used and you can search the place by hand.'**
+  /// **'Text is read live on the phone with ML Kit (English / Latin script). Camera frames stay in memory only while being read; no photo is taken or saved. For Kannada or Hindi addresses the PIN digits are used.'**
   String get scanPrivacy;
 
   /// No description provided for @noOpenSession.
@@ -1617,6 +1617,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue counting'**
   String get continueSession;
+
+  /// No description provided for @scanLiveHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold the camera over the address – it reads the PIN and office names by itself.'**
+  String get scanLiveHint;
+
+  /// No description provided for @scanLooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for PIN / office name…'**
+  String get scanLooking;
+
+  /// No description provided for @scanPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get scanPaused;
+
+  /// No description provided for @scanPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get scanPause;
+
+  /// No description provided for @scanResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get scanResume;
+
+  /// No description provided for @scanNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next article'**
+  String get scanNext;
+
+  /// No description provided for @scanOfficesNearest.
+  ///
+  /// In en, this message translates to:
+  /// **'Offices on the address – nearest first'**
+  String get scanOfficesNearest;
+
+  /// No description provided for @scanNothingYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing read yet. Hold steady in good light; use the torch in a dark place.'**
+  String get scanNothingYet;
+
+  /// No description provided for @scanPinOnAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN on the address'**
+  String get scanPinOnAddress;
 
   /// No description provided for @learnNeedsScheme.
   ///

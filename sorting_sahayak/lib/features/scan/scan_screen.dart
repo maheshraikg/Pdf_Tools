@@ -1,8 +1,11 @@
-/// Camera address scan with on-device ML Kit text recognition. The photo is
-/// deleted right after recognition and never stored or uploaded.
+/// Live camera address scan with on-device ML Kit text recognition. Frames
+/// are read straight from the camera stream (no photo is taken): the PIN and
+/// office names on the address show their line as soon as they are read.
+/// Frames stay in memory only while being read; nothing is stored.
 library;
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -11,12 +14,13 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 import '../../core/app_scope.dart';
 import '../../core/feedback.dart';
 import '../../core/l10n/app_localizations.dart';
-import '../../core/pin_utils.dart';
+import '../../core/labels.dart';
+import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../data/sort_engine.dart';
-import '../find_pin/mismatch_view.dart';
 import '../lookup/sort_result_view.dart';
 import 'address_parser.dart';
+import 'live_scan.dart';
 
 class ScanOutcome {
   const ScanOutcome(this.pin, this.place);
@@ -33,18 +37,29 @@ class ScanScreen extends StatefulWidget {
 }
 
 class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
+  /// Minimum time between two recognised frames.
+  static const _frameGap = Duration(milliseconds: 450);
+
   CameraController? _camera;
   String? _cameraError;
-  bool _busy = false;
   bool _torch = false;
-
-  final _pin = TextEditingController();
-  final _place = TextEditingController();
-  List<String> _pinCandidates = [];
-  List<String> _placeCandidates = [];
-  SortResult? _result;
-  bool _scanned = false;
+  bool _paused = false;
   bool _started = false;
+
+  // Only the Latin (English) model is bundled, to keep the APK small.
+  final _recognizer = TextRecognizer(script: TextRecognitionScript.latin);
+  bool _reading = false;
+  DateTime _lastFrame = DateTime.fromMillisecondsSinceEpoch(0);
+
+  final _stabilizer = PinStabilizer();
+  String? _pin;
+  SortResult? _result;
+  List<ScanOfficeHit> _offices = [];
+  List<String> _places = [];
+  String _placesKey = '';
+  GeoPoint? _home;
+  bool _homeLoaded = false;
+  bool _sawText = false;
 
   @override
   void initState() {
@@ -58,15 +73,36 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     if (!_started) {
       _started = true;
       _initCamera();
+      _loadHome();
     }
+  }
+
+  Future<void> _loadHome() async {
+    final services = context.services;
+    final office = services.active?.scheme.office ?? '';
+    final home = await homePoint(services.directory, office.isEmpty ? 'Mangaluru' : office);
+    if (!mounted) return;
+    _home = home;
+    _homeLoaded = true;
+    if (_places.isNotEmpty) await _findOffices(_places);
   }
 
   Future<void> _initCamera() async {
     try {
       final cams = await availableCameras();
       final back = cams.firstWhere((c) => c.lensDirection == CameraLensDirection.back, orElse: () => cams.first);
-      final c = CameraController(back, ResolutionPreset.high, enableAudio: false);
+      final c = CameraController(
+        back,
+        ResolutionPreset.high,
+        enableAudio: false,
+        imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.nv21 : ImageFormatGroup.bgra8888,
+      );
       await c.initialize();
+      if (!mounted) {
+        await c.dispose();
+        return;
+      }
+      await c.startImageStream((img) => _onFrame(img, back.sensorOrientation));
       if (!mounted) {
         await c.dispose();
         return;
@@ -77,15 +113,26 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     }
   }
 
+  Future<void> _stopCamera() async {
+    final c = _camera;
+    _camera = null;
+    _torch = false;
+    if (c == null) return;
+    try {
+      if (c.value.isStreamingImages) await c.stopImageStream();
+    } on Object {
+      // Already stopped.
+    }
+    await c.dispose();
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    final c = _camera;
-    if (c == null) return;
     if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
-      _camera = null;
-      c.dispose();
+      if (_camera == null) return;
+      _stopCamera();
       if (mounted) setState(() {});
-    } else if (state == AppLifecycleState.resumed && !_scanned) {
+    } else if (state == AppLifecycleState.resumed && _camera == null && _cameraError == null) {
       _initCamera();
     }
   }
@@ -93,92 +140,158 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _camera?.dispose();
-    _pin.dispose();
-    _place.dispose();
+    _stopCamera();
+    _recognizer.close();
     super.dispose();
   }
 
-  Future<void> _capture() async {
-    final c = _camera;
-    if (c == null || _busy) return;
-    setState(() => _busy = true);
-    final l = AppLocalizations.of(context);
+  InputImage? _toInputImage(CameraImage img, int sensorOrientation) {
+    final rotation = InputImageRotationValue.fromRawValue(sensorOrientation) ?? InputImageRotation.rotation0deg;
+    final InputImageFormat format;
+    final Uint8List bytes;
+    if (Platform.isAndroid) {
+      // CameraX gives one NV21 plane when NV21 is requested.
+      if (img.planes.length != 1) return null;
+      format = InputImageFormat.nv21;
+      bytes = img.planes.first.bytes;
+    } else {
+      final f = InputImageFormatValue.fromRawValue(img.format.raw);
+      if (f == null || img.planes.length != 1) return null;
+      format = f;
+      bytes = img.planes.first.bytes;
+    }
+    return InputImage.fromBytes(
+      bytes: bytes,
+      metadata: InputImageMetadata(
+        size: Size(img.width.toDouble(), img.height.toDouble()),
+        rotation: rotation,
+        format: format,
+        bytesPerRow: img.planes.first.bytesPerRow,
+      ),
+    );
+  }
+
+  Future<void> _onFrame(CameraImage img, int sensorOrientation) async {
+    if (_paused || _reading || !mounted) return;
+    final now = DateTime.now();
+    if (now.difference(_lastFrame) < _frameGap) return;
+    _lastFrame = now;
+    _reading = true;
+    try {
+      final input = _toInputImage(img, sensorOrientation);
+      if (input == null) return;
+      final r = await _recognizer.processImage(input);
+      if (!mounted || _paused) return;
+      await _handleText(r.text);
+    } on Object {
+      // A bad frame; the next one is read shortly.
+    } finally {
+      _reading = false;
+    }
+  }
+
+  Future<void> _handleText(String text) async {
+    if (text.trim().isNotEmpty && !_sawText) setState(() => _sawText = true);
+    final cand = parseAddress(text);
+    if (_stabilizer.add(cand.pins.firstOrNull)) {
+      await _resolvePin(_stabilizer.stable!);
+    }
+    final key = cand.places.take(8).join('|');
+    if (cand.places.isNotEmpty && key != _placesKey) {
+      _placesKey = key;
+      _places = cand.places;
+      await _findOffices(cand.places);
+    }
+  }
+
+  Future<void> _resolvePin(String pin) async {
     final services = context.services;
     final settings = context.settings;
-    XFile? shot;
-    TextRecognizer? recognizer;
-    String text = '';
-    try {
-      shot = await c.takePicture();
-      // Only the Latin (English) model is bundled, to keep the APK small.
-      recognizer = TextRecognizer(script: TextRecognitionScript.latin);
-      final r = await recognizer.processImage(InputImage.fromFilePath(shot.path));
-      text = r.text;
-    } on Object catch (e) {
-      if (mounted) toast(context, l.error('$e'));
-    } finally {
-      await recognizer?.close();
-      // Privacy: delete the photo immediately.
-      if (shot != null) {
-        try {
-          await File(shot.path).delete();
-        } on Object {
-          // Already gone.
-        }
-      }
-    }
-    final cand = parseAddress(text);
-    text = '';
-    _pinCandidates = cand.pins;
-    _placeCandidates = cand.places;
-    _pin.text = cand.pins.firstOrNull ?? '';
-    final best = await bestPlace(services.directory, cand.places, pin: cand.pins.firstOrNull);
-    _place.text = best?.place ?? '';
-    _scanned = true;
-    // Free the camera while reviewing the result.
-    _camera = null;
-    await c.dispose();
+    final place = _offices.where((h) => h.office.pin == pin).firstOrNull?.office.officeName;
+    final r = await services.engine.resolvePin(pin, category: settings.category, officeName: place);
     if (!mounted) return;
-    setState(() => _busy = false);
-    if (_pin.text.isEmpty) {
-      AppFeedback.warning(settings);
-    } else {
-      AppFeedback.success(settings);
-    }
-    await _resolve();
-  }
-
-  Future<void> _resolve() async {
-    final p = PinUtils.digitsOnly(_pin.text);
-    if (p.length != 6) {
-      setState(() => _result = null);
-      return;
-    }
-    final r = await context.services.engine.resolvePin(p, category: context.settings.category, officeName: _place.text);
-    if (mounted) setState(() => _result = r);
-  }
-
-  void _again() {
+    // OCR can read a street number as a PIN: keep only real PINs.
+    if (!r.valid || (r.offices.isEmpty && r.bag == null)) return;
+    final isNew = pin != _pin;
     setState(() {
-      _scanned = false;
-      _result = null;
-      _pin.clear();
-      _place.clear();
-      _pinCandidates = [];
-      _placeCandidates = [];
+      _pin = pin;
+      _result = r;
+      _offices = [
+        for (final h in _offices) ScanOfficeHit(office: h.office, result: h.result, score: h.score, km: h.km, samePin: h.office.pin == pin),
+      ]..sort(compareScanHits);
     });
-    _initCamera();
+    if (isNew) AppFeedback.success(settings);
   }
+
+  Future<void> _findOffices(List<String> places) async {
+    if (!_homeLoaded) return;
+    final services = context.services;
+    final hits = await officesOnAddress(
+      services.directory,
+      services.engine,
+      places,
+      category: context.settings.category,
+      pin: _pin,
+      home: _home,
+    );
+    if (!mounted || hits.isEmpty) return;
+    setState(() => _offices = hits);
+  }
+
+  Future<void> _reResolve() async {
+    final p = _pin;
+    if (p == null) return;
+    _pin = null;
+    await _resolvePin(p);
+    if (_places.isNotEmpty) await _findOffices(_places);
+  }
+
+  void _next() {
+    AppFeedback.tap(context.settings);
+    _stabilizer.reset();
+    setState(() {
+      _pin = null;
+      _result = null;
+      _offices = [];
+      _places = [];
+      _placesKey = '';
+      _sawText = false;
+      _paused = false;
+    });
+  }
+
+  void _use(String pin, String? place) => Navigator.pop(context, ScanOutcome(pin, place));
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final c = _camera;
     return Scaffold(
       appBar: AppBar(
         title: Text(l.scanAddress),
+        actions: [
+          if (c != null)
+            IconButton(
+              tooltip: l.torch,
+              icon: Icon(_torch ? Icons.flash_on : Icons.flash_off),
+              onPressed: () async {
+                _torch = !_torch;
+                try {
+                  await c.setFlashMode(_torch ? FlashMode.torch : FlashMode.off);
+                } on Object {
+                  _torch = false;
+                }
+                if (mounted) setState(() {});
+              },
+            ),
+        ],
       ),
-      body: _scanned ? _review(l) : _preview(l),
+      body: Column(
+        children: [
+          Expanded(flex: 4, child: _preview(l)),
+          Expanded(flex: 5, child: _results(l)),
+        ],
+      ),
     );
   }
 
@@ -187,47 +300,56 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     if (_cameraError != null) {
       return EmptyState(icon: Icons.no_photography_outlined, text: l.cameraUnavailable(_cameraError!));
     }
-    if (c == null || !c.value.isInitialized) return const Center(child: CircularProgressIndicator());
+    if (c == null || !c.value.isInitialized) return const ColoredBox(color: Colors.black, child: Center(child: CircularProgressIndicator()));
+    final found = _pin != null;
     return Stack(
       children: [
-        Positioned.fill(child: FittedBox(fit: BoxFit.cover, child: SizedBox(width: c.value.previewSize?.height ?? 1, height: c.value.previewSize?.width ?? 1, child: CameraPreview(c)))),
-        Positioned(
-          left: 24,
-          right: 24,
-          top: 24,
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            color: Colors.black54,
-            child: Text(l.scanHint, style: const TextStyle(color: Colors.white, fontSize: 16), textAlign: TextAlign.center),
+        Positioned.fill(
+          child: ClipRect(
+            child: FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(width: c.value.previewSize?.height ?? 1, height: c.value.previewSize?.width ?? 1, child: CameraPreview(c)),
+            ),
+          ),
+        ),
+        // Aim box.
+        Positioned.fill(
+          child: IgnorePointer(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(28, 56, 28, 56),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  border: Border.all(color: found ? kTeal : Colors.white70, width: 3),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+              ),
+            ),
           ),
         ),
         Positioned(
-          left: 0,
-          right: 0,
-          bottom: 24,
+          left: 12,
+          right: 12,
+          top: 10,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(12)),
+            child: Text(l.scanLiveHint, style: const TextStyle(color: Colors.white, fontSize: 15), textAlign: TextAlign.center),
+          ),
+        ),
+        Positioned(
+          left: 12,
+          right: 12,
+          bottom: 10,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              IconButton.filled(
-                tooltip: l.torch,
-                iconSize: 32,
-                icon: Icon(_torch ? Icons.flash_on : Icons.flash_off),
-                onPressed: () async {
-                  _torch = !_torch;
-                  await c.setFlashMode(_torch ? FlashMode.torch : FlashMode.off);
-                  setState(() {});
-                },
+              Expanded(child: Align(alignment: Alignment.centerLeft, child: _statusPill(l))),
+              const SizedBox(width: 8),
+              FilledButton.tonalIcon(
+                key: const ValueKey('scan_pause'),
+                onPressed: () => setState(() => _paused = !_paused),
+                icon: Icon(_paused ? Icons.play_arrow : Icons.pause),
+                label: Text(_paused ? l.scanResume : l.scanPause),
               ),
-              SizedBox(
-                width: 84,
-                height: 84,
-                child: FloatingActionButton.large(
-                  tooltip: l.capture,
-                  onPressed: _busy ? null : _capture,
-                  child: _busy ? const CircularProgressIndicator() : const Icon(Icons.camera, size: 48),
-                ),
-              ),
-              const SizedBox(width: 48),
             ],
           ),
         ),
@@ -235,63 +357,175 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     );
   }
 
-  Widget _review(AppLocalizations l) {
-    final r = _result;
-    final p = PinUtils.digitsOnly(_pin.text);
-    return ListView(
-      padding: const EdgeInsets.all(12),
-      children: [
-        if (_pinCandidates.isEmpty) WarningBanner(text: l.noPinDetected),
-        TextField(
-          controller: _pin,
-          keyboardType: TextInputType.number,
-          maxLength: 6,
-          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: 4),
-          decoration: InputDecoration(labelText: l.detectedPin, counterText: ''),
-          onChanged: (_) => _resolve(),
-        ),
-        if (_pinCandidates.length > 1)
-          Wrap(spacing: 6, children: [
-            for (final c in _pinCandidates) ActionChip(label: Text(c), onPressed: () {
-              _pin.text = c;
-              _resolve();
-            }),
-          ]),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _place,
-          decoration: InputDecoration(labelText: l.detectedPlace),
-          onChanged: (_) => setState(() {}),
-        ),
-        if (_placeCandidates.isNotEmpty)
-          Wrap(spacing: 6, children: [
-            for (final c in _placeCandidates.take(6)) ActionChip(label: Text(c), onPressed: () => setState(() => _place.text = c)),
-          ]),
-        const SizedBox(height: 12),
-        if (p.length == 6 && _place.text.trim().length >= 2) ...[
-          MismatchView(pin: p, place: _place.text, onPickPin: (o) {
-            _pin.text = o.pin;
-            _resolve();
-          }),
-          const SizedBox(height: 10),
-        ],
-        if (r != null) SortResultView(result: r, showBreakdown: false, onEdited: _resolve),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            FilledButton.icon(
-              onPressed: p.length == 6 ? () => Navigator.pop(context, ScanOutcome(p, _place.text.trim().isEmpty ? null : _place.text.trim())) : null,
-              icon: const Icon(Icons.dialpad),
-              label: Text(l.useThisPin),
+  Widget _statusPill(AppLocalizations l) {
+    final pin = _pin;
+    final (Color bg, IconData icon, String text) = _paused
+        ? (Colors.black87, Icons.pause_circle, l.scanPaused)
+        : pin != null
+        ? (kTeal, Icons.check_circle, pin)
+        : (Colors.black87, Icons.center_focus_weak, l.scanLooking);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(24)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.white, size: 20),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              text,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: pin != null && !_paused ? 20 : 15, letterSpacing: pin != null && !_paused ? 2 : 0),
             ),
-            OutlinedButton.icon(onPressed: _again, icon: const Icon(Icons.refresh), label: Text(l.scanAgain)),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Text(l.scanPrivacy, style: Theme.of(context).textTheme.bodySmall),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _results(AppLocalizations l) {
+    final t = Theme.of(context).textTheme;
+    final r = _result;
+    final pin = _pin;
+    final nothing = r == null && _offices.isEmpty;
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
+      children: [
+        if (pin != null && r != null) ...[
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l.scanPinOnAddress, style: t.labelLarge),
+                    Text(pin, style: t.headlineMedium?.copyWith(fontWeight: FontWeight.w900, letterSpacing: 3)),
+                  ],
+                ),
+              ),
+              FilledButton.icon(
+                key: const ValueKey('scan_use'),
+                onPressed: () => _use(pin, _offices.where((h) => h.samePin).firstOrNull?.office.officeName),
+                icon: const Icon(Icons.dialpad),
+                label: Text(l.useThisPin),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          SortResultView(result: r, showBreakdown: false, onEdited: _reResolve),
+          const SizedBox(height: 12),
+        ],
+        if (_offices.isNotEmpty) ...[
+          Text(l.scanOfficesNearest, style: t.titleMedium?.copyWith(fontWeight: FontWeight.w900)),
+          const SizedBox(height: 6),
+          for (final h in _offices) _ScanOfficeCard(hit: h, onTap: () => _use(h.office.pin, h.office.officeName)),
+          const SizedBox(height: 8),
+        ],
+        if (nothing)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Row(
+              children: [
+                if (!_paused) const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 3)),
+                const SizedBox(width: 12),
+                Expanded(child: Text(_sawText ? l.scanLooking : l.scanNothingYet, style: t.titleMedium)),
+              ],
+            ),
+          )
+        else
+          Align(
+            alignment: Alignment.centerLeft,
+            child: OutlinedButton.icon(key: const ValueKey('scan_next'), onPressed: _next, icon: const Icon(Icons.refresh), label: Text(l.scanNext)),
+          ),
+        const SizedBox(height: 12),
+        Text(l.scanPrivacy, style: t.bodySmall),
       ],
+    );
+  }
+}
+
+/// An office read on the address: name, PIN, district, distance, and its
+/// line with position on the right.
+class _ScanOfficeCard extends StatelessWidget {
+  const _ScanOfficeCard({required this.hit, required this.onTap});
+
+  final ScanOfficeHit hit;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final t = Theme.of(context).textTheme;
+    final c = Theme.of(context).colorScheme;
+    final o = hit.office;
+    final r = hit.result;
+    final bag = r.bag;
+    final colour = bag == null ? c.outlineVariant : bagColour(context, bag);
+    final section = r.bagRule?.section ?? '';
+    final km = hit.km;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(width: 8, color: colour),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 10, 8, 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          if (hit.samePin) const Padding(padding: EdgeInsets.only(right: 4), child: Icon(Icons.check_circle, color: kTeal, size: 20)),
+                          Flexible(child: Text('${o.officeName} ${o.officeType}', style: t.titleMedium?.copyWith(fontWeight: FontWeight.w900))),
+                        ],
+                      ),
+                      Text(
+                        [o.pin, if (o.district.isNotEmpty) o.district, if (km != null) l.kmAway(km.round().toString())].join(' · '),
+                        style: t.titleSmall?.copyWith(fontWeight: FontWeight.w700, color: c.onSurfaceVariant),
+                      ),
+                      if (bag == null && r.otherBag != null)
+                        Text(
+                          l.otherModeHint(categoryLabel(l, r.otherCategory!), r.otherBag!.label),
+                          style: t.bodyMedium?.copyWith(color: warningColor(context), fontWeight: FontWeight.w700),
+                        )
+                      else if (bag == null)
+                        Text(l.noLineInScheme, style: t.bodyMedium?.copyWith(color: c.onSurfaceVariant)),
+                    ],
+                  ),
+                ),
+              ),
+              if (bag != null)
+                Container(
+                  constraints: const BoxConstraints(maxWidth: 150),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  color: Color.alphaBlend(colour.withValues(alpha: 0.14), c.surfaceContainerLowest),
+                  alignment: Alignment.centerRight,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        bag.code,
+                        textAlign: TextAlign.right,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: t.titleMedium?.copyWith(fontWeight: FontWeight.w900, color: c.onSurface),
+                      ),
+                      if (section.isNotEmpty) Text('${l.section} $section', style: t.titleSmall?.copyWith(fontWeight: FontWeight.w800)),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -791,7 +791,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scanPrivacy =>
-      'Text is read on the phone with ML Kit (English / Latin script). The photo is deleted right after reading. For Kannada or Hindi addresses the PIN digits are used and you can search the place by hand.';
+      'Text is read live on the phone with ML Kit (English / Latin script). Camera frames stay in memory only while being read; no photo is taken or saved. For Kannada or Hindi addresses the PIN digits are used.';
 
   @override
   String get noOpenSession =>
@@ -850,6 +850,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get continueSession => 'Continue counting';
+
+  @override
+  String get scanLiveHint =>
+      'Hold the camera over the address – it reads the PIN and office names by itself.';
+
+  @override
+  String get scanLooking => 'Looking for PIN / office name…';
+
+  @override
+  String get scanPaused => 'Paused';
+
+  @override
+  String get scanPause => 'Pause';
+
+  @override
+  String get scanResume => 'Resume';
+
+  @override
+  String get scanNext => 'Next article';
+
+  @override
+  String get scanOfficesNearest => 'Offices on the address – nearest first';
+
+  @override
+  String get scanNothingYet =>
+      'Nothing read yet. Hold steady in good light; use the torch in a dark place.';
+
+  @override
+  String get scanPinOnAddress => 'PIN on the address';
 
   @override
   String get learnNeedsScheme =>

@@ -27,8 +27,9 @@ your department's rules on sharing internal documents.
   permission**.
 - No login, no ads, no analytics, no tracking, no third-party SDKs that send
   data.
-- Camera scans are processed on the phone (on-device text recognition) and the
-  photo is deleted immediately. Nothing is uploaded.
+- Camera scans are processed live on the phone (on-device text recognition).
+  Camera frames stay in memory only while being read; no photo is taken or
+  saved. Nothing is uploaded.
 - Schemes, favourites and settings are stored only on your phone and are
   removed when you uninstall the app.
 

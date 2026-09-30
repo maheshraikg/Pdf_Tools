@@ -793,7 +793,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get scanPrivacy =>
-      'टेक्स्ट फ़ोन पर ML Kit से पढ़ा जाता है (अंग्रेज़ी / लैटिन लिपि)। पढ़ते ही फ़ोटो हटा दी जाती है। कन्नड़ या हिन्दी पतों के लिए पिन अंक उपयोग होते हैं और स्थान हाथ से खोज सकते हैं।';
+      'टेक्स्ट फ़ोन पर ML Kit से सीधे पढ़ा जाता है (अंग्रेज़ी / लैटिन लिपि)। कैमरा फ्रेम सिर्फ़ पढ़ते समय मेमोरी में रहते हैं; कोई फ़ोटो न ली जाती है, न सहेजी जाती है। कन्नड़ या हिन्दी पतों के लिए पिन अंक उपयोग होते हैं।';
 
   @override
   String get noOpenSession =>
@@ -852,6 +852,35 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get continueSession => 'गिनती जारी रखें';
+
+  @override
+  String get scanLiveHint =>
+      'पते पर कैमरा रखें – यह पिन और डाकघर का नाम खुद पढ़ लेता है।';
+
+  @override
+  String get scanLooking => 'पिन / डाकघर का नाम खोज रहा है…';
+
+  @override
+  String get scanPaused => 'रोका गया';
+
+  @override
+  String get scanPause => 'रोकें';
+
+  @override
+  String get scanResume => 'जारी रखें';
+
+  @override
+  String get scanNext => 'अगली डाक';
+
+  @override
+  String get scanOfficesNearest => 'पते पर डाकघर – सबसे नज़दीकी पहले';
+
+  @override
+  String get scanNothingYet =>
+      'अभी कुछ नहीं पढ़ा। अच्छी रोशनी में स्थिर रखें; अंधेरे में टॉर्च चलाएं।';
+
+  @override
+  String get scanPinOnAddress => 'पते पर पिन';
 
   @override
   String get learnNeedsScheme =>
