@@ -453,6 +453,24 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String get navLines => 'लाइनें';
+
+  @override
+  String get allLines => 'सभी लाइनें';
+
+  @override
+  String get filterLines => 'लाइन / बैग खोजें';
+
+  @override
+  String stopsN(int count) {
+    return '$count डाकघर';
+  }
+
+  @override
+  String get learnSub =>
+      'फ़्लैशकार्ड, क्विज़, कमज़ोर क्षेत्र, पिन की मूल बातें';
+
+  @override
   String get enterPin => 'पिन दर्ज करें';
 
   @override
@@ -474,7 +492,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get recentLookups => 'हाल की खोजें';
 
   @override
-  String get sortHint => 'कीपैड पर पिन टाइप करें। टाइप करते ही बैग दिखेगा।';
+  String get sortHint =>
+      'पिन या डाकघर का नाम लिखें। लिखते ही लाइन / बैग दिखेगा।';
 
   @override
   String get bag => 'लाइन / बैग';

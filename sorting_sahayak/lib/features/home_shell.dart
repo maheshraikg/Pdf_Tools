@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import '../core/l10n/app_localizations.dart';
 import 'air/air_finder_screen.dart';
 import 'find_pin/find_pin_screen.dart';
-import 'learn/learn_screen.dart';
+import 'lines/lines_screen.dart';
 import 'lookup/sort_screen.dart';
 import 'settings/legal_screen.dart';
 import 'settings/more_screen.dart';
 
-/// Bottom navigation: Sort · Find PIN · Air · Learn · More.
+/// Bottom navigation: Sort · Find PIN · Air · Lines · More (Learn is in More).
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
 
@@ -52,7 +52,7 @@ class HomeShellState extends State<HomeShell> {
           SortScreen(key: _sortKey),
           const FindPinScreen(),
           const AirFinderScreen(),
-          const LearnScreen(),
+          const LinesScreen(),
           const MoreScreen(),
         ],
       ),
@@ -63,7 +63,7 @@ class HomeShellState extends State<HomeShell> {
           NavigationDestination(icon: const Icon(Icons.dialpad_outlined), selectedIcon: const Icon(Icons.dialpad), label: l.navSort),
           NavigationDestination(icon: const Icon(Icons.travel_explore_outlined), selectedIcon: const Icon(Icons.travel_explore), label: l.navFindPin),
           NavigationDestination(icon: const Icon(Icons.flight_outlined), selectedIcon: const Icon(Icons.flight), label: l.navAir),
-          NavigationDestination(icon: const Icon(Icons.school_outlined), selectedIcon: const Icon(Icons.school), label: l.navLearn),
+          NavigationDestination(icon: const Icon(Icons.format_list_numbered), selectedIcon: const Icon(Icons.format_list_numbered_rtl), label: l.navLines),
           NavigationDestination(icon: const Icon(Icons.more_horiz), label: l.navMore),
         ],
       ),

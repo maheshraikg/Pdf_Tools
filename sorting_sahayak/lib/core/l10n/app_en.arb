@@ -207,6 +207,18 @@
       }
     }
   },
+  "navLines": "Lines",
+  "allLines": "All lines",
+  "filterLines": "Search line / bag",
+  "stopsN": "{count} offices",
+  "@stopsN": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "learnSub": "Flashcards, quiz, weak areas, PIN basics",
   "enterPin": "Enter PIN",
   "backspace": "Delete last digit",
   "voiceInput": "Voice input",
@@ -214,7 +226,7 @@
   "checkPlace": "PIN vs place check",
   "placeOnAddress": "City / office on the address",
   "recentLookups": "Recent lookups",
-  "sortHint": "Type a PIN on the keypad. The bag appears as you type.",
+  "sortHint": "Type a PIN or an office name. The line / bag appears as you type.",
   "bag": "Line / Bag",
   "bags": "Lines / Bags",
   "section": "Position",

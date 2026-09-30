@@ -60,7 +60,22 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Bag 14'), findsWidgets);
 
-    // Learn → flashcards (pushed route using services).
+    // Lines tab: all lines; pick one to see the whole line with PINs.
+    await tester.tap(find.text('Lines'));
+    await tester.pumpAndSettle();
+    expect(find.text('All lines'), findsOneWidget);
+    await tester.tap(find.text('Bag 12'));
+    await settle(tester);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('line_table')), findsOneWidget);
+    expect(find.text('574201'), findsWidgets);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    // Learn now lives in More → flashcards (pushed route using services).
+    expect(find.widgetWithText(NavigationDestination, 'Learn'), findsNothing);
+    await tester.tap(find.text('More'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Learn'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Bag flashcards'));
@@ -73,6 +88,8 @@ void main() {
     await settle(tester);
     await tester.pumpAndSettle();
     expect(find.textContaining('2 / '), findsOneWidget);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
     await tester.pageBack();
     await tester.pumpAndSettle();
 

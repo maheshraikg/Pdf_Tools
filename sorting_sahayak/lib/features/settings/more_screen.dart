@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/l10n/app_localizations.dart';
+import '../learn/learn_screen.dart';
 import '../schemes/schemes_screen.dart';
 import 'about_screen.dart';
 import 'airports_screen.dart';
@@ -27,6 +28,7 @@ class MoreScreen extends StatelessWidget {
       appBar: AppBar(title: Text(l.navMore)),
       body: ListView(
         children: [
+          item(Icons.school_outlined, l.navLearn, l.learnSub, const LearnScreen()),
           item(Icons.rule_folder_outlined, l.schemes, l.schemesSub, const SchemesScreen()),
           item(Icons.storage_outlined, l.pinDirectory, l.pinDirectorySub, const DirectoryScreen()),
           item(Icons.star_outline, l.favourites, l.favouritesSub, const FavouritesScreen()),

@@ -452,6 +452,23 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get navLines => 'Lines';
+
+  @override
+  String get allLines => 'All lines';
+
+  @override
+  String get filterLines => 'Search line / bag';
+
+  @override
+  String stopsN(int count) {
+    return '$count offices';
+  }
+
+  @override
+  String get learnSub => 'Flashcards, quiz, weak areas, PIN basics';
+
+  @override
   String get enterPin => 'Enter PIN';
 
   @override
@@ -474,7 +491,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sortHint =>
-      'Type a PIN on the keypad. The bag appears as you type.';
+      'Type a PIN or an office name. The line / bag appears as you type.';
 
   @override
   String get bag => 'Line / Bag';

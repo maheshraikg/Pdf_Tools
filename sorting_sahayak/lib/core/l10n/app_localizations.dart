@@ -904,6 +904,36 @@ abstract class AppLocalizations {
   /// **'Full line ({count})'**
   String fullLineN(int count);
 
+  /// No description provided for @navLines.
+  ///
+  /// In en, this message translates to:
+  /// **'Lines'**
+  String get navLines;
+
+  /// No description provided for @allLines.
+  ///
+  /// In en, this message translates to:
+  /// **'All lines'**
+  String get allLines;
+
+  /// No description provided for @filterLines.
+  ///
+  /// In en, this message translates to:
+  /// **'Search line / bag'**
+  String get filterLines;
+
+  /// No description provided for @stopsN.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} offices'**
+  String stopsN(int count);
+
+  /// No description provided for @learnSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Flashcards, quiz, weak areas, PIN basics'**
+  String get learnSub;
+
   /// No description provided for @enterPin.
   ///
   /// In en, this message translates to:
@@ -949,7 +979,7 @@ abstract class AppLocalizations {
   /// No description provided for @sortHint.
   ///
   /// In en, this message translates to:
-  /// **'Type a PIN on the keypad. The bag appears as you type.'**
+  /// **'Type a PIN or an office name. The line / bag appears as you type.'**
   String get sortHint;
 
   /// No description provided for @bag.

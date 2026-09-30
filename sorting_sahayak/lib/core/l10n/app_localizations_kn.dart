@@ -453,6 +453,24 @@ class AppLocalizationsKn extends AppLocalizations {
   }
 
   @override
+  String get navLines => 'ಲೈನ್‌ಗಳು';
+
+  @override
+  String get allLines => 'ಎಲ್ಲ ಲೈನ್‌ಗಳು';
+
+  @override
+  String get filterLines => 'ಲೈನ್ / ಚೀಲ ಹುಡುಕಿ';
+
+  @override
+  String stopsN(int count) {
+    return '$count ಕಚೇರಿಗಳು';
+  }
+
+  @override
+  String get learnSub =>
+      'ಫ್ಲ್ಯಾಶ್‌ಕಾರ್ಡ್, ರಸಪ್ರಶ್ನೆ, ದುರ್ಬಲ ಭಾಗಗಳು, ಪಿನ್ ಮೂಲಭೂತ';
+
+  @override
   String get enterPin => 'ಪಿನ್ ನಮೂದಿಸಿ';
 
   @override
@@ -475,7 +493,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get sortHint =>
-      'ಕೀಪ್ಯಾಡ್‌ನಲ್ಲಿ ಪಿನ್ ಟೈಪ್ ಮಾಡಿ. ಟೈಪ್ ಮಾಡುತ್ತಿದ್ದಂತೆ ಚೀಲ ಕಾಣಿಸುತ್ತದೆ.';
+      'ಪಿನ್ ಅಥವಾ ಕಚೇರಿ ಹೆಸರು ಟೈಪ್ ಮಾಡಿ. ಟೈಪ್ ಮಾಡುತ್ತಿದ್ದಂತೆ ಲೈನ್ / ಚೀಲ ಕಾಣಿಸುತ್ತದೆ.';
 
   @override
   String get bag => 'ಲೈನ್ / ಚೀಲ';

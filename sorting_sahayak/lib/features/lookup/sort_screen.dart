@@ -404,8 +404,6 @@ class SortScreenState extends State<SortScreen> {
                         query: _query,
                         onPick: (m) => _showBox(scheme, m),
                         onAdd: (bag) => _addOffice(scheme, bag),
-                        onPin: setPin,
-                        category: settings.category,
                       ),
                     // Partial PIN without list entries: sorting district / likely bag.
                     if (r != null && r.digits == _digits && _digits.isNotEmpty && matches.isEmpty) SortResultView(result: r),
@@ -541,23 +539,13 @@ class _SearchField extends StatelessWidget {
 /// Printed-list style results, grouped by bag / line:
 /// "KOZHIKODE · Kerala  [673] [674] [675] [676]".
 class _LiveList extends StatelessWidget {
-  const _LiveList({
-    required this.matches,
-    required this.scheme,
-    required this.query,
-    required this.onPick,
-    required this.onAdd,
-    required this.onPin,
-    this.category,
-  });
+  const _LiveList({required this.matches, required this.scheme, required this.query, required this.onPick, required this.onAdd});
 
   final List<LiveMatch> matches;
   final ActiveScheme scheme;
   final String query;
   final ValueChanged<LiveMatch> onPick;
   final ValueChanged<Bag> onAdd;
-  final ValueChanged<String> onPin;
-  final String? category;
 
   @override
   Widget build(BuildContext context) {
@@ -588,9 +576,6 @@ class _LiveList extends StatelessWidget {
               highlight: i == 0 && e.value.first.covers,
               onPick: onPick,
               onAdd: () => onAdd(scheme.bagFor(e.value.first.rule)),
-              roster: lineRoster(scheme.rules, e.key, category: category),
-              startOpen: entries.length <= 3,
-              onPin: onPin,
             ),
             const SizedBox(height: 8),
           ],
@@ -608,14 +593,8 @@ class _LiveGroup extends StatefulWidget {
     required this.highlight,
     required this.onPick,
     required this.onAdd,
-    required this.roster,
-    required this.onPin,
-    this.startOpen = false,
   });
 
-  final List<LineStop> roster;
-  final ValueChanged<String> onPin;
-  final bool startOpen;
   final Bag bag;
   final List<LiveMatch> matches;
   final bool highlight;
@@ -629,7 +608,6 @@ class _LiveGroup extends StatefulWidget {
 class _LiveGroupState extends State<_LiveGroup> {
   static const _collapsed = 24;
   bool _all = false;
-  late bool _line = widget.startOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -685,24 +663,13 @@ class _LiveGroupState extends State<_LiveGroup> {
                       spacing: 6,
                       runSpacing: 6,
                       children: [
-                        if (!_line)
-                          for (final m in shown) _KeyChip(match: m, colour: colour, onDark: highlight, onTap: () => onPick(m)),
-                        if (hidden > 0 && !_line)
+                        for (final m in shown) _KeyChip(match: m, colour: colour, onDark: highlight, onTap: () => onPick(m)),
+                        if (hidden > 0)
                           ActionChip(
                             key: const ValueKey('show_all'),
                             avatar: const Icon(Icons.expand_more),
                             label: Text(l.showAllN(matches.length), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
                             onPressed: () => setState(() => _all = true),
-                          ),
-                        if (widget.roster.length > 1)
-                          ActionChip(
-                            key: const ValueKey('full_line'),
-                            avatar: Icon(_line ? Icons.expand_less : Icons.format_list_numbered),
-                            label: Text(
-                              l.fullLineN(widget.roster.length),
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-                            ),
-                            onPressed: () => setState(() => _line = !_line),
                           ),
                         ActionChip(
                           key: const ValueKey('add_office'),
@@ -712,16 +679,6 @@ class _LiveGroupState extends State<_LiveGroup> {
                         ),
                       ],
                     ),
-                    if (_line && widget.roster.length > 1) ...[
-                      const SizedBox(height: 10),
-                      _LineTable(
-                        stops: widget.roster,
-                        colour: colour,
-                        onDark: highlight,
-                        matched: {for (final m in matches) m.key},
-                        onPin: widget.onPin,
-                      ),
-                    ],
                   ],
                 ),
               ),
@@ -729,84 +686,6 @@ class _LiveGroupState extends State<_LiveGroup> {
           ],
         ),
       ),
-    );
-  }
-}
-
-/// The whole line in position order: "5  Naravi  574109".
-class _LineTable extends StatelessWidget {
-  const _LineTable({required this.stops, required this.colour, required this.onDark, required this.matched, required this.onPin});
-
-  final List<LineStop> stops;
-  final Color colour;
-  final bool onDark;
-  final Set<String> matched;
-  final ValueChanged<String> onPin;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = Theme.of(context).textTheme;
-    final c = Theme.of(context).colorScheme;
-    final fg = onDark ? onColour(colour) : c.onSurface;
-    return Column(
-      key: const ValueKey('line_table'),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        for (final s in stops)
-          Container(
-            margin: const EdgeInsets.only(bottom: 4),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            decoration: BoxDecoration(
-              color: s.pins.any(matched.contains)
-                  ? (onDark
-                        ? Colors.white.withValues(alpha: 0.28)
-                        : Color.alphaBlend(colour.withValues(alpha: 0.22), c.surfaceContainerLowest))
-                  : (onDark ? Colors.white.withValues(alpha: 0.10) : c.surfaceContainerHigh.withValues(alpha: 0.5)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 34,
-                  height: 34,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(color: s.position.isEmpty ? Colors.transparent : colour, shape: BoxShape.circle),
-                  child: Text(
-                    s.position.isEmpty ? '–' : s.position,
-                    style: t.titleSmall?.copyWith(fontWeight: FontWeight.w900, color: s.position.isEmpty ? fg : onColour(colour)),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    s.name,
-                    style: t.titleMedium?.copyWith(fontWeight: FontWeight.w800, color: fg),
-                  ),
-                ),
-                for (final p in s.pins.take(3))
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: RegExp(r'^\d{6}$').hasMatch(p) ? () => onPin(p) : null,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                        child: Text(
-                          p,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                            color: fg,
-                            fontFeatures: const [FontFeature.tabularFigures()],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-      ],
     );
   }
 }

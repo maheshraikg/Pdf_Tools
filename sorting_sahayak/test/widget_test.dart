@@ -118,12 +118,7 @@ void main() {
     await settle(tester);
     await tester.enterText(find.byKey(const ValueKey('pin_field')), 'belm');
     await settle(tester);
-    // One line matched: the full line (position order, with PINs) is open.
-    expect(find.byKey(const ValueKey('line_table')), findsOneWidget);
-    expect(find.text('575013'), findsWidgets); // 16 Kulur
-    // Close it; more than 24 entries on Belman Line: "Show all" reveals the rest.
-    await tester.tap(find.byKey(const ValueKey('full_line')));
-    await tester.pumpAndSettle();
+    // More than 24 entries on Belman Line: "Show all" reveals the rest.
     final showAll = find.byKey(const ValueKey('show_all'));
     expect(showAll, findsOneWidget);
     await tester.ensureVisible(showAll);
@@ -137,8 +132,7 @@ void main() {
     await tester.tap(find.text('Kulur').first);
     await tester.pumpAndSettle();
     expect(find.text('Belman Line'), findsWidgets);
-    expect(find.text('16'), findsWidgets);
-
+    expect(find.text('16'), findsOneWidget);
     await tester.tapAt(const Offset(10, 10));
     await tester.pumpAndSettle();
     // "+ Add office" opens the rule form on this line, type Office.
