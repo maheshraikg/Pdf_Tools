@@ -310,6 +310,56 @@ class AppLocalizationsKn extends AppLocalizations {
   }
 
   @override
+  String get navAir => 'ಏರ್';
+
+  @override
+  String get airFinderTitle => 'ಏರ್ ಕೋಡ್ ಹುಡುಕಿ';
+
+  @override
+  String get airSearchHint => 'ಪಿನ್, ನಗರ ಅಥವಾ ಕೋಡ್ (IXE)';
+
+  @override
+  String get airFinderHelp =>
+      'ಏರ್ ಕೋಡ್‌ಗಾಗಿ 6 ಅಂಕಿಯ ಪಿನ್ ಟೈಪ್ ಮಾಡಿ, ಅಥವಾ ನಗರ, ವಿಮಾನ ನಿಲ್ದಾಣ ಅಥವಾ 3 ಅಕ್ಷರದ ಕೋಡ್‌ನಿಂದ ಹುಡುಕಿ.';
+
+  @override
+  String allAirports(int count) {
+    return 'ಎಲ್ಲ ವಿಮಾನ ನಿಲ್ದಾಣಗಳು ($count)';
+  }
+
+  @override
+  String get fromYourScheme => 'ನಿಮ್ಮ ಕಚೇರಿಯ ಏರ್ ಕೋಡ್ ಪಟ್ಟಿಯಿಂದ';
+
+  @override
+  String get nearestAirport => 'ಹತ್ತಿರದ ವಿಮಾನ ನಿಲ್ದಾಣ';
+
+  @override
+  String kmAway(String km) {
+    return '$km ಕಿ.ಮೀ';
+  }
+
+  @override
+  String get airRefNote =>
+      'ಉಲ್ಲೇಖ ಮಾತ್ರ (ಅಂಚೆ ಕಚೇರಿಗೆ ಹತ್ತಿರದ ವಿಮಾನ ನಿಲ್ದಾಣ). ನಿಮ್ಮ ಕಚೇರಿಯ ಏರ್ ಕೋಡ್ ಪಟ್ಟಿ ಆಮದು ಮಾಡಿದರೆ ಅದರ ಕೋಡ್ ಬಳಸಲಾಗುತ್ತದೆ.';
+
+  @override
+  String get otherNearbyAirports => 'ಇತರ ಹತ್ತಿರದ ವಿಮಾನ ನಿಲ್ದಾಣಗಳು';
+
+  @override
+  String get yourAirCodes => 'ನಿಮ್ಮ ಏರ್ ಕೋಡ್ ಪಟ್ಟಿ';
+
+  @override
+  String airportsInState(String state) {
+    return '$state ನಲ್ಲಿನ ವಿಮಾನ ನಿಲ್ದಾಣಗಳು';
+  }
+
+  @override
+  String get typeFullPinForAir => 'ಪಿನ್‌ನ ಎಲ್ಲ 6 ಅಂಕಿಗಳನ್ನು ಟೈಪ್ ಮಾಡಿ';
+
+  @override
+  String get noAirportFound => 'ಯಾವುದೇ ವಿಮಾನ ನಿಲ್ದಾಣ ಸಿಗಲಿಲ್ಲ';
+
+  @override
   String get enterPin => 'ಪಿನ್ ನಮೂದಿಸಿ';
 
   @override

@@ -3,7 +3,7 @@
 A fully offline Android helper for postal sorting assistants in India. It sorts
 articles by PIN code and place name using **your own office's sorting scheme**,
 finds a PIN from an address, catches PIN–city mismatches, scans addresses with
-the camera, counts articles per bag, and lets you practise the scheme.
+the camera, finds air codes, and lets you practise the scheme.
 
 > **Independent helper tool for postal staff. Not an official Department of Posts app.**
 > It does not use the India Post name, logo, colours or branding.
@@ -18,9 +18,9 @@ the camera, counts articles per bag, and lets you practise the scheme.
 
 | Tab | What it does |
 |---|---|
-| **Sort (ಸಾರ್ಟ್)** | Big custom keypad; the result updates as you type. After 3 digits you get the sorting district and the likely bag (prefix rules). After 6 digits you get the final bag in huge text on the bag colour, plus code, section, remarks, the delivery office(s) and the PIN structure. Mail category toggle (Letters / Parcel / Air Parcel / Speed Post / your own). **Air Parcel** mode shows the air label code in very large letters (copy + read-out), the YELLOW **AIR** / BLUE **SURFACE** badge, the **L2 → L1 hub** route from the active DMSL, and the bag. Also: voice input, camera scan, recent lookups, optional "place on address" mismatch check, **Label view** (big label card, share as image or text), haptics and optional TTS. |
+| **Sort (ಸಾರ್ಟ್)** | TD / Non-TD switch and a big search field using the phone keyboard (ABC toggle for office / line names). While you type, matching rules are listed live, grouped by line / bag ("67" → KANNUR 670 671, KOZHIKODE 673–676, …). After 6 digits you get the line / bag in huge text on its colour, with the section in a round badge, remarks, the delivery office(s) and the PIN structure. Mail category toggle (Letters / Parcel / Air Parcel / Speed Post / your own). **Air Parcel** mode shows the air label code in very large letters (copy + read-out), the YELLOW **AIR** / BLUE **SURFACE** badge, the **L2 → L1 hub** route from the active DMSL, and the bag. Also: voice input, camera scan, recent lookups, optional "place on address" mismatch check, **Label view** (big label card, share as image or text), haptics and optional TTS. |
 | **Find PIN (ಪಿನ್ ಹುಡುಕಿ)** | Search office, village, city, taluk or district in English, Kannada or Hindi. It tolerates spelling mistakes: `Puttoor`, `Putur`, `ಪುತ್ತೂರು` and `पुत्तूर` all find Puttur. Filter chips (state, district, delivery only). Each result shows the bag from the active scheme. **PIN ↔ place check**: ✅ match · ⚠️ same district, different PIN (suggests the right PIN) · ❌ different district/state (suggests likely PINs). |
-| **Bulk (ಗುಂಪು)** | Sessions (name, date, scheme, category). Enter PINs quickly with the keypad or scanner. Each entry flashes its bag colour, and you can undo the last entry. Live counts per bag, per air code, per hub and per Air/Surface, plus a list of unresolved entries to fix. The summary can be shared as text, CSV or a printable text file. |
+| **Air (ಏರ್)** | Air code finder. Type a 6-digit PIN: the code from your office's air code list (if imported), otherwise the nearest airport to that post office with distance (reference only). Or search by city, airport name or 3-letter code (IXE, Kochi …). A partial PIN lists the airports in that PIN's states. |
 | **Learn (ಅಭ್ಯಾಸ)** | Flashcards with Leitner spaced repetition, a timed 20-question quiz (4 options, score, articles per minute, history chart), weak areas, and a PIN basics lesson with the circle table. Air-code and hub cards too. After a new DMSL you can practise only the PINs whose hub changed. It works with the SAMPLE scheme. |
 | **More** | Schemes (import, create/edit, export, set active, delete), PIN directory info and update from CSV, favourites, airport codes, settings, help, about. |
 
@@ -286,7 +286,7 @@ extraction, OCR fixes, Kannada/Hindi digits), transliteration and fuzzy
 search, directory builder and search (FTS5 and LIKE), mismatch checker,
 scheme resolver priority, category rules, air codes, DMSL diff, import
 column auto-detection and validation, the sample files, export round-trip,
-bulk counter, learn engine, voice digit parsing, a 165k-row performance
+live rule search, learn engine, voice digit parsing, a 165k-row performance
 test, and widget tests for the Sort screen (incl. Air Parcel mode and the
 Air/Surface badge) and the Find PIN screen. Tests use a small fixture DB
 (`test/fixtures/directory.csv`).
@@ -299,7 +299,7 @@ lib/core/      theme, l10n (ARB: en/kn/hi), constants, pin_utils, fuzzy, transli
                settings, feedback (haptics/TTS), voice, files, shared widgets
 lib/data/      db, user_db, directory_builder/repo/update, scheme_repo, resolver,
                sort_engine, mismatch, dmsl_diff, airports, user_repo, import/, models/
-lib/features/  lookup/ find_pin/ scan/ bulk/ learn/ schemes/ settings/
+lib/features/  lookup/ find_pin/ scan/ air/ learn/ schemes/ settings/
 tool/          build_directory_db.dart, make_samples.dart
 assets/db/     pincode_directory.db
 assets/samples/ sample_* and template_* (.xlsx/.csv) – SAMPLE, not real

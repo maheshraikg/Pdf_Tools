@@ -309,6 +309,56 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get navAir => 'Air';
+
+  @override
+  String get airFinderTitle => 'Air code finder';
+
+  @override
+  String get airSearchHint => 'PIN, city or code (IXE)';
+
+  @override
+  String get airFinderHelp =>
+      'Type a 6-digit PIN to get the air code, or search by city, airport or 3-letter code.';
+
+  @override
+  String allAirports(int count) {
+    return 'All airports ($count)';
+  }
+
+  @override
+  String get fromYourScheme => 'From your office\'s air code list';
+
+  @override
+  String get nearestAirport => 'Nearest airport';
+
+  @override
+  String kmAway(String km) {
+    return '$km km';
+  }
+
+  @override
+  String get airRefNote =>
+      'Reference only (nearest airport to the post office). Import your office\'s air code list to use its codes.';
+
+  @override
+  String get otherNearbyAirports => 'Other nearby airports';
+
+  @override
+  String get yourAirCodes => 'Your air code list';
+
+  @override
+  String airportsInState(String state) {
+    return 'Airports in $state';
+  }
+
+  @override
+  String get typeFullPinForAir => 'Type all 6 digits of the PIN';
+
+  @override
+  String get noAirportFound => 'No airport found';
+
+  @override
   String get enterPin => 'Enter PIN';
 
   @override

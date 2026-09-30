@@ -131,6 +131,41 @@
       }
     }
   },
+  "navAir": "Air",
+  "airFinderTitle": "Air code finder",
+  "airSearchHint": "PIN, city or code (IXE)",
+  "airFinderHelp": "Type a 6-digit PIN to get the air code, or search by city, airport or 3-letter code.",
+  "allAirports": "All airports ({count})",
+  "@allAirports": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fromYourScheme": "From your office's air code list",
+  "nearestAirport": "Nearest airport",
+  "kmAway": "{km} km",
+  "@kmAway": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "airRefNote": "Reference only (nearest airport to the post office). Import your office's air code list to use its codes.",
+  "otherNearbyAirports": "Other nearby airports",
+  "yourAirCodes": "Your air code list",
+  "airportsInState": "Airports in {state}",
+  "@airportsInState": {
+    "placeholders": {
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "typeFullPinForAir": "Type all 6 digits of the PIN",
+  "noAirportFound": "No airport found",
   "enterPin": "Enter PIN",
   "backspace": "Delete last digit",
   "voiceInput": "Voice input",

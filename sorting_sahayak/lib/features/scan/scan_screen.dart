@@ -14,7 +14,6 @@ import '../../core/l10n/app_localizations.dart';
 import '../../core/pin_utils.dart';
 import '../../core/widgets.dart';
 import '../../data/sort_engine.dart';
-import '../bulk/bulk_counter.dart';
 import '../find_pin/mismatch_view.dart';
 import '../lookup/sort_result_view.dart';
 import 'address_parser.dart';
@@ -27,10 +26,7 @@ class ScanOutcome {
 }
 
 class ScanScreen extends StatefulWidget {
-  const ScanScreen({super.key, this.bulkSessionId});
-
-  /// When set, "Add to bulk count" adds to this session and returns.
-  final int? bulkSessionId;
+  const ScanScreen({super.key});
 
   @override
   State<ScanScreen> createState() => _ScanScreenState();
@@ -175,28 +171,6 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     _initCamera();
   }
 
-  Future<void> _addToBulk() async {
-    final l = AppLocalizations.of(context);
-    final services = context.services;
-    final settings = context.settings;
-    final sessionId = widget.bulkSessionId ?? (await services.user.sessions()).where((s) => !s.ended).firstOrNull?.id;
-    if (!mounted) return;
-    if (sessionId == null) {
-      toast(context, l.noOpenSession);
-      return;
-    }
-    final session = await services.user.session(sessionId);
-    final entry = await makeBulkEntry(services.engine, _pin.text, session?.category ?? settings.category);
-    await services.user.addEntry(sessionId, entry);
-    if (!mounted) return;
-    toast(context, l.addedToBulk(entry.bagCode ?? l.unresolved));
-    if (widget.bulkSessionId != null) {
-      Navigator.pop(context);
-    } else {
-      _again();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -312,7 +286,6 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
               icon: const Icon(Icons.dialpad),
               label: Text(l.useThisPin),
             ),
-            FilledButton.tonalIcon(onPressed: p.length == 6 ? _addToBulk : null, icon: const Icon(Icons.add_box_outlined), label: Text(l.addToBulk)),
             OutlinedButton.icon(onPressed: _again, icon: const Icon(Icons.refresh), label: Text(l.scanAgain)),
           ],
         ),

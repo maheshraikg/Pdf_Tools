@@ -658,6 +658,90 @@ abstract class AppLocalizations {
   /// **'This PIN is in {mode}: {bag}'**
   String otherModeHint(String mode, String bag);
 
+  /// No description provided for @navAir.
+  ///
+  /// In en, this message translates to:
+  /// **'Air'**
+  String get navAir;
+
+  /// No description provided for @airFinderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Air code finder'**
+  String get airFinderTitle;
+
+  /// No description provided for @airSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN, city or code (IXE)'**
+  String get airSearchHint;
+
+  /// No description provided for @airFinderHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a 6-digit PIN to get the air code, or search by city, airport or 3-letter code.'**
+  String get airFinderHelp;
+
+  /// No description provided for @allAirports.
+  ///
+  /// In en, this message translates to:
+  /// **'All airports ({count})'**
+  String allAirports(int count);
+
+  /// No description provided for @fromYourScheme.
+  ///
+  /// In en, this message translates to:
+  /// **'From your office\'s air code list'**
+  String get fromYourScheme;
+
+  /// No description provided for @nearestAirport.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest airport'**
+  String get nearestAirport;
+
+  /// No description provided for @kmAway.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} km'**
+  String kmAway(String km);
+
+  /// No description provided for @airRefNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference only (nearest airport to the post office). Import your office\'s air code list to use its codes.'**
+  String get airRefNote;
+
+  /// No description provided for @otherNearbyAirports.
+  ///
+  /// In en, this message translates to:
+  /// **'Other nearby airports'**
+  String get otherNearbyAirports;
+
+  /// No description provided for @yourAirCodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Your air code list'**
+  String get yourAirCodes;
+
+  /// No description provided for @airportsInState.
+  ///
+  /// In en, this message translates to:
+  /// **'Airports in {state}'**
+  String airportsInState(String state);
+
+  /// No description provided for @typeFullPinForAir.
+  ///
+  /// In en, this message translates to:
+  /// **'Type all 6 digits of the PIN'**
+  String get typeFullPinForAir;
+
+  /// No description provided for @noAirportFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No airport found'**
+  String get noAirportFound;
+
   /// No description provided for @enterPin.
   ///
   /// In en, this message translates to:

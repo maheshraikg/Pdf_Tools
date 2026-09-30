@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
 
-/// Brand palette: deep navy + teal, with amber for highlights. Chosen for
-/// strong contrast in poor light and to stay clear of any organisation's
-/// branding.
-const Color kNavy = Color(0xFF1E3A8A);
-const Color kTeal = Color(0xFF0F766E);
+/// Brand palette: deep indigo with saffron highlights, teal for actions and
+/// sky blue for air. High contrast in poor light and clear of any
+/// organisation's branding.
+const Color kNavy = Color(0xFF3730A3); // primary indigo
+const Color kIndigoDeep = Color(0xFF1E1B4B);
+const Color kIndigoTop = Color(0xFF2E2A85);
+const Color kIndigoBottom = Color(0xFF4338CA);
+const Color kTeal = Color(0xFF0D9488);
 const Color kAmber = Color(0xFFF59E0B);
+const Color kSky = Color(0xFF0EA5E9);
+const Color kSkyDeep = Color(0xFF0369A1);
+
+/// Vertical gradient under the app bar (seamless with its colour).
+LinearGradient headerGradient(BuildContext context) {
+  final dark = Theme.of(context).brightness == Brightness.dark;
+  return LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: dark ? const [kIndigoDeep, Color(0xFF2A2670)] : const [kIndigoTop, kIndigoBottom],
+  );
+}
 
 // Kept for older call sites.
 const Color kSeedRed = kNavy;
@@ -24,16 +39,16 @@ Color okColor(BuildContext context) =>
 ThemeData buildTheme(Brightness brightness) {
   final dark = brightness == Brightness.dark;
   final scheme = ColorScheme.fromSeed(seedColor: kNavy, brightness: brightness).copyWith(
-    primary: dark ? const Color(0xFF93B4FF) : kNavy,
-    onPrimary: dark ? const Color(0xFF0B1B4D) : Colors.white,
-    primaryContainer: dark ? const Color(0xFF1E3A8A) : const Color(0xFFDCE6FF),
-    onPrimaryContainer: dark ? const Color(0xFFDCE6FF) : const Color(0xFF0B1B4D),
+    primary: dark ? const Color(0xFFA5B4FC) : kNavy,
+    onPrimary: dark ? kIndigoDeep : Colors.white,
+    primaryContainer: dark ? const Color(0xFF312E81) : const Color(0xFFE0E7FF),
+    onPrimaryContainer: dark ? const Color(0xFFE0E7FF) : kIndigoDeep,
     secondary: dark ? const Color(0xFF5EEAD4) : kTeal,
     onSecondary: dark ? const Color(0xFF042F2E) : Colors.white,
     secondaryContainer: dark ? const Color(0xFF134E4A) : const Color(0xFFCCFBF1),
     onSecondaryContainer: dark ? const Color(0xFFCCFBF1) : const Color(0xFF042F2E),
     tertiary: kAmber,
-    surface: dark ? const Color(0xFF0F172A) : const Color(0xFFF5F7FB),
+    surface: dark ? const Color(0xFF0B1020) : const Color(0xFFF4F5FB),
     onSurface: dark ? const Color(0xFFE2E8F0) : const Color(0xFF0F172A),
     onSurfaceVariant: dark ? const Color(0xFF94A3B8) : const Color(0xFF475569),
     surfaceContainerLowest: dark ? const Color(0xFF0B1220) : Colors.white,
@@ -70,7 +85,7 @@ ThemeData buildTheme(Brightness brightness) {
       centerTitle: false,
       elevation: 0,
       scrolledUnderElevation: 2,
-      backgroundColor: dark ? const Color(0xFF0B1220) : kNavy,
+      backgroundColor: dark ? kIndigoDeep : kIndigoTop,
       foregroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
       titleTextStyle: text.titleLarge?.copyWith(color: Colors.white, fontSize: 21, fontWeight: FontWeight.w800),

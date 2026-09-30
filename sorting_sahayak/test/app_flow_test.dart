@@ -7,7 +7,7 @@ import 'package:sorting_sahayak/main.dart';
 import 'helpers/app_harness.dart';
 
 void main() {
-  testWidgets('app shell: schemes, find → sort, learn, bulk', (tester) async {
+  testWidgets('app shell: schemes, find → sort, learn, air codes', (tester) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 2.5;
     addTearDown(tester.view.reset);
@@ -64,36 +64,23 @@ void main() {
     await tester.pageBack();
     await tester.pumpAndSettle();
 
-    // Bulk: start a session, count two PINs, undo one.
-    await tester.tap(find.text('Bulk'));
+    // No Bulk tab any more; Air code finder instead.
+    expect(find.text('Bulk'), findsNothing);
+    await tester.tap(find.text('Air'));
+    await tester.pumpAndSettle();
+    expect(find.text('Air code finder'), findsOneWidget);
+    // By code / name.
+    await tester.enterText(find.byKey(const ValueKey('air_field')), 'IXE');
     await settle(tester);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Start session').last);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Start'));
+    expect(find.text('Mangaluru'), findsWidgets);
+    await tester.enterText(find.byKey(const ValueKey('air_field')), 'kochi');
     await settle(tester);
+    expect(find.text('COK'), findsWidgets);
+    // By PIN: nearest airport to the post office.
+    await tester.enterText(find.byKey(const ValueKey('air_field')), '574239');
+    await settle(tester, rounds: 6);
     await tester.pumpAndSettle();
-    Future<void> type(String pin) async {
-      for (final d in pin.split('')) {
-        await tester.tap(find.byKey(ValueKey('key_$d')));
-        await tester.pump();
-      }
-      await settle(tester, rounds: 6);
-    }
-
-    await type('574201');
-    await type('576101');
-    await tester.pump(const Duration(seconds: 1));
-    expect(find.text('Total: 2'), findsOneWidget);
-    expect(find.text('Bag 12: 1'), findsOneWidget);
-    await tester.tap(find.byTooltip('Undo last'));
-    await settle(tester);
-    await tester.pumpAndSettle();
-    expect(find.text('Total: 1'), findsOneWidget);
-    await tester.tap(find.text('End'));
-    await settle(tester);
-    await tester.pumpAndSettle();
-    expect(find.text('Summary'), findsOneWidget);
-    expect(find.text('Bag 12 – Puttur Line'), findsOneWidget);
+    expect(find.textContaining('Nearest airport'), findsOneWidget);
+    expect(find.text('Sullia SO · Dakshina Kannada, Karnataka'), findsOneWidget);
   });
 }

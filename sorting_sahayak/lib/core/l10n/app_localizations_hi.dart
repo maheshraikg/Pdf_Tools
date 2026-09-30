@@ -310,6 +310,56 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String get navAir => 'एयर';
+
+  @override
+  String get airFinderTitle => 'एयर कोड खोजें';
+
+  @override
+  String get airSearchHint => 'पिन, शहर या कोड (IXE)';
+
+  @override
+  String get airFinderHelp =>
+      'एयर कोड के लिए 6 अंकों का पिन लिखें, या शहर, हवाई अड्डे या 3 अक्षर के कोड से खोजें।';
+
+  @override
+  String allAirports(int count) {
+    return 'सभी हवाई अड्डे ($count)';
+  }
+
+  @override
+  String get fromYourScheme => 'आपके डाकघर की एयर कोड सूची से';
+
+  @override
+  String get nearestAirport => 'निकटतम हवाई अड्डा';
+
+  @override
+  String kmAway(String km) {
+    return '$km कि.मी.';
+  }
+
+  @override
+  String get airRefNote =>
+      'केवल संदर्भ (डाकघर के निकटतम हवाई अड्डा)। अपने डाकघर की एयर कोड सूची आयात करें ताकि उसके कोड इस्तेमाल हों।';
+
+  @override
+  String get otherNearbyAirports => 'अन्य निकट हवाई अड्डे';
+
+  @override
+  String get yourAirCodes => 'आपकी एयर कोड सूची';
+
+  @override
+  String airportsInState(String state) {
+    return '$state के हवाई अड्डे';
+  }
+
+  @override
+  String get typeFullPinForAir => 'पिन के सभी 6 अंक लिखें';
+
+  @override
+  String get noAirportFound => 'कोई हवाई अड्डा नहीं मिला';
+
+  @override
   String get enterPin => 'पिन दर्ज करें';
 
   @override

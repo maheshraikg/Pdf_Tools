@@ -218,7 +218,7 @@ class SortScreenState extends State<SortScreen> {
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(12, 4, 12, 14),
               decoration: BoxDecoration(
-                color: Theme.of(context).appBarTheme.backgroundColor,
+                gradient: headerGradient(context),
                 borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
               ),
               child: Column(

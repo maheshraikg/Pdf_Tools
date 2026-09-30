@@ -45,17 +45,6 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
             const Divider(),
-            ListTile(
-              title: Text(l.keypadSize, style: const TextStyle(fontWeight: FontWeight.w700)),
-              subtitle: Slider(
-                value: s.keypadScale,
-                min: 0.8,
-                max: 1.4,
-                divisions: 6,
-                label: '${(s.keypadScale * 100).round()}%',
-                onChanged: (v) => s.keypadScale = v,
-              ),
-            ),
             SwitchListTile(value: s.ttsEnabled, onChanged: (v) => s.ttsEnabled = v, title: Text(l.ttsSetting), subtitle: Text(l.ttsSettingSub)),
             SwitchListTile(value: s.hapticsEnabled, onChanged: (v) => s.hapticsEnabled = v, title: Text(l.hapticsSetting)),
             SwitchListTile(value: s.showMismatchField, onChanged: (v) => s.showMismatchField = v, title: Text(l.mismatchFieldSetting), subtitle: Text(l.mismatchFieldSettingSub)),
