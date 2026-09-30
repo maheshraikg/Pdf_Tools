@@ -169,3 +169,78 @@ int compareScanHits(ScanOfficeHit a, ScanOfficeHit b) {
   if (a.rank != b.rank) return a.rank.compareTo(b.rank);
   return s;
 }
+
+enum AddressCheckLevel { match, sameArea, mismatch }
+
+/// PIN ↔ post office check for a scanned address.
+class AddressCheck {
+  const AddressCheck({required this.level, required this.pin, this.pinOffice, required this.named, this.others = const []});
+
+  final AddressCheckLevel level;
+
+  /// PIN read on the address.
+  final String pin;
+
+  /// The office the PIN belongs to (head office first).
+  final Office? pinOffice;
+
+  /// The post office named on the address: agrees with the PIN on a match,
+  /// otherwise the suggested office.
+  final ScanOfficeHit named;
+
+  /// Other offices with a name on the address (alternatives).
+  final List<ScanOfficeHit> others;
+
+  /// Best PIN to use: the PIN when it matches, else the named office's PIN
+  /// (when they differ, the post office named on the address is usually
+  /// right and the PIN mistyped).
+  String get bestPin => level == AddressCheckLevel.match ? pin : named.office.pin;
+}
+
+/// Compares the PIN read with the office names read. Null when there is no
+/// PIN or no clearly read office name. A city head office in the same
+/// district ("Mangaluru" on a 575003 cover) is not a conflict.
+AddressCheck? checkAddress(String? pin, List<Office> pinOffices, List<ScanOfficeHit> hits, {List<String> postNames = const []}) {
+  if (pin == null) return null;
+  final strong = hits.where((h) => h.score >= 0.95).toList();
+  if (strong.isEmpty) return null;
+  final pinOffice = pinOffices.where((o) => _headTypes.contains(o.officeType)).firstOrNull ?? pinOffices.firstOrNull;
+  // An office written with "post" ("Sulkeri post, Belthangady Tq") is the
+  // delivery office meant; a taluk town that happens to carry the PIN is not.
+  final posts = {for (final p in postNames) normalizePlace(p)}..removeWhere((p) => p.length < 3);
+  bool isPost(ScanOfficeHit h) {
+    final name = normalizePlace(h.office.officeName);
+    return posts.any((p) => placeSimilarity(p, name) >= 0.9);
+  }
+
+  final postHits = strong.where(isPost).toList();
+  if (postHits.isNotEmpty) {
+    final same = postHits.where((h) => h.samePin).firstOrNull;
+    if (same != null) return AddressCheck(level: AddressCheckLevel.match, pin: pin, pinOffice: pinOffice, named: same);
+    final best = postHits.first;
+    return AddressCheck(
+      level: best.sameArea ? AddressCheckLevel.sameArea : AddressCheckLevel.mismatch,
+      pin: pin,
+      pinOffice: pinOffice,
+      named: best,
+      others: strong.where((h) => h != best && !h.samePin).take(3).toList(),
+    );
+  }
+  final same = strong.where((h) => h.samePin).firstOrNull;
+  if (same != null) {
+    return AddressCheck(level: AddressCheckLevel.match, pin: pin, pinOffice: pinOffice, named: same);
+  }
+  final named = strong.where((h) => !(h.sameArea && h.office.officeType == 'HO')).toList();
+  if (named.isEmpty) return null;
+  // Prefer the delivery office (SO / BO / PO) over its HO or taluk town
+  // within the best area: "Kabaka post, Puttur Tq" → Kabaka.
+  final area = named.first.office.pin.substring(0, 3);
+  final best = named.where((h) => h.office.pin.substring(0, 3) == area && h.office.officeType != 'HO').firstOrNull ?? named.first;
+  return AddressCheck(
+    level: best.sameArea ? AddressCheckLevel.sameArea : AddressCheckLevel.mismatch,
+    pin: pin,
+    pinOffice: pinOffice,
+    named: best,
+    others: named.where((h) => h != best).take(3).toList(),
+  );
+}

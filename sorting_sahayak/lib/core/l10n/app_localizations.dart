@@ -1672,6 +1672,60 @@ abstract class AppLocalizations {
   /// **'PIN on the address'**
   String get scanPinOnAddress;
 
+  /// No description provided for @chkMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN and post office match'**
+  String get chkMatch;
+
+  /// No description provided for @chkSameArea.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN and post office differ (same district)'**
+  String get chkSameArea;
+
+  /// No description provided for @chkMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN and post office do not match'**
+  String get chkMismatch;
+
+  /// No description provided for @chkAddressNames.
+  ///
+  /// In en, this message translates to:
+  /// **'Address names {office} – PIN {pin}'**
+  String chkAddressNames(String office, String pin);
+
+  /// No description provided for @chkBest.
+  ///
+  /// In en, this message translates to:
+  /// **'Best option'**
+  String get chkBest;
+
+  /// No description provided for @chkBestWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'The post office named on the address is usually right – check the address before sorting.'**
+  String get chkBestWhy;
+
+  /// No description provided for @chkUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Use {pin}'**
+  String chkUse(String pin);
+
+  /// No description provided for @chkKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep {pin}'**
+  String chkKeep(String pin);
+
+  /// No description provided for @chkAlso.
+  ///
+  /// In en, this message translates to:
+  /// **'Also on the address:'**
+  String get chkAlso;
+
   /// No description provided for @learnNeedsScheme.
   ///
   /// In en, this message translates to:

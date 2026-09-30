@@ -62,6 +62,7 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
   SortResult? _result;
   List<ScanOfficeHit> _offices = [];
   List<String> _places = [];
+  List<String> _postNames = [];
   String _placesKey = '';
   bool _sawText = false;
 
@@ -255,6 +256,7 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     if (cand.places.isNotEmpty && (captured || key != _placesKey)) {
       _placesKey = key;
       _places = cand.places;
+      _postNames = cand.postNames;
       await _findOffices(cand.places);
     }
   }
@@ -305,6 +307,7 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
       _result = null;
       _offices = [];
       _places = [];
+      _postNames = [];
       _placesKey = '';
       _sawText = false;
     });
@@ -448,9 +451,14 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     final r = _result;
     final pin = _pin;
     final nothing = r == null && _offices.isEmpty;
+    final check = checkAddress(pin, r?.offices ?? const [], _offices, postNames: _postNames);
     return ListView(
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
       children: [
+        if (check != null) ...[
+          _AddressCheckCard(check: check, onUse: _use),
+          const SizedBox(height: 10),
+        ],
         if (pin != null && r != null) ...[
           Row(
             children: [
@@ -580,6 +588,105 @@ class _ScanOfficeCard extends StatelessWidget {
                     ],
                   ),
                 ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// PIN ↔ post office check: ✅ match, or ⚠️ / ❌ with the best option and
+/// its line.
+class _AddressCheckCard extends StatelessWidget {
+  const _AddressCheckCard({required this.check, required this.onUse});
+
+  final AddressCheck check;
+  final void Function(String pin, String? place) onUse;
+
+  String _lineOf(AppLocalizations l, SortResult r) {
+    final bag = r.bag;
+    if (bag == null) return l.noLineInScheme;
+    final pos = r.bagRule?.section ?? '';
+    return [bag.label, if (pos.isNotEmpty) '${l.section} $pos'].join(' · ');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final t = Theme.of(context).textTheme;
+    final c = check;
+    final n = c.named.office;
+    final (IconData icon, Color colour, String title) = switch (c.level) {
+      AddressCheckLevel.match => (Icons.check_circle, okColor(context), l.chkMatch),
+      AddressCheckLevel.sameArea => (Icons.warning_amber_rounded, warningColor(context), l.chkSameArea),
+      AddressCheckLevel.mismatch => (Icons.cancel, Theme.of(context).colorScheme.error, l.chkMismatch),
+    };
+    final po = c.pinOffice;
+    return Semantics(
+      liveRegion: true,
+      child: Card(
+        key: ValueKey('scan_check_${c.level.name}'),
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: BorderSide(color: colour, width: 3)),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, color: colour, size: 32),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(title, style: t.titleMedium?.copyWith(fontWeight: FontWeight.w900, color: colour))),
+                ],
+              ),
+              if (c.level == AddressCheckLevel.match)
+                Text('${n.officeName} ${n.officeType} · ${n.pin}', style: t.titleSmall?.copyWith(fontWeight: FontWeight.w700))
+              else ...[
+                const SizedBox(height: 4),
+                if (po != null) Text(l.mmPinIs(c.pin, '${po.officeName} ${po.officeType}, ${po.district}'), style: t.bodyLarge),
+                Text(l.chkAddressNames('${n.officeName} ${n.officeType}, ${n.district}', n.pin), style: t.bodyLarge),
+                const SizedBox(height: 8),
+                Text(l.chkBest, style: t.labelLarge?.copyWith(fontWeight: FontWeight.w900)),
+                Text('${n.pin} · ${n.officeName} ${n.officeType}', style: t.titleLarge?.copyWith(fontWeight: FontWeight.w900)),
+                Text(_lineOf(l, c.named.result), style: t.titleSmall?.copyWith(fontWeight: FontWeight.w800)),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    FilledButton.icon(
+                      key: const ValueKey('check_use_best'),
+                      onPressed: () => onUse(n.pin, n.officeName),
+                      icon: const Icon(Icons.check),
+                      label: Text(l.chkUse(n.pin)),
+                    ),
+                    OutlinedButton(
+                      key: const ValueKey('check_keep_pin'),
+                      onPressed: () => onUse(c.pin, null),
+                      child: Text(l.chkKeep(c.pin)),
+                    ),
+                  ],
+                ),
+                if (c.others.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(l.chkAlso, style: t.labelLarge),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 4,
+                    children: [
+                      for (final h in c.others)
+                        ActionChip(
+                          label: Text('${h.office.pin} · ${h.office.officeName} (${h.office.district})'),
+                          onPressed: () => onUse(h.office.pin, h.office.officeName),
+                        ),
+                    ],
+                  ),
+                ],
+                const SizedBox(height: 6),
+                Text(l.chkBestWhy, style: t.bodySmall),
+              ],
             ],
           ),
         ),

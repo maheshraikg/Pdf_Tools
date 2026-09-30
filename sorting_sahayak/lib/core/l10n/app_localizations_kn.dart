@@ -885,6 +885,40 @@ class AppLocalizationsKn extends AppLocalizations {
   String get scanPinOnAddress => 'ವಿಳಾಸದಲ್ಲಿನ ಪಿನ್';
 
   @override
+  String get chkMatch => 'ಪಿನ್ ಮತ್ತು ಅಂಚೆ ಕಚೇರಿ ಹೊಂದುತ್ತವೆ';
+
+  @override
+  String get chkSameArea => 'ಪಿನ್ ಮತ್ತು ಅಂಚೆ ಕಚೇರಿ ಬೇರೆ (ಅದೇ ಜಿಲ್ಲೆ)';
+
+  @override
+  String get chkMismatch => 'ಪಿನ್ ಮತ್ತು ಅಂಚೆ ಕಚೇರಿ ಹೊಂದುವುದಿಲ್ಲ';
+
+  @override
+  String chkAddressNames(String office, String pin) {
+    return 'ವಿಳಾಸದಲ್ಲಿ $office – ಪಿನ್ $pin';
+  }
+
+  @override
+  String get chkBest => 'ಉತ್ತಮ ಆಯ್ಕೆ';
+
+  @override
+  String get chkBestWhy =>
+      'ವಿಳಾಸದಲ್ಲಿರುವ ಅಂಚೆ ಕಚೇರಿ ಹೆಸರು ಸಾಮಾನ್ಯವಾಗಿ ಸರಿ – ವಿಂಗಡಿಸುವ ಮೊದಲು ವಿಳಾಸ ಪರಿಶೀಲಿಸಿ.';
+
+  @override
+  String chkUse(String pin) {
+    return '$pin ಬಳಸಿ';
+  }
+
+  @override
+  String chkKeep(String pin) {
+    return '$pin ಇರಲಿ';
+  }
+
+  @override
+  String get chkAlso => 'ವಿಳಾಸದಲ್ಲಿ ಇನ್ನೂ:';
+
+  @override
   String get learnNeedsScheme =>
       'ಅಭ್ಯಾಸವು ಸಕ್ರಿಯ ಸ್ಕೀಮ್ ಬಳಸುತ್ತದೆ. ನಿಮ್ಮ ಕಚೇರಿಯ ಸ್ಕೀಮ್ ಆಮದು ಮಾಡಿ ಅಥವಾ ಮಾದರಿ ಪ್ರಯತ್ನಿಸಿ.';
 

@@ -9,7 +9,10 @@ void main() {
   test('finds PIN and nearby place candidates', () {
     final c = parseAddress(ocr);
     expect(c.pins, ['574201']);
-    expect(c.places.first, 'Dakshina Kannada');
+    // "Darbe Post" names the delivery office: it comes first.
+    expect(c.postNames, contains('Darbe'));
+    expect(c.places.first, 'Darbe');
+    expect(c.places, contains('Dakshina Kannada'));
     expect(c.places, contains('Puttur'));
   });
 
@@ -25,5 +28,19 @@ void main() {
     final c = parseAddress('Manipal\nUdupi district');
     expect(c.pins, isEmpty);
     expect(c.places, containsAll(['Manipal', 'Udupi']));
+  });
+
+  test('short noise words are not cut out of place names', () {
+    final c = parseAddress('Mattur\nKarnataka 577201');
+    expect(c.places, containsAll(['Mattur', 'Karnataka']));
+  });
+
+  test('names written with post / P.O. are the delivery office', () {
+    expect(parseAddress('Sulkeri post\nBelthangady Tq 574214').postNames, contains('Sulkeri'));
+    expect(parseAddress('At & PO: Kabaka\nPuttur').postNames, contains('Kabaka'));
+    expect(parseAddress('Ujire (P.O.)\n574240').postNames, contains('Ujire'));
+    expect(parseAddress('Belthangady Tq\n574214').postNames, isEmpty);
+    // Searched first.
+    expect(parseAddress('Sulkeri post\nBelthangady 574214').places.first, 'Sulkeri');
   });
 }

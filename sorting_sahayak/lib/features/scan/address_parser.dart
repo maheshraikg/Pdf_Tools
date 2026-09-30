@@ -6,15 +6,61 @@ import '../../core/pin_utils.dart';
 import '../../data/directory_repo.dart';
 
 class AddressCandidates {
-  const AddressCandidates(this.pins, this.places);
+  const AddressCandidates(this.pins, this.places, [this.postNames = const []]);
 
   final List<String> pins;
 
   /// Most likely first: lines just above / on the PIN line, then others.
   final List<String> places;
+
+  /// Names written with "post" / "P.O." ("Sulkeri Post", "PO: Kabaka"):
+  /// the delivery office the writer meant.
+  final List<String> postNames;
 }
 
-final RegExp _junk = RegExp(r'(p\.?\s?i\.?\s?n\.?(\s?code)?|pincode|ಪಿನ್|पिन|dist\.?|district|tq\.?|taluk|post|p\.o\.?|via|to|at)\s*[:\-.]?', caseSensitive: false);
+// "Sulkeri post", "Kabaka P.O.", "Ujire (PO)", "ಸುಲ್ಕೇರಿ ಅಂಚೆ", "करोल बाग डाकघर".
+final RegExp _postAfter = RegExp(
+  r'([\p{L}\p{M}]{3,}(?:\s[\p{L}\p{M}]{3,})?)\s*[(\-,]?\s*(?:post\b|p\s?\.\s?o\b\.?|po\b|ಅಂಚೆ|डाकघर|डाक)',
+  caseSensitive: false,
+  unicode: true,
+);
+// "PO: Kabaka", "Post - Sulkeri", "P.O. Ujire".
+final RegExp _postBefore = RegExp(
+  r'(?:^|\s)(?:post|p\s?\.\s?o\.?|po)\s*[:\-.]\s*([\p{L}\p{M}]{3,}(?:\s[\p{L}\p{M}]{3,})?)',
+  caseSensitive: false,
+  unicode: true,
+);
+
+const _notOffice = {'head', 'sub', 'branch', 'the', 'near', 'via', 'dist', 'district', 'taluk'};
+
+List<String> _postNames(List<String> lines) {
+  final out = <String>[];
+  void add(String? raw) {
+    final t = (raw ?? '').trim();
+    if (t.isEmpty) return;
+    final words = t.split(RegExp(r'\s+')).where((w) => !_notOffice.contains(w.toLowerCase())).toList();
+    if (words.isEmpty) return;
+    for (final w in [words.join(' '), words.last]) {
+      if (w.length >= 3 && !out.contains(w)) out.add(w);
+    }
+  }
+
+  for (final line in lines) {
+    for (final m in _postAfter.allMatches(line)) {
+      add(m.group(1));
+    }
+    for (final m in _postBefore.allMatches(line)) {
+      add(m.group(1));
+    }
+  }
+  return out;
+}
+
+final RegExp _junk = RegExp(
+  r'(?<![\p{L}\p{M}])(p\.?\s?i\.?\s?n\.?(\s?code)?|pincode|dist\.?|district|tq\.?|taluk|post|p\.o\.?|po|via|to|at)(?![\p{L}\p{M}])\s*[:\-.]?|ಪಿನ್|पिन|ಅಂಚೆ|डाकघर',
+  caseSensitive: false,
+  unicode: true,
+);
 
 String _clean(String line) => PinUtils.normalizeDigits(line)
     .replaceAll(RegExp(r'[0-9OIlSB]{3}[\s\-]?[0-9OIlSB]{3}'), ' ')
@@ -61,7 +107,10 @@ AddressCandidates parseAddress(String text) {
       add(words.first);
     }
   }
-  return AddressCandidates(pins, out.take(15).toList());
+  final posts = _postNames(lines);
+  // A name written with "post" is the most likely office: search it first.
+  final places = [...posts, ...out.where((p) => !posts.contains(p))];
+  return AddressCandidates(pins, places.take(15).toList(), posts);
 }
 
 /// The candidate that best matches a directory office/district, or null.

@@ -449,6 +449,39 @@
   "scanOfficesBest": "Offices on the address – best match first",
   "scanNothingYet": "Nothing read yet. Hold steady in good light; use the torch in a dark place.",
   "scanPinOnAddress": "PIN on the address",
+  "chkMatch": "PIN and post office match",
+  "chkSameArea": "PIN and post office differ (same district)",
+  "chkMismatch": "PIN and post office do not match",
+  "chkAddressNames": "Address names {office} – PIN {pin}",
+  "@chkAddressNames": {
+    "placeholders": {
+      "office": {
+        "type": "String"
+      },
+      "pin": {
+        "type": "String"
+      }
+    }
+  },
+  "chkBest": "Best option",
+  "chkBestWhy": "The post office named on the address is usually right – check the address before sorting.",
+  "chkUse": "Use {pin}",
+  "@chkUse": {
+    "placeholders": {
+      "pin": {
+        "type": "String"
+      }
+    }
+  },
+  "chkKeep": "Keep {pin}",
+  "@chkKeep": {
+    "placeholders": {
+      "pin": {
+        "type": "String"
+      }
+    }
+  },
+  "chkAlso": "Also on the address:",
   "learnNeedsScheme": "Practice uses the active scheme. Import your office scheme, or try the sample.",
   "learnFromScheme": "Questions come from this scheme",
   "flashcards": "Bag flashcards",

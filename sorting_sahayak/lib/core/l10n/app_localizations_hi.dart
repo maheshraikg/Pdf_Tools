@@ -883,6 +883,40 @@ class AppLocalizationsHi extends AppLocalizations {
   String get scanPinOnAddress => 'पते पर पिन';
 
   @override
+  String get chkMatch => 'पिन और डाकघर मेल खाते हैं';
+
+  @override
+  String get chkSameArea => 'पिन और डाकघर अलग हैं (एक ही ज़िला)';
+
+  @override
+  String get chkMismatch => 'पिन और डाकघर मेल नहीं खाते';
+
+  @override
+  String chkAddressNames(String office, String pin) {
+    return 'पते पर $office – पिन $pin';
+  }
+
+  @override
+  String get chkBest => 'सबसे अच्छा विकल्प';
+
+  @override
+  String get chkBestWhy =>
+      'पते पर लिखा डाकघर आमतौर पर सही होता है – छँटाई से पहले पता जाँचें।';
+
+  @override
+  String chkUse(String pin) {
+    return '$pin उपयोग करें';
+  }
+
+  @override
+  String chkKeep(String pin) {
+    return '$pin रखें';
+  }
+
+  @override
+  String get chkAlso => 'पते पर और भी:';
+
+  @override
   String get learnNeedsScheme =>
       'अभ्यास सक्रिय स्कीम का उपयोग करता है। अपने कार्यालय की स्कीम आयात करें या नमूना आज़माएं।';
 

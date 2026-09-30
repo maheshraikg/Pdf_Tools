@@ -75,4 +75,54 @@ void main() {
     expect(c.pins, ['110005']);
     expect(c.places, containsAll(['नई दिल्ली', 'करोल बाग']));
   });
+
+  group('PIN ↔ post office check', () {
+    Future<(List<ScanOfficeHit>, SortResult)> scan(String text) async {
+      final dir = await fixtureRepo();
+      final engine = SortEngine(dir, null);
+      final c = parseAddress(text);
+      final pin = c.pins.first;
+      final hits = await officesOnAddress(dir, engine, c.places, category: kCatTD, pin: pin);
+      return (hits, await engine.resolvePin(pin, category: kCatTD));
+    }
+
+    test('match', () async {
+      final (hits, r) = await scan('Sri Ramesh\nSullia 574239');
+      final chk = checkAddress('574239', r.offices, hits)!;
+      expect(chk.level, AddressCheckLevel.match);
+      expect(chk.bestPin, '574239');
+    });
+
+    test('same district: office named on the address is suggested', () async {
+      final (hits, r) = await scan('Sri Ramesh\nKabaka post\n574201');
+      final chk = checkAddress('574201', r.offices, hits)!;
+      expect(chk.level, AddressCheckLevel.sameArea);
+      expect(chk.named.office.officeName, 'Kabaka');
+      expect(chk.bestPin, '574220');
+      expect(chk.pinOffice!.officeName, 'Puttur');
+    });
+
+    test('different district', () async {
+      final (hits, r) = await scan('Sri Ramesh\nSullia\n575001');
+      final chk = checkAddress('575001', r.offices, hits)!;
+      expect(chk.level, AddressCheckLevel.mismatch);
+      expect(chk.bestPin, '574239');
+    });
+
+    test('city head office in the same district is not a conflict', () async {
+      final (hits, r) = await scan('Car Street\nMangalore 575003');
+      expect(checkAddress('575003', r.offices, hits), isNull);
+    });
+  
+    test('office written with "post" wins over a taluk town with the PIN', () async {
+      final dir = await fixtureRepo();
+      final engine = SortEngine(dir, null);
+      final c = parseAddress('Sri Ramesh\nKabaka post\nPuttur 574201');
+      final hits = await officesOnAddress(dir, engine, c.places, category: kCatTD, pin: '574201');
+      final r = await engine.resolvePin('574201', category: kCatTD);
+      final chk = checkAddress('574201', r.offices, hits, postNames: c.postNames)!;
+      expect(chk.level, AddressCheckLevel.sameArea);
+      expect(chk.bestPin, '574220');
+    });
+  });
 }

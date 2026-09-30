@@ -881,6 +881,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanPinOnAddress => 'PIN on the address';
 
   @override
+  String get chkMatch => 'PIN and post office match';
+
+  @override
+  String get chkSameArea => 'PIN and post office differ (same district)';
+
+  @override
+  String get chkMismatch => 'PIN and post office do not match';
+
+  @override
+  String chkAddressNames(String office, String pin) {
+    return 'Address names $office – PIN $pin';
+  }
+
+  @override
+  String get chkBest => 'Best option';
+
+  @override
+  String get chkBestWhy =>
+      'The post office named on the address is usually right – check the address before sorting.';
+
+  @override
+  String chkUse(String pin) {
+    return 'Use $pin';
+  }
+
+  @override
+  String chkKeep(String pin) {
+    return 'Keep $pin';
+  }
+
+  @override
+  String get chkAlso => 'Also on the address:';
+
+  @override
   String get learnNeedsScheme =>
       'Practice uses the active scheme. Import your office scheme, or try the sample.';
 
