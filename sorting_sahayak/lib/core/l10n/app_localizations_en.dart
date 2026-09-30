@@ -791,7 +791,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scanPrivacy =>
-      'Text is read on the phone with ML Kit (English and Hindi). Live camera frames stay in memory only while being read; a captured photo is deleted right after reading. Kannada script cannot be read yet – the PIN digits and English / Hindi text are used.';
+      'Text is read on the phone, offline: English and Hindi with ML Kit, Kannada with Tesseract. Live camera frames stay in memory only while being read; a captured photo is deleted right after reading.';
 
   @override
   String get noOpenSession =>

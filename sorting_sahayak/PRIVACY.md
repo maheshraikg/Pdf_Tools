@@ -27,7 +27,8 @@ your department's rules on sharing internal documents.
   permission**.
 - No login, no ads, no analytics, no tracking, no third-party SDKs that send
   data.
-- Camera scans are processed live on the phone (on-device text recognition).
+- Camera scans are processed live on the phone (on-device text recognition:
+  ML Kit for English / Hindi, Tesseract for Kannada).
   Live camera frames stay in memory only while being read. A photo taken with
   the capture button is deleted right after reading. Nothing is uploaded.
 - Schemes, favourites and settings are stored only on your phone and are

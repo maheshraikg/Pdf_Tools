@@ -21,6 +21,7 @@ import '../../core/widgets.dart';
 import '../../data/sort_engine.dart';
 import '../lookup/sort_result_view.dart';
 import 'address_parser.dart';
+import 'kannada_ocr.dart';
 import 'live_scan.dart';
 
 class ScanOutcome {
@@ -41,6 +42,9 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
   /// Minimum time between two recognised frames.
   static const _frameGap = Duration(milliseconds: 450);
 
+  /// Tesseract (Kannada) is slower: one frame at a time, at most this often.
+  static const _kannadaGap = Duration(milliseconds: 1500);
+
   CameraController? _camera;
   CameraDescription? _desc;
   String? _cameraError;
@@ -56,8 +60,12 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
   int _frameNo = 0;
   bool _reading = false;
   DateTime _lastFrame = DateTime.fromMillisecondsSinceEpoch(0);
+  bool _readingKannada = false;
+  DateTime _lastKannada = DateTime.fromMillisecondsSinceEpoch(0);
 
   final _stabilizer = PinStabilizer();
+  // Kannada frames come less often, so they confirm PINs among themselves.
+  final _kannadaStabilizer = PinStabilizer();
   String? _pin;
   SortResult? _result;
   List<ScanOfficeHit> _offices = [];
@@ -144,7 +152,13 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
       final input = InputImage.fromFilePath(shot.path);
       final a = await _latin.processImage(input);
       final b = await _deva.processImage(input);
-      text = '${a.text}\n${b.text}';
+      var kn = '';
+      try {
+        kn = await KannadaOcr.readFile(shot.path);
+      } on Object {
+        // Kannada model unavailable: English / Hindi text is still used.
+      }
+      text = '${a.text}\n${b.text}\n$kn';
     } on Object catch (e) {
       if (mounted) toast(context, l.error('$e'));
     } finally {
@@ -224,8 +238,35 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// Kannada: Tesseract on a copy of the frame, alongside ML Kit.
+  Future<void> _readKannada(CameraImage img, int sensorOrientation) async {
+    if (!KannadaOcr.available || _readingKannada || img.planes.length != 1) return;
+    final now = DateTime.now();
+    if (now.difference(_lastKannada) < _kannadaGap) return;
+    _lastKannada = now;
+    _readingKannada = true;
+    try {
+      final plane = img.planes.first;
+      final text = await KannadaOcr.readNv21(
+        Uint8List.fromList(plane.bytes),
+        width: img.width,
+        height: img.height,
+        stride: plane.bytesPerRow,
+        rotation: sensorOrientation,
+      );
+      if (!mounted || _paused) return;
+      await _handleText(text, stabilizer: _kannadaStabilizer);
+    } on Object {
+      // Model not ready or a bad frame; tried again shortly.
+    } finally {
+      _readingKannada = false;
+    }
+  }
+
   Future<void> _onFrame(CameraImage img, int sensorOrientation) async {
-    if (_paused || _reading || !mounted) return;
+    if (_paused || !mounted) return;
+    _readKannada(img, sensorOrientation);
+    if (_reading) return;
     final now = DateTime.now();
     if (now.difference(_lastFrame) < _frameGap) return;
     _lastFrame = now;
@@ -245,12 +286,13 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _handleText(String text, {bool captured = false}) async {
+  Future<void> _handleText(String text, {bool captured = false, PinStabilizer? stabilizer}) async {
     if (text.trim().isNotEmpty && !_sawText) setState(() => _sawText = true);
     final cand = parseAddress(text);
     final first = cand.pins.firstOrNull;
-    if (captured && first != null ? _stabilizer.force(first) : _stabilizer.add(first)) {
-      await _resolvePin(_stabilizer.stable!);
+    final stab = stabilizer ?? _stabilizer;
+    if (captured && first != null ? stab.force(first) : stab.add(first)) {
+      await _resolvePin(stab.stable!);
     }
     final key = cand.places.take(8).join('|');
     if (cand.places.isNotEmpty && (captured || key != _placesKey)) {
@@ -302,6 +344,7 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
   void _next() {
     AppFeedback.tap(context.settings);
     _stabilizer.reset();
+    _kannadaStabilizer.reset();
     setState(() {
       _pin = null;
       _result = null;

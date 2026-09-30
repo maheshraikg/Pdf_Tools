@@ -395,7 +395,7 @@
   "useThisPin": "Use this PIN",
   "addToBulk": "Add to bulk count",
   "scanAgain": "Scan again",
-  "scanPrivacy": "Text is read on the phone with ML Kit (English and Hindi). Live camera frames stay in memory only while being read; a captured photo is deleted right after reading. Kannada script cannot be read yet – the PIN digits and English / Hindi text are used.",
+  "scanPrivacy": "Text is read on the phone, offline: English and Hindi with ML Kit, Kannada with Tesseract. Live camera frames stay in memory only while being read; a captured photo is deleted right after reading.",
   "noOpenSession": "No bulk session in progress – start one in the Bulk tab",
   "addedToBulk": "Added: {bag}",
   "@addedToBulk": {

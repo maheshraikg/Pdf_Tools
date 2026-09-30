@@ -43,4 +43,13 @@ void main() {
     // Searched first.
     expect(parseAddress('Sulkeri post\nBelthangady 574214').places.first, 'Sulkeri');
   });
+
+  test('Kannada address: digits, post name, taluk word dropped', () {
+    final c = parseAddress('ಶ್ರೀ ರಮೇಶ್\nಕಬಕ ಅಂಚೆ, ಪುತ್ತೂರು ತಾಲೂಕು\nದ.ಕ. ೫೭೪೨೨೦');
+    expect(c.pins, ['574220']);
+    expect(c.postNames, contains('ಕಬಕ'));
+    expect(c.places.first, 'ಕಬಕ');
+    expect(c.places, contains('ಪುತ್ತೂರು'));
+    expect(c.places.any((p) => p.contains('ತಾಲೂಕು')), isFalse);
+  });
 }

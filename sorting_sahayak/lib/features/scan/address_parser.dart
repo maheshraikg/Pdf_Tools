@@ -57,7 +57,7 @@ List<String> _postNames(List<String> lines) {
 }
 
 final RegExp _junk = RegExp(
-  r'(?<![\p{L}\p{M}])(p\.?\s?i\.?\s?n\.?(\s?code)?|pincode|dist\.?|district|tq\.?|taluk|post|p\.o\.?|po|via|to|at)(?![\p{L}\p{M}])\s*[:\-.]?|ಪಿನ್|पिन|ಅಂಚೆ|डाकघर',
+  r'(?<![\p{L}\p{M}])(p\.?\s?i\.?\s?n\.?(\s?code)?|pincode|dist\.?|district|tq\.?|taluk|post|p\.o\.?|po|via|to|at)(?![\p{L}\p{M}])\s*[:\-.]?|ಪಿನ್|पिन|ಅಂಚೆ|डाकघर|ತಾಲ್ಲೂಕು|ತಾಲೂಕು|ಜಿಲ್ಲೆ|ಗ್ರಾಮ|ಅಂಚೆ\s?ಕಚೇರಿ|तहसील|जिला|ग्राम|पोस्ट',
   caseSensitive: false,
   unicode: true,
 );

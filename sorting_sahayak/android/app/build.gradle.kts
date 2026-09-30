@@ -53,4 +53,7 @@ dependencies {
     // Hindi (Devanagari) text recognition for address scans; bundled model,
     // works offline. Latin (English) comes with the plugin.
     implementation("com.google.mlkit:text-recognition-devanagari:16.0.1")
+    // Kannada text recognition (ML Kit has no Kannada model): Tesseract with
+    // the bundled tessdata_fast `kan` model in assets/tessdata.
+    implementation("cz.adaptech.tesseract4android:tesseract4android:4.9.0")
 }

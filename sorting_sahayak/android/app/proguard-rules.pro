@@ -18,3 +18,7 @@
 -keep class com.google_mlkit_text_recognition.** { *; }
 -keep class com.google_mlkit_commons.** { *; }
 -keep class io.flutter.plugins.camera.** { *; }
+
+# Tesseract4Android calls back into Java from JNI.
+-keep class com.googlecode.tesseract.android.** { *; }
+-keep class com.googlecode.leptonica.android.** { *; }

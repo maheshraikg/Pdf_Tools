@@ -250,8 +250,11 @@ and templates with `dart run tool/make_samples.dart`.
   frames in memory, so the PIN and office names show their line as soon as
   they are read, best match first. The capture button takes one
   full-resolution photo for handwriting or small print; it is deleted right
-  after reading. Kannada script is not supported by ML Kit; the PIN digits
-  and the English / Hindi text are used. Nothing is stored or uploaded.
+  after reading. Kannada is read with Tesseract (Tesseract4Android, bundled
+  `tessdata_fast` `kan` model in `android/app/src/main/assets/tessdata`,
+  called from `MainActivity` over the `po_sorting/kannada_ocr` channel), on
+  a live frame every 1.5 s and on captured photos. Nothing is stored or
+  uploaded.
 * The app ships with one default scheme, **Mangaluru – default (TD /
   Non-TD)** (`assets/schemes/mangaluru_default.csv`), installed and made
   active on first launch. Users can edit it, delete it (it is not re-added),
