@@ -359,6 +359,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noAirportFound => 'No airport found';
 
   @override
+  String get postOfficesFound => 'Post offices';
+
+  @override
+  String get soLabel => 'SO';
+
+  @override
+  String get noLineInScheme =>
+      'No line / bag in your scheme – tap to see the PIN';
+
+  @override
   String showAllN(int count) {
     return 'Show all $count';
   }

@@ -742,6 +742,24 @@ abstract class AppLocalizations {
   /// **'No airport found'**
   String get noAirportFound;
 
+  /// No description provided for @postOfficesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Post offices'**
+  String get postOfficesFound;
+
+  /// No description provided for @soLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'SO'**
+  String get soLabel;
+
+  /// No description provided for @noLineInScheme.
+  ///
+  /// In en, this message translates to:
+  /// **'No line / bag in your scheme – tap to see the PIN'**
+  String get noLineInScheme;
+
   /// No description provided for @showAllN.
   ///
   /// In en, this message translates to:

@@ -360,6 +360,16 @@ class AppLocalizationsHi extends AppLocalizations {
   String get noAirportFound => 'कोई हवाई अड्डा नहीं मिला';
 
   @override
+  String get postOfficesFound => 'डाकघर';
+
+  @override
+  String get soLabel => 'SO';
+
+  @override
+  String get noLineInScheme =>
+      'आपकी स्कीम में लाइन / बैग नहीं – पिन देखने के लिए दबाएँ';
+
+  @override
   String showAllN(int count) {
     return 'सभी $count दिखाएँ';
   }

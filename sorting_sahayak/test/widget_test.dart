@@ -146,6 +146,33 @@ void main() {
     expect(find.text('Office'), findsWidgets);
   });
 
+  testWidgets('Sort screen: typing a BO name shows PIN, SO and line', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.5;
+    addTearDown(tester.view.reset);
+    final h = await Harness.create(tester, sample: false);
+    await tester.runAsync(() async {
+      final id = await installDefaultScheme(h.services.schemes, (p) async => File(p).readAsBytesSync());
+      await h.services.schemes.setActive(id);
+      await h.services.reloadActive();
+    });
+    h.settings.category = kCatTD;
+    await tester.pumpWidget(h.wrap(const SortScreen()));
+    await settle(tester);
+    await tester.tap(find.byKey(const ValueKey('kb_toggle')));
+    await settle(tester);
+    await tester.enterText(find.byKey(const ValueKey('pin_field')), 'kabaka');
+    await settle(tester, rounds: 8);
+    expect(find.text('Post offices'), findsOneWidget);
+    expect(find.text('Kabaka BO'), findsOneWidget);
+    expect(find.textContaining('574220'), findsWidgets);
+    expect(find.text('Puttur Line'), findsWidgets);
+    // Tap opens the PIN with the full result.
+    await tester.tap(find.text('Kabaka BO'));
+    await settle(tester, rounds: 6);
+    expect(tester.widget<TextField>(find.byKey(const ValueKey('pin_field'))).controller!.text, '574220');
+  });
+
   testWidgets('Sort screen: change bag for this PIN updates the result', (tester) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 2.5;

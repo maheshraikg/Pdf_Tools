@@ -166,6 +166,9 @@
   },
   "typeFullPinForAir": "Type all 6 digits of the PIN",
   "noAirportFound": "No airport found",
+  "postOfficesFound": "Post offices",
+  "soLabel": "SO",
+  "noLineInScheme": "No line / bag in your scheme – tap to see the PIN",
   "showAllN": "Show all {count}",
   "@showAllN": {
     "placeholders": {

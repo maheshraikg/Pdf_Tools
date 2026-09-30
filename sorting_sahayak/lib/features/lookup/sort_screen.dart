@@ -15,6 +15,7 @@ import '../../core/theme.dart';
 import '../../core/voice_input.dart';
 import '../../core/widgets.dart';
 import '../../data/live_search.dart';
+import '../../data/models/office.dart';
 import '../../data/models/scheme.dart';
 import '../../data/scheme_repo.dart';
 import '../../data/sort_engine.dart';
@@ -45,6 +46,8 @@ class SortScreenState extends State<SortScreen> {
   bool _placeOpen = false;
   String _lastSpoken = '';
   Object? _schemeSeen;
+  List<_PlaceHit> _places = [];
+  int _placeSeq = 0;
 
   @override
   void didChangeDependencies() {
@@ -61,6 +64,7 @@ class SortScreenState extends State<SortScreen> {
       final first = _schemeSeen == null && scheme == null;
       _schemeSeen = scheme;
       if (!first && _digits.isNotEmpty) _resolve();
+      if (!first && _places.isNotEmpty) _searchPlaces();
     }
   }
 
@@ -98,14 +102,16 @@ class SortScreenState extends State<SortScreen> {
   void _onChanged(String text) {
     final t = PinUtils.normalizeDigits(text);
     if (RegExp(r'[^\d\s]').hasMatch(t)) {
-      // Office / place name: live list only.
+      // Office / place name: scheme rules plus the PIN directory (BOs too).
       setState(() {
         _query = t.trim();
         _digits = '';
         _result = null;
       });
+      _searchPlaces();
       return;
     }
+    if (_places.isNotEmpty) _places = [];
     var d = PinUtils.digitsOnly(t);
     if (d.length > 6) {
       // Typing a 7th digit starts a new PIN: fastest flow for sorting.
@@ -121,6 +127,31 @@ class SortScreenState extends State<SortScreen> {
       _query = d;
     });
     _resolve();
+  }
+
+  /// Post offices (HO / SO / BO) matching the typed name, each with its PIN,
+  /// account office (SO) and the line / bag from the active scheme.
+  Future<void> _searchPlaces() async {
+    final q = _query;
+    final seq = ++_placeSeq;
+    if (q.length < 3) {
+      setState(() => _places = []);
+      return;
+    }
+    final services = context.services;
+    final category = context.settings.category;
+    final hits = await services.directory.search(q, limit: 10);
+    final engine = services.engine;
+    final out = <_PlaceHit>[];
+    for (final h in hits) {
+      final o = h.office;
+      final same = await services.directory.officesForPin(o.pincode);
+      const heads = {'SO', 'PO', 'HO'};
+      final so = heads.contains(o.officeType) ? null : same.where((x) => heads.contains(x.officeType)).firstOrNull;
+      out.add(_PlaceHit(o, so, engine.resolveOffice(o, category: category)));
+    }
+    if (!mounted || seq != _placeSeq || q != _query) return;
+    setState(() => _places = out);
   }
 
   void _update(String digits) => _setText(digits.length > 6 ? digits.substring(0, 6) : digits);
@@ -309,6 +340,7 @@ class SortScreenState extends State<SortScreen> {
                       settings.category = c;
                       _lastSpoken = '';
                       _resolve();
+                      if (_places.isNotEmpty) _searchPlaces();
                     },
                   ),
                   const SizedBox(height: 10),
@@ -354,7 +386,18 @@ class SortScreenState extends State<SortScreen> {
                     ],
                     SortResultView(result: r),
                   ] else ...[
-                    if (scheme != null && _query.isNotEmpty)
+                    if (_places.isNotEmpty && _digits.isEmpty) ...[
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(4, 0, 4, 6),
+                        child: Text(
+                          l.postOfficesFound,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+                        ),
+                      ),
+                      for (final p in _places) _PlaceCard(hit: p, onTap: () => setPin(p.office.pin)),
+                      const SizedBox(height: 8),
+                    ],
+                    if (scheme != null && _query.isNotEmpty && (matches.isNotEmpty || _places.isEmpty))
                       _LiveList(
                         matches: matches,
                         scheme: scheme,
@@ -673,6 +716,96 @@ class _KeyChip extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: fg, fontFeatures: const [FontFeature.tabularFigures()]),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PlaceHit {
+  const _PlaceHit(this.office, this.accountOffice, this.result);
+
+  final Office office;
+
+  /// The SO / HO a branch office belongs to (same PIN), if any.
+  final Office? accountOffice;
+  final SortResult result;
+}
+
+/// One post office found by name: "Sulkeri BO · 574109 · SO Naravi" with
+/// its line / bag and position on the right.
+class _PlaceCard extends StatelessWidget {
+  const _PlaceCard({required this.hit, required this.onTap});
+
+  final _PlaceHit hit;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final t = Theme.of(context).textTheme;
+    final c = Theme.of(context).colorScheme;
+    final o = hit.office;
+    final r = hit.result;
+    final bag = r.bag;
+    final colour = bag == null ? c.outlineVariant : bagColour(context, bag);
+    final section = r.bagRule?.section ?? '';
+    final so = hit.accountOffice;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(width: 8, color: colour),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 10, 8, 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${o.officeName} ${o.officeType}', style: t.titleLarge?.copyWith(fontWeight: FontWeight.w900)),
+                      Text(
+                        [o.pin, if (so != null) '${l.soLabel} ${so.officeName}', o.district].join(' · '),
+                        style: t.titleSmall?.copyWith(fontWeight: FontWeight.w700, color: c.onSurfaceVariant),
+                      ),
+                      if (bag == null && r.otherBag != null)
+                        Text(
+                          l.otherModeHint(categoryLabel(l, r.otherCategory!), r.otherBag!.label),
+                          style: t.bodyMedium?.copyWith(color: warningColor(context), fontWeight: FontWeight.w700),
+                        )
+                      else if (bag == null)
+                        Text(l.noLineInScheme, style: t.bodyMedium?.copyWith(color: c.onSurfaceVariant)),
+                    ],
+                  ),
+                ),
+              ),
+              if (bag != null)
+                Container(
+                  constraints: const BoxConstraints(maxWidth: 150),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  color: Color.alphaBlend(colour.withValues(alpha: 0.14), c.surfaceContainerLowest),
+                  alignment: Alignment.centerRight,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        bag.code,
+                        textAlign: TextAlign.right,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: t.titleMedium?.copyWith(fontWeight: FontWeight.w900, color: c.onSurface),
+                      ),
+                      if (section.isNotEmpty) Text('${l.section} $section', style: t.titleSmall?.copyWith(fontWeight: FontWeight.w800)),
+                    ],
+                  ),
+                ),
+            ],
           ),
         ),
       ),

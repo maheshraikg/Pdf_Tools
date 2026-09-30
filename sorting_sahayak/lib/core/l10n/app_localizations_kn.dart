@@ -360,6 +360,16 @@ class AppLocalizationsKn extends AppLocalizations {
   String get noAirportFound => 'ಯಾವುದೇ ವಿಮಾನ ನಿಲ್ದಾಣ ಸಿಗಲಿಲ್ಲ';
 
   @override
+  String get postOfficesFound => 'ಅಂಚೆ ಕಚೇರಿಗಳು';
+
+  @override
+  String get soLabel => 'SO';
+
+  @override
+  String get noLineInScheme =>
+      'ನಿಮ್ಮ ಸ್ಕೀಮ್‌ನಲ್ಲಿ ಲೈನ್ / ಚೀಲ ಇಲ್ಲ – ಪಿನ್ ನೋಡಲು ಒತ್ತಿ';
+
+  @override
   String showAllN(int count) {
     return 'ಎಲ್ಲ $count ತೋರಿಸಿ';
   }
