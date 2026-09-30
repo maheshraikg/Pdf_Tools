@@ -507,6 +507,19 @@ class AppLocalizationsHi extends AppLocalizations {
   String get sampleShort => 'नमूना';
 
   @override
+  String get pinHint => 'पिन लिखें';
+
+  @override
+  String get officeNameHint => 'डाकघर / लाइन का नाम';
+
+  @override
+  String get switchKeyboard => 'अंक / अक्षर कीबोर्ड';
+
+  @override
+  String get noMatchingRules =>
+      'आपकी स्कीम में इससे शुरू होने वाला कोई नियम नहीं';
+
+  @override
   String get findPinHint => 'डाकघर, गाँव, शहर, तहसील या ज़िला';
 
   @override

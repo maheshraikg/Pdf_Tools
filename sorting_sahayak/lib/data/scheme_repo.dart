@@ -13,7 +13,7 @@ class ActiveScheme {
   ActiveScheme({
     required this.scheme,
     required List<Bag> bags,
-    required List<BagRule> rules,
+    required this.rules,
     required List<AirCodeRule> airCodes,
     this.dmsl,
     List<HubRule> hubRules = const [],
@@ -24,6 +24,7 @@ class ActiveScheme {
        hubResolver = RuleResolver(hubRules);
 
   final Scheme scheme;
+  final List<BagRule> rules;
   final Map<String, Bag> bags;
   final List<String> bagOrder;
   final RuleResolver<BagRule> bagResolver;

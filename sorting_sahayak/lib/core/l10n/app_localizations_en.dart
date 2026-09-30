@@ -507,6 +507,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sampleShort => 'Sample';
 
   @override
+  String get pinHint => 'Type PIN';
+
+  @override
+  String get officeNameHint => 'Office / line name';
+
+  @override
+  String get switchKeyboard => 'Numbers / letters keyboard';
+
+  @override
+  String get noMatchingRules => 'No rule in your scheme starts with this';
+
+  @override
   String get findPinHint => 'Office, village, city, taluk or district';
 
   @override

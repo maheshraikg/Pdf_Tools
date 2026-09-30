@@ -8,10 +8,9 @@ import 'package:sorting_sahayak/features/lookup/sort_screen.dart';
 import 'helpers/app_harness.dart';
 
 Future<void> typePin(WidgetTester tester, String pin) async {
-  for (final d in pin.split('')) {
-    await tester.tap(find.byKey(ValueKey('key_$d')));
-    await tester.pump();
-  }
+  final field = find.byKey(const ValueKey('pin_field'));
+  final current = tester.widget<TextField>(field).controller!.text;
+  await tester.enterText(field, current + pin);
   await settle(tester);
 }
 
@@ -24,10 +23,12 @@ void main() {
     await tester.pumpWidget(h.wrap(const SortScreen()));
     await settle(tester);
 
+    // Partial PIN: live list of matching rules, like a printed sorting list.
     await typePin(tester, '576');
-    expect(find.text('Sorting district 576'), findsOneWidget);
-    expect(find.text('Likely bag (from prefix)'), findsOneWidget);
     expect(find.text('Bag 20'), findsWidgets);
+    expect(find.text('576101'), findsWidgets);
+    expect(find.text('Bag 21'), findsWidgets);
+    expect(find.byKey(const ValueKey('key_1')), findsNothing, reason: 'no in-app keypad');
 
     await typePin(tester, '101');
     expect(find.text('Bag 21'), findsWidgets);
@@ -40,10 +41,10 @@ void main() {
     expect(find.text('PIN not in directory – check the address'), findsOneWidget);
 
     // Backspace and clear.
-    await tester.tap(find.byKey(const ValueKey('key_⌫')));
+    await tester.enterText(find.byKey(const ValueKey('pin_field')), '57499');
     await settle(tester);
     expect(find.text('PIN not in directory – check the address'), findsNothing);
-    await tester.tap(find.byKey(const ValueKey('key_C')));
+    await tester.tap(find.byKey(const ValueKey('clear_field')));
     await settle(tester);
     expect(find.text('Recent lookups'), findsOneWidget);
     expect(find.text('576101'), findsOneWidget);
@@ -83,6 +84,18 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('mode_Non-TD')));
     await settle(tester);
     expect(find.text('NT-40'), findsWidgets);
+  });
+
+  testWidgets('Sort screen: office name search lists TD lines', (tester) async {
+    final h = await Harness.create(tester);
+    await tester.pumpWidget(h.wrap(const SortScreen()));
+    await settle(tester);
+    await tester.tap(find.byKey(const ValueKey('kb_toggle')));
+    await settle(tester);
+    await tester.enterText(find.byKey(const ValueKey('pin_field')), 'sull');
+    await settle(tester);
+    expect(find.text('Sullia'), findsWidgets);
+    expect(find.text('Bag 14'), findsWidgets);
   });
 
   testWidgets('Sort screen: change bag for this PIN updates the result', (tester) async {

@@ -1018,6 +1018,30 @@ abstract class AppLocalizations {
   /// **'Sample'**
   String get sampleShort;
 
+  /// No description provided for @pinHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type PIN'**
+  String get pinHint;
+
+  /// No description provided for @officeNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Office / line name'**
+  String get officeNameHint;
+
+  /// No description provided for @switchKeyboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Numbers / letters keyboard'**
+  String get switchKeyboard;
+
+  /// No description provided for @noMatchingRules.
+  ///
+  /// In en, this message translates to:
+  /// **'No rule in your scheme starts with this'**
+  String get noMatchingRules;
+
   /// No description provided for @findPinHint.
   ///
   /// In en, this message translates to:

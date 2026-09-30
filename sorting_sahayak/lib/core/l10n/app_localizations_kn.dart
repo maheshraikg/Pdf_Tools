@@ -507,6 +507,18 @@ class AppLocalizationsKn extends AppLocalizations {
   String get sampleShort => 'ಮಾದರಿ';
 
   @override
+  String get pinHint => 'ಪಿನ್ ಟೈಪ್ ಮಾಡಿ';
+
+  @override
+  String get officeNameHint => 'ಕಚೇರಿ / ಲೈನ್ ಹೆಸರು';
+
+  @override
+  String get switchKeyboard => 'ಅಂಕಿ / ಅಕ್ಷರ ಕೀಬೋರ್ಡ್';
+
+  @override
+  String get noMatchingRules => 'ನಿಮ್ಮ ಸ್ಕೀಮ್‌ನಲ್ಲಿ ಇದರಿಂದ ಶುರುವಾಗುವ ನಿಯಮ ಇಲ್ಲ';
+
+  @override
   String get findPinHint => 'ಕಚೇರಿ, ಗ್ರಾಮ, ನಗರ, ತಾಲ್ಲೂಕು ಅಥವಾ ಜಿಲ್ಲೆ';
 
   @override
