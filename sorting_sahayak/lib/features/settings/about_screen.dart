@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants.dart';
 import '../../core/l10n/app_localizations.dart';
+import 'legal_screen.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -41,6 +42,12 @@ class AboutScreen extends StatelessWidget {
           Text(l.licenceTitle, style: t.titleMedium),
           Text(l.licenceText),
           const SizedBox(height: 16),
+          FilledButton.tonalIcon(
+            icon: const Icon(Icons.verified_user_outlined),
+            label: Text(l.legalTitle),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LegalScreen())),
+          ),
+          const SizedBox(height: 8),
           OutlinedButton(onPressed: () => showLicensePage(context: context, applicationName: kAppNameEn, applicationVersion: kAppVersion), child: Text(l.openSourceLicences)),
         ],
       ),

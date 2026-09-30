@@ -244,7 +244,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get schemeDataNote =>
-      'Sorting schemes, air code sheets and DMSLs are department documents: the app ships with none. Each user imports their own file; the bundled sample is fake.';
+      'The app comes with a default Mangaluru TD / Non-TD scheme compiled from sorting lists shared by postal staff. You can edit or delete it, restore it, or import your own file. The SAMPLE scheme is fake demo data.';
 
   @override
   String get licenceTitle => 'Licence';
@@ -357,6 +357,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noAirportFound => 'No airport found';
+
+  @override
+  String get restoreDefault => 'Restore default Mangaluru scheme';
+
+  @override
+  String get defaultRestored => 'Default scheme restored';
+
+  @override
+  String get legalTitle => 'Disclaimer & privacy policy';
+
+  @override
+  String get legalSub => 'Independent tool · not an official app · offline';
+
+  @override
+  String get acceptLegal => 'I understand';
+
+  @override
+  String get readFullPolicy => 'Read full policy';
+
+  @override
+  String get legalH1 => 'Independent tool';
+
+  @override
+  String get legal1 =>
+      'PO Sorting is an independent helper tool made for postal staff. It is not an official app of the Department of Posts / India Post, and it is not endorsed by, affiliated with or connected to the Department of Posts, the Ministry of Communications or the Government of India.';
+
+  @override
+  String get legalH2 => 'No official branding';
+
+  @override
+  String get legal2 =>
+      'The app does not use the India Post name, logo, colours or branding. Post office names and PIN codes are used only as public reference data.';
+
+  @override
+  String get legalH3 => 'No warranty';
+
+  @override
+  String get legal3 =>
+      'Sorting data, PIN details and airport codes are provided “as is” for convenience and may be outdated or wrong. Always follow your office\'s official sorting instructions, circulars and DMSL. The developer is not responsible for any mis-sort, delay, loss or other consequence of using this app.';
+
+  @override
+  String get legalH4 => 'Your responsibility';
+
+  @override
+  String get legal4 =>
+      'You are responsible for the data you import, edit or share, and for following your department\'s rules on sharing internal documents.';
+
+  @override
+  String get legalH5 => 'Privacy';
+
+  @override
+  String get legal5 =>
+      'The app works fully offline. It has no internet permission, no login, no ads, no analytics and no tracking. Camera scans are processed on the phone and deleted immediately; nothing is uploaded. Your schemes, favourites and settings stay only on your phone and are removed when you uninstall the app.';
+
+  @override
+  String get legalH6 => 'Open data';
+
+  @override
+  String get legal6 =>
+      'PIN directory: data.gov.in, Government of India, Open Government Data Licence – India. Airport codes are public IATA codes. The default Mangaluru scheme was compiled from lists shared by postal staff and may differ from your office\'s current scheme.';
+
+  @override
+  String get legalH7 => 'Changes';
+
+  @override
+  String get legal7 =>
+      'This policy may be updated with new versions of the app. By using the app you agree to this disclaimer and policy.';
 
   @override
   String get enterPin => 'Enter PIN';

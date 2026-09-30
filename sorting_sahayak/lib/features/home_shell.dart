@@ -5,6 +5,7 @@ import 'air/air_finder_screen.dart';
 import 'find_pin/find_pin_screen.dart';
 import 'learn/learn_screen.dart';
 import 'lookup/sort_screen.dart';
+import 'settings/legal_screen.dart';
 import 'settings/more_screen.dart';
 
 /// Bottom navigation: Sort · Find PIN · Air · Learn · More.
@@ -32,6 +33,14 @@ class HomeShellState extends State<HomeShell> {
   }
 
   void selectTab(int i) => setState(() => _index = i);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) showFirstRunDisclaimer(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

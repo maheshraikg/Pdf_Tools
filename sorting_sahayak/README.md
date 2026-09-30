@@ -248,9 +248,16 @@ and templates with `dart run tool/make_samples.dart`.
 * Camera scans are processed on-device by ML Kit (bundled models, no
   download). The photo file is deleted right after recognition and the
   recognised text is discarded. Nothing is stored or uploaded.
-* Sorting schemes are department documents. The app ships with no scheme
-  data, and schemes stay in the app's private database. App data is excluded
-  from Android cloud backup and device transfer.
+* The app ships with one default scheme, **Mangaluru – default (TD /
+  Non-TD)** (`assets/schemes/mangaluru_default.csv`), installed and made
+  active on first launch. Users can edit it, delete it (it is not re-added),
+  restore it from Schemes → ⋮ → *Restore default Mangaluru scheme*, or import
+  their own. Schemes stay in the app's private database. App data is
+  excluded from Android cloud backup and device transfer.
+* A disclaimer ("Independent helper tool for postal staff. Not an official
+  Department of Posts app.", no warranty, privacy) is shown on first launch
+  and is always available under More → *Disclaimer & privacy policy*. The
+  same text is in [PRIVACY.md](PRIVACY.md).
 * Voice input uses the phone's speech recogniser. It works offline when the
   language pack is installed on the phone; otherwise Android's recogniser may
   need its own connection, outside this app.

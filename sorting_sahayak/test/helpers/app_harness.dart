@@ -21,7 +21,7 @@ class Harness {
   final AppServices services;
 
   static Future<Harness> create(WidgetTester tester, {bool sample = true, bool parcelExtras = false, Map<String, Object> prefs = const {}}) async {
-    SharedPreferences.setMockInitialValues(prefs);
+    SharedPreferences.setMockInitialValues({'disclaimerAccepted': true, 'defaultSchemeDone': true, ...prefs});
     late Harness h;
     await tester.runAsync(() async {
       final settings = await Settings.load();

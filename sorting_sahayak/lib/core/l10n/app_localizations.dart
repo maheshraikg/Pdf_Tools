@@ -541,7 +541,7 @@ abstract class AppLocalizations {
   /// No description provided for @schemeDataNote.
   ///
   /// In en, this message translates to:
-  /// **'Sorting schemes, air code sheets and DMSLs are department documents: the app ships with none. Each user imports their own file; the bundled sample is fake.'**
+  /// **'The app comes with a default Mangaluru TD / Non-TD scheme compiled from sorting lists shared by postal staff. You can edit or delete it, restore it, or import your own file. The SAMPLE scheme is fake demo data.'**
   String get schemeDataNote;
 
   /// No description provided for @licenceTitle.
@@ -741,6 +741,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No airport found'**
   String get noAirportFound;
+
+  /// No description provided for @restoreDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore default Mangaluru scheme'**
+  String get restoreDefault;
+
+  /// No description provided for @defaultRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Default scheme restored'**
+  String get defaultRestored;
+
+  /// No description provided for @legalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Disclaimer & privacy policy'**
+  String get legalTitle;
+
+  /// No description provided for @legalSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Independent tool · not an official app · offline'**
+  String get legalSub;
+
+  /// No description provided for @acceptLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'I understand'**
+  String get acceptLegal;
+
+  /// No description provided for @readFullPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Read full policy'**
+  String get readFullPolicy;
+
+  /// No description provided for @legalH1.
+  ///
+  /// In en, this message translates to:
+  /// **'Independent tool'**
+  String get legalH1;
+
+  /// No description provided for @legal1.
+  ///
+  /// In en, this message translates to:
+  /// **'PO Sorting is an independent helper tool made for postal staff. It is not an official app of the Department of Posts / India Post, and it is not endorsed by, affiliated with or connected to the Department of Posts, the Ministry of Communications or the Government of India.'**
+  String get legal1;
+
+  /// No description provided for @legalH2.
+  ///
+  /// In en, this message translates to:
+  /// **'No official branding'**
+  String get legalH2;
+
+  /// No description provided for @legal2.
+  ///
+  /// In en, this message translates to:
+  /// **'The app does not use the India Post name, logo, colours or branding. Post office names and PIN codes are used only as public reference data.'**
+  String get legal2;
+
+  /// No description provided for @legalH3.
+  ///
+  /// In en, this message translates to:
+  /// **'No warranty'**
+  String get legalH3;
+
+  /// No description provided for @legal3.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorting data, PIN details and airport codes are provided “as is” for convenience and may be outdated or wrong. Always follow your office\'s official sorting instructions, circulars and DMSL. The developer is not responsible for any mis-sort, delay, loss or other consequence of using this app.'**
+  String get legal3;
+
+  /// No description provided for @legalH4.
+  ///
+  /// In en, this message translates to:
+  /// **'Your responsibility'**
+  String get legalH4;
+
+  /// No description provided for @legal4.
+  ///
+  /// In en, this message translates to:
+  /// **'You are responsible for the data you import, edit or share, and for following your department\'s rules on sharing internal documents.'**
+  String get legal4;
+
+  /// No description provided for @legalH5.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get legalH5;
+
+  /// No description provided for @legal5.
+  ///
+  /// In en, this message translates to:
+  /// **'The app works fully offline. It has no internet permission, no login, no ads, no analytics and no tracking. Camera scans are processed on the phone and deleted immediately; nothing is uploaded. Your schemes, favourites and settings stay only on your phone and are removed when you uninstall the app.'**
+  String get legal5;
+
+  /// No description provided for @legalH6.
+  ///
+  /// In en, this message translates to:
+  /// **'Open data'**
+  String get legalH6;
+
+  /// No description provided for @legal6.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN directory: data.gov.in, Government of India, Open Government Data Licence – India. Airport codes are public IATA codes. The default Mangaluru scheme was compiled from lists shared by postal staff and may differ from your office\'s current scheme.'**
+  String get legal6;
+
+  /// No description provided for @legalH7.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes'**
+  String get legalH7;
+
+  /// No description provided for @legal7.
+  ///
+  /// In en, this message translates to:
+  /// **'This policy may be updated with new versions of the app. By using the app you agree to this disclaimer and policy.'**
+  String get legal7;
 
   /// No description provided for @enterPin.
   ///

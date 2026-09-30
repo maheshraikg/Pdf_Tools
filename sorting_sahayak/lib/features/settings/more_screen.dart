@@ -7,6 +7,7 @@ import 'airports_screen.dart';
 import 'directory_screen.dart';
 import 'favourites_screen.dart';
 import 'help_screen.dart';
+import 'legal_screen.dart';
 import 'settings_screen.dart';
 
 class MoreScreen extends StatelessWidget {
@@ -32,6 +33,7 @@ class MoreScreen extends StatelessWidget {
           item(Icons.flight, l.airportCodes, l.airportCodesSub, const AirportsScreen()),
           item(Icons.settings_outlined, l.settings, l.settingsSub, const SettingsScreen()),
           item(Icons.help_outline, l.help, l.helpSub, const HelpScreen()),
+          item(Icons.verified_user_outlined, l.legalTitle, l.legalSub, const LegalScreen()),
           item(Icons.info_outline, l.about, l.aboutSub, const AboutScreen()),
         ],
       ),

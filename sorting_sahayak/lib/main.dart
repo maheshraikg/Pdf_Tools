@@ -2,23 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/app_scope.dart';
+import 'core/files.dart';
 import 'core/l10n/app_localizations.dart';
 import 'core/settings.dart';
 import 'core/theme.dart';
 import 'data/app_services.dart';
 import 'data/db.dart';
+import 'data/import/scheme_io.dart';
 import 'features/home_shell.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final settings = await Settings.load();
-  runApp(SortingSahayakApp(settings: settings, open: _openServices));
+  runApp(SortingSahayakApp(settings: settings, open: () => _openServices(settings)));
 }
 
-Future<AppServices> _openServices() async {
+Future<AppServices> _openServices(Settings settings) async {
   final dbs = await AppDatabases.open();
   final s = AppServices(directoryDb: dbs.directory, userDb: dbs.user);
   await s.init();
+  // First launch: install the bundled default scheme (editable, deletable).
+  if (!settings.defaultSchemeDone) {
+    if ((await s.schemes.schemes()).isEmpty) {
+      await installDefaultScheme(s.schemes, loadAssetBytes);
+      await s.reloadActive();
+    }
+    settings.defaultSchemeDone = true;
+  }
   return s;
 }
 

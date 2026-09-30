@@ -20,6 +20,26 @@ ImportResult<T> autoImport<T extends Matchable>(List<List<String>> rows, ImportK
 
 List<String> get _palette => kBagPalette.map(colourToHex).toList();
 
+/// Bundled default scheme (Mangaluru TD / Non-TD lines), installed on first
+/// launch. Users can edit or delete it and restore it from Schemes.
+const String kDefaultSchemeAsset = 'assets/schemes/mangaluru_default.csv';
+const String kDefaultSchemeName = 'Mangaluru – default (TD / Non-TD)';
+
+/// Installs the bundled default scheme and makes it active. Returns its id.
+Future<int> installDefaultScheme(SchemeRepo repo, Future<Uint8List> Function(String path) loadAsset) async {
+  final t = readTable(await loadAsset(kDefaultSchemeAsset), 'x.csv');
+  final res = autoImport<BagRule>(t.sheets[t.defaultSheet]!, ImportKind.bagRules);
+  return repo.saveScheme(
+    const Scheme(
+      name: kDefaultSchemeName,
+      office: 'Mangaluru',
+      notes: 'Built-in default. Edit it when sorting changes, or delete it and import your own file.',
+    ),
+    res.rules,
+    completeBags(res.rules, res.bags, _palette),
+  );
+}
+
 /// Installs the bundled SAMPLE scheme (bag rules, air codes, DMSL).
 /// [loadAsset] returns the bytes of an asset path.
 /// [withParcelExtras] also installs the SAMPLE air code sheet and DMSL

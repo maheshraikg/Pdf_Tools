@@ -148,6 +148,23 @@ void main() {
     expect((await repo.bags(id)).map((b) => b.code), contains('Karkala Line'));
   });
 
+  test('bundled default Mangaluru scheme', () async {
+    final id = await installDefaultScheme(repo, (p) async => File(p).readAsBytesSync());
+    final rules = await repo.rules(id);
+    expect(rules.length, greaterThan(700));
+    expect(rules.where((r) => r.category == kCatTD), isNotEmpty);
+    expect(rules.where((r) => r.category == kCatNonTD), isNotEmpty);
+    await repo.setActive(id);
+    final e = SortEngine(await fixtureRepo(), await repo.loadActive());
+    final td = await e.resolvePin('574239', category: kCatTD);
+    expect(td.bag?.code, 'Puttur Line');
+    final ntd = await e.resolvePin('560001', category: kCatNonTD);
+    expect(ntd.bag?.code, 'BANGALORE');
+    // Deletable like any other scheme.
+    await repo.deleteScheme(id);
+    expect((await repo.schemes()).any((s) => s.name == kDefaultSchemeName), isFalse);
+  });
+
   test('categories', () async {
     await repo.addCategory('Registered');
     expect(await repo.categories(), [...kBuiltInCategories, 'Registered']);

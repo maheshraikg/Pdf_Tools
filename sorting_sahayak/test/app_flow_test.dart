@@ -7,6 +7,18 @@ import 'package:sorting_sahayak/main.dart';
 import 'helpers/app_harness.dart';
 
 void main() {
+  testWidgets('first launch shows the disclaimer until accepted', (tester) async {
+    final h = await Harness.create(tester, prefs: {'disclaimerAccepted': false});
+    await tester.pumpWidget(SortingSahayakApp(settings: h.settings, open: () async => h.services));
+    await settle(tester);
+    await tester.pumpAndSettle();
+    expect(find.text('Independent helper tool for postal staff. Not an official Department of Posts app.'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('accept_legal')));
+    await tester.pumpAndSettle();
+    expect(h.settings.disclaimerAccepted, isTrue);
+    expect(find.byKey(const ValueKey('accept_legal')), findsNothing);
+  });
+
   testWidgets('app shell: schemes, find → sort, learn, air codes', (tester) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 2.5;

@@ -36,11 +36,17 @@ class Settings extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Keypad key height multiplier: 0.8 (compact) … 1.4 (extra large).
-  double get keypadScale => _prefs.getDouble('keypadScale') ?? 1.0;
+  /// True once the bundled default scheme was offered (so deleting it does
+  /// not bring it back on the next launch).
+  bool get defaultSchemeDone => _prefs.getBool('defaultSchemeDone') ?? false;
 
-  set keypadScale(double v) {
-    _prefs.setDouble('keypadScale', v);
+  set defaultSchemeDone(bool v) => _prefs.setBool('defaultSchemeDone', v);
+
+  /// True once the user accepted the disclaimer on first launch.
+  bool get disclaimerAccepted => _prefs.getBool('disclaimerAccepted') ?? false;
+
+  set disclaimerAccepted(bool v) {
+    _prefs.setBool('disclaimerAccepted', v);
     notifyListeners();
   }
 

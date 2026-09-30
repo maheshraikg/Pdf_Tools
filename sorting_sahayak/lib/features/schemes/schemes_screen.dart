@@ -80,6 +80,12 @@ class _SchemesScreenState extends State<SchemesScreen> {
           PopupMenuButton<String>(
             onSelected: (v) async {
               switch (v) {
+                case 'default':
+                  final repo = context.services.schemes;
+                  final id = await installDefaultScheme(repo, loadAssetBytes);
+                  await repo.setActive(id);
+                  await _afterChange();
+                  if (context.mounted) toast(context, l.defaultRestored);
                 case 'sample':
                   await _installSample();
                 case 'template':
@@ -91,6 +97,7 @@ class _SchemesScreenState extends State<SchemesScreen> {
               }
             },
             itemBuilder: (_) => [
+              PopupMenuItem(value: 'default', child: Text(l.restoreDefault)),
               PopupMenuItem(value: 'sample', child: Text(l.installSample)),
               PopupMenuItem(value: 'template', child: Text(l.downloadTemplate)),
               PopupMenuItem(value: 'sampleFile', child: Text(l.downloadSampleFile)),
