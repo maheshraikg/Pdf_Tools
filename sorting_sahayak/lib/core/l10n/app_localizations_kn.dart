@@ -680,6 +680,10 @@ class AppLocalizationsKn extends AppLocalizations {
   String get noMatchingRules => 'ನಿಮ್ಮ ಸ್ಕೀಮ್‌ನಲ್ಲಿ ಇದರಿಂದ ಶುರುವಾಗುವ ನಿಯಮ ಇಲ್ಲ';
 
   @override
+  String get placeCheckNeedsPin =>
+      'ಮೇಲೆ 6 ಅಂಕಿಯ ಪಿನ್ ಕೂಡ ಟೈಪ್ ಮಾಡಿ – ಆಗ ಈ ಸ್ಥಳದೊಂದಿಗೆ ಪರಿಶೀಲಿಸುತ್ತದೆ.';
+
+  @override
   String get findPinHint => 'ಕಚೇರಿ, ಗ್ರಾಮ, ನಗರ, ತಾಲ್ಲೂಕು ಅಥವಾ ಜಿಲ್ಲೆ';
 
   @override

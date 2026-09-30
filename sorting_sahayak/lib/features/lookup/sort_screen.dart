@@ -372,6 +372,18 @@ class SortScreenState extends State<SortScreen> {
                   onChanged: (_) => setState(() {}),
                 ),
               ),
+            if (_placeOpen && _place.text.trim().length >= 2 && _digits.length < 6)
+              Padding(
+                key: const ValueKey('place_needs_pin'),
+                padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline, size: 18, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    const SizedBox(width: 6),
+                    Expanded(child: Text(l.placeCheckNeedsPin, style: Theme.of(context).textTheme.bodyMedium)),
+                  ],
+                ),
+              ),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),

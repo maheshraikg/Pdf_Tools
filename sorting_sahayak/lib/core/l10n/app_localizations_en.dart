@@ -679,6 +679,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noMatchingRules => 'No rule in your scheme starts with this';
 
   @override
+  String get placeCheckNeedsPin =>
+      'Also type the 6-digit PIN above – the app then checks it against this place.';
+
+  @override
   String get findPinHint => 'Office, village, city, taluk or district';
 
   @override

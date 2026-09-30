@@ -682,6 +682,10 @@ class AppLocalizationsHi extends AppLocalizations {
       'आपकी स्कीम में इससे शुरू होने वाला कोई नियम नहीं';
 
   @override
+  String get placeCheckNeedsPin =>
+      'ऊपर 6 अंकों का पिन भी लिखें – फिर ऐप इसे इस स्थान से जाँचेगा।';
+
+  @override
   String get findPinHint => 'डाकघर, गाँव, शहर, तहसील या ज़िला';
 
   @override

@@ -1318,6 +1318,12 @@ abstract class AppLocalizations {
   /// **'No rule in your scheme starts with this'**
   String get noMatchingRules;
 
+  /// No description provided for @placeCheckNeedsPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Also type the 6-digit PIN above – the app then checks it against this place.'**
+  String get placeCheckNeedsPin;
+
   /// No description provided for @findPinHint.
   ///
   /// In en, this message translates to:
