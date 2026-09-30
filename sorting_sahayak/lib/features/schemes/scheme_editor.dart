@@ -16,6 +16,44 @@ import '../../data/models/scheme.dart';
 import 'dmsl_diff_screen.dart';
 import 'import_wizard.dart';
 
+/// Shows the rule dialog and saves the result (creating its bag if new).
+/// Used by the editor and by "Change bag for this PIN" on result screens.
+/// Returns true when something was saved.
+Future<bool> editRuleFor(
+  BuildContext context, {
+  required int schemeId,
+  BagRule? rule,
+  String? pin,
+  String? category,
+  String? bagCode,
+}) async {
+  final services = context.services;
+  final repo = services.schemes;
+  final bags = await repo.bags(schemeId);
+  if (!context.mounted) return false;
+  final r = await showDialog<BagRule>(
+    context: context,
+    builder: (_) => RuleDialog(
+      rule: rule,
+      bags: bags,
+      categories: services.categories,
+      initialPin: pin,
+      initialCategory: category,
+      initialBag: bagCode,
+    ),
+  );
+  if (r == null) return false;
+  if (!bags.any((b) => b.code == r.bagCode)) {
+    await repo.upsertBag(
+      schemeId,
+      Bag(code: r.bagCode, name: r.bagName, colour: colourToHex(kBagPalette[bags.length % kBagPalette.length]), order: bags.length),
+    );
+  }
+  await repo.upsertRule(schemeId, r);
+  await services.reloadActive();
+  return true;
+}
+
 class SchemeEditor extends StatefulWidget {
   const SchemeEditor({super.key, required this.schemeId});
 
@@ -64,26 +102,28 @@ class _SchemeEditorState extends State<SchemeEditor> {
   }
 
   Future<void> _editRule([BagRule? rule]) async {
-    final r = await showDialog<BagRule>(
+    if (await editRuleFor(context, schemeId: widget.schemeId, rule: rule)) await _changed();
+  }
+
+  Future<void> _moveRules(Bag from) async {
+    final l = AppLocalizations.of(context);
+    final count = _rules.where((r) => r.bagCode == from.code).length;
+    final res = await showDialog<(Bag, bool)>(
       context: context,
-      builder: (_) => _RuleDialog(rule: rule, bags: _bags, categories: context.services.categories),
+      builder: (_) => _MoveDialog(from: from, count: count, bags: _bags.where((b) => b.code != from.code).toList(), order: _bags.length),
     );
-    if (r == null || !mounted) return;
-    final repo = context.services.schemes;
-    if (!_bags.any((b) => b.code == r.bagCode)) {
-      await repo.upsertBag(widget.schemeId, Bag(
-        code: r.bagCode,
-        name: r.bagName,
-        colour: colourToHex(kBagPalette[_bags.length % kBagPalette.length]),
-        order: _bags.length,
-      ));
-    }
-    await repo.upsertRule(widget.schemeId, r);
+    if (res == null || !mounted) return;
+    final n = await context.services.schemes.moveRules(widget.schemeId, from.code, res.$1, removeOld: res.$2);
+    if (!mounted) return;
+    toast(context, l.rulesMoved(n, res.$1.code));
     await _changed();
   }
 
   Future<void> _editBag([Bag? bag]) async {
-    final b = await showDialog<Bag>(context: context, builder: (_) => _BagDialog(bag: bag, order: _bags.length));
+    final b = await showDialog<Bag>(
+      context: context,
+      builder: (_) => _BagDialog(bag: bag, order: _bags.length),
+    );
     if (b == null || !mounted) return;
     await context.services.schemes.upsertBag(widget.schemeId, b);
     await _changed();
@@ -115,10 +155,19 @@ class _SchemeEditorState extends State<SchemeEditor> {
                   context: context,
                   builder: (d) => AlertDialog(
                     title: Text(l.rename),
-                    content: Column(mainAxisSize: MainAxisSize.min, children: [
-                      TextField(controller: c, decoration: InputDecoration(labelText: l.schemeName)),
-                      TextField(controller: o, decoration: InputDecoration(labelText: l.officeName)),
-                    ]),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextField(
+                          controller: c,
+                          decoration: InputDecoration(labelText: l.schemeName),
+                        ),
+                        TextField(
+                          controller: o,
+                          decoration: InputDecoration(labelText: l.officeName),
+                        ),
+                      ],
+                    ),
                     actions: [
                       TextButton(onPressed: () => Navigator.pop(d, false), child: Text(l.cancel)),
                       FilledButton(onPressed: () => Navigator.pop(d, true), child: Text(l.save)),
@@ -166,16 +215,21 @@ class _SchemeEditorState extends State<SchemeEditor> {
                       final r = rules[i];
                       final bag = bagMap[r.bagCode];
                       return ListTile(
-                        leading: CircleAvatar(backgroundColor: bagColour(context, bag), child: Text(ruleTypeLabel(l, r.match.type)[0], style: TextStyle(color: onColour(bagColour(context, bag))))),
+                        leading: CircleAvatar(
+                          backgroundColor: bagColour(context, bag),
+                          child: Text(ruleTypeLabel(l, r.match.type)[0], style: TextStyle(color: onColour(bagColour(context, bag)))),
+                        ),
                         title: Text('${r.describe}  →  ${r.bagCode}', style: const TextStyle(fontWeight: FontWeight.w700)),
-                        subtitle: Text([
-                          ruleTypeLabel(l, r.match.type),
-                          if ((bag?.name ?? r.bagName).isNotEmpty) bag?.name ?? r.bagName,
-                          if (r.section.isNotEmpty) '${l.section} ${r.section}',
-                          if (r.category != null) categoryLabel(l, r.category!),
-                          if (r.connectivity != null) connectivityLabel(l, r.connectivity!),
-                          if (r.remarks.isNotEmpty) r.remarks,
-                        ].join(' · ')),
+                        subtitle: Text(
+                          [
+                            ruleTypeLabel(l, r.match.type),
+                            if ((bag?.name ?? r.bagName).isNotEmpty) bag?.name ?? r.bagName,
+                            if (r.section.isNotEmpty) '${l.section} ${r.section}',
+                            if (r.category != null) categoryLabel(l, r.category!),
+                            if (r.connectivity != null) connectivityLabel(l, r.connectivity!),
+                            if (r.remarks.isNotEmpty) r.remarks,
+                          ].join(' · '),
+                        ),
                         onTap: () => _editRule(r),
                         trailing: IconButton(
                           tooltip: l.delete,
@@ -201,16 +255,26 @@ class _SchemeEditorState extends State<SchemeEditor> {
                     title: Text(b.code, style: const TextStyle(fontWeight: FontWeight.w800)),
                     subtitle: Text('${b.name}  ·  ${l.rulesCount(_rules.where((r) => r.bagCode == b.code).length)}'),
                     onTap: () => _editBag(b),
-                    trailing: IconButton(
-                      tooltip: l.delete,
-                      icon: const Icon(Icons.delete_outline),
-                      onPressed: () async {
-                        if (await confirm(context, l.deleteBagConfirm(b.code))) {
-                          if (!context.mounted) return;
-                          await context.services.schemes.deleteBag(widget.schemeId, b.code);
-                          await _changed();
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (v) async {
+                        switch (v) {
+                          case 'edit':
+                            await _editBag(b);
+                          case 'move':
+                            await _moveRules(b);
+                          case 'delete':
+                            if (await confirm(context, l.deleteBagConfirm(b.code))) {
+                              if (!context.mounted) return;
+                              await context.services.schemes.deleteBag(widget.schemeId, b.code);
+                              await _changed();
+                            }
                         }
                       },
+                      itemBuilder: (_) => [
+                        PopupMenuItem(value: 'edit', child: Text(l.editBag)),
+                        PopupMenuItem(value: 'move', child: Text(l.moveRules)),
+                        PopupMenuItem(value: 'delete', child: Text(l.delete)),
+                      ],
                     ),
                   ),
               ],
@@ -225,7 +289,12 @@ class _SchemeEditorState extends State<SchemeEditor> {
                     icon: const Icon(Icons.file_open),
                     label: Text(l.importAirCodes),
                     onPressed: () async {
-                      final ok = await Navigator.push<bool>(context, MaterialPageRoute(builder: (_) => ImportWizard(kind: ImportKind.airCodes, schemeId: widget.schemeId)));
+                      final ok = await Navigator.push<bool>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ImportWizard(kind: ImportKind.airCodes, schemeId: widget.schemeId),
+                        ),
+                      );
                       if (ok == true) await _changed();
                     },
                   ),
@@ -235,7 +304,9 @@ class _SchemeEditorState extends State<SchemeEditor> {
                   ListTile(
                     leading: Text(a.airCode, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
                     title: Text('${ruleTypeLabel(l, a.match.type)}: ${a.describe}'),
-                    subtitle: Text([a.stationName, if (a.viaHub.isNotEmpty) '${l.via} ${a.viaHub}', a.remarks].where((x) => x.isNotEmpty).join(' · ')),
+                    subtitle: Text(
+                      [a.stationName, if (a.viaHub.isNotEmpty) '${l.via} ${a.viaHub}', a.remarks].where((x) => x.isNotEmpty).join(' · '),
+                    ),
                   ),
               ],
             ),
@@ -249,20 +320,33 @@ class _SchemeEditorState extends State<SchemeEditor> {
                     icon: const Icon(Icons.file_open),
                     label: Text(l.importDmsl),
                     onPressed: () async {
-                      await Navigator.push<bool>(context, MaterialPageRoute(builder: (_) => ImportWizard(kind: ImportKind.dmsl, schemeId: widget.schemeId)));
+                      await Navigator.push<bool>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ImportWizard(kind: ImportKind.dmsl, schemeId: widget.schemeId),
+                        ),
+                      );
                       await _changed();
                     },
                   ),
                 ),
-                Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Text(l.dmslHelp, style: Theme.of(context).textTheme.bodySmall)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(l.dmslHelp, style: Theme.of(context).textTheme.bodySmall),
+                ),
                 for (var i = 0; i < _versions.length; i++)
                   ListTile(
-                    leading: Icon(_versions[i].active ? Icons.radio_button_checked : Icons.radio_button_off, color: _versions[i].active ? Theme.of(context).colorScheme.primary : null),
+                    leading: Icon(
+                      _versions[i].active ? Icons.radio_button_checked : Icons.radio_button_off,
+                      color: _versions[i].active ? Theme.of(context).colorScheme.primary : null,
+                    ),
                     title: Text(_versions[i].versionName, style: const TextStyle(fontWeight: FontWeight.w700)),
-                    subtitle: Text([
-                      if (_versions[i].validFrom != null) l.validFromDate(_versions[i].validFrom!.toIso8601String().substring(0, 10)),
-                      if (_versions[i].active) l.active,
-                    ].join(' · ')),
+                    subtitle: Text(
+                      [
+                        if (_versions[i].validFrom != null) l.validFromDate(_versions[i].validFrom!.toIso8601String().substring(0, 10)),
+                        if (_versions[i].active) l.active,
+                      ].join(' · '),
+                    ),
                     onTap: () async {
                       await context.services.schemes.setActiveDmsl(widget.schemeId, _versions[i].id!);
                       await _changed();
@@ -270,11 +354,16 @@ class _SchemeEditorState extends State<SchemeEditor> {
                     trailing: PopupMenuButton<String>(
                       onSelected: (v) async {
                         if (v == 'diff' && i + 1 < _versions.length) {
-                          await Navigator.push(context, MaterialPageRoute(builder: (_) => DmslDiffScreen(
-                            schemeId: widget.schemeId,
-                            oldVersionId: _versions[i + 1].id!,
-                            newVersionId: _versions[i].id!,
-                          )));
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => DmslDiffScreen(
+                                schemeId: widget.schemeId,
+                                oldVersionId: _versions[i + 1].id!,
+                                newVersionId: _versions[i].id!,
+                              ),
+                            ),
+                          );
                         } else if (v == 'delete') {
                           await context.services.schemes.deleteDmslVersion(_versions[i].id!);
                           await _changed();
@@ -309,32 +398,45 @@ class _SchemeEditorState extends State<SchemeEditor> {
   }
 }
 
-class _RuleDialog extends StatefulWidget {
-  const _RuleDialog({this.rule, required this.bags, required this.categories});
+class RuleDialog extends StatefulWidget {
+  const RuleDialog({
+    super.key,
+    this.rule,
+    required this.bags,
+    required this.categories,
+    this.initialPin,
+    this.initialCategory,
+    this.initialBag,
+  });
 
   final BagRule? rule;
   final List<Bag> bags;
   final List<String> categories;
 
+  /// Pre-filled values for a new rule.
+  final String? initialPin;
+  final String? initialCategory;
+  final String? initialBag;
+
   @override
-  State<_RuleDialog> createState() => _RuleDialogState();
+  State<RuleDialog> createState() => _RuleDialogState();
 }
 
-class _RuleDialogState extends State<_RuleDialog> {
+class _RuleDialogState extends State<RuleDialog> {
   late RuleType _type = widget.rule?.match.type ?? RuleType.exact;
   late final _a = TextEditingController(text: _initialA());
   late final _b = TextEditingController(text: widget.rule?.match.pinTo?.toString() ?? '');
-  late final _bag = TextEditingController(text: widget.rule?.bagCode ?? '');
+  late final _bag = TextEditingController(text: widget.rule?.bagCode ?? widget.initialBag ?? '');
   late final _bagName = TextEditingController(text: widget.rule?.bagName ?? '');
   late final _section = TextEditingController(text: widget.rule?.section ?? '');
   late final _remarks = TextEditingController(text: widget.rule?.remarks ?? '');
-  late String? _category = widget.rule?.category;
+  late String? _category = widget.rule == null ? widget.initialCategory : widget.rule!.category;
   late Connectivity? _conn = widget.rule?.connectivity;
   String? _error;
 
   String _initialA() {
     final r = widget.rule;
-    if (r == null) return '';
+    if (r == null) return widget.initialPin ?? '';
     final m = r.match;
     return switch (m.type) {
       RuleType.exact => '${m.pin}',
@@ -419,17 +521,23 @@ class _RuleDialogState extends State<_RuleDialog> {
               TextField(
                 controller: _a,
                 keyboardType: numeric ? TextInputType.number : TextInputType.text,
-                decoration: InputDecoration(labelText: switch (_type) {
-                  RuleType.exact => l.fPin,
-                  RuleType.range => l.fPinFrom,
-                  RuleType.prefix => l.fPrefix,
-                  RuleType.office => l.fOffice,
-                  RuleType.district => l.fDistrict,
-                  _ => l.fState,
-                }),
+                decoration: InputDecoration(
+                  labelText: switch (_type) {
+                    RuleType.exact => l.fPin,
+                    RuleType.range => l.fPinFrom,
+                    RuleType.prefix => l.fPrefix,
+                    RuleType.office => l.fOffice,
+                    RuleType.district => l.fDistrict,
+                    _ => l.fState,
+                  },
+                ),
               ),
             if (_type == RuleType.range)
-              TextField(controller: _b, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: l.fPinTo)),
+              TextField(
+                controller: _b,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(labelText: l.fPinTo),
+              ),
             TextField(
               controller: _bag,
               decoration: InputDecoration(
@@ -447,9 +555,18 @@ class _RuleDialogState extends State<_RuleDialog> {
                       ),
               ),
             ),
-            TextField(controller: _bagName, decoration: InputDecoration(labelText: l.fBagName)),
-            TextField(controller: _section, decoration: InputDecoration(labelText: l.fSection)),
-            TextField(controller: _remarks, decoration: InputDecoration(labelText: l.fRemarks)),
+            TextField(
+              controller: _bagName,
+              decoration: InputDecoration(labelText: l.fBagName),
+            ),
+            TextField(
+              controller: _section,
+              decoration: InputDecoration(labelText: l.fSection),
+            ),
+            TextField(
+              controller: _remarks,
+              decoration: InputDecoration(labelText: l.fRemarks),
+            ),
             DropdownButtonFormField<String?>(
               isExpanded: true,
               initialValue: widget.categories.contains(_category) ? _category : null,
@@ -470,7 +587,11 @@ class _RuleDialogState extends State<_RuleDialog> {
               ],
               onChanged: (v) => setState(() => _conn = v),
             ),
-            if (_error != null) Padding(padding: const EdgeInsets.only(top: 8), child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error))),
+            if (_error != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              ),
           ],
         ),
       ),
@@ -505,8 +626,15 @@ class _BagDialogState extends State<_BagDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextField(controller: _code, enabled: widget.bag == null, decoration: InputDecoration(labelText: l.fBagCode)),
-          TextField(controller: _name, decoration: InputDecoration(labelText: l.fBagName)),
+          TextField(
+            controller: _code,
+            enabled: widget.bag == null,
+            decoration: InputDecoration(labelText: l.fBagCode),
+          ),
+          TextField(
+            controller: _name,
+            decoration: InputDecoration(labelText: l.fBagName),
+          ),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -534,9 +662,84 @@ class _BagDialogState extends State<_BagDialog> {
         FilledButton(
           onPressed: () {
             if (_code.text.trim().isEmpty) return;
-            Navigator.pop(context, Bag(code: _code.text.trim(), name: _name.text.trim(), colour: _colour, order: widget.bag?.order ?? widget.order));
+            Navigator.pop(
+              context,
+              Bag(code: _code.text.trim(), name: _name.text.trim(), colour: _colour, order: widget.bag?.order ?? widget.order),
+            );
           },
           child: Text(l.save),
+        ),
+      ],
+    );
+  }
+}
+
+class _MoveDialog extends StatefulWidget {
+  const _MoveDialog({required this.from, required this.count, required this.bags, required this.order});
+
+  final Bag from;
+  final int count;
+  final List<Bag> bags;
+  final int order;
+
+  @override
+  State<_MoveDialog> createState() => _MoveDialogState();
+}
+
+class _MoveDialogState extends State<_MoveDialog> {
+  final _code = TextEditingController();
+  bool _removeOld = true;
+
+  @override
+  void dispose() {
+    _code.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(l.moveRulesTitle(widget.count, widget.from.code)),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              key: const ValueKey('move_to'),
+              controller: _code,
+              decoration: InputDecoration(
+                labelText: l.moveTo,
+                suffixIcon: widget.bags.isEmpty
+                    ? null
+                    : PopupMenuButton<String>(
+                        tooltip: l.bags,
+                        icon: const Icon(Icons.arrow_drop_down),
+                        onSelected: (v) => setState(() => _code.text = v),
+                        itemBuilder: (_) => [for (final b in widget.bags) PopupMenuItem(value: b.code, child: Text(b.label))],
+                      ),
+              ),
+            ),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              value: _removeOld,
+              onChanged: (v) => setState(() => _removeOld = v ?? true),
+              title: Text(l.removeOldBag),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l.cancel)),
+        FilledButton(
+          onPressed: () {
+            final code = _code.text.trim();
+            if (code.isEmpty || code == widget.from.code) return;
+            final existing = widget.bags.where((b) => b.code == code).firstOrNull;
+            final to = existing ?? Bag(code: code, name: '', colour: widget.from.colour, order: widget.order);
+            Navigator.pop(context, (to, _removeOld));
+          },
+          child: Text(l.move),
         ),
       ],
     );

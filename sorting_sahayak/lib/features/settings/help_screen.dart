@@ -19,6 +19,7 @@ class HelpScreen extends StatelessWidget {
       (Icons.document_scanner_outlined, Colors.teal, l.help6Title, l.help6),
       (Icons.inventory_2_outlined, Colors.brown, l.help7Title, l.help7),
       (Icons.school_outlined, Colors.purple, l.help8Title, l.help8),
+      (Icons.edit_note, kTeal, l.help9Title, l.help9),
     ];
     return Scaffold(
       appBar: AppBar(title: Text(l.help)),

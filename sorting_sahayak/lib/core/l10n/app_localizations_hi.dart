@@ -1165,6 +1165,39 @@ class AppLocalizationsHi extends AppLocalizations {
   String get fDirect => 'सीधा बंद (Y/N)';
 
   @override
+  String get changeBagHere => 'इस पिन का थैला बदलें';
+
+  @override
+  String editRuleX(String rule) {
+    return 'नियम बदलें: $rule';
+  }
+
+  @override
+  String get savedSortingUpdated => 'सहेजा गया – सॉर्टिंग अपडेट हुई';
+
+  @override
+  String get moveRules => 'नियम दूसरे थैले में ले जाएँ';
+
+  @override
+  String moveRulesTitle(int count, String bag) {
+    return '$bag से $count नियम ले जाएँ';
+  }
+
+  @override
+  String get moveTo => 'नया थैला / लाइन';
+
+  @override
+  String get removeOldBag => 'खाली पुराना थैला हटाएँ';
+
+  @override
+  String rulesMoved(int count, String bag) {
+    return '$count नियम $bag में ले जाए गए';
+  }
+
+  @override
+  String get move => 'ले जाएँ';
+
+  @override
   String get dirSource => 'स्रोत';
 
   @override
@@ -1262,4 +1295,11 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get help8 =>
       'अभ्यास: अंतराल पुनरावृत्ति वाले फ़्लैशकार्ड, 20 वस्तुओं का समयबद्ध क्विज़, कमज़ोर क्षेत्र और पिन की मूल बातें। नए DMSL के बाद केवल वे पिन अभ्यास करें जिनका हब बदला।';
+
+  @override
+  String get help9Title => 'सॉर्टिंग बदली? बदलें';
+
+  @override
+  String get help9 =>
+      'एक पिन ठीक करने के लिए सॉर्ट स्क्रीन पर “इस पिन का थैला बदलें” दबाएँ। बड़े बदलावों के लिए और → स्कीम → अपनी स्कीम खोलें: नियम बदलें, जोड़ें या हटाएँ। कोई डाकघर नई लाइन में जाए तो थैलों में “नियम दूसरे थैले में ले जाएँ” चुनें। सहकर्मियों से साझा करने के लिए स्कीम निर्यात करें।';
 }

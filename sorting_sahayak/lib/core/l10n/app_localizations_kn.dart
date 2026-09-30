@@ -1167,6 +1167,39 @@ class AppLocalizationsKn extends AppLocalizations {
   String get fDirect => 'ನೇರ ಮುಚ್ಚುವಿಕೆ (Y/N)';
 
   @override
+  String get changeBagHere => 'ಈ ಪಿನ್‌ನ ಚೀಲ ಬದಲಿಸಿ';
+
+  @override
+  String editRuleX(String rule) {
+    return 'ನಿಯಮ ಬದಲಿಸಿ: $rule';
+  }
+
+  @override
+  String get savedSortingUpdated => 'ಉಳಿಸಲಾಗಿದೆ – ಸಾರ್ಟಿಂಗ್ ನವೀಕರಿಸಲಾಗಿದೆ';
+
+  @override
+  String get moveRules => 'ನಿಯಮಗಳನ್ನು ಬೇರೆ ಚೀಲಕ್ಕೆ ಸರಿಸಿ';
+
+  @override
+  String moveRulesTitle(int count, String bag) {
+    return '$bag ನಿಂದ $count ನಿಯಮಗಳನ್ನು ಸರಿಸಿ';
+  }
+
+  @override
+  String get moveTo => 'ಹೊಸ ಚೀಲ / ಲೈನ್';
+
+  @override
+  String get removeOldBag => 'ಖಾಲಿಯಾದ ಹಳೆಯ ಚೀಲ ತೆಗೆದುಹಾಕಿ';
+
+  @override
+  String rulesMoved(int count, String bag) {
+    return '$count ನಿಯಮಗಳನ್ನು $bag ಗೆ ಸರಿಸಲಾಗಿದೆ';
+  }
+
+  @override
+  String get move => 'ಸರಿಸಿ';
+
+  @override
   String get dirSource => 'ಮೂಲ';
 
   @override
@@ -1264,4 +1297,11 @@ class AppLocalizationsKn extends AppLocalizations {
   @override
   String get help8 =>
       'ಅಭ್ಯಾಸ: ಅಂತರದ ಪುನರಾವರ್ತನೆಯ ಫ್ಲ್ಯಾಶ್‌ಕಾರ್ಡ್‌ಗಳು, 20 ವಸ್ತುಗಳ ಸಮಯದ ರಸಪ್ರಶ್ನೆ, ದುರ್ಬಲ ಭಾಗಗಳು ಮತ್ತು ಪಿನ್ ಮೂಲಭೂತ ಪಾಠ. ಹೊಸ DMSL ನಂತರ ಹಬ್ ಬದಲಾದ ಪಿನ್‌ಗಳನ್ನು ಮಾತ್ರ ಅಭ್ಯಾಸ ಮಾಡಿ.';
+
+  @override
+  String get help9Title => 'ಸಾರ್ಟಿಂಗ್ ಬದಲಾಗಿದೆಯೇ? ಬದಲಿಸಿ';
+
+  @override
+  String get help9 =>
+      'ಒಂದು ಪಿನ್ ಸರಿಪಡಿಸಲು ಸಾರ್ಟ್ ಪರದೆಯಲ್ಲಿ “ಈ ಪಿನ್‌ನ ಚೀಲ ಬದಲಿಸಿ” ಒತ್ತಿ. ದೊಡ್ಡ ಬದಲಾವಣೆಗಳಿಗೆ ಇನ್ನಷ್ಟು → ಸ್ಕೀಮ್‌ಗಳು → ನಿಮ್ಮ ಸ್ಕೀಮ್ ತೆರೆಯಿರಿ: ನಿಯಮಗಳನ್ನು ಬದಲಿಸಿ, ಸೇರಿಸಿ ಅಥವಾ ಅಳಿಸಿ. ಕಚೇರಿ ಹೊಸ ಲೈನ್‌ಗೆ ಹೋದಾಗ ಚೀಲಗಳಲ್ಲಿ “ನಿಯಮಗಳನ್ನು ಬೇರೆ ಚೀಲಕ್ಕೆ ಸರಿಸಿ” ಬಳಸಿ. ಸಹೋದ್ಯೋಗಿಗಳೊಂದಿಗೆ ಹಂಚಲು ಸ್ಕೀಮ್ ರಫ್ತು ಮಾಡಿ.';
 }

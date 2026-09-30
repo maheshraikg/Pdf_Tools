@@ -301,7 +301,7 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
           }),
           const SizedBox(height: 10),
         ],
-        if (r != null) SortResultView(result: r, showBreakdown: false),
+        if (r != null) SortResultView(result: r, showBreakdown: false, onEdited: _resolve),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,

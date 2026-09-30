@@ -2176,6 +2176,60 @@ abstract class AppLocalizations {
   /// **'Direct closure (Y/N)'**
   String get fDirect;
 
+  /// No description provided for @changeBagHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Change bag for this PIN'**
+  String get changeBagHere;
+
+  /// No description provided for @editRuleX.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit rule: {rule}'**
+  String editRuleX(String rule);
+
+  /// No description provided for @savedSortingUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved – sorting updated'**
+  String get savedSortingUpdated;
+
+  /// No description provided for @moveRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Move rules to another bag'**
+  String get moveRules;
+
+  /// No description provided for @moveRulesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Move {count} rules from {bag}'**
+  String moveRulesTitle(int count, String bag);
+
+  /// No description provided for @moveTo.
+  ///
+  /// In en, this message translates to:
+  /// **'New bag / line'**
+  String get moveTo;
+
+  /// No description provided for @removeOldBag.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the empty old bag'**
+  String get removeOldBag;
+
+  /// No description provided for @rulesMoved.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} rules moved to {bag}'**
+  String rulesMoved(int count, String bag);
+
+  /// No description provided for @move.
+  ///
+  /// In en, this message translates to:
+  /// **'Move'**
+  String get move;
+
   /// No description provided for @dirSource.
   ///
   /// In en, this message translates to:
@@ -2349,6 +2403,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Learn: flashcards with spaced repetition, a timed 20-article quiz, weak areas, and a PIN basics lesson. After a new DMSL, practise only the PINs whose hub changed.'**
   String get help8;
+
+  /// No description provided for @help9Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorting changed? Edit it'**
+  String get help9Title;
+
+  /// No description provided for @help9.
+  ///
+  /// In en, this message translates to:
+  /// **'On the Sort screen tap “Change bag for this PIN” to fix one PIN. For bigger changes open More → Schemes → your scheme: edit, add or delete rules, and in Bags use “Move rules to another bag” when an office moves to a new line. Export the scheme to share it with colleagues.'**
+  String get help9;
 }
 
 class _AppLocalizationsDelegate

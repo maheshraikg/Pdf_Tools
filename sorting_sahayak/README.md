@@ -146,7 +146,15 @@ file. The wizard then walks you through these steps:
 4. **Save**. You can keep several schemes; only one is active at a time.
 
 You can also **create or edit a scheme in the app**: add, edit and delete
-rules and bags, and pick bag colours. To share a scheme with your team, use
+rules and bags, and pick bag colours. When sorting changes:
+
+- On any result, **Change bag for this PIN** saves a PIN-only rule (or edits
+  the PIN's own rule). If a wider rule matched (prefix, office, district), the
+  **Edit rule** button changes that rule for every PIN it covers.
+- In **Bags**, **Move rules to another bag** moves all of a bag's rules to
+  another bag or line, e.g. when an office moves to a new line.
+
+To share a scheme with your team, use
 **export as .xlsx / .csv**. **Download template** saves a blank template.
 **Add SAMPLE scheme** installs the demo scheme, which is clearly marked
 "SAMPLE – not real".

@@ -15,14 +15,19 @@ import '../../core/files.dart';
 import '../../data/import/scheme_import.dart';
 import '../../data/import/scheme_io.dart';
 import '../../data/models/office.dart';
+import '../../data/models/scheme.dart';
 import '../../data/sort_engine.dart';
 import '../schemes/import_wizard.dart';
+import '../schemes/scheme_editor.dart';
 
 class SortResultView extends StatelessWidget {
-  const SortResultView({super.key, required this.result, this.showBreakdown = true});
+  const SortResultView({super.key, required this.result, this.showBreakdown = true, this.onEdited});
 
   final SortResult result;
   final bool showBreakdown;
+
+  /// Called after the user changed the scheme from this view.
+  final VoidCallback? onEdited;
 
   @override
   Widget build(BuildContext context) {
@@ -40,14 +45,20 @@ class SortResultView extends StatelessWidget {
       // Partial PIN: sorting district + likely bag.
       final s = r.prefixSummary;
       if (s != null) {
-        children.add(Card(
-          margin: EdgeInsets.zero,
-          child: ListTile(
-            leading: const Icon(Icons.map_outlined),
-            title: Text(l.sortingDistrictN(r.digits.substring(0, 3)), style: const TextStyle(fontWeight: FontWeight.w700)),
-            subtitle: Text(s.districts.isEmpty ? l.prefixNotInDirectory : '${s.districts.take(5).join(', ')}${s.districts.length > 5 ? '…' : ''}\n${s.states.join(', ')}'),
+        children.add(
+          Card(
+            margin: EdgeInsets.zero,
+            child: ListTile(
+              leading: const Icon(Icons.map_outlined),
+              title: Text(l.sortingDistrictN(r.digits.substring(0, 3)), style: const TextStyle(fontWeight: FontWeight.w700)),
+              subtitle: Text(
+                s.districts.isEmpty
+                    ? l.prefixNotInDirectory
+                    : '${s.districts.take(5).join(', ')}${s.districts.length > 5 ? '…' : ''}\n${s.states.join(', ')}',
+              ),
+            ),
           ),
-        ));
+        );
         children.add(gap);
       }
       if (r.likelyBag != null) {
@@ -56,19 +67,32 @@ class SortResultView extends StatelessWidget {
         children.add(gap);
       }
       if (r.possibleBags.length > 1) {
-        children.add(Wrap(spacing: 6, runSpacing: 4, children: [
-          Text('${l.possibleBags}: '),
-          for (final b in r.possibleBags) Chip(label: Text(b.code), backgroundColor: bagColour(context, b).withValues(alpha: 0.35), visualDensity: VisualDensity.compact),
-        ]));
+        children.add(
+          Wrap(
+            spacing: 6,
+            runSpacing: 4,
+            children: [
+              Text('${l.possibleBags}: '),
+              for (final b in r.possibleBags)
+                Chip(
+                  label: Text(b.code),
+                  backgroundColor: bagColour(context, b).withValues(alpha: 0.35),
+                  visualDensity: VisualDensity.compact,
+                ),
+            ],
+          ),
+        );
         children.add(gap);
       }
     } else {
       final air = isAirCategory(r.category);
       if (air) {
-        children.add(AirCodeCard(
-          air: r.air,
-          onSpeak: r.air == null ? null : () => AppFeedback.speak(context.settings, AppFeedback.spell(r.air!.rule.airCode), force: true),
-        ));
+        children.add(
+          AirCodeCard(
+            air: r.air,
+            onSpeak: r.air == null ? null : () => AppFeedback.speak(context.settings, AppFeedback.spell(r.air!.rule.airCode), force: true),
+          ),
+        );
         children.add(gap);
       }
       if (r.connectivity != null) {
@@ -94,10 +118,12 @@ class SortResultView extends StatelessWidget {
         children.add(gap);
       }
       if (scheme != null && r.otherBag != null) {
-        children.add(WarningBanner(
-          text: l.otherModeHint(categoryLabel(l, r.otherCategory!), r.otherBag!.label),
-          icon: Icons.swap_horiz,
-        ));
+        children.add(WarningBanner(text: l.otherModeHint(categoryLabel(l, r.otherCategory!), r.otherBag!.label), icon: Icons.swap_horiz));
+        children.add(gap);
+      }
+      final schemeId = scheme?.scheme.id;
+      if (schemeId != null && r.valid) {
+        children.add(_EditButtons(result: r, schemeId: schemeId, onEdited: onEdited));
         children.add(gap);
       }
       if (r.notInDirectory) {
@@ -105,20 +131,22 @@ class SortResultView extends StatelessWidget {
         children.add(gap);
       }
       if (r.offices.isNotEmpty) {
-        children.add(Card(
-          margin: EdgeInsets.zero,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-                child: Text(l.deliveryOfficesN(r.offices.length), style: Theme.of(context).textTheme.labelLarge),
-              ),
-              for (final o in r.offices.take(12)) OfficeTile(office: o),
-              if (r.offices.length > 12) Padding(padding: const EdgeInsets.all(12), child: Text(l.andMore(r.offices.length - 12))),
-            ],
+        children.add(
+          Card(
+            margin: EdgeInsets.zero,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                  child: Text(l.deliveryOfficesN(r.offices.length), style: Theme.of(context).textTheme.labelLarge),
+                ),
+                for (final o in r.offices.take(12)) OfficeTile(office: o),
+                if (r.offices.length > 12) Padding(padding: const EdgeInsets.all(12), child: Text(l.andMore(r.offices.length - 12))),
+              ],
+            ),
           ),
-        ));
+        );
         children.add(gap);
       }
     }
@@ -160,8 +188,10 @@ class OfficeHeadline extends StatelessWidget {
           FittedBox(
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
-            child: Text('${office.officeName} ${office.officeType}',
-                style: t.headlineMedium?.copyWith(color: c.onPrimary, fontWeight: FontWeight.w900)),
+            child: Text(
+              '${office.officeName} ${office.officeType}',
+              style: t.headlineMedium?.copyWith(color: c.onPrimary, fontWeight: FontWeight.w900),
+            ),
           ),
           Text('${office.district}, ${office.state}', style: t.titleMedium?.copyWith(color: c.onPrimary)),
           if (more > 0) Text(l.andMore(more), style: t.bodyMedium?.copyWith(color: c.onPrimary.withValues(alpha: 0.85))),
@@ -187,7 +217,12 @@ class NoSchemeBar extends StatelessWidget {
         children: [
           Icon(Icons.info_outline, color: c.onSecondaryContainer),
           const SizedBox(width: 8),
-          Expanded(child: Text(l.noSchemeShort, style: TextStyle(color: c.onSecondaryContainer, fontWeight: FontWeight.w700))),
+          Expanded(
+            child: Text(
+              l.noSchemeShort,
+              style: TextStyle(color: c.onSecondaryContainer, fontWeight: FontWeight.w700),
+            ),
+          ),
           TextButton(
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ImportWizard(kind: ImportKind.bagRules))),
             child: Text(l.importShort),
@@ -201,6 +236,46 @@ class NoSchemeBar extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// "Change bag for this PIN" (a PIN-only override, or edits the PIN's own
+/// rule) and, when a wider rule matched, a button to edit that rule.
+class _EditButtons extends StatelessWidget {
+  const _EditButtons({required this.result, required this.schemeId, this.onEdited});
+
+  final SortResult result;
+  final int schemeId;
+  final VoidCallback? onEdited;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final r = result;
+    final rule = r.bagRule;
+    final own = rule != null && rule.match.type == RuleType.exact && rule.category == r.category ? rule : null;
+    Future<void> run(BagRule? edit) async {
+      final ok = await editRuleFor(context, schemeId: schemeId, rule: edit, pin: r.digits, category: r.category, bagCode: r.bag?.code);
+      if (ok && context.mounted) {
+        toast(context, l.savedSortingUpdated);
+        onEdited?.call();
+      }
+    }
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 4,
+      children: [
+        OutlinedButton.icon(
+          key: const ValueKey('change_bag'),
+          icon: const Icon(Icons.edit_outlined),
+          label: Text(l.changeBagHere),
+          onPressed: () => run(own),
+        ),
+        if (rule != null && own == null && rule.match.type != RuleType.fallback)
+          TextButton.icon(icon: const Icon(Icons.rule), label: Text(l.editRuleX(rule.describe)), onPressed: () => run(rule)),
+      ],
     );
   }
 }

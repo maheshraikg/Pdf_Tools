@@ -131,6 +131,23 @@ void main() {
     expect((await repo.schemes()).length, 1);
   });
 
+  test('move rules to another bag (office changes line)', () async {
+    final id = await repo.createScheme(const Scheme(name: 'Lines'));
+    await repo.upsertBag(id, const Bag(code: 'Puttur Line'));
+    await repo.upsertBag(id, const Bag(code: 'Karkala Line'));
+    await repo.upsertRule(id, const BagRule(match: MatchSpec.exact(574201), bagCode: 'Puttur Line'));
+    await repo.upsertRule(id, const BagRule(match: MatchSpec.exact(574202), bagCode: 'Puttur Line'));
+    await repo.upsertRule(id, const BagRule(match: MatchSpec.exact(574104), bagCode: 'Karkala Line'));
+    expect(await repo.moveRules(id, 'Puttur Line', const Bag(code: 'Udupi Line', name: 'Udupi')), 2);
+    final rules = await repo.rules(id);
+    expect(rules.where((r) => r.bagCode == 'Udupi Line').length, 2);
+    expect(rules.where((r) => r.bagCode == 'Udupi Line').every((r) => r.bagName == 'Udupi'), isTrue);
+    expect((await repo.bags(id)).map((b) => b.code), unorderedEquals(['Karkala Line', 'Udupi Line']));
+    // Keep the old bag when asked.
+    expect(await repo.moveRules(id, 'Karkala Line', const Bag(code: 'Udupi Line'), removeOld: false), 1);
+    expect((await repo.bags(id)).map((b) => b.code), contains('Karkala Line'));
+  });
+
   test('categories', () async {
     await repo.addCategory('Registered');
     expect(await repo.categories(), [...kBuiltInCategories, 'Registered']);

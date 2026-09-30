@@ -85,6 +85,30 @@ void main() {
     expect(find.text('NT-40'), findsWidgets);
   });
 
+  testWidgets('Sort screen: change bag for this PIN updates the result', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.5;
+    addTearDown(tester.view.reset);
+    final h = await Harness.create(tester);
+    await tester.pumpWidget(h.wrap(const SortScreen()));
+    await settle(tester);
+    await typePin(tester, '574201');
+    expect(find.text('Bag 12'), findsWidgets);
+
+    await tester.ensureVisible(find.byKey(const ValueKey('change_bag')));
+    await tester.tap(find.byKey(const ValueKey('change_bag')));
+    await settle(tester);
+    // PIN and current bag are pre-filled.
+    final fields = tester.widgetList<TextField>(find.byType(TextField));
+    expect(fields.any((f) => f.controller?.text == '574201'), isTrue);
+    final bagField = find.byWidgetPredicate((w) => w is TextField && w.controller?.text == 'Bag 12');
+    await tester.enterText(bagField, 'Bag 77');
+    await tester.tap(find.text('Save'));
+    await settle(tester);
+    expect(find.text('Saved – sorting updated'), findsOneWidget);
+    expect(find.text('Bag 77'), findsWidgets);
+  });
+
   testWidgets('Sort screen: Kannada UI and no-scheme warning', (tester) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 2.5;

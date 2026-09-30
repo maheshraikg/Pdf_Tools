@@ -1164,6 +1164,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fDirect => 'Direct closure (Y/N)';
 
   @override
+  String get changeBagHere => 'Change bag for this PIN';
+
+  @override
+  String editRuleX(String rule) {
+    return 'Edit rule: $rule';
+  }
+
+  @override
+  String get savedSortingUpdated => 'Saved – sorting updated';
+
+  @override
+  String get moveRules => 'Move rules to another bag';
+
+  @override
+  String moveRulesTitle(int count, String bag) {
+    return 'Move $count rules from $bag';
+  }
+
+  @override
+  String get moveTo => 'New bag / line';
+
+  @override
+  String get removeOldBag => 'Remove the empty old bag';
+
+  @override
+  String rulesMoved(int count, String bag) {
+    return '$count rules moved to $bag';
+  }
+
+  @override
+  String get move => 'Move';
+
+  @override
   String get dirSource => 'Source';
 
   @override
@@ -1261,4 +1294,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get help8 =>
       'Learn: flashcards with spaced repetition, a timed 20-article quiz, weak areas, and a PIN basics lesson. After a new DMSL, practise only the PINs whose hub changed.';
+
+  @override
+  String get help9Title => 'Sorting changed? Edit it';
+
+  @override
+  String get help9 =>
+      'On the Sort screen tap “Change bag for this PIN” to fix one PIN. For bigger changes open More → Schemes → your scheme: edit, add or delete rules, and in Bags use “Move rules to another bag” when an office moves to a new line. Export the scheme to share it with colleagues.';
 }

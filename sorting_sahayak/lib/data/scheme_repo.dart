@@ -51,12 +51,8 @@ class SchemeRepo {
 
   Future<int> createScheme(Scheme s) => db.insert('schemes', s.toRow());
 
-  Future<void> updateScheme(int id, {String? name, String? office, String? notes}) => db.update(
-    'schemes',
-    {'name': ?name, 'office': ?office, 'notes': ?notes},
-    where: 'id = ?',
-    whereArgs: [id],
-  );
+  Future<void> updateScheme(int id, {String? name, String? office, String? notes}) =>
+      db.update('schemes', {'name': ?name, 'office': ?office, 'notes': ?notes}, where: 'id = ?', whereArgs: [id]);
 
   Future<void> deleteScheme(int id) => db.delete('schemes', where: 'id = ?', whereArgs: [id]);
 
@@ -66,27 +62,22 @@ class SchemeRepo {
   });
 
   /// Saves a complete imported scheme in one transaction; returns its id.
-  Future<int> saveScheme(Scheme s, List<BagRule> rules, List<Bag> bags, {bool activate = true}) =>
-      db.transaction((t) async {
-        if (activate) await t.update('schemes', {'active': 0});
-        final id = await t.insert('schemes', Scheme(
-          name: s.name,
-          office: s.office,
-          notes: s.notes,
-          importedAt: DateTime.now(),
-          active: activate,
-          isSample: s.isSample,
-        ).toRow());
-        final b = t.batch();
-        for (final r in rules) {
-          b.insert('rules', r.toRow(id));
-        }
-        for (final bag in bags) {
-          b.insert('bags', _bagRow(id, bag), conflictAlgorithm: ConflictAlgorithm.replace);
-        }
-        await b.commit(noResult: true);
-        return id;
-      });
+  Future<int> saveScheme(Scheme s, List<BagRule> rules, List<Bag> bags, {bool activate = true}) => db.transaction((t) async {
+    if (activate) await t.update('schemes', {'active': 0});
+    final id = await t.insert(
+      'schemes',
+      Scheme(name: s.name, office: s.office, notes: s.notes, importedAt: DateTime.now(), active: activate, isSample: s.isSample).toRow(),
+    );
+    final b = t.batch();
+    for (final r in rules) {
+      b.insert('rules', r.toRow(id));
+    }
+    for (final bag in bags) {
+      b.insert('bags', _bagRow(id, bag), conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+    await b.commit(noResult: true);
+    return id;
+  });
 
   // ------------------------------------------------------------------ rules
 
@@ -124,12 +115,25 @@ class SchemeRepo {
   };
 
   Future<List<Bag>> bags(int schemeId) async =>
-      (await db.query('bags', where: 'scheme_id = ?', whereArgs: [schemeId], orderBy: 'sort_order, bag_code'))
-          .map(Bag.fromRow)
-          .toList();
+      (await db.query('bags', where: 'scheme_id = ?', whereArgs: [schemeId], orderBy: 'sort_order, bag_code')).map(Bag.fromRow).toList();
 
-  Future<void> upsertBag(int schemeId, Bag b) =>
-      db.insert('bags', _bagRow(schemeId, b), conflictAlgorithm: ConflictAlgorithm.replace);
+  Future<void> upsertBag(int schemeId, Bag b) => db.insert('bags', _bagRow(schemeId, b), conflictAlgorithm: ConflictAlgorithm.replace);
+
+  /// Points every rule of bag [from] at bag [to] (created if missing), e.g.
+  /// when an office moves to another line. Returns the number of rules moved.
+  Future<int> moveRules(int schemeId, String from, Bag to, {bool removeOld = true}) => db.transaction((t) async {
+    await t.insert('bags', _bagRow(schemeId, to), conflictAlgorithm: ConflictAlgorithm.ignore);
+    final n = await t.update(
+      'rules',
+      {'bag_code': to.code, if (to.name.isNotEmpty) 'bag_name': to.name},
+      where: 'scheme_id = ? AND bag_code = ?',
+      whereArgs: [schemeId, from],
+    );
+    if (removeOld && from != to.code) {
+      await t.delete('bags', where: 'scheme_id = ? AND bag_code = ?', whereArgs: [schemeId, from]);
+    }
+    return n;
+  });
 
   /// Deletes a bag; rules pointing at it are deleted too.
   Future<void> deleteBag(int schemeId, String code) => db.transaction((t) async {
@@ -140,9 +144,7 @@ class SchemeRepo {
   // -------------------------------------------------------------- air codes
 
   Future<List<AirCodeRule>> airCodes(int schemeId) async =>
-      (await db.query('air_codes', where: 'scheme_id = ?', whereArgs: [schemeId], orderBy: 'id'))
-          .map(AirCodeRule.fromRow)
-          .toList();
+      (await db.query('air_codes', where: 'scheme_id = ?', whereArgs: [schemeId], orderBy: 'id')).map(AirCodeRule.fromRow).toList();
 
   /// Replaces the air code table of a scheme.
   Future<void> replaceAirCodes(int schemeId, List<AirCodeRule> rules) => db.transaction((t) async {
@@ -164,28 +166,25 @@ class SchemeRepo {
   )).map(DmslVersion.fromRow).toList();
 
   Future<List<HubRule>> hubRules(int versionId) async =>
-      (await db.query('hub_rules', where: 'version_id = ?', whereArgs: [versionId], orderBy: 'id'))
-          .map(HubRule.fromRow)
-          .toList();
+      (await db.query('hub_rules', where: 'version_id = ?', whereArgs: [versionId], orderBy: 'id')).map(HubRule.fromRow).toList();
 
   /// Stores a new DMSL version and makes it the active one.
-  Future<int> addDmslVersion(int schemeId, String name, DateTime? validFrom, List<HubRule> rules) =>
-      db.transaction((t) async {
-        await t.update('dmsl_versions', {'active': 0}, where: 'scheme_id = ?', whereArgs: [schemeId]);
-        final id = await t.insert('dmsl_versions', {
-          'scheme_id': schemeId,
-          'version_name': name,
-          'valid_from': validFrom?.toIso8601String().substring(0, 10),
-          'imported_at': DateTime.now().toIso8601String(),
-          'active': 1,
-        });
-        final b = t.batch();
-        for (final r in rules) {
-          b.insert('hub_rules', r.toRow(id));
-        }
-        await b.commit(noResult: true);
-        return id;
-      });
+  Future<int> addDmslVersion(int schemeId, String name, DateTime? validFrom, List<HubRule> rules) => db.transaction((t) async {
+    await t.update('dmsl_versions', {'active': 0}, where: 'scheme_id = ?', whereArgs: [schemeId]);
+    final id = await t.insert('dmsl_versions', {
+      'scheme_id': schemeId,
+      'version_name': name,
+      'valid_from': validFrom?.toIso8601String().substring(0, 10),
+      'imported_at': DateTime.now().toIso8601String(),
+      'active': 1,
+    });
+    final b = t.batch();
+    for (final r in rules) {
+      b.insert('hub_rules', r.toRow(id));
+    }
+    await b.commit(noResult: true);
+    return id;
+  });
 
   Future<void> setActiveDmsl(int schemeId, int versionId) => db.transaction((t) async {
     await t.update('dmsl_versions', {'active': 0}, where: 'scheme_id = ?', whereArgs: [schemeId]);

@@ -649,6 +649,42 @@
   "fL2Hub": "L2 hub",
   "fL1Hub": "L1 hub",
   "fDirect": "Direct closure (Y/N)",
+  "changeBagHere": "Change bag for this PIN",
+  "editRuleX": "Edit rule: {rule}",
+  "@editRuleX": {
+    "placeholders": {
+      "rule": {
+        "type": "String"
+      }
+    }
+  },
+  "savedSortingUpdated": "Saved – sorting updated",
+  "moveRules": "Move rules to another bag",
+  "moveRulesTitle": "Move {count} rules from {bag}",
+  "@moveRulesTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "bag": {
+        "type": "String"
+      }
+    }
+  },
+  "moveTo": "New bag / line",
+  "removeOldBag": "Remove the empty old bag",
+  "rulesMoved": "{count} rules moved to {bag}",
+  "@rulesMoved": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "bag": {
+        "type": "String"
+      }
+    }
+  },
+  "move": "Move",
   "dirSource": "Source",
   "dirRows": "Offices",
   "dirFileDate": "Data file date",
@@ -684,5 +720,7 @@
   "help7Title": "Count articles per bag",
   "help7": "Bulk → Start session. Enter PINs one after another; each one flashes its bag colour and adds to the count. Undo the last entry, fix unresolved ones, then share the summary to tally with the manifest.",
   "help8Title": "Practise",
-  "help8": "Learn: flashcards with spaced repetition, a timed 20-article quiz, weak areas, and a PIN basics lesson. After a new DMSL, practise only the PINs whose hub changed."
+  "help8": "Learn: flashcards with spaced repetition, a timed 20-article quiz, weak areas, and a PIN basics lesson. After a new DMSL, practise only the PINs whose hub changed.",
+  "help9Title": "Sorting changed? Edit it",
+  "help9": "On the Sort screen tap “Change bag for this PIN” to fix one PIN. For bigger changes open More → Schemes → your scheme: edit, add or delete rules, and in Bags use “Move rules to another bag” when an office moves to a new line. Export the scheme to share it with colleagues."
 }
