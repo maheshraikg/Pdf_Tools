@@ -10,7 +10,7 @@ class AppLocalizationsKn extends AppLocalizations {
   AppLocalizationsKn([String locale = 'kn']) : super(locale);
 
   @override
-  String get appTitle => 'ಸಾರ್ಟಿಂಗ್ ಸಹಾಯಕ';
+  String get appTitle => 'ಪಿಒ ಸಾರ್ಟಿಂಗ್';
 
   @override
   String get navSort => 'ಸಾರ್ಟ್';
@@ -335,10 +335,10 @@ class AppLocalizationsKn extends AppLocalizations {
       'ಕೀಪ್ಯಾಡ್‌ನಲ್ಲಿ ಪಿನ್ ಟೈಪ್ ಮಾಡಿ. ಟೈಪ್ ಮಾಡುತ್ತಿದ್ದಂತೆ ಚೀಲ ಕಾಣಿಸುತ್ತದೆ.';
 
   @override
-  String get bag => 'ಚೀಲ';
+  String get bag => 'ಲೈನ್ / ಚೀಲ';
 
   @override
-  String get bags => 'ಚೀಲಗಳು';
+  String get bags => 'ಲೈನ್‌ಗಳು / ಚೀಲಗಳು';
 
   @override
   String get section => 'ವಿಭಾಗ';
@@ -1140,10 +1140,10 @@ class AppLocalizationsKn extends AppLocalizations {
   String get fState => 'ರಾಜ್ಯ';
 
   @override
-  String get fBagCode => 'ಚೀಲ ಸಂಖ್ಯೆ / ಕೋಡ್';
+  String get fBagCode => 'ಲೈನ್ / ಚೀಲ (ಉದಾ. Puttur Line)';
 
   @override
-  String get fBagName => 'ಚೀಲದ ಹೆಸರು';
+  String get fBagName => 'ಹೆಚ್ಚುವರಿ ಹೆಸರು (ಉದಾ. ರಾಜ್ಯ)';
 
   @override
   String get fSection => 'ವಿಭಾಗ';
@@ -1179,7 +1179,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get fDirect => 'ನೇರ ಮುಚ್ಚುವಿಕೆ (Y/N)';
 
   @override
-  String get changeBagHere => 'ಈ ಪಿನ್‌ನ ಚೀಲ ಬದಲಿಸಿ';
+  String get changeBagHere => 'ಈ ಪಿನ್‌ನ ಲೈನ್ / ಚೀಲ ಬದಲಿಸಿ';
 
   @override
   String editRuleX(String rule) {
@@ -1190,7 +1190,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get savedSortingUpdated => 'ಉಳಿಸಲಾಗಿದೆ – ಸಾರ್ಟಿಂಗ್ ನವೀಕರಿಸಲಾಗಿದೆ';
 
   @override
-  String get moveRules => 'ನಿಯಮಗಳನ್ನು ಬೇರೆ ಚೀಲಕ್ಕೆ ಸರಿಸಿ';
+  String get moveRules => 'ನಿಯಮಗಳನ್ನು ಬೇರೆ ಲೈನ್ / ಚೀಲಕ್ಕೆ ಸರಿಸಿ';
 
   @override
   String moveRulesTitle(int count, String bag) {

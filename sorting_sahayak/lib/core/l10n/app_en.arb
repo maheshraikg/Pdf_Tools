@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appTitle": "Sorting Sahayak",
+  "appTitle": "PO Sorting",
   "navSort": "Sort",
   "navFindPin": "Find PIN",
   "navBulk": "Bulk",
@@ -139,8 +139,8 @@
   "placeOnAddress": "City / office on the address",
   "recentLookups": "Recent lookups",
   "sortHint": "Type a PIN on the keypad. The bag appears as you type.",
-  "bag": "Bag",
-  "bags": "Bags",
+  "bag": "Line / Bag",
+  "bags": "Lines / Bags",
   "section": "Section",
   "matchedBy": "Matched by {type}: {key}",
   "@matchedBy": {
@@ -640,8 +640,8 @@
   "fOffice": "Office",
   "fDistrict": "District",
   "fState": "State",
-  "fBagCode": "Bag no. / code",
-  "fBagName": "Bag name",
+  "fBagCode": "Line / bag (e.g. Puttur Line, BANGALORE)",
+  "fBagName": "Extra name (e.g. state)",
   "fSection": "Section",
   "fRemarks": "Remarks",
   "fCategory": "Mail category",
@@ -653,7 +653,7 @@
   "fL2Hub": "L2 hub",
   "fL1Hub": "L1 hub",
   "fDirect": "Direct closure (Y/N)",
-  "changeBagHere": "Change bag for this PIN",
+  "changeBagHere": "Change line / bag for this PIN",
   "editRuleX": "Edit rule: {rule}",
   "@editRuleX": {
     "placeholders": {
@@ -663,7 +663,7 @@
     }
   },
   "savedSortingUpdated": "Saved – sorting updated",
-  "moveRules": "Move rules to another bag",
+  "moveRules": "Move rules to another line / bag",
   "moveRulesTitle": "Move {count} rules from {bag}",
   "@moveRulesTitle": {
     "placeholders": {

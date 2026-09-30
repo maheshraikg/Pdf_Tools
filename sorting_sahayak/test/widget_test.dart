@@ -129,7 +129,7 @@ void main() {
     final h = await Harness.create(tester, sample: false);
     await tester.pumpWidget(h.wrap(const SortScreen(), locale: const Locale('kn')));
     await settle(tester);
-    expect(find.text('ಸಾರ್ಟ್'), findsOneWidget);
+    expect(find.text('ಪಿಒ ಸಾರ್ಟಿಂಗ್'), findsOneWidget);
     expect(find.text('ಇನ್ನೂ ಸಾರ್ಟಿಂಗ್ ಸ್ಕೀಮ್ ಇಲ್ಲ'), findsOneWidget);
     expect(find.text('TD'), findsOneWidget);
     expect(find.text('ನಾನ್-TD'), findsOneWidget);

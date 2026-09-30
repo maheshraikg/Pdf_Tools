@@ -190,7 +190,8 @@ class SortScreenState extends State<SortScreen> {
     final matches = scheme == null ? const <LiveMatch>[] : liveMatches(scheme.rules, _query, category: settings.category);
     return Scaffold(
       appBar: AppBar(
-        title: Text(l.navSort),
+        title: Text(l.appTitle),
+        scrolledUnderElevation: 0,
         actions: [
           if (scheme?.scheme.isSample ?? false) const Padding(padding: EdgeInsets.only(right: 4), child: SampleChip()),
           IconButton(
@@ -212,31 +213,38 @@ class SortScreenState extends State<SortScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // TD / Non-TD (plus any custom categories).
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-              child: _ModeSwitch(
-                modes: services.categories,
-                selected: services.categories.contains(settings.category) ? settings.category : services.categories.first,
-                onChanged: (c) {
-                  settings.category = c;
-                  _lastSpoken = '';
-                  _resolve();
-                },
+            // Navy header: TD / Non-TD and the big search field.
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(12, 4, 12, 14),
+              decoration: BoxDecoration(
+                color: Theme.of(context).appBarTheme.backgroundColor,
+                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-              child: _SearchField(
-                controller: _input,
-                focusNode: _focus,
-                letters: _letters,
-                error: r != null && r.complete && !r.valid,
-                onChanged: _onChanged,
-                onClear: _clear,
-                onVoice: _voice,
-                onScan: _scan,
-                onToggleKeyboard: _toggleKeyboard,
+              child: Column(
+                children: [
+                  _ModeSwitch(
+                    modes: services.categories,
+                    selected: services.categories.contains(settings.category) ? settings.category : services.categories.first,
+                    onChanged: (c) {
+                      settings.category = c;
+                      _lastSpoken = '';
+                      _resolve();
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  _SearchField(
+                    controller: _input,
+                    focusNode: _focus,
+                    letters: _letters,
+                    error: r != null && r.complete && !r.valid,
+                    onChanged: _onChanged,
+                    onClear: _clear,
+                    onVoice: _voice,
+                    onScan: _scan,
+                    onToggleKeyboard: _toggleKeyboard,
+                  ),
+                ],
               ),
             ),
             if (_placeOpen)
@@ -402,7 +410,8 @@ class _SearchField extends StatelessWidget {
   }
 }
 
-/// Printed-list style rows: "678 → COIMBATORE · Tamil Nadu".
+/// Printed-list style results, grouped by bag / line:
+/// "KOZHIKODE · Kerala  [673] [674] [675] [676]".
 class _LiveList extends StatelessWidget {
   const _LiveList({required this.matches, required this.scheme, required this.query, required this.onPick});
 
@@ -422,14 +431,19 @@ class _LiveList extends StatelessWidget {
         child: Text(l.noMatchingRules, style: t.titleMedium?.copyWith(color: c.onSurfaceVariant)),
       );
     }
+    final groups = <String, List<LiveMatch>>{};
+    for (final m in matches) {
+      (groups[m.rule.bagCode] ??= []).add(m);
+    }
+    final entries = groups.entries.toList();
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          for (final (i, m) in matches.indexed) ...[
-            _LiveRow(match: m, bag: scheme.bagFor(m.rule), highlight: i == 0 && m.covers, onTap: () => onPick(m)),
-            const SizedBox(height: 6),
+          for (final (i, e) in entries.indexed) ...[
+            _LiveGroup(bag: scheme.bagFor(e.value.first.rule), matches: e.value, highlight: i == 0 && e.value.first.covers, onPick: onPick),
+            const SizedBox(height: 8),
           ],
         ],
       ),
@@ -437,66 +451,42 @@ class _LiveList extends StatelessWidget {
   }
 }
 
-class _LiveRow extends StatelessWidget {
-  const _LiveRow({required this.match, required this.bag, required this.highlight, required this.onTap});
+class _LiveGroup extends StatelessWidget {
+  const _LiveGroup({required this.bag, required this.matches, required this.highlight, required this.onPick});
 
-  final LiveMatch match;
   final Bag bag;
+  final List<LiveMatch> matches;
   final bool highlight;
-  final VoidCallback onTap;
+  final ValueChanged<LiveMatch> onPick;
 
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     final c = Theme.of(context).colorScheme;
     final colour = bagColour(context, bag);
-    final bg = highlight ? colour : Color.alphaBlend(colour.withValues(alpha: 0.10), c.surfaceContainerLowest);
+    final bg = highlight ? colour : c.surfaceContainerLowest;
     final fg = highlight ? onColour(colour) : c.onSurface;
-    final r = match.rule;
-    final sub = [
-      if (bag.name.isNotEmpty && bag.name != bag.code) bag.name,
-      if (r.section.isNotEmpty) '#${r.section}',
-      if (r.remarks.isNotEmpty) r.remarks,
-    ].join(' · ');
-    return Material(
-      color: bg,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(0, 10, 12, 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            border: highlight ? null : Border.all(color: c.outlineVariant),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 6,
-                height: 44,
-                margin: const EdgeInsets.only(right: 10),
-                decoration: BoxDecoration(
-                  color: highlight ? fg.withValues(alpha: 0.6) : colour,
-                  borderRadius: const BorderRadius.horizontal(right: Radius.circular(4)),
-                ),
-              ),
-              ConstrainedBox(
-                constraints: const BoxConstraints(minWidth: 72, maxWidth: 130),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    match.key,
-                    style: t.titleLarge?.copyWith(fontWeight: FontWeight.w900, color: fg),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Icon(Icons.arrow_forward, size: 20, color: fg.withValues(alpha: 0.7)),
-              ),
-              Expanded(
+    final sections = {
+      for (final m in matches)
+        if (m.rule.section.isNotEmpty) m.rule.section,
+    };
+    final sub = [if (bag.name.isNotEmpty && bag.name != bag.code) bag.name, if (sections.length == 1) '#${sections.first}'].join(' · ');
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(18),
+        border: highlight ? null : Border.all(color: c.outlineVariant),
+        boxShadow: highlight ? [BoxShadow(color: colour.withValues(alpha: 0.35), blurRadius: 14, offset: const Offset(0, 6))] : null,
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(width: 8, color: highlight ? Colors.white.withValues(alpha: 0.35) : colour),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -504,19 +494,59 @@ class _LiveRow extends StatelessWidget {
                       bag.code,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: t.titleLarge?.copyWith(fontWeight: FontWeight.w900, color: fg),
+                      style: t.headlineSmall?.copyWith(fontWeight: FontWeight.w900, color: fg),
                     ),
                     if (sub.isNotEmpty)
                       Text(
                         sub,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: t.bodyMedium?.copyWith(color: fg.withValues(alpha: 0.85)),
+                        style: t.titleSmall?.copyWith(color: fg.withValues(alpha: 0.8), fontWeight: FontWeight.w600),
                       ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        for (final m in matches.take(24)) _KeyChip(match: m, colour: colour, onDark: highlight, onTap: () => onPick(m)),
+                        if (matches.length > 24) Text('+${matches.length - 24}', style: t.titleMedium?.copyWith(color: fg)),
+                      ],
+                    ),
                   ],
                 ),
               ),
-            ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _KeyChip extends StatelessWidget {
+  const _KeyChip({required this.match, required this.colour, required this.onDark, required this.onTap});
+
+  final LiveMatch match;
+  final Color colour;
+  final bool onDark;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = Theme.of(context).colorScheme;
+    final bg = onDark ? Colors.white.withValues(alpha: 0.22) : Color.alphaBlend(colour.withValues(alpha: 0.14), c.surfaceContainerLowest);
+    final fg = onDark ? onColour(colour) : c.onSurface;
+    final r = match.rule;
+    final label = r.match.type == RuleType.exact && r.remarks.isNotEmpty ? '${match.key}  ${r.remarks}' : match.key;
+    return Material(
+      color: bg,
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          child: Text(
+            label,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: fg, fontFeatures: const [FontFeature.tabularFigures()]),
           ),
         ),
       ),
@@ -535,7 +565,6 @@ class _ModeSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final c = Theme.of(context).colorScheme;
     Widget seg(String m) {
       final on = m == selected;
       return Semantics(
@@ -543,20 +572,20 @@ class _ModeSwitch extends StatelessWidget {
         button: true,
         label: categoryLabel(l, m),
         child: Material(
-          color: on ? c.primary : Colors.transparent,
+          color: on ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           child: InkWell(
             key: ValueKey('mode_$m'),
             borderRadius: BorderRadius.circular(12),
             onTap: () => onChanged(m),
             child: Container(
-              height: 46,
+              height: 44,
               padding: const EdgeInsets.symmetric(horizontal: 18),
               alignment: Alignment.center,
               child: Text(
                 categoryLabel(l, m),
                 maxLines: 1,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: on ? c.onPrimary : c.onSurfaceVariant),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: on ? kNavy : Colors.white.withValues(alpha: 0.8)),
               ),
             ),
           ),
@@ -564,7 +593,7 @@ class _ModeSwitch extends StatelessWidget {
       );
     }
 
-    final box = BoxDecoration(color: c.surfaceContainerHigh, borderRadius: BorderRadius.circular(14));
+    final box = BoxDecoration(color: Colors.white.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(14));
     if (modes.length <= 3) {
       return Container(
         padding: const EdgeInsets.all(4),

@@ -10,7 +10,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Sorting Sahayak';
+  String get appTitle => 'PO Sorting';
 
   @override
   String get navSort => 'Sort';
@@ -334,10 +334,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Type a PIN on the keypad. The bag appears as you type.';
 
   @override
-  String get bag => 'Bag';
+  String get bag => 'Line / Bag';
 
   @override
-  String get bags => 'Bags';
+  String get bags => 'Lines / Bags';
 
   @override
   String get section => 'Section';
@@ -1137,10 +1137,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fState => 'State';
 
   @override
-  String get fBagCode => 'Bag no. / code';
+  String get fBagCode => 'Line / bag (e.g. Puttur Line, BANGALORE)';
 
   @override
-  String get fBagName => 'Bag name';
+  String get fBagName => 'Extra name (e.g. state)';
 
   @override
   String get fSection => 'Section';
@@ -1176,7 +1176,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fDirect => 'Direct closure (Y/N)';
 
   @override
-  String get changeBagHere => 'Change bag for this PIN';
+  String get changeBagHere => 'Change line / bag for this PIN';
 
   @override
   String editRuleX(String rule) {
@@ -1187,7 +1187,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savedSortingUpdated => 'Saved – sorting updated';
 
   @override
-  String get moveRules => 'Move rules to another bag';
+  String get moveRules => 'Move rules to another line / bag';
 
   @override
   String moveRulesTitle(int count, String bag) {

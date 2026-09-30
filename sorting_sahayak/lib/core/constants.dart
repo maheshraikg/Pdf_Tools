@@ -1,8 +1,8 @@
 /// App-wide constants.
 library;
 
-const String kAppNameEn = 'Sorting Sahayak';
-const String kAppNameKn = 'ಸಾರ್ಟಿಂಗ್ ಸಹಾಯಕ';
+const String kAppNameEn = 'PO Sorting';
+const String kAppNameKn = 'ಪಿಒ ಸಾರ್ಟಿಂಗ್';
 const String kAppVersion = '1.0.0';
 
 /// Shown verbatim on the About screen (plus translations).

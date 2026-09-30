@@ -1,4 +1,4 @@
-# Sorting Sahayak (ಸಾರ್ಟಿಂಗ್ ಸಹಾಯಕ)
+# PO Sorting (ಪಿಒ ಸಾರ್ಟಿಂಗ್)
 
 A fully offline Android helper for postal sorting assistants in India. It sorts
 articles by PIN code and place name using **your own office's sorting scheme**,

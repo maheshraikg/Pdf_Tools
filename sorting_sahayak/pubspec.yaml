@@ -1,5 +1,5 @@
 name: sorting_sahayak
-description: "Sorting Sahayak – offline helper for postal sorting assistants (independent, not an official Department of Posts app)."
+description: "PO Sorting – offline helper for postal sorting assistants (independent, not an official Department of Posts app)."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev

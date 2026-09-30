@@ -13,10 +13,10 @@ import 'labels.dart';
 import 'pin_utils.dart';
 import 'theme.dart';
 
-Color bagColour(BuildContext context, Bag? bag) =>
-    parseColour(bag?.colour) ?? Theme.of(context).colorScheme.primaryContainer;
+Color bagColour(BuildContext context, Bag? bag) => parseColour(bag?.colour) ?? Theme.of(context).colorScheme.primaryContainer;
 
-/// The final bag in huge bold text on the bag colour.
+/// The final bag in huge bold text on the bag colour, with the position
+/// (section) in a round badge – the main answer of the app.
 class BagCard extends StatelessWidget {
   const BagCard({super.key, required this.bag, this.rule, this.level, this.compact = false});
 
@@ -31,44 +31,108 @@ class BagCard extends StatelessWidget {
     final bg = bagColour(context, bag);
     final fg = onColour(bg);
     final t = Theme.of(context).textTheme;
+    final dark = Color.lerp(bg, Colors.black, 0.28)!;
+    final section = rule?.section ?? '';
+    final remarks = rule?.remarks ?? '';
     return Semantics(
-      label: '${l.bag}: ${bag.label}',
-      child: Card(
-        color: bg,
-        margin: EdgeInsets.zero,
-        child: Padding(
-          padding: EdgeInsets.all(compact ? 12 : 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  bag.code,
-                  style: (compact ? t.headlineMedium : t.displayMedium)?.copyWith(color: fg, fontWeight: FontWeight.w900),
-                ),
-              ),
-              if (bag.name.isNotEmpty)
-                Text(bag.name, style: (compact ? t.titleMedium : t.headlineSmall)?.copyWith(color: fg, fontWeight: FontWeight.w700)),
-              if (rule != null && (rule!.section.isNotEmpty || rule!.remarks.isNotEmpty || level != null)) ...[
-                const SizedBox(height: 6),
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 4,
-                  children: [
-                    if (rule!.section.isNotEmpty) Text('${l.section}: ${rule!.section}', style: t.titleMedium?.copyWith(color: fg)),
-                    if (rule!.remarks.isNotEmpty) Text(rule!.remarks, style: t.bodyLarge?.copyWith(color: fg)),
-                    if (level != null)
-                      Text(
-                        l.matchedBy(ruleTypeLabel(l, level!), rule!.describe),
-                        style: t.bodySmall?.copyWith(color: fg.withValues(alpha: 0.85)),
+      label: '${l.bag}: ${bag.label}${section.isEmpty ? '' : ', ${l.section} $section'}',
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [bg, dark]),
+          borderRadius: BorderRadius.circular(compact ? 16 : 24),
+          boxShadow: compact ? null : [BoxShadow(color: bg.withValues(alpha: 0.35), blurRadius: 18, offset: const Offset(0, 8))],
+        ),
+        padding: EdgeInsets.fromLTRB(compact ? 14 : 20, compact ? 12 : 18, compact ? 14 : 16, compact ? 12 : 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (!compact)
+                        Text(
+                          l.bag.toUpperCase(),
+                          style: t.labelMedium?.copyWith(color: fg.withValues(alpha: 0.8), letterSpacing: 1.5, fontWeight: FontWeight.w800),
+                        ),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          bag.code,
+                          style: (compact ? t.headlineMedium : t.displayMedium)?.copyWith(
+                            color: fg,
+                            fontWeight: FontWeight.w900,
+                            height: 1.1,
+                          ),
+                        ),
                       ),
-                  ],
+                      if (bag.name.isNotEmpty && bag.name != bag.code)
+                        Text(
+                          bag.name,
+                          style: (compact ? t.titleMedium : t.headlineSmall)?.copyWith(color: fg, fontWeight: FontWeight.w700),
+                        ),
+                    ],
+                  ),
                 ),
+                if (section.isNotEmpty && !compact) ...[
+                  const SizedBox(width: 12),
+                  Container(
+                    width: 76,
+                    height: 76,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: fg.withValues(alpha: 0.4), width: 3),
+                    ),
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          l.section,
+                          style: t.labelSmall?.copyWith(color: dark, fontWeight: FontWeight.w700),
+                        ),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            child: Text(
+                              section,
+                              style: t.headlineMedium?.copyWith(color: dark, fontWeight: FontWeight.w900, height: 1),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
+            ),
+            if (compact && section.isNotEmpty) Text('${l.section}: $section', style: t.titleMedium?.copyWith(color: fg)),
+            if (remarks.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Icon(Icons.local_post_office_outlined, size: 20, color: fg.withValues(alpha: 0.9)),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      remarks,
+                      style: t.titleMedium?.copyWith(color: fg, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
             ],
-          ),
+            if (rule != null && level != null) ...[
+              const SizedBox(height: 6),
+              Text(l.matchedBy(ruleTypeLabel(l, level!), rule!.describe), style: t.bodySmall?.copyWith(color: fg.withValues(alpha: 0.8))),
+            ],
+          ],
         ),
       ),
     );
@@ -109,8 +173,11 @@ class ConnectivityBadge extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(
                   text,
-                  style: (large ? Theme.of(context).textTheme.headlineMedium : Theme.of(context).textTheme.titleMedium)
-                      ?.copyWith(color: fg, fontWeight: FontWeight.w900, letterSpacing: 2),
+                  style: (large ? Theme.of(context).textTheme.headlineMedium : Theme.of(context).textTheme.titleMedium)?.copyWith(
+                    color: fg,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                  ),
                 ),
               ],
             ),
@@ -119,7 +186,10 @@ class ConnectivityBadge extends StatelessWidget {
         if (defaulted)
           Padding(
             padding: const EdgeInsets.only(top: 4),
-            child: Text(l.connectivityDefaulted, style: TextStyle(color: warningColor(context), fontWeight: FontWeight.w600)),
+            child: Text(
+              l.connectivityDefaulted,
+              style: TextStyle(color: warningColor(context), fontWeight: FontWeight.w600),
+            ),
           ),
       ],
     );
@@ -261,14 +331,21 @@ class OfficeTile extends StatelessWidget {
       subtitle: Text.rich(
         TextSpan(
           children: [
-            TextSpan(text: '${office.pin} · ', style: const TextStyle(fontWeight: FontWeight.w800)),
+            TextSpan(
+              text: '${office.pin} · ',
+              style: const TextStyle(fontWeight: FontWeight.w800),
+            ),
             TextSpan(text: '${officeTypeLabel(l, office.officeType)} · '),
             TextSpan(
               text: office.delivery ? l.delivery : l.nonDelivery,
               style: office.delivery ? null : TextStyle(color: warn, fontWeight: FontWeight.w700),
             ),
             TextSpan(text: '\n${office.district}, ${office.state}'),
-            if (subtitleExtra != null) TextSpan(text: '\n$subtitleExtra', style: const TextStyle(fontWeight: FontWeight.w700)),
+            if (subtitleExtra != null)
+              TextSpan(
+                text: '\n$subtitleExtra',
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
           ],
         ),
       ),
@@ -296,32 +373,39 @@ class PinBreakdownView extends StatelessWidget {
     ];
     return Card(
       margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(l.pinStructure, style: Theme.of(context).textTheme.labelLarge),
-            for (final r in rows)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 3),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 72,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerLeft,
-                        child: Text(r.$1, maxLines: 1, softWrap: false, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18, fontFeatures: [FontFeature.tabularFigures()])),
+      clipBehavior: Clip.antiAlias,
+      child: ExpansionTile(
+        dense: true,
+        shape: const Border(),
+        leading: const Icon(Icons.pin_outlined),
+        title: Text(l.pinStructure, style: Theme.of(context).textTheme.labelLarge),
+        childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
+        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (final r in rows)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 72,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        r.$1,
+                        maxLines: 1,
+                        softWrap: false,
+                        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18, fontFeatures: [FontFeature.tabularFigures()]),
                       ),
                     ),
-                    Expanded(child: Text('${r.$2}: ${r.$3}')),
-                  ],
-                ),
+                  ),
+                  Expanded(child: Text('${r.$2}: ${r.$3}')),
+                ],
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }
@@ -340,14 +424,22 @@ class WarningBanner extends StatelessWidget {
     return Card(
       margin: EdgeInsets.zero,
       color: c.withValues(alpha: 0.12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: c, width: 2)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: c, width: 2),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
             Icon(icon, color: c, size: 32),
             const SizedBox(width: 12),
-            Expanded(child: Text(text, style: TextStyle(color: c, fontWeight: FontWeight.w700, fontSize: 17))),
+            Expanded(
+              child: Text(
+                text,
+                style: TextStyle(color: c, fontWeight: FontWeight.w700, fontSize: 17),
+              ),
+            ),
             ?action,
           ],
         ),
@@ -361,7 +453,10 @@ class SampleChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Chip(
-    label: Text(AppLocalizations.of(context).sampleBadge, style: const TextStyle(fontWeight: FontWeight.w800, color: Colors.black)),
+    label: Text(
+      AppLocalizations.of(context).sampleBadge,
+      style: const TextStyle(fontWeight: FontWeight.w800, color: Colors.black),
+    ),
     backgroundColor: kAmber,
     visualDensity: VisualDensity.compact,
   );
@@ -406,5 +501,6 @@ Future<bool> confirm(BuildContext context, String message) async {
   return r ?? false;
 }
 
-void toast(BuildContext context, String text) =>
-    ScaffoldMessenger.of(context)..hideCurrentSnackBar()..showSnackBar(SnackBar(content: Text(text)));
+void toast(BuildContext context, String text) => ScaffoldMessenger.of(context)
+  ..hideCurrentSnackBar()
+  ..showSnackBar(SnackBar(content: Text(text)));

@@ -10,7 +10,7 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
-  String get appTitle => 'सॉर्टिंग सहायक';
+  String get appTitle => 'पीओ सॉर्टिंग';
 
   @override
   String get navSort => 'सॉर्ट';
@@ -334,10 +334,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get sortHint => 'कीपैड पर पिन टाइप करें। टाइप करते ही बैग दिखेगा।';
 
   @override
-  String get bag => 'बैग';
+  String get bag => 'लाइन / बैग';
 
   @override
-  String get bags => 'बैग';
+  String get bags => 'लाइनें / बैग';
 
   @override
   String get section => 'अनुभाग';
@@ -1139,10 +1139,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get fState => 'राज्य';
 
   @override
-  String get fBagCode => 'बैग नं. / कोड';
+  String get fBagCode => 'लाइन / बैग (जैसे Puttur Line)';
 
   @override
-  String get fBagName => 'बैग का नाम';
+  String get fBagName => 'अतिरिक्त नाम (जैसे राज्य)';
 
   @override
   String get fSection => 'अनुभाग';
@@ -1178,7 +1178,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get fDirect => 'सीधा बंद (Y/N)';
 
   @override
-  String get changeBagHere => 'इस पिन का थैला बदलें';
+  String get changeBagHere => 'इस पिन की लाइन / बैग बदलें';
 
   @override
   String editRuleX(String rule) {
@@ -1189,7 +1189,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get savedSortingUpdated => 'सहेजा गया – सॉर्टिंग अपडेट हुई';
 
   @override
-  String get moveRules => 'नियम दूसरे थैले में ले जाएँ';
+  String get moveRules => 'नियम दूसरी लाइन / बैग में ले जाएँ';
 
   @override
   String moveRulesTitle(int count, String bag) {

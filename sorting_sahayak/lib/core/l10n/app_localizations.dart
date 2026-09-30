@@ -103,7 +103,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'Sorting Sahayak'**
+  /// **'PO Sorting'**
   String get appTitle;
 
   /// No description provided for @navSort.
@@ -709,13 +709,13 @@ abstract class AppLocalizations {
   /// No description provided for @bag.
   ///
   /// In en, this message translates to:
-  /// **'Bag'**
+  /// **'Line / Bag'**
   String get bag;
 
   /// No description provided for @bags.
   ///
   /// In en, this message translates to:
-  /// **'Bags'**
+  /// **'Lines / Bags'**
   String get bags;
 
   /// No description provided for @section.
@@ -2125,13 +2125,13 @@ abstract class AppLocalizations {
   /// No description provided for @fBagCode.
   ///
   /// In en, this message translates to:
-  /// **'Bag no. / code'**
+  /// **'Line / bag (e.g. Puttur Line, BANGALORE)'**
   String get fBagCode;
 
   /// No description provided for @fBagName.
   ///
   /// In en, this message translates to:
-  /// **'Bag name'**
+  /// **'Extra name (e.g. state)'**
   String get fBagName;
 
   /// No description provided for @fSection.
@@ -2203,7 +2203,7 @@ abstract class AppLocalizations {
   /// No description provided for @changeBagHere.
   ///
   /// In en, this message translates to:
-  /// **'Change bag for this PIN'**
+  /// **'Change line / bag for this PIN'**
   String get changeBagHere;
 
   /// No description provided for @editRuleX.
@@ -2221,7 +2221,7 @@ abstract class AppLocalizations {
   /// No description provided for @moveRules.
   ///
   /// In en, this message translates to:
-  /// **'Move rules to another bag'**
+  /// **'Move rules to another line / bag'**
   String get moveRules;
 
   /// No description provided for @moveRulesTitle.
