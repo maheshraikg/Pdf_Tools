@@ -50,4 +50,37 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(AlertDialog), findsOneWidget);
   });
+
+  testWidgets('make a new line, then remove a line', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.5;
+    addTearDown(tester.view.reset);
+    final h = await Harness.create(tester);
+    await tester.pumpWidget(h.wrap(const LinesScreen()));
+    await settle(tester);
+
+    await tester.tap(find.byKey(const ValueKey('new_line')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.descendant(of: find.byType(AlertDialog), matching: find.byType(TextField)).first, 'Kateel Line');
+    await tester.tap(find.text('Save'));
+    await settle(tester, rounds: 6);
+    await tester.pumpAndSettle();
+    // Opened on the new (empty) line, ready to add offices / PINs.
+    expect(find.byKey(const ValueKey('line_add_office')), findsOneWidget);
+    expect(h.services.active!.bags.containsKey('Kateel Line'), isTrue);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const ValueKey('lines_filter')), 'Kateel');
+    await tester.pumpAndSettle();
+    expect(find.text('Kateel Line'), findsOneWidget);
+
+    // Remove it again.
+    await tester.tap(find.byKey(const ValueKey('remove_line_Kateel Line')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('confirm_remove_line')));
+    await settle(tester, rounds: 6);
+    await tester.pumpAndSettle();
+    expect(h.services.active!.bags.containsKey('Kateel Line'), isFalse);
+    expect(find.text('Kateel Line'), findsNothing);
+  });
 }

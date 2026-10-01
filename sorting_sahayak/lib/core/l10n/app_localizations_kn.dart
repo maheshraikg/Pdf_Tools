@@ -717,6 +717,27 @@ class AppLocalizationsKn extends AppLocalizations {
   }
 
   @override
+  String get newLine => 'ಹೊಸ ಲೈನ್';
+
+  @override
+  String get removeLine => 'ಲೈನ್ ತೆಗೆದುಹಾಕಿ';
+
+  @override
+  String removeLineQ(String line) {
+    return '$line ಲೈನ್ ತೆಗೆದುಹಾಕಬೇಕೆ?';
+  }
+
+  @override
+  String removeLineBody(int count, String mode) {
+    return 'ಈ ಲೈನ್‌ನ ($mode) ಎಲ್ಲ $count ಕಚೇರಿ / ಪಿನ್‌ಗಳನ್ನು ಯೋಜನೆಯಿಂದ ಅಳಿಸಲಾಗುತ್ತದೆ. ನಂತರ ಡೀಫಾಲ್ಟ್ ಯೋಜನೆ ಮರುಸ್ಥಾಪಿಸಬಹುದು.';
+  }
+
+  @override
+  String lineExists(String line) {
+    return '$line ಲೈನ್ ಈಗಾಗಲೇ ಇದೆ';
+  }
+
+  @override
   String get findPinHint => 'ಕಚೇರಿ, ಗ್ರಾಮ, ನಗರ, ತಾಲ್ಲೂಕು ಅಥವಾ ಜಿಲ್ಲೆ';
 
   @override

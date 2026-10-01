@@ -716,6 +716,27 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get newLine => 'New line';
+
+  @override
+  String get removeLine => 'Remove line';
+
+  @override
+  String removeLineQ(String line) {
+    return 'Remove line $line?';
+  }
+
+  @override
+  String removeLineBody(int count, String mode) {
+    return 'All $count offices / PINs of this line ($mode) are deleted from the scheme. You can restore the default scheme later.';
+  }
+
+  @override
+  String lineExists(String line) {
+    return 'Line $line already exists';
+  }
+
+  @override
   String get findPinHint => 'Office, village, city, taluk or district';
 
   @override

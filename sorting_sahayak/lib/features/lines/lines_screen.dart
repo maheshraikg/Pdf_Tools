@@ -29,6 +29,49 @@ class LinesScreen extends StatefulWidget {
 class _LinesScreenState extends State<LinesScreen> {
   String _filter = '';
 
+  /// Name + colour, then straight to the new line to add its offices / PINs.
+  Future<void> _newLine(BuildContext context, ActiveScheme scheme, String mode) async {
+    final l = AppLocalizations.of(context);
+    final services = context.services;
+    final bag = await showDialog<Bag>(context: context, builder: (_) => BagDialog(order: scheme.bags.length));
+    if (bag == null || !context.mounted) return;
+    if (scheme.bags.containsKey(bag.code)) {
+      toast(context, l.lineExists(bag.code));
+      return;
+    }
+    await services.schemes.upsertBag(scheme.scheme.id!, bag);
+    await services.reloadActive();
+    if (!context.mounted) return;
+    await Navigator.push(context, MaterialPageRoute(builder: (_) => LineDetailScreen(code: bag.code, category: mode)));
+  }
+
+  /// Deletes the line's rules in this mode; the line itself goes when it has
+  /// no rules left in any mode.
+  Future<void> _removeLine(BuildContext context, ActiveScheme scheme, String code, String mode, List<BagRule> rules) async {
+    final l = AppLocalizations.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (d) => AlertDialog(
+        title: Text(l.removeLineQ(code)),
+        content: Text(l.removeLineBody(rules.length, categoryLabel(l, mode))),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(d, false), child: Text(l.cancel)),
+          FilledButton(key: const ValueKey('confirm_remove_line'), onPressed: () => Navigator.pop(d, true), child: Text(l.removeLine)),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    final services = context.services;
+    final id = scheme.scheme.id!;
+    for (final r in rules) {
+      if (r.id != null) await services.schemes.deleteRule(r.id!);
+    }
+    final left = scheme.rules.where((r) => r.bagCode == code && !rules.contains(r));
+    if (left.isEmpty) await services.schemes.deleteBag(id, code);
+    await services.reloadActive();
+    if (context.mounted) toast(context, l.lineRemoved(code));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -45,6 +88,11 @@ class _LinesScreenState extends State<LinesScreen> {
       if (r.category != null && r.category != mode) continue;
       (lines[r.bagCode] ??= []).add(r);
     }
+    // New lines with nothing on them yet (in any mode) show too.
+    final used = {for (final r in scheme?.rules ?? const <BagRule>[]) r.bagCode};
+    for (final b in scheme?.bags.keys ?? const <String>[]) {
+      if (!used.contains(b)) lines[b] ??= [];
+    }
     final order = scheme?.bagOrder ?? const <String>[];
     final codes = lines.keys.where((k) => _filter.isEmpty || k.toLowerCase().contains(_filter.toLowerCase())).toList()
       ..sort((a, b) {
@@ -54,6 +102,14 @@ class _LinesScreenState extends State<LinesScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(l.allLines), scrolledUnderElevation: 0),
+      floatingActionButton: scheme == null
+          ? null
+          : FloatingActionButton.extended(
+              key: const ValueKey('new_line'),
+              onPressed: () => _newLine(context, scheme, mode),
+              icon: const Icon(Icons.add),
+              label: Text(l.newLine),
+            ),
       body: Column(
         children: [
           Container(
@@ -101,7 +157,7 @@ class _LinesScreenState extends State<LinesScreen> {
             child: scheme == null
                 ? const Padding(padding: EdgeInsets.all(12), child: NoSchemeBar())
                 : ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
+                    padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
                     itemCount: codes.length,
                     itemBuilder: (_, i) {
                       final code = codes[i];
@@ -138,7 +194,13 @@ class _LinesScreenState extends State<LinesScreen> {
                                     ),
                                   ),
                                 ),
-                                const Padding(padding: EdgeInsets.only(right: 12), child: Icon(Icons.chevron_right)),
+                                IconButton(
+                                  key: ValueKey('remove_line_$code'),
+                                  tooltip: l.removeLine,
+                                  icon: Icon(Icons.delete_outline, color: c.error),
+                                  onPressed: () => _removeLine(context, scheme, code, mode, lines[code]!),
+                                ),
+                                const Padding(padding: EdgeInsets.only(right: 8), child: Icon(Icons.chevron_right)),
                               ],
                             ),
                           ),

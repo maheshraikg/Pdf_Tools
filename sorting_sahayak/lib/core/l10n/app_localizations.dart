@@ -1372,6 +1372,36 @@ abstract class AppLocalizations {
   /// **'{name} removed'**
   String lineRemoved(String name);
 
+  /// No description provided for @newLine.
+  ///
+  /// In en, this message translates to:
+  /// **'New line'**
+  String get newLine;
+
+  /// No description provided for @removeLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove line'**
+  String get removeLine;
+
+  /// No description provided for @removeLineQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove line {line}?'**
+  String removeLineQ(String line);
+
+  /// No description provided for @removeLineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'All {count} offices / PINs of this line ({mode}) are deleted from the scheme. You can restore the default scheme later.'**
+  String removeLineBody(int count, String mode);
+
+  /// No description provided for @lineExists.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line} already exists'**
+  String lineExists(String line);
+
   /// No description provided for @findPinHint.
   ///
   /// In en, this message translates to:

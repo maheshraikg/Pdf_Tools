@@ -124,7 +124,7 @@ class _SchemeEditorState extends State<SchemeEditor> {
   Future<void> _editBag([Bag? bag]) async {
     final b = await showDialog<Bag>(
       context: context,
-      builder: (_) => _BagDialog(bag: bag, order: _bags.length),
+      builder: (_) => BagDialog(bag: bag, order: _bags.length),
     );
     if (b == null || !mounted) return;
     await context.services.schemes.upsertBag(widget.schemeId, b);
@@ -607,17 +607,18 @@ class _RuleDialogState extends State<RuleDialog> {
   }
 }
 
-class _BagDialog extends StatefulWidget {
-  const _BagDialog({this.bag, required this.order});
+/// Line / bag name, extra name and colour.
+class BagDialog extends StatefulWidget {
+  const BagDialog({super.key, this.bag, required this.order});
 
   final Bag? bag;
   final int order;
 
   @override
-  State<_BagDialog> createState() => _BagDialogState();
+  State<BagDialog> createState() => BagDialogState();
 }
 
-class _BagDialogState extends State<_BagDialog> {
+class BagDialogState extends State<BagDialog> {
   late final _code = TextEditingController(text: widget.bag?.code ?? '');
   late final _name = TextEditingController(text: widget.bag?.name ?? '');
   late String _colour = widget.bag?.colour ?? colourToHex(kBagPalette[widget.order % kBagPalette.length]);

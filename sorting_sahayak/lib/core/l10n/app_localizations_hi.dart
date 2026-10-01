@@ -719,6 +719,27 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String get newLine => 'नई लाइन';
+
+  @override
+  String get removeLine => 'लाइन हटाएँ';
+
+  @override
+  String removeLineQ(String line) {
+    return '$line लाइन हटाएँ?';
+  }
+
+  @override
+  String removeLineBody(int count, String mode) {
+    return 'इस लाइन ($mode) के सभी $count डाकघर / पिन योजना से हटा दिए जाएँगे। बाद में डिफ़ॉल्ट योजना वापस ला सकते हैं।';
+  }
+
+  @override
+  String lineExists(String line) {
+    return '$line लाइन पहले से है';
+  }
+
+  @override
   String get findPinHint => 'डाकघर, गाँव, शहर, तहसील या ज़िला';
 
   @override

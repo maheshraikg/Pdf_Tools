@@ -375,6 +375,35 @@
       }
     }
   },
+  "newLine": "New line",
+  "removeLine": "Remove line",
+  "removeLineQ": "Remove line {line}?",
+  "@removeLineQ": {
+    "placeholders": {
+      "line": {
+        "type": "String"
+      }
+    }
+  },
+  "removeLineBody": "All {count} offices / PINs of this line ({mode}) are deleted from the scheme. You can restore the default scheme later.",
+  "@removeLineBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "lineExists": "Line {line} already exists",
+  "@lineExists": {
+    "placeholders": {
+      "line": {
+        "type": "String"
+      }
+    }
+  },
   "findPinHint": "Office, village, city, taluk or district",
   "findPinTip": "Type in English, ಕನ್ನಡ or हिन्दी. Spelling mistakes are fine: \"Puttoor\", \"Putur\" and \"ಪುತ್ತೂರು\" all find Puttur.",
   "allStates": "All states",
