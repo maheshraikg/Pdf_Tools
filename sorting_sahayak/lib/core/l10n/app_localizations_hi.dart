@@ -746,6 +746,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get chooseRuleToEdit => 'किसे बदलें?';
 
   @override
+  String get noAirCodeSheet =>
+      'इस पिन के लिए आपकी सूची में एयर कोड नहीं – सरफेस';
+
+  @override
   String get findPinHint => 'डाकघर, गाँव, शहर, तहसील या ज़िला';
 
   @override

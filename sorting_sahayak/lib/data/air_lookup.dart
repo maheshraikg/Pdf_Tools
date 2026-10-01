@@ -1,8 +1,7 @@
-/// Air code for a PIN or PIN series: the scheme's air rule when it has one,
-/// otherwise the airport nearest to the area's head office.
+/// Air code for a PIN or PIN series from the scheme's air codes (the office's
+/// PH sorting sheet). No guessing: a PIN with no air code shows none.
 library;
 
-import 'airports.dart';
 import 'directory_repo.dart';
 import 'resolver.dart';
 import 'scheme_repo.dart';
@@ -13,7 +12,6 @@ class AreaAir {
   final String code;
   final String city;
 
-  /// From the scheme's air codes (else the nearest airport).
   final bool fromScheme;
 }
 
@@ -23,31 +21,19 @@ final Map<String, AreaAir?> _cache = {};
 Future<AreaAir?> airForRange(DirectorySource dir, ActiveScheme? scheme, int lo, int hi) async {
   final key = '${identityHashCode(scheme)}:$lo-$hi';
   if (_cache.containsKey(key)) return _cache[key];
-  final offices = await dir.officesInRange(lo, hi);
   AreaAir? out;
-  final rule = scheme?.airResolver.resolve(ResolveQuery(pin: offices.firstOrNull?.pincode ?? lo))?.rule;
-  if (rule != null && rule.airCode.isNotEmpty) {
-    out = AreaAir(rule.airCode, rule.airCode, fromScheme: true);
-  } else {
-    final located = offices.where((o) => o.latitude != null && o.longitude != null).toList();
-    // The area's head office stands for it; else the middle of its offices.
-    final head = located.where((o) => o.officeType == 'HO').firstOrNull;
-    double? lat, lng;
-    if (head != null) {
-      lat = head.latitude;
-      lng = head.longitude;
-    } else if (located.isNotEmpty) {
-      lat = located.map((o) => o.latitude!).reduce((a, b) => a + b) / located.length;
-      lng = located.map((o) => o.longitude!).reduce((a, b) => a + b) / located.length;
-    }
-    if (lat != null && lng != null) {
-      final a = nearestAirports(lat, lng, count: 1).first.$1;
-      out = AreaAir(a.iata, a.city);
-    }
+  // A typed series ("560") stands for its first real PIN.
+  final pin = lo == hi ? lo : (await dir.officesInRange(lo, hi)).firstOrNull?.pincode ?? lo;
+  final rule = scheme?.airResolver.resolve(ResolveQuery(pin: pin))?.rule;
+  if (rule != null && hasAirCode(rule.airCode)) {
+    out = AreaAir(rule.airCode, rule.stationName.isEmpty ? rule.airCode : rule.stationName, fromScheme: true);
   }
   if (_cache.length > 500) _cache.clear();
   return _cache[key] = out;
 }
+
+/// "NIL" (or empty) in an air code sheet: sent without an air code.
+bool hasAirCode(String code) => code.isNotEmpty && code.toUpperCase() != 'NIL';
 
 /// PIN range a typed prefix or a rule key stands for ("560" → 560000–560999).
 (int, int)? pinRange(String digits) {

@@ -25,11 +25,33 @@ List<String> get _palette => kBagPalette.map(colourToHex).toList();
 const String kDefaultSchemeAsset = 'assets/schemes/mangaluru_default.csv';
 const String kDefaultSchemeName = 'Mangaluru – default (TD / Non-TD)';
 
+/// Air codes per destination PH, from the MR PH sorting sheet. "NIL" marks
+/// PIN series the sheet sends without an air code (surface).
+const String kDefaultAirAsset = 'assets/schemes/mangaluru_air_codes.csv';
+
+Future<List<AirCodeRule>> _defaultAirCodes(Future<Uint8List> Function(String path) loadAsset) async {
+  final t = readTable(await loadAsset(kDefaultAirAsset), 'x.csv');
+  return autoImport<AirCodeRule>(t.sheets[t.defaultSheet]!, ImportKind.airCodes).rules;
+}
+
+/// Adds the sheet's air codes to an installed default scheme that has none
+/// (installs from before the air codes were bundled). Returns true if added.
+Future<bool> addDefaultAirCodes(SchemeRepo repo, Future<Uint8List> Function(String path) loadAsset) async {
+  var added = false;
+  for (final s in await repo.schemes()) {
+    if (s.name != kDefaultSchemeName || s.id == null) continue;
+    if ((await repo.airCodes(s.id!)).isNotEmpty) continue;
+    await repo.replaceAirCodes(s.id!, await _defaultAirCodes(loadAsset));
+    added = true;
+  }
+  return added;
+}
+
 /// Installs the bundled default scheme and makes it active. Returns its id.
 Future<int> installDefaultScheme(SchemeRepo repo, Future<Uint8List> Function(String path) loadAsset) async {
   final t = readTable(await loadAsset(kDefaultSchemeAsset), 'x.csv');
   final res = autoImport<BagRule>(t.sheets[t.defaultSheet]!, ImportKind.bagRules);
-  return repo.saveScheme(
+  final id = await repo.saveScheme(
     const Scheme(
       name: kDefaultSchemeName,
       office: 'Mangaluru',
@@ -38,6 +60,8 @@ Future<int> installDefaultScheme(SchemeRepo repo, Future<Uint8List> Function(Str
     res.rules,
     completeBags(res.rules, res.bags, _palette),
   );
+  await repo.replaceAirCodes(id, await _defaultAirCodes(loadAsset));
+  return id;
 }
 
 /// Installs the bundled SAMPLE scheme (bag rules, air codes, DMSL).

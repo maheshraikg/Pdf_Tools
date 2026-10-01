@@ -1414,6 +1414,12 @@ abstract class AppLocalizations {
   /// **'Which one to edit?'**
   String get chooseRuleToEdit;
 
+  /// No description provided for @noAirCodeSheet.
+  ///
+  /// In en, this message translates to:
+  /// **'No air code in your sheet for this PIN – surface mail'**
+  String get noAirCodeSheet;
+
   /// No description provided for @findPinHint.
   ///
   /// In en, this message translates to:

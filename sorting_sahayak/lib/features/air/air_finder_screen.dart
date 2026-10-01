@@ -11,6 +11,7 @@ import '../../core/fuzzy.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/pin_utils.dart';
 import '../../core/theme.dart';
+import '../../data/air_lookup.dart' show hasAirCode;
 import '../../data/airports.dart';
 import '../../data/models/office.dart';
 import '../../data/models/scheme.dart';
@@ -137,7 +138,7 @@ class _AirFinderScreenState extends State<AirFinderScreen> {
   List<Widget> _results(BuildContext context, AppLocalizations l) {
     final t = Theme.of(context).textTheme;
     final scheme = context.services.active;
-    final schemeAir = scheme?.airResolver.rules ?? const <AirCodeRule>[];
+    final schemeAir = [for (final r in scheme?.airResolver.rules ?? const <AirCodeRule>[]) if (hasAirCode(r.airCode)) r];
     final q = _q;
     final digits = RegExp(r'^\d+$').hasMatch(q);
     final out = <Widget>[];
@@ -169,7 +170,8 @@ class _AirFinderScreenState extends State<AirFinderScreen> {
           ),
         );
       }
-      final rule = _schemeRule;
+      final sheetRule = _schemeRule;
+      final rule = sheetRule != null && hasAirCode(sheetRule.airCode) ? sheetRule : null;
       if (rule != null) {
         out.add(
           _AirHero(
@@ -178,6 +180,19 @@ class _AirFinderScreenState extends State<AirFinderScreen> {
             subtitle: [l.fromYourScheme, if (rule.viaHub.isNotEmpty) '${l.via} ${rule.viaHub}'].join(' · '),
           ),
         );
+      }
+      // The office's sheet decides: no guessing from the nearest airport.
+      if (schemeAir.isNotEmpty) {
+        if (rule == null) {
+          out.add(
+            Padding(
+              key: const ValueKey('no_air_code'),
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(l.noAirCodeSheet, style: t.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+            ),
+          );
+        }
+        return out;
       }
       final near = (o?.latitude != null && o?.longitude != null)
           ? nearestAirports(o!.latitude!, o.longitude!)

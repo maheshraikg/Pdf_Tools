@@ -744,6 +744,10 @@ class AppLocalizationsKn extends AppLocalizations {
   String get chooseRuleToEdit => 'ಯಾವುದನ್ನು ಬದಲಿಸಬೇಕು?';
 
   @override
+  String get noAirCodeSheet =>
+      'ಈ ಪಿನ್‌ಗೆ ನಿಮ್ಮ ಪಟ್ಟಿಯಲ್ಲಿ ವಾಯು ಕೋಡ್ ಇಲ್ಲ – ಸರ್ಫೇಸ್';
+
+  @override
   String get findPinHint => 'ಕಚೇರಿ, ಗ್ರಾಮ, ನಗರ, ತಾಲ್ಲೂಕು ಅಥವಾ ಜಿಲ್ಲೆ';
 
   @override

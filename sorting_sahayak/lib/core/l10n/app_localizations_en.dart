@@ -743,6 +743,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseRuleToEdit => 'Which one to edit?';
 
   @override
+  String get noAirCodeSheet =>
+      'No air code in your sheet for this PIN – surface mail';
+
+  @override
   String get findPinHint => 'Office, village, city, taluk or district';
 
   @override

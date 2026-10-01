@@ -29,6 +29,8 @@ Future<AppServices> _openServices(Settings settings) async {
     }
     settings.defaultSchemeDone = true;
   }
+  // Default scheme installed before its air codes were bundled.
+  if (await addDefaultAirCodes(s.schemes, loadAssetBytes)) await s.reloadActive();
   return s;
 }
 
