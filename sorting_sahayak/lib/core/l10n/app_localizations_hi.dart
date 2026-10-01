@@ -696,6 +696,29 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String get lineAddPin => 'पिन जोड़ें';
+
+  @override
+  String lineRemoveQ(String name, String line) {
+    return '$line से $name हटाएँ?';
+  }
+
+  @override
+  String get lineRemoveBody =>
+      'इसका छँटाई नियम योजना से हटा दिया जाएगा। आप इसे फिर जोड़ सकते हैं या डिफ़ॉल्ट योजना वापस ला सकते हैं।';
+
+  @override
+  String get lineRemove => 'लाइन से हटाएँ';
+
+  @override
+  String get lineMovePin => 'यह पिन दूसरी लाइन में भेजें';
+
+  @override
+  String lineRemoved(String name) {
+    return '$name हटाया गया';
+  }
+
+  @override
   String get findPinHint => 'डाकघर, गाँव, शहर, तहसील या ज़िला';
 
   @override

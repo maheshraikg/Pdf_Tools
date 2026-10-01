@@ -693,6 +693,29 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get lineAddPin => 'Add PIN';
+
+  @override
+  String lineRemoveQ(String name, String line) {
+    return 'Remove $name from $line?';
+  }
+
+  @override
+  String get lineRemoveBody =>
+      'Its sorting rule is deleted from the scheme. You can add it again, or restore the default scheme.';
+
+  @override
+  String get lineRemove => 'Remove from line';
+
+  @override
+  String get lineMovePin => 'Move this PIN to another line';
+
+  @override
+  String lineRemoved(String name) {
+    return '$name removed';
+  }
+
+  @override
   String get findPinHint => 'Office, village, city, taluk or district';
 
   @override

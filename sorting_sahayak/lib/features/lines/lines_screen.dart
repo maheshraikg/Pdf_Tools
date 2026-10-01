@@ -16,6 +16,7 @@ import '../../data/resolver.dart';
 import '../../data/scheme_repo.dart';
 import '../home_shell.dart';
 import '../lookup/line_table.dart';
+import '../schemes/scheme_editor.dart';
 import '../lookup/sort_result_view.dart';
 
 class LinesScreen extends StatefulWidget {
@@ -169,12 +170,60 @@ class LineDetailScreen extends StatelessWidget {
     shell?.openSort(pin);
   }
 
+  int? _schemeId(BuildContext context) => context.services.active?.scheme.id;
+
+  /// Deletes the rules that put [name] on this line, after a confirmation.
+  Future<void> _remove(BuildContext context, String name, List<BagRule> rules) async {
+    final l = AppLocalizations.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (d) => AlertDialog(
+        title: Text(l.lineRemoveQ(name, code)),
+        content: Text(l.lineRemoveBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(d, false), child: Text(l.cancel)),
+          FilledButton(key: const ValueKey('confirm_remove'), onPressed: () => Navigator.pop(d, true), child: Text(l.lineRemove)),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    final services = context.services;
+    for (final r in rules) {
+      if (r.id != null) await services.schemes.deleteRule(r.id!);
+    }
+    await services.reloadActive();
+    if (context.mounted) toast(context, l.lineRemoved(name));
+  }
+
+  /// One PIN of a prefix line: an exact rule sending it to another line.
+  Future<void> _move(BuildContext context, String pin) async {
+    final id = _schemeId(context);
+    if (id == null) return;
+    final changed = await editRuleFor(context, schemeId: id, pin: pin, category: category, type: RuleType.exact);
+    if (changed && context.mounted) await context.services.reloadActive();
+  }
+
+  Future<void> _add(BuildContext context, RuleType type) async {
+    final id = _schemeId(context);
+    if (id == null) return;
+    final changed = await editRuleFor(context, schemeId: id, category: category, bagCode: code, type: type);
+    if (changed && context.mounted) await context.services.reloadActive();
+  }
+
   List<Widget> _sections(BuildContext context, List<LineStop> stops, Color colour, ActiveScheme? scheme) {
     final out = <Widget>[];
     var run = <LineStop>[];
     void flush() {
       if (run.isEmpty) return;
-      out.add(LineTable(stops: run, colour: colour, onDark: false, matched: const {}, onPin: (p) => _openPin(context, p)));
+      out.add(LineTable(
+        stops: run,
+        colour: colour,
+        onDark: false,
+        matched: const {},
+        onPin: (p) => _openPin(context, p),
+        onRemove: scheme == null ? null : (s) => _remove(context, s.name, [?s.officeRule, ...s.pinRules]),
+        removeTooltip: AppLocalizations.of(context).lineRemove,
+      ));
       run = [];
     }
 
@@ -185,7 +234,18 @@ class LineDetailScreen extends StatelessWidget {
       }
       flush();
       for (final r in s.pinRules) {
-        out.add(_AreaStop(rule: r, code: code, category: category, colour: colour, scheme: scheme, onPin: (p) => _openPin(context, p)));
+        out.add(_AreaStop(
+          // A new state when the scheme changes, so the PIN list reloads.
+          key: ValueKey('${r.id}-${identityHashCode(scheme)}'),
+          rule: r,
+          code: code,
+          category: category,
+          colour: colour,
+          scheme: scheme,
+          onPin: (p) => _openPin(context, p),
+          onRemove: scheme == null ? null : () => _remove(context, (r.match.prefix ?? r.describe).padRight(6, 'x'), [r]),
+          onMovePin: scheme == null ? null : (p) => _move(context, p),
+        ));
       }
     }
     flush();
@@ -225,7 +285,29 @@ class LineDetailScreen extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
+          if (scheme != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  FilledButton.tonalIcon(
+                    key: const ValueKey('line_add_office'),
+                    onPressed: () => _add(context, RuleType.office),
+                    icon: const Icon(Icons.add_business),
+                    label: Text(l.addOffice),
+                  ),
+                  FilledButton.tonalIcon(
+                    key: const ValueKey('line_add_pin'),
+                    onPressed: () => _add(context, RuleType.exact),
+                    icon: const Icon(Icons.pin_outlined),
+                    label: Text(l.lineAddPin),
+                  ),
+                ],
+              ),
+            ),
           ..._sections(context, stops, colour, scheme),
         ],
       ),
@@ -237,7 +319,17 @@ class LineDetailScreen extends StatelessWidget {
 /// to this line with the office names. PINs that a more exact rule sends to
 /// another line are left out.
 class _AreaStop extends StatefulWidget {
-  const _AreaStop({required this.rule, required this.code, required this.category, required this.colour, required this.scheme, required this.onPin});
+  const _AreaStop({
+    super.key,
+    required this.rule,
+    required this.code,
+    required this.category,
+    required this.colour,
+    required this.scheme,
+    required this.onPin,
+    this.onRemove,
+    this.onMovePin,
+  });
 
   final BagRule rule;
   final String code;
@@ -245,6 +337,8 @@ class _AreaStop extends StatefulWidget {
   final Color colour;
   final ActiveScheme? scheme;
   final ValueChanged<String> onPin;
+  final VoidCallback? onRemove;
+  final ValueChanged<String>? onMovePin;
 
   @override
   State<_AreaStop> createState() => _AreaStopState();
@@ -344,6 +438,13 @@ class _AreaStopState extends State<_AreaStop> {
                     ),
                   ),
                   if (pins != null && pins.isNotEmpty) Icon(_open ? Icons.expand_less : Icons.expand_more),
+                  if (widget.onRemove != null)
+                    IconButton(
+                      key: ValueKey('remove_$label'),
+                      tooltip: l.lineRemove,
+                      icon: Icon(Icons.remove_circle_outline, color: c.error),
+                      onPressed: widget.onRemove,
+                    ),
                 ],
               ),
             ),
@@ -374,6 +475,14 @@ class _AreaStopState extends State<_AreaStop> {
                         ),
                       ),
                       Text(p.head.district, style: t.bodySmall?.copyWith(color: c.onSurfaceVariant)),
+                      if (widget.onMovePin != null)
+                        IconButton(
+                          key: ValueKey('move_${p.pin}'),
+                          tooltip: l.lineMovePin,
+                          visualDensity: VisualDensity.compact,
+                          icon: Icon(Icons.remove_circle_outline, color: c.error),
+                          onPressed: () => widget.onMovePin!(p.pin),
+                        ),
                     ],
                   ),
                 ),

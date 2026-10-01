@@ -1336,6 +1336,42 @@ abstract class AppLocalizations {
   /// **'+{count} BO'**
   String moreOfficesN(int count);
 
+  /// No description provided for @lineAddPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Add PIN'**
+  String get lineAddPin;
+
+  /// No description provided for @lineRemoveQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} from {line}?'**
+  String lineRemoveQ(String name, String line);
+
+  /// No description provided for @lineRemoveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Its sorting rule is deleted from the scheme. You can add it again, or restore the default scheme.'**
+  String get lineRemoveBody;
+
+  /// No description provided for @lineRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from line'**
+  String get lineRemove;
+
+  /// No description provided for @lineMovePin.
+  ///
+  /// In en, this message translates to:
+  /// **'Move this PIN to another line'**
+  String get lineMovePin;
+
+  /// No description provided for @lineRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} removed'**
+  String lineRemoved(String name);
+
   /// No description provided for @findPinHint.
   ///
   /// In en, this message translates to:

@@ -5,13 +5,26 @@ import '../../data/live_search.dart';
 
 /// The whole line in position order: "5  Naravi  574109".
 class LineTable extends StatelessWidget {
-  const LineTable({super.key, required this.stops, required this.colour, required this.onDark, required this.matched, required this.onPin});
+  const LineTable({
+    super.key,
+    required this.stops,
+    required this.colour,
+    required this.onDark,
+    required this.matched,
+    required this.onPin,
+    this.onRemove,
+    this.removeTooltip,
+  });
 
   final List<LineStop> stops;
   final Color colour;
   final bool onDark;
   final Set<String> matched;
   final ValueChanged<String> onPin;
+
+  /// Shows a remove button on each row when set.
+  final ValueChanged<LineStop>? onRemove;
+  final String? removeTooltip;
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +85,14 @@ class LineTable extends StatelessWidget {
                         ),
                       ),
                     ),
+                  ),
+                if (onRemove != null)
+                  IconButton(
+                    key: ValueKey('remove_${s.name}'),
+                    tooltip: removeTooltip,
+                    visualDensity: VisualDensity.compact,
+                    icon: Icon(Icons.remove_circle_outline, color: c.error),
+                    onPressed: () => onRemove!(s),
                   ),
               ],
             ),

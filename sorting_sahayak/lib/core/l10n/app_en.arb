@@ -352,6 +352,29 @@
       }
     }
   },
+  "lineAddPin": "Add PIN",
+  "lineRemoveQ": "Remove {name} from {line}?",
+  "@lineRemoveQ": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "line": {
+        "type": "String"
+      }
+    }
+  },
+  "lineRemoveBody": "Its sorting rule is deleted from the scheme. You can add it again, or restore the default scheme.",
+  "lineRemove": "Remove from line",
+  "lineMovePin": "Move this PIN to another line",
+  "lineRemoved": "{name} removed",
+  "@lineRemoved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "findPinHint": "Office, village, city, taluk or district",
   "findPinTip": "Type in English, ಕನ್ನಡ or हिन्दी. Spelling mistakes are fine: \"Puttoor\", \"Putur\" and \"ಪುತ್ತೂರು\" all find Puttur.",
   "allStates": "All states",

@@ -694,6 +694,29 @@ class AppLocalizationsKn extends AppLocalizations {
   }
 
   @override
+  String get lineAddPin => 'ಪಿನ್ ಸೇರಿಸಿ';
+
+  @override
+  String lineRemoveQ(String name, String line) {
+    return '$line ನಿಂದ $name ತೆಗೆದುಹಾಕಬೇಕೆ?';
+  }
+
+  @override
+  String get lineRemoveBody =>
+      'ಇದರ ವಿಂಗಡಣೆ ನಿಯಮವನ್ನು ಯೋಜನೆಯಿಂದ ಅಳಿಸಲಾಗುತ್ತದೆ. ಮತ್ತೆ ಸೇರಿಸಬಹುದು ಅಥವಾ ಡೀಫಾಲ್ಟ್ ಯೋಜನೆ ಮರುಸ್ಥಾಪಿಸಬಹುದು.';
+
+  @override
+  String get lineRemove => 'ಲೈನ್‌ನಿಂದ ತೆಗೆದುಹಾಕಿ';
+
+  @override
+  String get lineMovePin => 'ಈ ಪಿನ್ ಬೇರೆ ಲೈನ್‌ಗೆ ಸರಿಸಿ';
+
+  @override
+  String lineRemoved(String name) {
+    return '$name ತೆಗೆದುಹಾಕಲಾಗಿದೆ';
+  }
+
+  @override
   String get findPinHint => 'ಕಚೇರಿ, ಗ್ರಾಮ, ನಗರ, ತಾಲ್ಲೂಕು ಅಥವಾ ಜಿಲ್ಲೆ';
 
   @override
