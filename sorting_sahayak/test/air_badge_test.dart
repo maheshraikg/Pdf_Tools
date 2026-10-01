@@ -27,7 +27,9 @@ void main() {
     expect(code(110001), 'DEL');
     expect(code(733101), 'CCU'); // 7331 Kolkata
     expect(code(733201), 'IXB'); // 7332 Siliguri
-    expect(code(416001), 'BOM'); // same line as the scheme (MUMBAI)
+    expect(code(416001), 'PNQ'); // Pune 410-416
+    expect(code(416501), 'BOM'); // 4165 Mumbai
+    expect(code(246001), 'DED'); // Dehradun 246
     expect(code(411001), 'PNQ');
     expect(code(416515), 'NIL'); // Margaon, no air code
     expect(hasAirCode(code(416515)!), isFalse);
@@ -65,5 +67,23 @@ void main() {
     await tester.enterText(find.byKey(const ValueKey('pin_field')), '574239');
     await settle(tester, rounds: 6);
     expect(find.byKey(const ValueKey('air_IXE')), findsNothing);
+  });
+
+  test('Non-TD lines follow the MR PH sheet', () async {
+    final repo = SchemeRepo(await memoryUserDb());
+    await installDefaultScheme(repo, _asset);
+    final s = (await repo.loadActive())!;
+    String? line(int pin) => s.bagResolver.resolve(ResolveQuery(pin: pin, category: kCatNonTD))?.rule.bagCode;
+    expect(line(415001), 'PUNE');
+    expect(line(416001), 'PUNE');
+    expect(line(415601), 'MUMBAI'); // 4156
+    expect(line(416515), 'MARGAON');
+    expect(line(246001), 'DEHRADUN');
+    expect(line(841101), 'PATNA');
+    expect(line(842001), 'MUZAFFARPUR');
+    expect(line(470113), 'BHOPAL');
+    expect(line(679102), 'COIMBATORE');
+    expect(line(679001), 'THRISSUR');
+    expect(line(431001), 'CHHATRAPATI SAMBHAJINAGAR');
   });
 }
