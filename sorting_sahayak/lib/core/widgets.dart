@@ -18,12 +18,15 @@ Color bagColour(BuildContext context, Bag? bag) => parseColour(bag?.colour) ?? T
 /// The final bag in huge bold text on the bag colour, with the position
 /// (section) in a round badge – the main answer of the app.
 class BagCard extends StatelessWidget {
-  const BagCard({super.key, required this.bag, this.rule, this.level, this.compact = false});
+  const BagCard({super.key, required this.bag, this.rule, this.level, this.compact = false, this.trailing});
 
   final Bag bag;
   final BagRule? rule;
   final RuleType? level;
   final bool compact;
+
+  /// Shown at the top right (e.g. the air code).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +81,7 @@ class BagCard extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (trailing != null) ...[const SizedBox(width: 8), trailing!],
                 if (section.isNotEmpty && !compact) ...[
                   const SizedBox(width: 12),
                   Container(

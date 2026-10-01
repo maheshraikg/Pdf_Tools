@@ -10,6 +10,7 @@ import '../../core/feedback.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/labels.dart';
 import '../../core/pin_utils.dart';
+import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../core/files.dart';
 import '../../data/import/scheme_import.dart';
@@ -19,6 +20,7 @@ import '../../data/models/scheme.dart';
 import '../../data/sort_engine.dart';
 import '../schemes/import_wizard.dart';
 import '../schemes/scheme_editor.dart';
+import 'air_badge.dart';
 
 class SortResultView extends StatelessWidget {
   const SortResultView({super.key, required this.result, this.showBreakdown = true, this.onEdited});
@@ -111,7 +113,13 @@ class SortResultView extends StatelessWidget {
           children.add(gap);
         }
       } else if (r.bag != null) {
-        children.add(BagCard(bag: r.bag!, rule: r.bagRule, level: r.bagLevel));
+        final pin = int.tryParse(r.digits);
+        children.add(BagCard(
+          bag: r.bag!,
+          rule: r.bagRule,
+          level: r.bagLevel,
+          trailing: pin == null || !r.complete ? null : AirBadge(lo: pin, hi: pin, foreground: onColour(bagColour(context, r.bag!))),
+        ));
         children.add(gap);
       } else if (r.otherBag == null) {
         children.add(WarningBanner(text: l.noBagRule));

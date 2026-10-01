@@ -14,6 +14,7 @@ import '../../core/pin_utils.dart';
 import '../../core/theme.dart';
 import '../../core/voice_input.dart';
 import '../../core/widgets.dart';
+import '../../data/air_lookup.dart';
 import '../../data/live_search.dart';
 import '../../data/models/office.dart';
 import '../../data/models/scheme.dart';
@@ -21,6 +22,7 @@ import '../../data/scheme_repo.dart';
 import '../../data/sort_engine.dart';
 import '../scan/scan_screen.dart';
 import '../schemes/scheme_editor.dart';
+import 'air_badge.dart';
 import 'label_view.dart';
 import 'sort_result_view.dart';
 
@@ -548,6 +550,7 @@ class _LiveList extends StatelessWidget {
               key: ValueKey('group_${e.key}'),
               bag: scheme.bagFor(e.value.first.rule),
               matches: e.value,
+              query: query,
               highlight: i == 0 && e.value.first.covers,
               onPick: onPick,
               onAdd: () => onAdd(scheme.bagFor(e.value.first.rule)),
@@ -565,6 +568,7 @@ class _LiveGroup extends StatefulWidget {
     super.key,
     required this.bag,
     required this.matches,
+    required this.query,
     required this.highlight,
     required this.onPick,
     required this.onAdd,
@@ -572,6 +576,9 @@ class _LiveGroup extends StatefulWidget {
 
   final Bag bag;
   final List<LiveMatch> matches;
+
+  /// Digits typed so far.
+  final String query;
   final bool highlight;
   final ValueChanged<LiveMatch> onPick;
   final VoidCallback onAdd;
@@ -583,6 +590,27 @@ class _LiveGroup extends StatefulWidget {
 class _LiveGroupState extends State<_LiveGroup> {
   static const _collapsed = 24;
   bool _all = false;
+
+  /// PINs this card stands for: what is typed when a rule already covers it
+  /// ("560" under prefix 56), else the first PIN / series rule shown.
+  (int, int)? _airRange() {
+    final q = widget.query.replaceAll(RegExp(r'\D'), '');
+    for (final m in widget.matches) {
+      final r = m.rule.match;
+      if (m.covers && q.length >= 3) return pinRange(q);
+      switch (r.type) {
+        case RuleType.exact:
+          if (r.pin != null) return (r.pin!, r.pin!);
+        case RuleType.range:
+          return (r.pinFrom!, r.pinTo!);
+        case RuleType.prefix:
+          final p = pinRange(r.prefix ?? '');
+          if (p != null && (r.prefix ?? '').length >= 2) return p;
+        default:
+      }
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -603,6 +631,7 @@ class _LiveGroupState extends State<_LiveGroup> {
         if (m.rule.section.isNotEmpty) m.rule.section,
     };
     final sub = [if (bag.name.isNotEmpty && bag.name != bag.code) bag.name, if (sections.length == 1) '#${sections.first}'].join(' · ');
+    final air = _airRange();
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
@@ -622,17 +651,30 @@ class _LiveGroupState extends State<_LiveGroup> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      bag.code,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: t.headlineSmall?.copyWith(fontWeight: FontWeight.w900, color: fg),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                bag.code,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: t.headlineSmall?.copyWith(fontWeight: FontWeight.w900, color: fg),
+                              ),
+                              if (sub.isNotEmpty)
+                                Text(
+                                  sub,
+                                  style: t.titleSmall?.copyWith(color: fg.withValues(alpha: 0.8), fontWeight: FontWeight.w600),
+                                ),
+                            ],
+                          ),
+                        ),
+                        if (air != null) AirBadge(lo: air.$1, hi: air.$2, foreground: fg),
+                      ],
                     ),
-                    if (sub.isNotEmpty)
-                      Text(
-                        sub,
-                        style: t.titleSmall?.copyWith(color: fg.withValues(alpha: 0.8), fontWeight: FontWeight.w600),
-                      ),
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 6,
