@@ -336,6 +336,22 @@
   "switchKeyboard": "Numbers / letters keyboard",
   "noMatchingRules": "No rule in your scheme starts with this",
   "placeCheckNeedsPin": "Also type the 6-digit PIN above – the app then checks it against this place.",
+  "areaPinsN": "{count} PINs – tap to see all",
+  "@areaPinsN": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "moreOfficesN": "+{count} BO",
+  "@moreOfficesN": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "findPinHint": "Office, village, city, taluk or district",
   "findPinTip": "Type in English, ಕನ್ನಡ or हिन्दी. Spelling mistakes are fine: \"Puttoor\", \"Putur\" and \"ಪುತ್ತೂರು\" all find Puttur.",
   "allStates": "All states",

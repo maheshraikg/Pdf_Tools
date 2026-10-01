@@ -686,6 +686,16 @@ class AppLocalizationsHi extends AppLocalizations {
       'ऊपर 6 अंकों का पिन भी लिखें – फिर ऐप इसे इस स्थान से जाँचेगा।';
 
   @override
+  String areaPinsN(int count) {
+    return '$count पिन – सभी देखने के लिए दबाएँ';
+  }
+
+  @override
+  String moreOfficesN(int count) {
+    return '+$count BO';
+  }
+
+  @override
   String get findPinHint => 'डाकघर, गाँव, शहर, तहसील या ज़िला';
 
   @override

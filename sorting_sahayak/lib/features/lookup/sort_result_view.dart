@@ -131,22 +131,7 @@ class SortResultView extends StatelessWidget {
         children.add(gap);
       }
       if (r.offices.isNotEmpty) {
-        children.add(
-          Card(
-            margin: EdgeInsets.zero,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-                  child: Text(l.deliveryOfficesN(r.offices.length), style: Theme.of(context).textTheme.labelLarge),
-                ),
-                for (final o in r.offices.take(12)) OfficeTile(office: o),
-                if (r.offices.length > 12) Padding(padding: const EdgeInsets.all(12), child: Text(l.andMore(r.offices.length - 12))),
-              ],
-            ),
-          ),
-        );
+        children.add(_OfficeList(key: ValueKey('offices_${r.digits}'), offices: r.offices));
         children.add(gap);
       }
     }
@@ -276,6 +261,51 @@ class _EditButtons extends StatelessWidget {
         if (rule != null && own == null && rule.match.type != RuleType.fallback)
           TextButton.icon(icon: const Icon(Icons.rule), label: Text(l.editRuleX(rule.describe)), onPressed: () => run(rule)),
       ],
+    );
+  }
+}
+
+/// Delivery offices of a PIN: the first 12, then "Show all N" for the rest.
+class _OfficeList extends StatefulWidget {
+  const _OfficeList({super.key, required this.offices});
+
+  final List<Office> offices;
+
+  @override
+  State<_OfficeList> createState() => _OfficeListState();
+}
+
+class _OfficeListState extends State<_OfficeList> {
+  static const _first = 12;
+  bool _all = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final offices = widget.offices;
+    final shown = _all ? offices : offices.take(_first);
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+            child: Text(l.deliveryOfficesN(offices.length), style: Theme.of(context).textTheme.labelLarge),
+          ),
+          for (final o in shown) OfficeTile(office: o),
+          if (!_all && offices.length > _first)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+              child: TextButton.icon(
+                key: const ValueKey('offices_show_all'),
+                onPressed: () => setState(() => _all = true),
+                icon: const Icon(Icons.expand_more),
+                label: Text(l.showAllN(offices.length)),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

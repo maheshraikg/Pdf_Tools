@@ -10,7 +10,10 @@ import '../../core/labels.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../data/live_search.dart';
+import '../../data/models/office.dart';
 import '../../data/models/scheme.dart';
+import '../../data/resolver.dart';
+import '../../data/scheme_repo.dart';
 import '../home_shell.dart';
 import '../lookup/line_table.dart';
 import '../lookup/sort_result_view.dart';
@@ -149,12 +152,45 @@ class _LinesScreenState extends State<LinesScreen> {
   }
 }
 
-/// One line: every office in position order with its PIN.
+/// One line: every office in position order with its PIN. Prefix / range
+/// rules (Non-TD "573xxx") list the real PINs and offices they cover.
 class LineDetailScreen extends StatelessWidget {
   const LineDetailScreen({super.key, required this.code, required this.category});
 
   final String code;
   final String category;
+
+  static bool _isArea(LineStop s) =>
+      s.officeRule == null && s.pinRules.isNotEmpty && s.pinRules.every((r) => r.match.type == RuleType.prefix || r.match.type == RuleType.range);
+
+  void _openPin(BuildContext context, String pin) {
+    final shell = HomeShell.of(context);
+    Navigator.popUntil(context, (r) => r.isFirst);
+    shell?.openSort(pin);
+  }
+
+  List<Widget> _sections(BuildContext context, List<LineStop> stops, Color colour, ActiveScheme? scheme) {
+    final out = <Widget>[];
+    var run = <LineStop>[];
+    void flush() {
+      if (run.isEmpty) return;
+      out.add(LineTable(stops: run, colour: colour, onDark: false, matched: const {}, onPin: (p) => _openPin(context, p)));
+      run = [];
+    }
+
+    for (final s in stops) {
+      if (!_isArea(s)) {
+        run.add(s);
+        continue;
+      }
+      flush();
+      for (final r in s.pinRules) {
+        out.add(_AreaStop(rule: r, code: code, category: category, colour: colour, scheme: scheme, onPin: (p) => _openPin(context, p)));
+      }
+    }
+    flush();
+    return out;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -190,17 +226,158 @@ class LineDetailScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          LineTable(
-            stops: stops,
-            colour: colour,
-            onDark: false,
-            matched: const {},
-            onPin: (pin) {
-              final shell = HomeShell.of(context);
-              Navigator.popUntil(context, (r) => r.isFirst);
-              shell?.openSort(pin);
-            },
+          ..._sections(context, stops, colour, scheme),
+        ],
+      ),
+    );
+  }
+}
+
+/// A prefix / range rule ("573xxx"): its districts, then every PIN it sends
+/// to this line with the office names. PINs that a more exact rule sends to
+/// another line are left out.
+class _AreaStop extends StatefulWidget {
+  const _AreaStop({required this.rule, required this.code, required this.category, required this.colour, required this.scheme, required this.onPin});
+
+  final BagRule rule;
+  final String code;
+  final String category;
+  final Color colour;
+  final ActiveScheme? scheme;
+  final ValueChanged<String> onPin;
+
+  @override
+  State<_AreaStop> createState() => _AreaStopState();
+}
+
+class _AreaPin {
+  _AreaPin(this.pin, this.head);
+
+  final String pin;
+  final Office head;
+  int others = 0;
+}
+
+class _AreaStopState extends State<_AreaStop> {
+  List<_AreaPin>? _pins;
+  List<String> _districts = [];
+  bool _open = false;
+
+  (int, int)? get _range {
+    final m = widget.rule.match;
+    if (m.type == RuleType.range) return (m.pinFrom!, m.pinTo!);
+    final p = (m.prefix ?? '').replaceAll(RegExp(r'\D'), '');
+    if (p.isEmpty || p.length > 6) return null;
+    return (int.parse(p.padRight(6, '0')), int.parse(p.padRight(6, '9')));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_pins == null) _load();
+  }
+
+  Future<void> _load() async {
+    final range = _range;
+    if (range == null) {
+      setState(() => _pins = []);
+      return;
+    }
+    final offices = await context.services.directory.officesInRange(range.$1, range.$2);
+    final resolver = widget.scheme?.bagResolver;
+    final byPin = <int, _AreaPin>{};
+    final districts = <String, int>{};
+    for (final o in offices) {
+      final have = byPin[o.pincode];
+      if (have != null) {
+        have.others++;
+        continue;
+      }
+      // Keep only PINs this line really gets.
+      final res = resolver?.resolve(ResolveQuery(pin: o.pincode, category: widget.category));
+      if (res != null && res.rule.bagCode != widget.code) continue;
+      byPin[o.pincode] = _AreaPin(o.pin, o);
+      if (o.district.isNotEmpty) districts[o.district] = (districts[o.district] ?? 0) + 1;
+    }
+    if (!mounted) return;
+    setState(() {
+      _pins = byPin.values.toList();
+      _districts = (districts.keys.toList()..sort((a, b) => districts[b]!.compareTo(districts[a]!)));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final t = Theme.of(context).textTheme;
+    final c = Theme.of(context).colorScheme;
+    final pins = _pins;
+    final label = widget.rule.match.type == RuleType.range
+        ? '${widget.rule.match.pinFrom}–${widget.rule.match.pinTo}'
+        : (widget.rule.match.prefix ?? '').padRight(6, 'x');
+    return Card(
+      margin: const EdgeInsets.only(bottom: 6),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          InkWell(
+            key: ValueKey('area_$label'),
+            onTap: pins == null || pins.isEmpty ? null : () => setState(() => _open = !_open),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 10, 8, 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(label, style: t.titleLarge?.copyWith(fontWeight: FontWeight.w900)),
+                        if (pins == null)
+                          const Padding(padding: EdgeInsets.only(top: 4), child: LinearProgressIndicator())
+                        else ...[
+                          if (_districts.isNotEmpty)
+                            Text(_districts.take(4).join(' · '), style: t.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                          Text(l.areaPinsN(pins.length), style: t.bodyMedium?.copyWith(color: c.onSurfaceVariant)),
+                        ],
+                      ],
+                    ),
+                  ),
+                  if (pins != null && pins.isNotEmpty) Icon(_open ? Icons.expand_less : Icons.expand_more),
+                ],
+              ),
+            ),
           ),
+          if (_open && pins != null)
+            for (final p in pins)
+              InkWell(
+                onTap: () => widget.onPin(p.pin),
+                child: Container(
+                  decoration: BoxDecoration(border: Border(top: BorderSide(color: c.outlineVariant.withValues(alpha: 0.5)))),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 84,
+                        child: Text(
+                          p.pin,
+                          style: t.titleMedium?.copyWith(fontWeight: FontWeight.w900, fontFeatures: const [FontFeature.tabularFigures()]),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          [
+                            '${p.head.officeName} ${p.head.officeType}',
+                            if (p.others > 0) l.moreOfficesN(p.others),
+                          ].join(' · '),
+                          style: t.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      Text(p.head.district, style: t.bodySmall?.copyWith(color: c.onSurfaceVariant)),
+                    ],
+                  ),
+                ),
+              ),
         ],
       ),
     );

@@ -684,6 +684,16 @@ class AppLocalizationsKn extends AppLocalizations {
       'ಮೇಲೆ 6 ಅಂಕಿಯ ಪಿನ್ ಕೂಡ ಟೈಪ್ ಮಾಡಿ – ಆಗ ಈ ಸ್ಥಳದೊಂದಿಗೆ ಪರಿಶೀಲಿಸುತ್ತದೆ.';
 
   @override
+  String areaPinsN(int count) {
+    return '$count ಪಿನ್‌ಗಳು – ಎಲ್ಲ ನೋಡಲು ಒತ್ತಿ';
+  }
+
+  @override
+  String moreOfficesN(int count) {
+    return '+$count BO';
+  }
+
+  @override
   String get findPinHint => 'ಕಚೇರಿ, ಗ್ರಾಮ, ನಗರ, ತಾಲ್ಲೂಕು ಅಥವಾ ಜಿಲ್ಲೆ';
 
   @override

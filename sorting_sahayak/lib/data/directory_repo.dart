@@ -38,6 +38,9 @@ class PrefixSummary {
 
 abstract class DirectorySource {
   Future<List<Office>> officesForPin(int pin);
+
+  /// Every office with a PIN from [lo] to [hi], by PIN, head office first.
+  Future<List<Office>> officesInRange(int lo, int hi);
   Future<PrefixSummary> prefixSummary(String prefix);
   Future<List<SearchHit>> search(String query, {SearchFilter filter = const SearchFilter(), int limit = 50});
   Future<List<String>> states();
@@ -80,6 +83,16 @@ class DirectoryRepo implements DirectorySource {
       'SELECT $kOfficeSelect FROM $kOfficeFrom WHERE o.pincode = ? '
       "ORDER BY CASE o.office_type WHEN 'HO' THEN 0 WHEN 'SO' THEN 1 WHEN 'PO' THEN 2 ELSE 3 END, o.office_name",
       [pin],
+    );
+    return rows.map(Office.fromRow).toList();
+  }
+
+  @override
+  Future<List<Office>> officesInRange(int lo, int hi) async {
+    final rows = await db.rawQuery(
+      'SELECT $kOfficeSelect FROM $kOfficeFrom WHERE o.pincode BETWEEN ? AND ? '
+      "ORDER BY o.pincode, CASE o.office_type WHEN 'HO' THEN 0 WHEN 'SO' THEN 1 WHEN 'PO' THEN 2 ELSE 3 END, o.office_name",
+      [lo, hi],
     );
     return rows.map(Office.fromRow).toList();
   }

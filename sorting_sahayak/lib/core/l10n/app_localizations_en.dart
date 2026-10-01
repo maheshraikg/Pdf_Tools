@@ -683,6 +683,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Also type the 6-digit PIN above – the app then checks it against this place.';
 
   @override
+  String areaPinsN(int count) {
+    return '$count PINs – tap to see all';
+  }
+
+  @override
+  String moreOfficesN(int count) {
+    return '+$count BO';
+  }
+
+  @override
   String get findPinHint => 'Office, village, city, taluk or district';
 
   @override

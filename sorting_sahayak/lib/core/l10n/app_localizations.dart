@@ -1324,6 +1324,18 @@ abstract class AppLocalizations {
   /// **'Also type the 6-digit PIN above – the app then checks it against this place.'**
   String get placeCheckNeedsPin;
 
+  /// No description provided for @areaPinsN.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} PINs – tap to see all'**
+  String areaPinsN(int count);
+
+  /// No description provided for @moreOfficesN.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} BO'**
+  String moreOfficesN(int count);
+
   /// No description provided for @findPinHint.
   ///
   /// In en, this message translates to:
