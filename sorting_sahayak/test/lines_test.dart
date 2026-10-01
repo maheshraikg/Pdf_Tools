@@ -83,4 +83,32 @@ void main() {
     expect(h.services.active!.bags.containsKey('Kateel Line'), isFalse);
     expect(find.text('Kateel Line'), findsNothing);
   });
+
+  testWidgets('edit an office, a PIN series and the line on a line', (tester) async {
+    final h = await Harness.create(tester);
+    await tester.pumpWidget(h.wrap(const LineDetailScreen(code: 'NT-61', category: kCatNonTD)));
+    await settle(tester, rounds: 6);
+    // Office row → rule dialog.
+    await tester.tap(find.byKey(const ValueKey('edit_Kasaragod')));
+    await settle(tester);
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    // PIN series → rule dialog.
+    await tester.tap(find.byKey(const ValueKey('edit_671xxx')));
+    await settle(tester);
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    // Line name / colour.
+    await tester.tap(find.byKey(const ValueKey('edit_line')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.descendant(of: find.byType(AlertDialog), matching: find.byType(TextField)).at(1), 'Kasaragod side');
+    await tester.tap(find.text('Save'));
+    await settle(tester, rounds: 6);
+    await tester.pumpAndSettle();
+    expect(h.services.active!.bags['NT-61']!.name, 'Kasaragod side');
+  });
 }

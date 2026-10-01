@@ -14,6 +14,8 @@ class LineTable extends StatelessWidget {
     required this.onPin,
     this.onRemove,
     this.removeTooltip,
+    this.onEdit,
+    this.editTooltip,
   });
 
   final List<LineStop> stops;
@@ -25,6 +27,10 @@ class LineTable extends StatelessWidget {
   /// Shows a remove button on each row when set.
   final ValueChanged<LineStop>? onRemove;
   final String? removeTooltip;
+
+  /// Shows an edit button on each row when set.
+  final ValueChanged<LineStop>? onEdit;
+  final String? editTooltip;
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +91,14 @@ class LineTable extends StatelessWidget {
                         ),
                       ),
                     ),
+                  ),
+                if (onEdit != null)
+                  IconButton(
+                    key: ValueKey('edit_${s.name}'),
+                    tooltip: editTooltip,
+                    visualDensity: VisualDensity.compact,
+                    icon: Icon(Icons.edit_outlined, color: fg),
+                    onPressed: () => onEdit!(s),
                   ),
                 if (onRemove != null)
                   IconButton(

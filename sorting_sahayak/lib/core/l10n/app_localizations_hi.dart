@@ -740,6 +740,12 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String get editLine => 'लाइन नाम / रंग बदलें';
+
+  @override
+  String get chooseRuleToEdit => 'किसे बदलें?';
+
+  @override
   String get findPinHint => 'डाकघर, गाँव, शहर, तहसील या ज़िला';
 
   @override

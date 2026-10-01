@@ -1402,6 +1402,18 @@ abstract class AppLocalizations {
   /// **'Line {line} already exists'**
   String lineExists(String line);
 
+  /// No description provided for @editLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit line name / colour'**
+  String get editLine;
+
+  /// No description provided for @chooseRuleToEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Which one to edit?'**
+  String get chooseRuleToEdit;
+
   /// No description provided for @findPinHint.
   ///
   /// In en, this message translates to:

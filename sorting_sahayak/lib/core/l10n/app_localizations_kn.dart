@@ -738,6 +738,12 @@ class AppLocalizationsKn extends AppLocalizations {
   }
 
   @override
+  String get editLine => 'ಲೈನ್ ಹೆಸರು / ಬಣ್ಣ ಬದಲಿಸಿ';
+
+  @override
+  String get chooseRuleToEdit => 'ಯಾವುದನ್ನು ಬದಲಿಸಬೇಕು?';
+
+  @override
   String get findPinHint => 'ಕಚೇರಿ, ಗ್ರಾಮ, ನಗರ, ತಾಲ್ಲೂಕು ಅಥವಾ ಜಿಲ್ಲೆ';
 
   @override

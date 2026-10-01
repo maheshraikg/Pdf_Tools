@@ -737,6 +737,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get editLine => 'Edit line name / colour';
+
+  @override
+  String get chooseRuleToEdit => 'Which one to edit?';
+
+  @override
   String get findPinHint => 'Office, village, city, taluk or district';
 
   @override

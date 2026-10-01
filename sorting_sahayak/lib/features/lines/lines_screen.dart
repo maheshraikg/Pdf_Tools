@@ -257,6 +257,57 @@ class LineDetailScreen extends StatelessWidget {
     if (context.mounted) toast(context, l.lineRemoved(name));
   }
 
+  /// Edits the office / PIN rule of a row (asks which one when a row has
+  /// several, e.g. the office and its PIN).
+  Future<void> _editStop(BuildContext context, List<BagRule> rules) async {
+    final id = _schemeId(context);
+    if (id == null || rules.isEmpty) return;
+    var rule = rules.first;
+    if (rules.length > 1) {
+      final l = AppLocalizations.of(context);
+      final picked = await showModalBottomSheet<BagRule>(
+        context: context,
+        builder: (sheet) => SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(title: Text(l.chooseRuleToEdit, style: const TextStyle(fontWeight: FontWeight.w800))),
+              for (final r in rules)
+                ListTile(
+                  leading: const Icon(Icons.edit_outlined),
+                  title: Text(r.describe),
+                  subtitle: r.remarks.isEmpty ? null : Text(r.remarks),
+                  onTap: () => Navigator.pop(sheet, r),
+                ),
+            ],
+          ),
+        ),
+      );
+      if (picked == null || !context.mounted) return;
+      rule = picked;
+    }
+    final changed = await editRuleFor(context, schemeId: id, rule: rule);
+    if (changed && context.mounted) await context.services.reloadActive();
+  }
+
+  /// Line name / extra name / colour. A new name moves all its rules.
+  Future<void> _editLine(BuildContext context, ActiveScheme scheme, Bag bag) async {
+    final edited = await showDialog<Bag>(context: context, builder: (_) => BagDialog(bag: bag, order: bag.order));
+    if (edited == null || !context.mounted) return;
+    final l = AppLocalizations.of(context);
+    final services = context.services;
+    final id = scheme.scheme.id!;
+    if (edited.code != bag.code && scheme.bags.containsKey(edited.code)) {
+      toast(context, l.lineExists(edited.code));
+      return;
+    }
+    if (edited.code == bag.code) await services.schemes.upsertBag(id, edited);
+    await services.schemes.moveRules(id, bag.code, edited);
+    await services.reloadActive();
+    if (!context.mounted || edited.code == bag.code) return;
+    await Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LineDetailScreen(code: edited.code, category: category)));
+  }
+
   /// One PIN of a prefix line: an exact rule sending it to another line.
   Future<void> _move(BuildContext context, String pin) async {
     final id = _schemeId(context);
@@ -285,6 +336,8 @@ class LineDetailScreen extends StatelessWidget {
         onPin: (p) => _openPin(context, p),
         onRemove: scheme == null ? null : (s) => _remove(context, s.name, [?s.officeRule, ...s.pinRules]),
         removeTooltip: AppLocalizations.of(context).lineRemove,
+        onEdit: scheme == null ? null : (s) => _editStop(context, [?s.officeRule, ...s.pinRules]),
+        editTooltip: AppLocalizations.of(context).edit,
       ));
       run = [];
     }
@@ -307,6 +360,7 @@ class LineDetailScreen extends StatelessWidget {
           onPin: (p) => _openPin(context, p),
           onRemove: scheme == null ? null : () => _remove(context, (r.match.prefix ?? r.describe).padRight(6, 'x'), [r]),
           onMovePin: scheme == null ? null : (p) => _move(context, p),
+          onEdit: scheme == null ? null : () => _editStop(context, [r]),
         ));
       }
     }
@@ -323,7 +377,18 @@ class LineDetailScreen extends StatelessWidget {
     final stops = scheme == null ? const <LineStop>[] : lineRoster(scheme.rules, code, category: category);
     final colour = bagColour(context, bag);
     return Scaffold(
-      appBar: AppBar(title: Text(code)),
+      appBar: AppBar(
+        title: Text(code),
+        actions: [
+          if (scheme != null)
+            IconButton(
+              key: const ValueKey('edit_line'),
+              tooltip: l.editLine,
+              icon: const Icon(Icons.edit),
+              onPressed: () => _editLine(context, scheme, bag),
+            ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(12),
         children: [
@@ -391,6 +456,7 @@ class _AreaStop extends StatefulWidget {
     required this.onPin,
     this.onRemove,
     this.onMovePin,
+    this.onEdit,
   });
 
   final BagRule rule;
@@ -401,6 +467,7 @@ class _AreaStop extends StatefulWidget {
   final ValueChanged<String> onPin;
   final VoidCallback? onRemove;
   final ValueChanged<String>? onMovePin;
+  final VoidCallback? onEdit;
 
   @override
   State<_AreaStop> createState() => _AreaStopState();
@@ -500,6 +567,13 @@ class _AreaStopState extends State<_AreaStop> {
                     ),
                   ),
                   if (pins != null && pins.isNotEmpty) Icon(_open ? Icons.expand_less : Icons.expand_more),
+                  if (widget.onEdit != null)
+                    IconButton(
+                      key: ValueKey('edit_$label'),
+                      tooltip: l.edit,
+                      icon: const Icon(Icons.edit_outlined),
+                      onPressed: widget.onEdit,
+                    ),
                   if (widget.onRemove != null)
                     IconButton(
                       key: ValueKey('remove_$label'),
