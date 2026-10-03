@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -29,11 +31,29 @@ android {
         versionName = flutter.versionName
     }
 
+    // Play Store upload key: android/key.properties (local, never committed)
+    // or the UPLOAD_KEYSTORE_* environment variables (CI secrets). Without
+    // either, release builds fall back to the debug key (test APKs only).
+    val keyProps = Properties().apply {
+        val f = rootProject.file("key.properties")
+        if (f.exists()) f.inputStream().use { load(it) }
+    }
+    fun key(name: String, env: String): String? = keyProps.getProperty(name) ?: System.getenv(env)
+    val uploadStore = key("storeFile", "UPLOAD_KEYSTORE_FILE")
+    signingConfigs {
+        if (uploadStore != null && file(uploadStore).exists()) {
+            create("upload") {
+                storeFile = file(uploadStore)
+                storePassword = key("storePassword", "UPLOAD_KEYSTORE_PASSWORD")
+                keyAlias = key("keyAlias", "UPLOAD_KEY_ALIAS")
+                keyPassword = key("keyPassword", "UPLOAD_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // Sign with your own key for distribution (see README). Debug keys
-            // are used so `flutter build apk --release` works out of the box.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("upload") ?: signingConfigs.getByName("debug")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }

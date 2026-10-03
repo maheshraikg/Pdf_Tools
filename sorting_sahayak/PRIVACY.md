@@ -33,6 +33,11 @@ your department's rules on sharing internal documents.
   the capture button is deleted right after reading. Nothing is uploaded.
 - Schemes, favourites and settings are stored only on your phone and are
   removed when you uninstall the app.
+- Voice search (the microphone button) uses your phone's own speech
+  recognition service (for example Google). That service turns your speech
+  into text and may process it under its own privacy policy; PO Sorting only
+  receives the text and does not record or keep audio.
+- Text-to-speech (reading the line aloud) uses your phone's own voice engine.
 
 ## Open data
 - PIN directory: data.gov.in, Government of India, Open Government Data
@@ -41,6 +46,14 @@ your department's rules on sharing internal documents.
 - The default Mangaluru TD / Non-TD scheme was compiled from sorting lists
   shared by postal staff and may differ from your office's current scheme.
   You can edit it, delete it, restore it, or import your own.
+
+## Permissions
+- Camera: only for scanning addresses, when you open the scan screen.
+- Microphone: only for voice search, when you tap the microphone.
+
+## Contact
+For questions about this policy, use the developer contact email shown on the
+app's Google Play page.
 
 ## Changes
 This policy may be updated with new versions of the app. By using the app you

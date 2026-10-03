@@ -17,6 +17,9 @@ jobs:
     defaults:
       run:
         working-directory: sorting_sahayak
+    env:
+      # Play Store upload key, from repository secrets (absent on forks).
+      HAS_UPLOAD_KEY: ${{ secrets.UPLOAD_KEYSTORE_BASE64 != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -39,8 +42,56 @@ jobs:
       - name: Test
         run: flutter test
 
+      # With the upload key every build is signed the same way, so a new APK
+      # installs over the old one and the AAB can go to the Play Store.
+      - name: Set up the upload key
+        if: env.HAS_UPLOAD_KEY == 'true'
+        env:
+          UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+          UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+          UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+        run: |
+          echo "$UPLOAD_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          {
+            echo "UPLOAD_KEYSTORE_FILE=$RUNNER_TEMP/upload.jks"
+            echo "UPLOAD_KEYSTORE_PASSWORD=$UPLOAD_KEYSTORE_PASSWORD"
+            echo "UPLOAD_KEY_ALIAS=$UPLOAD_KEY_ALIAS"
+            echo "UPLOAD_KEY_PASSWORD=$UPLOAD_KEY_PASSWORD"
+          } >> "$GITHUB_ENV"
+
       - name: Build release APKs (per ABI)
         run: flutter build apk --release --split-per-abi
+
+      - name: Build Play Store bundle (AAB)
+        run: |
+          flutter build appbundle --release
+          cp build/app/outputs/bundle/release/app-release.aab po-sorting-release.aab
+          if [ "$HAS_UPLOAD_KEY" = true ]; then
+            echo 'AAB signed with the upload key – ready for the Play Console.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '**AAB is debug-signed** – add the UPLOAD_KEY* secrets before uploading to the Play Console.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # Google Play requires native libraries aligned for 16 KB memory pages
+      # (target SDK 35+).
+      - name: Check 16 KB page alignment
+        run: |
+          ZIPALIGN=$(ls "$ANDROID_HOME"/build-tools/*/zipalign | sort -V | tail -1)
+          echo '### 16 KB page alignment' >> "$GITHUB_STEP_SUMMARY"
+          ok=true
+          for apk in build/app/outputs/flutter-apk/app-arm64-v8a-release.apk build/app/outputs/flutter-apk/app-x86_64-release.apk; do
+            if "$ZIPALIGN" -c -P 16 -v 4 "$apk" > align.txt 2>&1; then
+              echo "    $(basename "$apk"): OK" >> "$GITHUB_STEP_SUMMARY"
+            else
+              ok=false
+              echo "    $(basename "$apk"): NOT aligned" >> "$GITHUB_STEP_SUMMARY"
+              grep -i 'lib/.*\.so' align.txt | grep -iv 'OK' | head -20 | sed 's/^/    /' >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
+          if [ "$ok" != true ]; then
+            echo "::warning::Some native libraries are not 16 KB aligned (see the summary)."
+          fi
 
       - name: APK sizes
         run: |
@@ -71,6 +122,11 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           path: sorting_sahayak/po-sorting-armv7.apk
+          archive: false
+
+      - uses: actions/upload-artifact@v7
+        with:
+          path: sorting_sahayak/po-sorting-release.aab
           archive: false
 
       - uses: actions/upload-artifact@v4
