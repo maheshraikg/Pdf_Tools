@@ -1,0 +1,35 @@
+﻿SAMPLE – not real. Demo sorting scheme for practice only – replace with your office scheme.,,,,,,,,,,,,,,
+Type,PIN,PIN From,PIN To,Prefix,Office,District,State,Bag No,Bag Name,Section,Remarks,Category,Connectivity,Colour
+PIN,574201,,,,,,,Bag 12,Puttur Line,12,,TD,,#D32F2F
+PIN,574202,,,,,,,Bag 12,Puttur Line,8,,TD,,
+PIN,574239,,,,,,,Bag 14,Sullia Line,4,,TD,,#2E7D32
+PIN,574241,,,,,,,Bag 13,Subramanya Line,7,,TD,,#1565C0
+PIN,575001,,,,,,,Bag 01,Mangaluru HO,B,,TD,,#6A1B9A
+PIN,576101,,,,,,,Bag 21,Udupi HO,C,,TD,,#EF6C00
+PIN,576104,,,,,,,Bag 22,Manipal Line,C,,TD,,#00796B
+PIN,574104,,,,,,,Bag 23,Karkala Line,5,,TD,,#6D4C41
+Range,,574201,574299,,,,,Bag 12,Puttur Line,,Puttur group,TD,,
+Range,,574210,574219,,,,,Bag 15,Charmadi Line,A,,TD,,#D81B60
+Range,,575001,575030,,,,,Bag 01,Mangaluru HO,,City delivery,TD,,
+Range,,576101,576125,,,,,Bag 21,Udupi HO,,,TD,,
+Range,,576201,576299,,,,,Bag 24,Kundapura Line,C,,TD,,#455A64
+Prefix,,,,574,,,,Bag 10,Puttur Division (other),A,,TD,,#880E4F
+Prefix,,,,575,,,,Bag 02,Mangaluru NSH,B,,TD,,#0097A7
+Prefix,,,,576,,,,Bag 20,Udupi Division,C,,TD,,#EF6C00
+Office,,,,,Puttur,,,Bag 12,Puttur Line,,Articles without PIN,TD,,
+Office,,,,,Sullia,,,Bag 14,Sullia Line,,,TD,,
+Office,,,,,Manipal,,,Bag 22,Manipal Line,,,TD,,
+District,,,,,,Dakshina Kannada,,Bag 10,Puttur Division (other),,,TD,,
+District,,,,,,Udupi,,Bag 20,Udupi Division,,,TD,,
+Prefix,,,,57,,,,NT-30,Karnataka – other,D,,Non-TD,,#616161
+Prefix,,,,56,,,,NT-40,Bengaluru,D,,Non-TD,,#1565C0
+Prefix,,,,58,,,,NT-41,Hubballi,D,,Non-TD,,#2E7D32
+Prefix,,,,5,,,,NT-50,Southern states,E,,Non-TD,,#2E7D32
+Prefix,,,,60,,,,NT-60,Chennai,E,,Non-TD,,#F9A825
+Prefix,,,,671,,,,NT-61,Kannur (Kerala),E,,Non-TD,,#00796B
+Office,,,,,Kasaragod,,,NT-61,Kannur (Kerala),,,Non-TD,,
+District,,,,,,Hassan,,NT-31,Hassan,,,Non-TD,,#6D4C41
+State,,,,,,,Kerala,NT-62,Kerala – other,,,Non-TD,,#0097A7
+Prefix,,,,11,,,,NT-11,Delhi,,,Non-TD,,#FBC02D
+Prefix,,,,40,,,,NT-40M,Mumbai,,,Non-TD,,#FFA000
+Default,,,,,,,,NT-99,All other – send to TMO,Z,Out of circle,Non-TD,,#212121

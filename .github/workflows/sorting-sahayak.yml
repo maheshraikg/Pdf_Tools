@@ -1,0 +1,137 @@
+name: Sorting Sahayak (Flutter)
+
+on:
+  pull_request:
+    paths:
+      - 'sorting_sahayak/**'
+      - '.github/workflows/sorting-sahayak.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'sorting_sahayak/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sorting_sahayak
+    env:
+      # Play Store upload key, from repository secrets (absent on forks).
+      HAS_UPLOAD_KEY: ${{ secrets.UPLOAD_KEYSTORE_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+      # With the upload key every build is signed the same way, so a new APK
+      # installs over the old one and the AAB can go to the Play Store.
+      - name: Set up the upload key
+        if: env.HAS_UPLOAD_KEY == 'true'
+        env:
+          UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+          UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+          UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+        run: |
+          echo "$UPLOAD_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          {
+            echo "UPLOAD_KEYSTORE_FILE=$RUNNER_TEMP/upload.jks"
+            echo "UPLOAD_KEYSTORE_PASSWORD=$UPLOAD_KEYSTORE_PASSWORD"
+            echo "UPLOAD_KEY_ALIAS=$UPLOAD_KEY_ALIAS"
+            echo "UPLOAD_KEY_PASSWORD=$UPLOAD_KEY_PASSWORD"
+          } >> "$GITHUB_ENV"
+
+      - name: Build release APKs (per ABI)
+        run: flutter build apk --release --split-per-abi
+
+      - name: Build Play Store bundle (AAB)
+        run: |
+          flutter build appbundle --release
+          cp build/app/outputs/bundle/release/app-release.aab po-sorting-release.aab
+          if [ "$HAS_UPLOAD_KEY" = true ]; then
+            echo 'AAB signed with the upload key – ready for the Play Console.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '**AAB is debug-signed** – add the UPLOAD_KEY* secrets before uploading to the Play Console.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # Google Play requires native libraries aligned for 16 KB memory pages
+      # (target SDK 35+).
+      - name: Check 16 KB page alignment
+        run: |
+          ZIPALIGN=$(ls "$ANDROID_HOME"/build-tools/*/zipalign | sort -V | tail -1)
+          echo '### 16 KB page alignment' >> "$GITHUB_STEP_SUMMARY"
+          ok=true
+          for apk in build/app/outputs/flutter-apk/app-arm64-v8a-release.apk build/app/outputs/flutter-apk/app-x86_64-release.apk; do
+            if "$ZIPALIGN" -c -P 16 -v 4 "$apk" > align.txt 2>&1; then
+              echo "    $(basename "$apk"): OK" >> "$GITHUB_STEP_SUMMARY"
+            else
+              ok=false
+              echo "    $(basename "$apk"): NOT aligned" >> "$GITHUB_STEP_SUMMARY"
+              grep -i 'lib/.*\.so' align.txt | grep -iv 'OK' | head -20 | sed 's/^/    /' >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
+          if [ "$ok" != true ]; then
+            echo "::warning::Some native libraries are not 16 KB aligned (see the summary)."
+          fi
+
+      - name: APK sizes
+        run: |
+          ls -l build/app/outputs/flutter-apk/*.apk | awk '{printf "%s  %.1f MB\n", $9, $5/1048576}' | tee apk-sizes.txt
+          echo '### APK sizes' >> "$GITHUB_STEP_SUMMARY"
+          sed 's/^/    /' apk-sizes.txt >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Check release manifest has no INTERNET permission
+        run: |
+          MANIFEST=$(find build/app/intermediates -path '*release*' -name AndroidManifest.xml | grep -i merged | head -1)
+          echo "Merged manifest: $MANIFEST"
+          if grep -q 'android.permission.INTERNET' "$MANIFEST"; then
+            echo "INTERNET permission found in release manifest" && exit 1
+          fi
+
+      # Plain .apk downloads (no zip): some phone file managers cut large
+      # files short when unzipping, and the APK then will not install.
+      - name: Name APKs for direct download
+        run: |
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk po-sorting-arm64.apk
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk po-sorting-armv7.apk
+
+      - uses: actions/upload-artifact@v7
+        with:
+          path: sorting_sahayak/po-sorting-arm64.apk
+          archive: false
+
+      - uses: actions/upload-artifact@v7
+        with:
+          path: sorting_sahayak/po-sorting-armv7.apk
+          archive: false
+
+      - uses: actions/upload-artifact@v7
+        with:
+          path: sorting_sahayak/po-sorting-release.aab
+          archive: false
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sorting-sahayak-apks
+          path: |
+            sorting_sahayak/build/app/outputs/flutter-apk/*-release.apk
+            sorting_sahayak/apk-sizes.txt
