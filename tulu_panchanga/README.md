@@ -10,6 +10,9 @@ Everything is computed on the phone; there is no network access.
 <img src="docs/screenshots/tcy_7_today_lipi.png" width="200">
 </p>
 
+**Download:** [tulu-panchanga.apk](https://github.com/maheshraikg/Pdf_Tools/releases/download/tulu-panchanga-latest/tulu-panchanga.apk)
+(latest build from CI, debug-signed).
+
 ## Features
 
 - **Today**: weekday, Gregorian, Tulu (solar) and lunar date; a **timeline
@@ -74,7 +77,9 @@ keyAlias, keyPassword) when present, else the debug key.
 
 CI (`.github/workflows/tulu-panchanga.yml`) runs analyze and tests, exports
 the Mangaluru CSVs for the current and next year, builds the release APK and
-uploads both as artifacts.
+uploads both as artifacts. Builds of `master` (and manual runs) also publish
+the APK to the rolling `tulu-panchanga-latest` pre-release, which gives the
+direct download link above.
 
 ## Tools
 

@@ -8,6 +8,9 @@ on:
     paths: [ 'tulu_panchanga/**', '.github/workflows/tulu-panchanga.yml' ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Analyze, test and build release APK
@@ -60,3 +63,19 @@ jobs:
         with:
           name: tulu-panchanga-mangaluru-csv
           path: tulu_panchanga/build/csv/
+
+      # Direct download link (no zip):
+      # https://github.com/<owner>/<repo>/releases/download/tulu-panchanga-latest/tulu-panchanga.apk
+      # A rolling pre-release, replaced on every master build or manual run;
+      # marked not-latest so it never shadows the PDF app's releases.
+      - name: Publish APK to the tulu-panchanga-latest release
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/master')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp build/app/outputs/flutter-apk/app-release.apk build/tulu-panchanga.apk
+          gh release delete tulu-panchanga-latest --yes --cleanup-tag || true
+          gh release create tulu-panchanga-latest build/tulu-panchanga.apk \
+            --target "${{ github.sha }}" --prerelease --latest=false \
+            --title "Tulu Panchanga (latest build)" \
+            --notes "Release APK built from ${{ github.sha }} (debug-signed). Direct link: https://github.com/${{ github.repository }}/releases/download/tulu-panchanga-latest/tulu-panchanga.apk"
