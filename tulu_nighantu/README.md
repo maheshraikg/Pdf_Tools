@@ -42,6 +42,19 @@ flutter build apk --debug   # build/app/outputs/flutter-apk/app-debug.apk
 CI (`.github/workflows/tulu-nighantu.yml`) runs analyze, test and a debug
 build, and uploads the APK as the `tulu-nighantu-debug-apk` artifact.
 
+## Play Store release
+
+- Upload key: add the repository secrets `TULU_KEYSTORE_BASE64`,
+  `TULU_KEYSTORE_PASSWORD` and `TULU_KEY_ALIAS`. Never commit the keystore or
+  `android/key.properties`; both are git-ignored.
+- **Actions › Tulu Nighantu release (Play Store) › Run workflow** builds the
+  signed `app-release.aab` (artifact `tulu-nighantu-release-aab`) with
+  built-in AI (`AI_PROXY_URL`). Without the secrets it signs with the debug
+  key, which the Play Store rejects.
+- Raise `version:` in `pubspec.yaml` (e.g. `1.0.1+2`) before each new upload.
+- Listing text, data-safety answers and graphics: `store/`. Privacy policy:
+  `PRIVACY.md`.
+
 ## Project layout
 
 ```

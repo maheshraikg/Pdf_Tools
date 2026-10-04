@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
 
 import '../lipi/tulu_lipi.dart';
 import '../models/word.dart';
@@ -52,6 +54,13 @@ class AiAnswer {
   String get lipi => TuluLipi.fromKannada(tulu);
 }
 
+/// Sends a POST request; used for the AI server fallback.
+typedef PostFn = Future<http.Response> Function(
+  Uri uri,
+  Map<String, String> headers,
+  String body,
+);
+
 /// A friendly, displayable AI error.
 class AiException implements Exception {
   const AiException(this.message);
@@ -71,18 +80,25 @@ class GeminiClient {
     this.model = kDefaultGeminiModel,
     http.Client? client,
   }) : proxyUrl = null,
+       fallbackPost = null,
        _client = client ?? http.Client();
 
   /// Calls the built-in AI server, which holds the key.
-  GeminiClient.proxy({required String this.proxyUrl, http.Client? client})
-    : apiKey = null,
-      model = kDefaultGeminiModel,
-      _client = client ?? http.Client();
+  GeminiClient.proxy({
+    required String this.proxyUrl,
+    http.Client? client,
+    this.fallbackPost = postViaDoh,
+  }) : apiKey = null,
+       model = kDefaultGeminiModel,
+       _client = client ?? http.Client();
 
   final String? apiKey;
   final String? proxyUrl;
   final String model;
   final http.Client _client;
+
+  /// Second attempt when the AI server can't be reached (proxy mode only).
+  final PostFn? fallbackPost;
 
   // Keep in sync with SYSTEM_PROMPT in backend/ai-worker/src/index.js.
   static const _system =
@@ -159,20 +175,82 @@ class GeminiClient {
         },
       });
     }
-    final http.Response res;
+    http.Response res;
     try {
       res = await _client
           .post(uri, headers: headers, body: body)
           .timeout(const Duration(seconds: 30));
     } on TimeoutException {
       throw const AiException('AI took too long. Please try again.');
-    } on http.ClientException {
-      throw const AiException(
-        'No internet connection. AI needs internet; the dictionary works offline.',
-      );
+    } on Exception catch (e) {
+      if (e is! http.ClientException && e is! IOException) rethrow;
+      final fallback = fallbackPost;
+      if (fallback == null) {
+        throw AiException(
+          'No internet connection. AI needs internet; the dictionary works '
+          'offline.\n\nDetails: ${_short(e)}',
+        );
+      }
+      // Some networks block the server's name; retry with a private lookup.
+      try {
+        res = await fallback(
+          uri,
+          headers,
+          body,
+        ).timeout(const Duration(seconds: 30));
+      } on Exception catch (e2) {
+        throw AiException(
+          'Can\'t reach the AI server. Check your internet, or try mobile '
+          'data or another Wi-Fi. The dictionary works offline.\n\n'
+          'Details: ${_short(e)} / ${_short(e2)}',
+        );
+      }
     }
     // Always decode as UTF-8 (Kannada script), whatever the headers say.
     return parseResponse(res.statusCode, utf8.decode(res.bodyBytes));
+  }
+
+  static String _short(Object e) {
+    final t = e.toString();
+    return t.length > 160 ? '${t.substring(0, 160)}…' : t;
+  }
+
+  /// Posts to [uri] after resolving its host with DNS-over-HTTPS
+  /// (Cloudflare's 1.1.1.1, reached by IP address), for networks whose DNS
+  /// blocks the AI server. TLS still verifies the server's certificate.
+  static Future<http.Response> postViaDoh(
+    Uri uri,
+    Map<String, String> headers,
+    String body,
+  ) async {
+    final dns = await http
+        .get(
+          Uri.https('1.1.1.1', '/dns-query', {'name': uri.host, 'type': 'A'}),
+          headers: {'accept': 'application/dns-json'},
+        )
+        .timeout(const Duration(seconds: 10));
+    final answers =
+        (jsonDecode(dns.body) as Map<String, dynamic>)['Answer'] as List? ??
+        const [];
+    final ips = [
+      for (final a in answers.cast<Map<String, dynamic>>())
+        if (a['type'] == 1) a['data'] as String,
+    ];
+    if (ips.isEmpty) throw const SocketException('No address from 1.1.1.1');
+    final io = HttpClient()
+      ..connectionFactory = (u, _, _) async {
+        final task = await Socket.startConnect(ips.first, u.port);
+        return ConnectionTask.fromSocket(
+          task.socket.then((s) => SecureSocket.secure(s, host: u.host)),
+          task.cancel,
+        );
+      };
+    final client = IOClient(io);
+    try {
+      return await client.post(uri, headers: headers, body: body);
+    } finally {
+      client.close();
+    }
   }
 
   /// Parses a Gemini HTTP response into an [AiAnswer]. Exposed for tests.
