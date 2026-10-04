@@ -20,14 +20,14 @@ enum Kaala {
   moonrise;
 
   Name get label => switch (this) {
-        sunrise => const Name('at sunrise', 'ಸೂರ್ಯೋದಯದಲ್ಲಿ'),
-        arunodaya => const Name('at arunodaya', 'ಅರುಣೋದಯದಲ್ಲಿ'),
-        madhyahna => const Name('at madhyahna', 'ಮಧ್ಯಾಹ್ನದಲ್ಲಿ'),
-        aparahna => const Name('at aparahna', 'ಅಪರಾಹ್ಣದಲ್ಲಿ'),
-        pradosha => const Name('at pradosha', 'ಪ್ರದೋಷದಲ್ಲಿ'),
-        nishita => const Name('at midnight (nishita)', 'ನಿಶೀಥ ಕಾಲದಲ್ಲಿ'),
-        moonrise => const Name('at moonrise', 'ಚಂದ್ರೋದಯದಲ್ಲಿ'),
-      };
+    sunrise => const Name('at sunrise', 'ಸೂರ್ಯೋದಯದಲ್ಲಿ'),
+    arunodaya => const Name('at arunodaya', 'ಅರುಣೋದಯದಲ್ಲಿ'),
+    madhyahna => const Name('at madhyahna', 'ಮಧ್ಯಾಹ್ನದಲ್ಲಿ'),
+    aparahna => const Name('at aparahna', 'ಅಪರಾಹ್ಣದಲ್ಲಿ'),
+    pradosha => const Name('at pradosha', 'ಪ್ರದೋಷದಲ್ಲಿ'),
+    nishita => const Name('at midnight (nishita)', 'ನಿಶೀಥ ಕಾಲದಲ್ಲಿ'),
+    moonrise => const Name('at moonrise', 'ಚಂದ್ರೋದಯದಲ್ಲಿ'),
+  };
 }
 
 enum FestivalCategory {
@@ -175,271 +175,331 @@ const int _k = 14;
 const List<Festival> festivals = [
   // --- Chandramana (lunar) -------------------------------------------------
   Festival(
-      id: 'ugadi',
-      name: Name('Chandramana Ugadi', 'ಚಾಂದ್ರಮಾನ ಯುಗಾದಿ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(0, _s + 1, Kaala.sunrise),
-      confidence: Confidence.high,
-      note: 'Lunar new year. Tulunadu mainly celebrates Bisu (solar).'),
+    id: 'ugadi',
+    name: Name('Chandramana Ugadi', 'ಚಾಂದ್ರಮಾನ ಯುಗಾದಿ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(0, _s + 1, Kaala.sunrise),
+    confidence: Confidence.high,
+    note: 'Lunar new year. Tulunadu mainly celebrates Bisu (solar).',
+  ),
   Festival(
-      id: 'ramanavami',
-      name: Name('Sri Rama Navami', 'ಶ್ರೀ ರಾಮ ನವಮಿ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(0, _s + 9, Kaala.madhyahna),
-      confidence: Confidence.high),
+    id: 'ramanavami',
+    name: Name('Sri Rama Navami', 'ಶ್ರೀ ರಾಮ ನವಮಿ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(0, _s + 9, Kaala.madhyahna),
+    confidence: Confidence.high,
+  ),
   Festival(
-      id: 'akshaya_tritiya',
-      name: Name('Akshaya Tritiya', 'ಅಕ್ಷಯ ತೃತೀಯ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(1, _s + 3, Kaala.sunrise)),
+    id: 'akshaya_tritiya',
+    name: Name('Akshaya Tritiya', 'ಅಕ್ಷಯ ತೃತೀಯ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(1, _s + 3, Kaala.sunrise),
+  ),
   Festival(
-      id: 'guru_purnima',
-      name: Name('Guru Purnima', 'ಗುರು ಪೂರ್ಣಿಮೆ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(3, _s + 15, Kaala.sunrise)),
+    id: 'guru_purnima',
+    name: Name('Guru Purnima', 'ಗುರು ಪೂರ್ಣಿಮೆ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(3, _s + 15, Kaala.sunrise),
+  ),
   Festival(
-      id: 'nagara_panchami',
-      name: Name('Nagara Panchami', 'ನಾಗರ ಪಂಚಮಿ'),
-      category: FestivalCategory.tulu,
-      rule: LunarTithiRule(4, _s + 5, Kaala.sunrise),
-      note: 'Naga worship at nagabana; check local temple announcement.'),
+    id: 'nagara_panchami',
+    name: Name('Nagara Panchami', 'ನಾಗರ ಪಂಚಮಿ'),
+    category: FestivalCategory.tulu,
+    rule: LunarTithiRule(4, _s + 5, Kaala.sunrise),
+    note: 'Naga worship at nagabana; check local temple announcement.',
+  ),
   Festival(
-      id: 'varamahalakshmi',
-      name: Name('Varamahalakshmi Vrata', 'ವರಮಹಾಲಕ್ಷ್ಮೀ ವ್ರತ'),
-      category: FestivalCategory.major,
-      rule: WeekdayBeforeRule(5, LunarTithiRule(4, _s + 15, Kaala.sunrise))),
+    id: 'varamahalakshmi',
+    name: Name('Varamahalakshmi Vrata', 'ವರಮಹಾಲಕ್ಷ್ಮೀ ವ್ರತ'),
+    category: FestivalCategory.major,
+    rule: WeekdayBeforeRule(5, LunarTithiRule(4, _s + 15, Kaala.sunrise)),
+  ),
   Festival(
-      id: 'nooli_hunnime',
-      name: Name('Nooli Hunnime / Upakarma', 'ನೂಲ ಹುಣ್ಣಿಮೆ / ಉಪಾಕರ್ಮ',
-          'ನೂಲ ಪುಣ್ಣಮೆ / ಉಪಾಕರ್ಮ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(4, _s + 15, Kaala.sunrise),
-      note: 'Rig/Yajur upakarma dates can differ (nakshatra based).'),
+    id: 'nooli_hunnime',
+    name: Name(
+      'Nooli Hunnime / Upakarma',
+      'ನೂಲ ಹುಣ್ಣಿಮೆ / ಉಪಾಕರ್ಮ',
+      'ನೂಲ ಪುಣ್ಣಮೆ / ಉಪಾಕರ್ಮ',
+    ),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(4, _s + 15, Kaala.sunrise),
+    note: 'Rig/Yajur upakarma dates can differ (nakshatra based).',
+  ),
   Festival(
-      id: 'janmashtami',
-      name: Name('Sri Krishna Janmashtami (Chandramana)',
-          'ಶ್ರೀ ಕೃಷ್ಣ ಜನ್ಮಾಷ್ಟಮಿ (ಚಾಂದ್ರಮಾನ)', 'ಅಷ್ಟೆಮಿ (ಚಾಂದ್ರಮಾನ)'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(4, _k + 8, Kaala.nishita),
-      confidence: Confidence.high),
+    id: 'janmashtami',
+    name: Name(
+      'Sri Krishna Janmashtami (Chandramana)',
+      'ಶ್ರೀ ಕೃಷ್ಣ ಜನ್ಮಾಷ್ಟಮಿ (ಚಾಂದ್ರಮಾನ)',
+      'ಅಷ್ಟೆಮಿ (ಚಾಂದ್ರಮಾನ)',
+    ),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(4, _k + 8, Kaala.nishita),
+    confidence: Confidence.high,
+  ),
   Festival(
-      id: 'krishna_jayanti_udupi',
-      name: Name('Sri Krishna Jayanti (Sauramana, Udupi)',
-          'ಶ್ರೀ ಕೃಷ್ಣ ಜಯಂತಿ (ಸೌರಮಾನ, ಉಡುಪಿ)', 'ಅಷ್ಟೆಮಿ (ಸೌರಮಾನ, ಒಡಿಪು)'),
-      category: FestivalCategory.tulu,
-      rule: SolarMonthTithiRule(4, _k + 8, Kaala.nishita),
-      confidence: Confidence.low,
-      note: 'Udupi follows Simha masa; Rohini nakshatra may also be '
-          'considered. Confirm with Udupi Sri Krishna Matha calendar.'),
+    id: 'krishna_jayanti_udupi',
+    name: Name(
+      'Sri Krishna Jayanti (Sauramana, Udupi)',
+      'ಶ್ರೀ ಕೃಷ್ಣ ಜಯಂತಿ (ಸೌರಮಾನ, ಉಡುಪಿ)',
+      'ಅಷ್ಟೆಮಿ (ಸೌರಮಾನ, ಒಡಿಪು)',
+    ),
+    category: FestivalCategory.tulu,
+    rule: SolarMonthTithiRule(4, _k + 8, Kaala.nishita),
+    confidence: Confidence.low,
+    note:
+        'Udupi follows Simha masa; Rohini nakshatra may also be '
+        'considered. Confirm with Udupi Sri Krishna Matha calendar.',
+  ),
   Festival(
-      id: 'swarna_gowri',
-      name: Name('Swarna Gowri Vrata', 'ಸ್ವರ್ಣ ಗೌರಿ ವ್ರತ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(5, _s + 3, Kaala.sunrise)),
+    id: 'swarna_gowri',
+    name: Name('Swarna Gowri Vrata', 'ಸ್ವರ್ಣ ಗೌರಿ ವ್ರತ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(5, _s + 3, Kaala.sunrise),
+  ),
   Festival(
-      id: 'ganesh_chaturthi',
-      name: Name('Ganesha Chaturthi', 'ಗಣೇಶ ಚತುರ್ಥಿ', 'ಚೌತಿ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(5, _s + 4, Kaala.madhyahna),
-      confidence: Confidence.high),
+    id: 'ganesh_chaturthi',
+    name: Name('Ganesha Chaturthi', 'ಗಣೇಶ ಚತುರ್ಥಿ', 'ಚೌತಿ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(5, _s + 4, Kaala.madhyahna),
+    confidence: Confidence.high,
+  ),
   Festival(
-      id: 'ananta_chaturdashi',
-      name: Name('Ananta Chaturdashi', 'ಅನಂತ ಚತುರ್ದಶಿ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(5, _s + 14, Kaala.sunrise)),
+    id: 'ananta_chaturdashi',
+    name: Name('Ananta Chaturdashi', 'ಅನಂತ ಚತುರ್ದಶಿ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(5, _s + 14, Kaala.sunrise),
+  ),
   Festival(
-      id: 'mahalaya_amavasya',
-      name: Name('Mahalaya Amavasya', 'ಮಹಾಲಯ ಅಮಾವಾಸ್ಯೆ', 'ಮಹಾಲಯ ಅಮಾಸೆ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(5, 29, Kaala.aparahna)),
+    id: 'mahalaya_amavasya',
+    name: Name('Mahalaya Amavasya', 'ಮಹಾಲಯ ಅಮಾವಾಸ್ಯೆ', 'ಮಹಾಲಯ ಅಮಾಸೆ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(5, 29, Kaala.aparahna),
+  ),
   Festival(
-      id: 'navaratri',
-      name: Name('Navaratri begins', 'ನವರಾತ್ರಿ ಆರಂಭ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(6, _s + 1, Kaala.sunrise),
-      confidence: Confidence.high,
-      note: 'Mangaluru Dasara begins.'),
+    id: 'navaratri',
+    name: Name('Navaratri begins', 'ನವರಾತ್ರಿ ಆರಂಭ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(6, _s + 1, Kaala.sunrise),
+    confidence: Confidence.high,
+    note: 'Mangaluru Dasara begins.',
+  ),
   Festival(
-      id: 'sharada_puja',
-      name: Name('Sharada Puja (Saraswati Puja)', 'ಶಾರದಾ ಪೂಜೆ'),
-      category: FestivalCategory.major,
-      rule: NakshatraRule(6, _s + 5, _s + 9, 18),
-      note: 'Mula nakshatra during Navaratri.'),
+    id: 'sharada_puja',
+    name: Name('Sharada Puja (Saraswati Puja)', 'ಶಾರದಾ ಪೂಜೆ'),
+    category: FestivalCategory.major,
+    rule: NakshatraRule(6, _s + 5, _s + 9, 18),
+    note: 'Mula nakshatra during Navaratri.',
+  ),
   Festival(
-      id: 'durgashtami',
-      name: Name('Durgashtami', 'ದುರ್ಗಾಷ್ಟಮಿ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(6, _s + 8, Kaala.sunrise)),
+    id: 'durgashtami',
+    name: Name('Durgashtami', 'ದುರ್ಗಾಷ್ಟಮಿ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(6, _s + 8, Kaala.sunrise),
+  ),
   Festival(
-      id: 'mahanavami',
-      name: Name('Mahanavami / Ayudha Puja', 'ಮಹಾನವಮಿ / ಆಯುಧ ಪೂಜೆ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(6, _s + 9, Kaala.sunrise)),
+    id: 'mahanavami',
+    name: Name('Mahanavami / Ayudha Puja', 'ಮಹಾನವಮಿ / ಆಯುಧ ಪೂಜೆ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(6, _s + 9, Kaala.sunrise),
+  ),
   Festival(
-      id: 'vijayadashami',
-      name: Name('Vijayadashami', 'ವಿಜಯದಶಮಿ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(6, _s + 10, Kaala.aparahna),
-      confidence: Confidence.high),
+    id: 'vijayadashami',
+    name: Name('Vijayadashami', 'ವಿಜಯದಶಮಿ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(6, _s + 10, Kaala.aparahna),
+    confidence: Confidence.high,
+  ),
   Festival(
-      id: 'naraka_chaturdashi',
-      name: Name('Naraka Chaturdashi', 'ನರಕ ಚತುರ್ದಶಿ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(6, _k + 14, Kaala.arunodaya),
-      note: 'Deepavali oil bath (abhyanga) day.'),
+    id: 'naraka_chaturdashi',
+    name: Name('Naraka Chaturdashi', 'ನರಕ ಚತುರ್ದಶಿ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(6, _k + 14, Kaala.arunodaya),
+    note: 'Deepavali oil bath (abhyanga) day.',
+  ),
   Festival(
-      id: 'deepavali_amavasya',
-      name: Name('Deepavali Amavasya (Lakshmi Puja)',
-          'ದೀಪಾವಳಿ ಅಮಾವಾಸ್ಯೆ (ಲಕ್ಷ್ಮೀ ಪೂಜೆ)', 'ದೀಪಾವಳಿ ಅಮಾಸೆ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(6, 29, Kaala.pradosha),
-      confidence: Confidence.high),
+    id: 'deepavali_amavasya',
+    name: Name(
+      'Deepavali Amavasya (Lakshmi Puja)',
+      'ದೀಪಾವಳಿ ಅಮಾವಾಸ್ಯೆ (ಲಕ್ಷ್ಮೀ ಪೂಜೆ)',
+      'ದೀಪಾವಳಿ ಅಮಾಸೆ',
+    ),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(6, 29, Kaala.pradosha),
+    confidence: Confidence.high,
+  ),
   Festival(
-      id: 'bali_padyami',
-      name: Name('Bali Padyami (Balindra Puja)', 'ಬಲಿಪಾಡ್ಯಮಿ',
-          'ಬಲೀಂದ್ರ ಪೂಜೆ'),
-      category: FestivalCategory.tulu,
-      rule: LunarTithiRule(7, _s + 1, Kaala.sunrise),
-      confidence: Confidence.high),
+    id: 'bali_padyami',
+    name: Name('Bali Padyami (Balindra Puja)', 'ಬಲಿಪಾಡ್ಯಮಿ', 'ಬಲೀಂದ್ರ ಪೂಜೆ'),
+    category: FestivalCategory.tulu,
+    rule: LunarTithiRule(7, _s + 1, Kaala.sunrise),
+    confidence: Confidence.high,
+  ),
   Festival(
-      id: 'tulasi_puja',
-      name: Name('Tulasi Puja (Utthana Dwadashi)', 'ತುಳಸಿ ಪೂಜೆ',
-          'ತುಲಸಿ ಪೂಜೆ'),
-      category: FestivalCategory.tulu,
-      rule: LunarTithiRule(7, _s + 12, Kaala.pradosha),
-      confidence: Confidence.low,
-      note: 'Puja is in the evening; some households use the sunrise '
-          'Dwadashi day.'),
+    id: 'tulasi_puja',
+    name: Name('Tulasi Puja (Utthana Dwadashi)', 'ತುಳಸಿ ಪೂಜೆ', 'ತುಲಸಿ ಪೂಜೆ'),
+    category: FestivalCategory.tulu,
+    rule: LunarTithiRule(7, _s + 12, Kaala.pradosha),
+    confidence: Confidence.low,
+    note:
+        'Puja is in the evening; some households use the sunrise '
+        'Dwadashi day.',
+  ),
   Festival(
-      id: 'subrahmanya_shashti',
-      name: Name('Subrahmanya Shashti (Champa Shashti)', 'ಸುಬ್ರಹ್ಮಣ್ಯ ಷಷ್ಠಿ',
-          'ಷಷ್ಠಿ'),
-      category: FestivalCategory.tulu,
-      rule: LunarTithiRule(8, _s + 6, Kaala.sunrise),
-      note: 'Kukke Subrahmanya and naga temples.'),
+    id: 'subrahmanya_shashti',
+    name: Name(
+      'Subrahmanya Shashti (Champa Shashti)',
+      'ಸುಬ್ರಹ್ಮಣ್ಯ ಷಷ್ಠಿ',
+      'ಷಷ್ಠಿ',
+    ),
+    category: FestivalCategory.tulu,
+    rule: LunarTithiRule(8, _s + 6, Kaala.sunrise),
+    note: 'Kukke Subrahmanya and naga temples.',
+  ),
   Festival(
-      id: 'hanumad_vrata',
-      name: Name('Hanumad Vrata', 'ಹನುಮದ್ವ್ರತ'),
-      category: FestivalCategory.vrata,
-      rule: LunarTithiRule(8, _s + 13, Kaala.sunrise)),
+    id: 'hanumad_vrata',
+    name: Name('Hanumad Vrata', 'ಹನುಮದ್ವ್ರತ'),
+    category: FestivalCategory.vrata,
+    rule: LunarTithiRule(8, _s + 13, Kaala.sunrise),
+  ),
   Festival(
-      id: 'vaikuntha_ekadashi',
-      name: Name('Vaikuntha Ekadashi', 'ವೈಕುಂಠ ಏಕಾದಶಿ'),
-      category: FestivalCategory.major,
-      rule: SolarMonthTithiRule(8, _s + 11, Kaala.sunrise),
-      note: 'Shukla Ekadashi in Dhanu masa.'),
+    id: 'vaikuntha_ekadashi',
+    name: Name('Vaikuntha Ekadashi', 'ವೈಕುಂಠ ಏಕಾದಶಿ'),
+    category: FestivalCategory.major,
+    rule: SolarMonthTithiRule(8, _s + 11, Kaala.sunrise),
+    note: 'Shukla Ekadashi in Dhanu masa.',
+  ),
   Festival(
-      id: 'ratha_saptami',
-      name: Name('Ratha Saptami', 'ರಥಸಪ್ತಮಿ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(10, _s + 7, Kaala.sunrise)),
+    id: 'ratha_saptami',
+    name: Name('Ratha Saptami', 'ರಥಸಪ್ತಮಿ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(10, _s + 7, Kaala.sunrise),
+  ),
   Festival(
-      id: 'shivaratri',
-      name: Name('Maha Shivaratri', 'ಮಹಾ ಶಿವರಾತ್ರಿ', 'ಶಿವರಾತ್ರೆ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(10, _k + 14, Kaala.nishita),
-      confidence: Confidence.high),
+    id: 'shivaratri',
+    name: Name('Maha Shivaratri', 'ಮಹಾ ಶಿವರಾತ್ರಿ', 'ಶಿವರಾತ್ರೆ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(10, _k + 14, Kaala.nishita),
+    confidence: Confidence.high,
+  ),
   Festival(
-      id: 'holi',
-      name: Name('Holi / Kama Dahana', 'ಹೋಳಿ / ಕಾಮದಹನ'),
-      category: FestivalCategory.major,
-      rule: LunarTithiRule(11, _s + 15, Kaala.pradosha)),
+    id: 'holi',
+    name: Name('Holi / Kama Dahana', 'ಹೋಳಿ / ಕಾಮದಹನ'),
+    category: FestivalCategory.major,
+    rule: LunarTithiRule(11, _s + 15, Kaala.pradosha),
+  ),
 
   // --- Sauramana (solar) / Tulunadu -----------------------------------------
   Festival(
-      id: 'bisu',
-      name: Name('Bisu (Tulu New Year)', 'ಬಿಸು (ಸೌರಮಾನ ಯುಗಾದಿ)', 'ಬಿಸು ಪರ್ಬ'),
-      category: FestivalCategory.tulu,
-      rule: SolarDayRule(0, 1),
-      confidence: Confidence.high,
-      note: 'First day of Paggu. Depends on the solar-month day-1 rule.'),
+    id: 'bisu',
+    name: Name('Bisu (Tulu New Year)', 'ಬಿಸು (ಸೌರಮಾನ ಯುಗಾದಿ)', 'ಬಿಸು ಪರ್ಬ'),
+    category: FestivalCategory.tulu,
+    rule: SolarDayRule(0, 1),
+    confidence: Confidence.high,
+    note: 'First day of Paggu. Depends on the solar-month day-1 rule.',
+  ),
   Festival(
-      id: 'pattanaje',
-      name: Name('Pattanaje', 'ಪತ್ತನಾಜೆ'),
-      category: FestivalCategory.tulu,
-      rule: SolarDayRule(1, 10),
-      note: '10th day of Beshe.'),
+    id: 'pattanaje',
+    name: Name('Pattanaje', 'ಪತ್ತನಾಜೆ'),
+    category: FestivalCategory.tulu,
+    rule: SolarDayRule(1, 10),
+    note: '10th day of Beshe.',
+  ),
   Festival(
-      id: 'aati_amavasye',
-      name: Name('Aati Amavasye', 'ಆಟಿ ಅಮಾವಾಸ್ಯೆ', 'ಆಟಿ ಅಮಾಸೆ'),
-      category: FestivalCategory.tulu,
-      rule: SolarMonthTithiRule(3, 29, Kaala.sunrise),
-      note: 'Pale kashaya (Alstonia bark) drink at dawn.'),
+    id: 'aati_amavasye',
+    name: Name('Aati Amavasye', 'ಆಟಿ ಅಮಾವಾಸ್ಯೆ', 'ಆಟಿ ಅಮಾಸೆ'),
+    category: FestivalCategory.tulu,
+    rule: SolarMonthTithiRule(3, 29, Kaala.sunrise),
+    note: 'Pale kashaya (Alstonia bark) drink at dawn.',
+  ),
   Festival(
-      id: 'tula_sankramana',
-      name: Name('Tula Sankramana (Kaveri Sankramana)',
-          'ತುಲಾ ಸಂಕ್ರಮಣ (ಕಾವೇರಿ ಸಂಕ್ರಮಣ)'),
-      category: FestivalCategory.tulu,
-      rule: SankrantiRule(6),
-      confidence: Confidence.high),
+    id: 'tula_sankramana',
+    name: Name(
+      'Tula Sankramana (Kaveri Sankramana)',
+      'ತುಲಾ ಸಂಕ್ರಮಣ (ಕಾವೇರಿ ಸಂಕ್ರಮಣ)',
+    ),
+    category: FestivalCategory.tulu,
+    rule: SankrantiRule(6),
+    confidence: Confidence.high,
+  ),
   Festival(
-      id: 'makara_sankranti',
-      name: Name('Makara Sankranti', 'ಮಕರ ಸಂಕ್ರಾಂತಿ', 'ಮಕರ ಸಂಕ್ರಮಣ'),
-      category: FestivalCategory.major,
-      rule: SankrantiRule(9),
-      confidence: Confidence.high),
+    id: 'makara_sankranti',
+    name: Name('Makara Sankranti', 'ಮಕರ ಸಂಕ್ರಾಂತಿ', 'ಮಕರ ಸಂಕ್ರಮಣ'),
+    category: FestivalCategory.major,
+    rule: SankrantiRule(9),
+    confidence: Confidence.high,
+  ),
   Festival(
-      id: 'keddasa',
-      name: Name('Keddasa', 'ಕೆಡ್ಡಸ'),
-      category: FestivalCategory.tulu,
-      rule: SolarDayRule(9, 27),
-      confidence: Confidence.low,
-      note: 'Bhumi (earth) festival, about 10 February. The exact day '
-          'reckoning (Puyintel 27) needs confirmation.'),
+    id: 'keddasa',
+    name: Name('Keddasa', 'ಕೆಡ್ಡಸ'),
+    category: FestivalCategory.tulu,
+    rule: SolarDayRule(9, 27),
+    confidence: Confidence.low,
+    note:
+        'Bhumi (earth) festival, about 10 February. The exact day '
+        'reckoning (Puyintel 27) needs confirmation.',
+  ),
 ];
 
 // Recurring observances generated for every month.
 const Festival ekadashi = Festival(
-    id: 'ekadashi',
-    name: Name('Ekadashi', 'ಏಕಾದಶಿ'),
-    category: FestivalCategory.vrata,
-    rule: LunarTithiRule(-1, 10, Kaala.sunrise), // and Krishna (25)
-    confidence: Confidence.medium,
-    note: 'Smarta reckoning (Ekadashi at sunrise). Madhwa (arunodaya) '
-        'variant noted when it differs.');
+  id: 'ekadashi',
+  name: Name('Ekadashi', 'ಏಕಾದಶಿ'),
+  category: FestivalCategory.vrata,
+  rule: LunarTithiRule(-1, 10, Kaala.sunrise), // and Krishna (25)
+  confidence: Confidence.medium,
+  note:
+      'Smarta reckoning (Ekadashi at sunrise). Madhwa (arunodaya) '
+      'variant noted when it differs.',
+);
 const Festival sankashti = Festival(
-    id: 'sankashti',
-    name: Name('Sankashti Chaturthi', 'ಸಂಕಷ್ಟ ಚತುರ್ಥಿ'),
-    category: FestivalCategory.vrata,
-    rule: LunarTithiRule(-1, _k + 4, Kaala.moonrise));
+  id: 'sankashti',
+  name: Name('Sankashti Chaturthi', 'ಸಂಕಷ್ಟ ಚತುರ್ಥಿ'),
+  category: FestivalCategory.vrata,
+  rule: LunarTithiRule(-1, _k + 4, Kaala.moonrise),
+);
 const Festival pradosha = Festival(
-    id: 'pradosha',
-    name: Name('Pradosha', 'ಪ್ರದೋಷ'),
-    category: FestivalCategory.vrata,
-    rule: LunarTithiRule(-1, 12, Kaala.pradosha));
+  id: 'pradosha',
+  name: Name('Pradosha', 'ಪ್ರದೋಷ'),
+  category: FestivalCategory.vrata,
+  rule: LunarTithiRule(-1, 12, Kaala.pradosha),
+);
 const Festival purnima = Festival(
-    id: 'purnima',
-    name: Name('Purnima', 'ಹುಣ್ಣಿಮೆ', 'ಪುಣ್ಣಮೆ'),
-    category: FestivalCategory.vrata,
-    rule: LunarTithiRule(-1, 14, Kaala.sunrise),
-    confidence: Confidence.high);
+  id: 'purnima',
+  name: Name('Purnima', 'ಹುಣ್ಣಿಮೆ', 'ಪುಣ್ಣಮೆ'),
+  category: FestivalCategory.vrata,
+  rule: LunarTithiRule(-1, 14, Kaala.sunrise),
+  confidence: Confidence.high,
+);
 const Festival amavasya = Festival(
-    id: 'amavasya',
-    name: Name('Amavasya', 'ಅಮಾವಾಸ್ಯೆ', 'ಅಮಾಸೆ'),
-    category: FestivalCategory.vrata,
-    rule: LunarTithiRule(-1, 29, Kaala.sunrise),
-    confidence: Confidence.high);
+  id: 'amavasya',
+  name: Name('Amavasya', 'ಅಮಾವಾಸ್ಯೆ', 'ಅಮಾಸೆ'),
+  category: FestivalCategory.vrata,
+  rule: LunarTithiRule(-1, 29, Kaala.sunrise),
+  confidence: Confidence.high,
+);
 
 Festival sankramanaFestival(int rashi) => Festival(
-    id: 'sankramana_$rashi',
-    name: Name(
-        '${rashiNames[rashi].en} Sankramana (${tuluMonthNames[rashi].en} begins)',
-        '${rashiNames[rashi].kn} ಸಂಕ್ರಮಣ',
-        '${rashiNames[rashi].kn} ಸಂಕ್ರಮಣ (${tuluMonthNames[rashi].tcy} ತಿಂಗೊಲು)'),
-    category: FestivalCategory.sankramana,
-    rule: SankrantiRule(rashi),
-    confidence: Confidence.high);
+  id: 'sankramana_$rashi',
+  name: Name(
+    '${rashiNames[rashi].en} Sankramana (${tuluMonthNames[rashi].en} begins)',
+    '${rashiNames[rashi].kn} ಸಂಕ್ರಮಣ',
+    '${rashiNames[rashi].kn} ಸಂಕ್ರಮಣ (${tuluMonthNames[rashi].tcy} ತಿಂಗೊಲು)',
+  ),
+  category: FestivalCategory.sankramana,
+  rule: SankrantiRule(rashi),
+  confidence: Confidence.high,
+);
 
 /// Every festival definition, including recurring ones (for settings/filters).
 List<Festival> get allFestivals => [
-      ...festivals,
-      ekadashi,
-      sankashti,
-      pradosha,
-      purnima,
-      amavasya,
-      for (var r = 0; r < 12; r++) sankramanaFestival(r),
-    ];
+  ...festivals,
+  ekadashi,
+  sankashti,
+  pradosha,
+  purnima,
+  amavasya,
+  for (var r = 0; r < 12; r++) sankramanaFestival(r),
+];
 
 // ---------------------------------------------------------------------------
 // Evaluation
@@ -463,20 +523,22 @@ class FestivalCalculator {
   }
 
   Window _window(DayPanchanga d, Kaala k) => switch (k) {
-        Kaala.sunrise => Window(d.sunrise, d.sunrise),
-        Kaala.arunodaya => d.kaalas.arunodaya,
-        Kaala.madhyahna => d.kaalas.madhyahna,
-        Kaala.aparahna => d.kaalas.aparahna,
-        Kaala.pradosha => d.kaalas.pradosha,
-        Kaala.nishita => d.kaalas.nishita,
-        Kaala.moonrise => d.moonrise == null
-            ? Window(-1, -1)
-            : Window(d.moonrise!, d.moonrise!),
-      };
+    Kaala.sunrise => Window(d.sunrise, d.sunrise),
+    Kaala.arunodaya => d.kaalas.arunodaya,
+    Kaala.madhyahna => d.kaalas.madhyahna,
+    Kaala.aparahna => d.kaalas.aparahna,
+    Kaala.pradosha => d.kaalas.pradosha,
+    Kaala.nishita => d.kaalas.nishita,
+    Kaala.moonrise =>
+      d.moonrise == null ? Window(-1, -1) : Window(d.moonrise!, d.moonrise!),
+  };
 
   /// Picks the civil day on which tithi [span] is observed for kaala [k].
   ({DayPanchanga day, String why}) pickDay(
-      Span span, Kaala k, List<DayPanchanga> days) {
+    Span span,
+    Kaala k,
+    List<DayPanchanga> days,
+  ) {
     final scored = <(DayPanchanga, double, bool)>[];
     for (final d in days) {
       if (d.nextSunrise + 1 < span.start || d.sunrise - 1 > span.end) continue;
@@ -493,8 +555,9 @@ class FestivalCalculator {
       // The tithi never touches the kaala (kshaya at that time): observe it
       // on the day it begins.
       final d = days.firstWhere(
-          (d) => span.start >= d.sunrise && span.start < d.nextSunrise,
-          orElse: () => days.firstWhere((d) => d.nextSunrise > span.start));
+        (d) => span.start >= d.sunrise && span.start < d.nextSunrise,
+        orElse: () => days.firstWhere((d) => d.nextSunrise > span.start),
+      );
       return (day: d, why: 'tithi does not touch ${k.label.en}; day it begins');
     }
     if (scored.length == 1) return (day: scored.first.$1, why: '');
@@ -503,24 +566,28 @@ class FestivalCalculator {
       final second = engine.config.tiePreference == TiePreference.second;
       return (
         day: second ? b.$1 : a.$1,
-        why: 'tithi covers ${k.label.en} on two days; '
-            '${second ? 'second' : 'first'} day chosen'
+        why:
+            'tithi covers ${k.label.en} on two days; '
+            '${second ? 'second' : 'first'} day chosen',
       );
     }
     return (
       day: a.$2 >= b.$2 ? a.$1 : b.$1,
-      why: 'tithi touches ${k.label.en} on two days; larger share chosen'
+      why: 'tithi touches ${k.label.en} on two days; larger share chosen',
     );
   }
 
   List<FestivalOccurrence> _compute(int year) {
     final from = DateTime.utc(year, 1, 1).subtract(const Duration(days: 40));
-    final count = DateTime.utc(year + 1, 1, 1)
-            .difference(DateTime.utc(year, 1, 1))
-            .inDays +
+    final count =
+        DateTime.utc(
+          year + 1,
+          1,
+          1,
+        ).difference(DateTime.utc(year, 1, 1)).inDays +
         80;
     final days = engine.days(from, count);
-    final inYear = (DateTime d) => d.year == year;
+    bool inYear(DateTime d) => d.year == year;
 
     // Unique tithi spans across the range.
     final tithis = <Span>[];
@@ -537,8 +604,14 @@ class FestivalCalculator {
     final out = <FestivalOccurrence>[];
     void add(DayPanchanga d, Festival f, [String detail = '', double? at]) {
       if (inYear(d.date)) {
-        out.add(FestivalOccurrence(
-            date: d.date, festival: f, detail: detail, instant: at));
+        out.add(
+          FestivalOccurrence(
+            date: d.date,
+            festival: f,
+            detail: detail,
+            instant: at,
+          ),
+        );
       }
     }
 
@@ -569,11 +642,11 @@ class FestivalCalculator {
             }
           }
         case NakshatraRule(
-            :final month,
-            :final fromTithi,
-            :final toTithi,
-            :final nakshatra
-          ):
+          :final month,
+          :final fromTithi,
+          :final toTithi,
+          :final nakshatra,
+        ):
           DayPanchanga? best;
           var bestO = 0.0;
           for (final d in days) {
@@ -653,6 +726,8 @@ class FestivalCalculator {
 }
 
 /// Convenience: festivals for [year] at [place].
-List<FestivalOccurrence> festivalsFor(int year, Place place,
-        [PanchangaConfig config = const PanchangaConfig()]) =>
-    FestivalCalculator(PanchangaEngine(place, config)).forYear(year);
+List<FestivalOccurrence> festivalsFor(
+  int year,
+  Place place, [
+  PanchangaConfig config = const PanchangaConfig(),
+]) => FestivalCalculator(PanchangaEngine(place, config)).forYear(year);

@@ -6,7 +6,8 @@ import 'package:tulu_panchanga/astro/astro.dart';
 
 /// Reference values from the Swiss Ephemeris (tool/gen_reference.py).
 final Map<String, dynamic> ref = jsonDecode(
-    File('test/fixtures/swisseph_reference.json').readAsStringSync());
+  File('test/fixtures/swisseph_reference.json').readAsStringSync(),
+);
 
 double arcsec(double a, double b) => norm180(a - b).abs() * 3600;
 
@@ -51,8 +52,7 @@ void main() {
     for (final r in rows) {
       final k = r['tithi'] as int; // tithi index (0-based) that starts here
       final jdRef = r['jd'] as double;
-      final jd =
-          nextCrossing(elongation, jdRef - 0.3, (k * 12.0) % 360, 12.19);
+      final jd = nextCrossing(elongation, jdRef - 0.3, (k * 12.0) % 360, 12.19);
       final err = (jd - jdRef).abs() * 1440;
       if (err > worst) worst = err;
     }
@@ -64,9 +64,16 @@ void main() {
     for (final r in rows) {
       final jdRef = r['jd'] as double;
       final jd = nextCrossing(
-          siderealSun, jdRef - 3, ((r['rashi'] as int) * 30.0) % 360, 0.9856);
-      expect((jd - jdRef).abs() * 1440, lessThan(1.0),
-          reason: 'rashi ${r['rashi']}');
+        siderealSun,
+        jdRef - 3,
+        ((r['rashi'] as int) * 30.0) % 360,
+        0.9856,
+      );
+      expect(
+        (jd - jdRef).abs() * 1440,
+        lessThan(1.0),
+        reason: 'rashi ${r['rashi']}',
+      );
     }
   });
 
@@ -75,10 +82,20 @@ void main() {
     for (final r in rows) {
       final jd0 = r['jd0'] as double; // local midnight
       for (final (suffix, h0) in [('', -0.8333), ('Centre', 0.0)]) {
-        final rise = sunRiseSet(jd0 + 0.25, mangaluruLat, mangaluruLon,
-            rising: true, h0: h0)!;
-        final set = sunRiseSet(jd0 + 0.75, mangaluruLat, mangaluruLon,
-            rising: false, h0: h0)!;
+        final rise = sunRiseSet(
+          jd0 + 0.25,
+          mangaluruLat,
+          mangaluruLon,
+          rising: true,
+          h0: h0,
+        )!;
+        final set = sunRiseSet(
+          jd0 + 0.75,
+          mangaluruLat,
+          mangaluruLon,
+          rising: false,
+          h0: h0,
+        )!;
         expect((rise - r['rise$suffix']).abs() * 86400, lessThan(30));
         expect((set - r['set$suffix']).abs() * 86400, lessThan(30));
       }

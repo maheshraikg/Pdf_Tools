@@ -196,8 +196,7 @@ const List<List<List<double>>> vsopEarthL = [
     [114.084, 3.14159265359, 0.0],
     [7.717, 4.13446589358, 6283.0758499914],
   ],
-  [
-  ],
+  [],
 ];
 
 const List<List<List<double>>> vsopEarthR = [
@@ -306,10 +305,8 @@ const List<List<List<double>>> vsopEarthR = [
     [144.595, 4.27319435148, 6283.0758499914],
     [6.729, 3.91697608662, 12566.1516999828],
   ],
-  [
-  ],
-  [
-  ],
+  [],
+  [],
 ];
 
 /// D, M, M', F, Σl (1e-6 deg), Σr (1e-3 km).

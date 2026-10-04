@@ -25,16 +25,16 @@ class Name {
   final String tcy;
 
   String of(Lang lang) => switch (lang) {
-        Lang.en => en,
-        Lang.kn => kn,
-        Lang.tcy => tcy,
-      };
+    Lang.en => en,
+    Lang.kn => kn,
+    Lang.tcy => tcy,
+  };
 }
 
 List<Name> _zip(List<String> en, List<String> kn, [List<String>? tcy]) => [
-      for (var i = 0; i < en.length; i++)
-        Name(en[i], kn[i], tcy == null ? null : tcy[i]),
-    ];
+  for (var i = 0; i < en.length; i++)
+    Name(en[i], kn[i], tcy == null ? null : tcy[i]),
+];
 
 /// Tithi names for 1–15 of a paksha (index 0 = Pratipada). Index 14 is
 /// Purnima; use [amavasyaName] for Krishna 15.

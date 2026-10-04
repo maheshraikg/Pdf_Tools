@@ -41,8 +41,10 @@ void main() {
       // Monday: 2nd part.
       final m = engine.day(DateTime.utc(2026, 10, 5));
       expect(m.kaalas.rahu.start, closeTo(m.sunrise + m.dayLength / 8, 1e-9));
-      expect(d.kaalas.abhijit.start,
-          closeTo(d.sunrise + 7 * d.dayLength / 15, 1e-9));
+      expect(
+        d.kaalas.abhijit.start,
+        closeTo(d.sunrise + 7 * d.dayLength / 15, 1e-9),
+      );
     });
 
     test('Mangaluru sunrise 2026-10-04 is about 06:19 IST', () {
@@ -91,11 +93,10 @@ void main() {
 
     test('day-1 rule changes the Tulu month start', () {
       // Makara sankramana 2026 is at 15:07 IST on 14 January.
-      DateTime start(SolarMonthRule r) =>
-          PanchangaEngine(mangaluru, PanchangaConfig(solarMonthRule: r))
-              .day(DateTime.utc(2026, 1, 20))
-              .solar
-              .monthStart;
+      DateTime start(SolarMonthRule r) => PanchangaEngine(
+        mangaluru,
+        PanchangaConfig(solarMonthRule: r),
+      ).day(DateTime.utc(2026, 1, 20)).solar.monthStart;
       expect(start(SolarMonthRule.sunset), DateTime.utc(2026, 1, 14));
       expect(start(SolarMonthRule.aparahna), DateTime.utc(2026, 1, 15));
       expect(start(SolarMonthRule.nextDay), DateTime.utc(2026, 1, 15));
@@ -110,9 +111,10 @@ void main() {
       // Sauramana year changes at Bisu.
       expect(samvatsaraNames[after.sauraSamvatsara].en, 'Vishvavasu');
       expect(
-          samvatsaraNames[engine.day(DateTime.utc(2026, 4, 15)).sauraSamvatsara]
-              .en,
-          'Parabhava');
+        samvatsaraNames[engine.day(DateTime.utc(2026, 4, 15)).sauraSamvatsara]
+            .en,
+        'Parabhava',
+      );
     });
   });
 
@@ -158,11 +160,15 @@ void main() {
 
     test('24 Ekadashis and 12 sankramanas a year (approximately)', () {
       final occ = calc.forYear(2026);
-      expect(occ.where((o) => o.festival.id == 'ekadashi').length,
-          inInclusiveRange(24, 26));
-      final sk = occ.where((o) =>
-          o.festival.category == FestivalCategory.sankramana ||
-          o.festival.rule is SankrantiRule);
+      expect(
+        occ.where((o) => o.festival.id == 'ekadashi').length,
+        inInclusiveRange(24, 26),
+      );
+      final sk = occ.where(
+        (o) =>
+            o.festival.category == FestivalCategory.sankramana ||
+            o.festival.rule is SankrantiRule,
+      );
       expect(sk.length, 12);
     });
   });

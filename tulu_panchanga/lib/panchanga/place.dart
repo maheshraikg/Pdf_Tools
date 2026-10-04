@@ -26,23 +26,23 @@ class Place {
   final int fixedOffsetMinutes;
 
   Map<String, Object> toJson() => {
-        'id': id,
-        'en': name.en,
-        'kn': name.kn,
-        'lat': lat,
-        'lon': lon,
-        'tz': tz,
-        'off': fixedOffsetMinutes,
-      };
+    'id': id,
+    'en': name.en,
+    'kn': name.kn,
+    'lat': lat,
+    'lon': lon,
+    'tz': tz,
+    'off': fixedOffsetMinutes,
+  };
 
   static Place fromJson(Map<String, dynamic> j) => Place(
-        id: j['id'] as String,
-        name: Name(j['en'] as String, j['kn'] as String),
-        lat: (j['lat'] as num).toDouble(),
-        lon: (j['lon'] as num).toDouble(),
-        tz: j['tz'] as String? ?? 'Asia/Kolkata',
-        fixedOffsetMinutes: j['off'] as int? ?? 330,
-      );
+    id: j['id'] as String,
+    name: Name(j['en'] as String, j['kn'] as String),
+    lat: (j['lat'] as num).toDouble(),
+    lon: (j['lon'] as num).toDouble(),
+    tz: j['tz'] as String? ?? 'Asia/Kolkata',
+    fixedOffsetMinutes: j['off'] as int? ?? 330,
+  );
 
   @override
   bool operator ==(Object other) =>
@@ -60,72 +60,85 @@ class Place {
 /// communities. Coordinates are town centres (WGS84).
 const List<Place> presetPlaces = [
   Place(
-      id: 'mangaluru',
-      name: Name('Mangaluru', 'ಮಂಗಳೂರು', 'ಕುಡ್ಲ'),
-      lat: 12.9141,
-      lon: 74.8560),
+    id: 'mangaluru',
+    name: Name('Mangaluru', 'ಮಂಗಳೂರು', 'ಕುಡ್ಲ'),
+    lat: 12.9141,
+    lon: 74.8560,
+  ),
   Place(
-      id: 'udupi',
-      name: Name('Udupi', 'ಉಡುಪಿ', 'ಒಡಿಪು'),
-      lat: 13.3409,
-      lon: 74.7421),
+    id: 'udupi',
+    name: Name('Udupi', 'ಉಡುಪಿ', 'ಒಡಿಪು'),
+    lat: 13.3409,
+    lon: 74.7421,
+  ),
   Place(
-      id: 'kundapura',
-      name: Name('Kundapura', 'ಕುಂದಾಪುರ'),
-      lat: 13.6269,
-      lon: 74.6907),
+    id: 'kundapura',
+    name: Name('Kundapura', 'ಕುಂದಾಪುರ'),
+    lat: 13.6269,
+    lon: 74.6907,
+  ),
   Place(
-      id: 'karkala',
-      name: Name('Karkala', 'ಕಾರ್ಕಳ'),
-      lat: 13.2140,
-      lon: 74.9940),
+    id: 'karkala',
+    name: Name('Karkala', 'ಕಾರ್ಕಳ'),
+    lat: 13.2140,
+    lon: 74.9940,
+  ),
   Place(
-      id: 'moodbidri',
-      name: Name('Moodbidri', 'ಮೂಡುಬಿದಿರೆ', 'ಬೆದ್ರ'),
-      lat: 13.0680,
-      lon: 74.9950),
+    id: 'moodbidri',
+    name: Name('Moodbidri', 'ಮೂಡುಬಿದಿರೆ', 'ಬೆದ್ರ'),
+    lat: 13.0680,
+    lon: 74.9950,
+  ),
   Place(
-      id: 'puttur',
-      name: Name('Puttur', 'ಪುತ್ತೂರು'),
-      lat: 12.7593,
-      lon: 75.2010),
+    id: 'puttur',
+    name: Name('Puttur', 'ಪುತ್ತೂರು'),
+    lat: 12.7593,
+    lon: 75.2010,
+  ),
   Place(
-      id: 'bantwal',
-      name: Name('Bantwal', 'ಬಂಟ್ವಾಳ'),
-      lat: 12.8930,
-      lon: 75.0340),
+    id: 'bantwal',
+    name: Name('Bantwal', 'ಬಂಟ್ವಾಳ'),
+    lat: 12.8930,
+    lon: 75.0340,
+  ),
   Place(
-      id: 'belthangady',
-      name: Name('Belthangady', 'ಬೆಳ್ತಂಗಡಿ'),
-      lat: 12.9930,
-      lon: 75.3040),
+    id: 'belthangady',
+    name: Name('Belthangady', 'ಬೆಳ್ತಂಗಡಿ'),
+    lat: 12.9930,
+    lon: 75.3040,
+  ),
   Place(
-      id: 'sullia',
-      name: Name('Sullia', 'ಸುಳ್ಯ'),
-      lat: 12.5590,
-      lon: 75.3880),
+    id: 'sullia',
+    name: Name('Sullia', 'ಸುಳ್ಯ'),
+    lat: 12.5590,
+    lon: 75.3880,
+  ),
   Place(
-      id: 'kasaragod',
-      name: Name('Kasaragod', 'ಕಾಸರಗೋಡು'),
-      lat: 12.4996,
-      lon: 74.9869),
+    id: 'kasaragod',
+    name: Name('Kasaragod', 'ಕಾಸರಗೋಡು'),
+    lat: 12.4996,
+    lon: 74.9869,
+  ),
   Place(
-      id: 'bengaluru',
-      name: Name('Bengaluru', 'ಬೆಂಗಳೂರು'),
-      lat: 12.9716,
-      lon: 77.5946),
+    id: 'bengaluru',
+    name: Name('Bengaluru', 'ಬೆಂಗಳೂರು'),
+    lat: 12.9716,
+    lon: 77.5946,
+  ),
   Place(
-      id: 'mumbai',
-      name: Name('Mumbai', 'ಮುಂಬಯಿ', 'ಬೊಂಬಾಯಿ'),
-      lat: 19.0760,
-      lon: 72.8777),
+    id: 'mumbai',
+    name: Name('Mumbai', 'ಮುಂಬಯಿ', 'ಬೊಂಬಾಯಿ'),
+    lat: 19.0760,
+    lon: 72.8777,
+  ),
   Place(
-      id: 'dubai',
-      name: Name('Dubai', 'ದುಬೈ'),
-      lat: 25.2048,
-      lon: 55.2708,
-      tz: 'Asia/Dubai',
-      fixedOffsetMinutes: 240),
+    id: 'dubai',
+    name: Name('Dubai', 'ದುಬೈ'),
+    lat: 25.2048,
+    lon: 55.2708,
+    tz: 'Asia/Dubai',
+    fixedOffsetMinutes: 240,
+  ),
 ];
 
 Place placeById(String id) =>
@@ -177,12 +190,11 @@ class PanchangaConfig {
     SunriseConvention? sunrise,
     SolarMonthRule? solarMonthRule,
     TiePreference? tiePreference,
-  }) =>
-      PanchangaConfig(
-        sunrise: sunrise ?? this.sunrise,
-        solarMonthRule: solarMonthRule ?? this.solarMonthRule,
-        tiePreference: tiePreference ?? this.tiePreference,
-      );
+  }) => PanchangaConfig(
+    sunrise: sunrise ?? this.sunrise,
+    solarMonthRule: solarMonthRule ?? this.solarMonthRule,
+    tiePreference: tiePreference ?? this.tiePreference,
+  );
 
   @override
   bool operator ==(Object other) =>

@@ -42,8 +42,9 @@ double jdFromDateTime(DateTime t) {
 
 /// UTC [DateTime] for a Julian Day (UT), rounded to the millisecond.
 DateTime dateTimeFromJd(double jd) => DateTime.fromMillisecondsSinceEpoch(
-    ((jd - 2440587.5) * 86400000.0).round(),
-    isUtc: true);
+  ((jd - 2440587.5) * 86400000.0).round(),
+  isUtc: true,
+);
 
 /// ΔT = TT − UT in seconds.
 ///
@@ -99,7 +100,28 @@ const List<double> _dtYears = [
   2024, 2026, 2028, 2030, 2035, 2040, 2050, 2060, 2075, 2100,
 ];
 const List<double> _dtValues = [
-  63.83, 64.30, 64.57, 64.85, 65.46, 66.07, 66.60, 67.28, 68.10, 68.97, 69.36, 69.29, 69.10, 68.90, 68.80, 69.28, 70.51, 71.80, 74.58, 77.64, 82.81, 93.18,
+  63.83,
+  64.30,
+  64.57,
+  64.85,
+  65.46,
+  66.07,
+  66.60,
+  67.28,
+  68.10,
+  68.97,
+  69.36,
+  69.29,
+  69.10,
+  68.90,
+  68.80,
+  69.28,
+  70.51,
+  71.80,
+  74.58,
+  77.64,
+  82.81,
+  93.18,
 ];
 
 /// Julian Ephemeris Day (TT) for a Julian Day (UT).
@@ -118,11 +140,13 @@ double jdeFromJd(double jd) {
   final om = (125.04452 - 1934.136261 * t) * _deg;
   final ls = (280.4665 + 36000.7698 * t) * _deg;
   final lm = (218.3165 + 481267.8813 * t) * _deg;
-  final dPsi = -17.20 * math.sin(om) -
+  final dPsi =
+      -17.20 * math.sin(om) -
       1.32 * math.sin(2 * ls) -
       0.23 * math.sin(2 * lm) +
       0.21 * math.sin(2 * om);
-  final dEps = 9.20 * math.cos(om) +
+  final dEps =
+      9.20 * math.cos(om) +
       0.57 * math.cos(2 * ls) +
       0.10 * math.cos(2 * lm) -
       0.09 * math.cos(2 * om);
@@ -174,28 +198,37 @@ double _vsop(List<List<List<double>>> series, double tau) {
 ({double lon, double lat, double dist}) moonMean(double jde) {
   final t = (jde - 2451545.0) / 36525.0;
   final t2 = t * t, t3 = t2 * t, t4 = t3 * t;
-  final lp = norm360(218.3164477 +
-      481267.88123421 * t -
-      0.0015786 * t2 +
-      t3 / 538841.0 -
-      t4 / 65194000.0);
-  final d = norm360(297.8501921 +
-      445267.1114034 * t -
-      0.0018819 * t2 +
-      t3 / 545868.0 -
-      t4 / 113065000.0);
+  final lp = norm360(
+    218.3164477 +
+        481267.88123421 * t -
+        0.0015786 * t2 +
+        t3 / 538841.0 -
+        t4 / 65194000.0,
+  );
+  final d = norm360(
+    297.8501921 +
+        445267.1114034 * t -
+        0.0018819 * t2 +
+        t3 / 545868.0 -
+        t4 / 113065000.0,
+  );
   final m = norm360(
-      357.5291092 + 35999.0502909 * t - 0.0001536 * t2 + t3 / 24490000.0);
-  final mp = norm360(134.9633964 +
-      477198.8675055 * t +
-      0.0087414 * t2 +
-      t3 / 69699.0 -
-      t4 / 14712000.0);
-  final f = norm360(93.2720950 +
-      483202.0175233 * t -
-      0.0036539 * t2 -
-      t3 / 3526000.0 +
-      t4 / 863310000.0);
+    357.5291092 + 35999.0502909 * t - 0.0001536 * t2 + t3 / 24490000.0,
+  );
+  final mp = norm360(
+    134.9633964 +
+        477198.8675055 * t +
+        0.0087414 * t2 +
+        t3 / 69699.0 -
+        t4 / 14712000.0,
+  );
+  final f = norm360(
+    93.2720950 +
+        483202.0175233 * t -
+        0.0036539 * t2 -
+        t3 / 3526000.0 +
+        t4 / 863310000.0,
+  );
   final a1 = norm360(119.75 + 131.849 * t) * _deg;
   final a2 = norm360(53.09 + 479264.290 * t) * _deg;
   final a3 = norm360(313.45 + 481266.484 * t) * _deg;
@@ -218,7 +251,8 @@ double _vsop(List<List<List<double>>> series, double tau) {
   }
   final lpr = lp * _deg, fr = f * _deg, mpr = mp * _deg;
   sl += 3958 * math.sin(a1) + 1962 * math.sin(lpr - fr) + 318 * math.sin(a2);
-  sb += -2235 * math.sin(lpr) +
+  sb +=
+      -2235 * math.sin(lpr) +
       382 * math.sin(a3) +
       175 * math.sin(a1 - fr) +
       175 * math.sin(a1 + fr) +
@@ -275,7 +309,8 @@ double elongation(double jd) {
 /// Greenwich apparent sidereal time (degrees) at [jd] (UT).
 double greenwichSiderealTime(double jd) {
   final t = (jd - 2451545.0) / 36525.0;
-  final gmst = 280.46061837 +
+  final gmst =
+      280.46061837 +
       360.98564736629 * (jd - 2451545.0) +
       0.000387933 * t * t -
       t * t * t / 38710000.0;
@@ -288,9 +323,12 @@ double greenwichSiderealTime(double jd) {
 ({double ra, double dec}) _toEquatorial(double lon, double lat, double eps) {
   final l = lon * _deg, b = lat * _deg, e = eps * _deg;
   final ra = math.atan2(
-      math.sin(l) * math.cos(e) - math.tan(b) * math.sin(e), math.cos(l));
+    math.sin(l) * math.cos(e) - math.tan(b) * math.sin(e),
+    math.cos(l),
+  );
   final dec = math.asin(
-      math.sin(b) * math.cos(e) + math.cos(b) * math.sin(e) * math.sin(l));
+    math.sin(b) * math.cos(e) + math.cos(b) * math.sin(e) * math.sin(l),
+  );
   return (ra: norm360(ra * _rad), dec: dec * _rad);
 }
 
@@ -319,8 +357,9 @@ double greenwichSiderealTime(double jd) {
 double altitude(double jd, double ra, double dec, double lat, double lon) {
   final h = (greenwichSiderealTime(jd) + lon - ra) * _deg;
   final p = lat * _deg, d = dec * _deg;
-  return math.asin(math.sin(p) * math.sin(d) +
-          math.cos(p) * math.cos(d) * math.cos(h)) *
+  return math.asin(
+        math.sin(p) * math.sin(d) + math.cos(p) * math.cos(d) * math.cos(h),
+      ) *
       _rad;
 }
 
@@ -330,15 +369,20 @@ double altitude(double jd, double ra, double dec, double lat, double lon) {
 /// Finds the Sun's rising (or setting when [rising] is false) closest to the
 /// initial guess [jdGuess] by iterating on the hour angle. Returns null for
 /// polar day/night.
-double? sunRiseSet(double jdGuess, double lat, double lon,
-    {required bool rising, double h0 = -0.8333}) {
+double? sunRiseSet(
+  double jdGuess,
+  double lat,
+  double lon, {
+  required bool rising,
+  double h0 = -0.8333,
+}) {
   var t = jdGuess;
   for (var i = 0; i < 8; i++) {
     final eq = sunEquatorial(t);
     final p = lat * _deg, d = eq.dec * _deg;
     final cosH0 =
         (math.sin(h0 * _deg) - math.sin(p) * math.sin(d)) /
-            (math.cos(p) * math.cos(d));
+        (math.cos(p) * math.cos(d));
     if (cosH0 < -1 || cosH0 > 1) return null;
     final h0Angle = math.acos(cosH0) * _rad;
     final target = rising ? -h0Angle : h0Angle;
@@ -354,7 +398,11 @@ double? sunRiseSet(double jdGuess, double lat, double lon,
 /// altitude in 20-minute steps and bisecting each sign change. Either may be
 /// null (the Moon does not rise or set every civil day).
 ({double? rise, double? set}) moonRiseSet(
-    double jdStart, double jdEnd, double lat, double lon) {
+  double jdStart,
+  double jdEnd,
+  double lat,
+  double lon,
+) {
   double alt(double t) {
     final m = moonEquatorial(t);
     // Upper limb with refraction, corrected for parallax.
@@ -401,8 +449,12 @@ double? sunRiseSet(double jdGuess, double lat, double lon,
 /// Newton iteration for the instant near [guess] at which the increasing
 /// angle [f] (degrees, wrapping at 360) equals [target]. Converges to the
 /// crossing whose angular distance from the guess is under 180°.
-double crossingNear(double Function(double jd) f, double guess, double target,
-    double rate) {
+double crossingNear(
+  double Function(double jd) f,
+  double guess,
+  double target,
+  double rate,
+) {
   var t = guess;
   const h = 1.0 / 1440.0;
   for (var i = 0; i < 50; i++) {
@@ -420,8 +472,12 @@ double crossingNear(double Function(double jd) f, double guess, double target,
 
 /// First instant ≥ [jdStart] at which the increasing angle [f] reaches
 /// [target]. [rate] is its approximate mean rate in degrees/day.
-double nextCrossing(double Function(double jd) f, double jdStart,
-    double target, double rate) {
+double nextCrossing(
+  double Function(double jd) f,
+  double jdStart,
+  double target,
+  double rate,
+) {
   final togo = norm360(target - f(jdStart));
   var t = crossingNear(f, jdStart + togo / rate, target, rate);
   if (t < jdStart - 1e-7) {
@@ -431,8 +487,12 @@ double nextCrossing(double Function(double jd) f, double jdStart,
 }
 
 /// Last instant ≤ [jdEnd] at which the increasing angle [f] reached [target].
-double prevCrossing(double Function(double jd) f, double jdEnd, double target,
-    double rate) {
+double prevCrossing(
+  double Function(double jd) f,
+  double jdEnd,
+  double target,
+  double rate,
+) {
   final back = norm360(f(jdEnd) - target);
   var t = crossingNear(f, jdEnd - back / rate, target, rate);
   if (t > jdEnd + 1e-7) {

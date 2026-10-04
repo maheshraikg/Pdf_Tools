@@ -266,10 +266,17 @@ class PanchangaEngine {
 
   /// Julian Day for a wall-clock [local] time at the place.
   double jdFromWall(DateTime local) {
-    final asUtc = DateTime.utc(local.year, local.month, local.day, local.hour,
-        local.minute, local.second);
-    final off = offsetAtUtc(asUtc.subtract(
-        Duration(minutes: place.fixedOffsetMinutes)));
+    final asUtc = DateTime.utc(
+      local.year,
+      local.month,
+      local.day,
+      local.hour,
+      local.minute,
+      local.second,
+    );
+    final off = offsetAtUtc(
+      asUtc.subtract(Duration(minutes: place.fixedOffsetMinutes)),
+    );
     return jdFromDateTime(asUtc.subtract(off));
   }
 
@@ -279,18 +286,28 @@ class PanchangaEngine {
   // --- Sun -----------------------------------------------------------------
 
   double sunrise(DateTime date) => _sunrises.putIfAbsent(_key(date), () {
-        final m = localMidnight(date);
-        return sunRiseSet(m + 0.25, place.lat, place.lon,
-                rising: true, h0: config.sunrise.h0) ??
-            m + 0.25;
-      });
+    final m = localMidnight(date);
+    return sunRiseSet(
+          m + 0.25,
+          place.lat,
+          place.lon,
+          rising: true,
+          h0: config.sunrise.h0,
+        ) ??
+        m + 0.25;
+  });
 
   double sunset(DateTime date) => _sunsets.putIfAbsent(_key(date), () {
-        final m = localMidnight(date);
-        return sunRiseSet(m + 0.75, place.lat, place.lon,
-                rising: false, h0: config.sunrise.h0) ??
-            m + 0.75;
-      });
+    final m = localMidnight(date);
+    return sunRiseSet(
+          m + 0.75,
+          place.lat,
+          place.lon,
+          rising: false,
+          h0: config.sunrise.h0,
+        ) ??
+        m + 0.75;
+  });
 
   /// Civil date whose Hindu day (sunrise to next sunrise) contains [jd].
   DateTime hinduDate(double jd) {
@@ -309,8 +326,13 @@ class PanchangaEngine {
 
   /// Consecutive spans of an increasing angle [f] divided into [count]
   /// segments, covering [a, b).
-  static List<Span> spans(double Function(double) f, int count, double rate,
-      double a, double b) {
+  static List<Span> spans(
+    double Function(double) f,
+    int count,
+    double rate,
+    double a,
+    double b,
+  ) {
     final seg = 360.0 / count;
     var idx = (f(a) / seg).floor() % count;
     var start = prevCrossing(f, a, idx * seg, rate);
@@ -386,13 +408,21 @@ class PanchangaEngine {
     final sr = sunrise(d);
     // Sankramana in progress today that may already start a new month.
     final r = (siderealSun(sr) / 30).floor();
-    final nextS =
-        nextCrossing(siderealSun, sr, ((r + 1) % 12) * 30.0, _sunRate);
+    final nextS = nextCrossing(
+      siderealSun,
+      sr,
+      ((r + 1) % 12) * 30.0,
+      _sunRate,
+    );
     if (nextS < sunrise(addDays(d, 1))) {
       final start = monthStartFor(nextS);
       if (!start.isAfter(d)) {
         return SolarDate(
-            month: (r + 1) % 12, day: 1, monthStart: start, sankranti: nextS);
+          month: (r + 1) % 12,
+          day: 1,
+          monthStart: start,
+          sankranti: nextS,
+        );
       }
     }
     // The month in force began at the last sankramana before sunrise (its
@@ -400,10 +430,11 @@ class PanchangaEngine {
     final s = prevCrossing(siderealSun, sr, r * 30.0, _sunRate);
     final start = monthStartFor(s);
     return SolarDate(
-        month: r,
-        day: d.difference(start).inDays + 1,
-        monthStart: start,
-        sankranti: s);
+      month: r,
+      day: d.difference(start).inDays + 1,
+      monthStart: start,
+      sankranti: s,
+    );
   }
 
   // --- Days ------------------------------------------------------------------
@@ -474,7 +505,12 @@ class PanchangaEngine {
 
     final solar = solarDate(d);
     final r = (sunSid / 30).floor();
-    final nextS = nextCrossing(siderealSun, sr, ((r + 1) % 12) * 30.0, _sunRate);
+    final nextS = nextCrossing(
+      siderealSun,
+      sr,
+      ((r + 1) % 12) * 30.0,
+      _sunRate,
+    );
 
     final result = DayPanchanga(
       date: d,
@@ -502,6 +538,7 @@ class PanchangaEngine {
   }
 
   /// [count] consecutive days starting at [from].
-  List<DayPanchanga> days(DateTime from, int count) =>
-      [for (var i = 0; i < count; i++) day(addDays(from, i))];
+  List<DayPanchanga> days(DateTime from, int count) => [
+    for (var i = 0; i < count; i++) day(addDays(from, i)),
+  ];
 }

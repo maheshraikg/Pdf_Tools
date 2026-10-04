@@ -18,22 +18,32 @@ void main() {
     expect(rituNames.length, 6);
   });
 
-  test('every name is non-empty in all languages and Kannada-script for kn/tcy',
-      () {
-    final all = [
-      ...tithiNames, amavasyaName, ...nakshatraNames, ...yogaNames,
-      ...karanaNames, ...varaNames, ...rashiNames, ...lunarMonthNames,
-      ...tuluMonthNames, ...samvatsaraNames, ...rituNames,
-      for (final f in allFestivals) f.name,
-    ];
-    for (final n in all) {
-      for (final l in Lang.values) {
-        expect(n.of(l).trim(), isNotEmpty, reason: '${n.en} / $l');
+  test(
+    'every name is non-empty in all languages and Kannada-script for kn/tcy',
+    () {
+      final all = [
+        ...tithiNames,
+        amavasyaName,
+        ...nakshatraNames,
+        ...yogaNames,
+        ...karanaNames,
+        ...varaNames,
+        ...rashiNames,
+        ...lunarMonthNames,
+        ...tuluMonthNames,
+        ...samvatsaraNames,
+        ...rituNames,
+        for (final f in allFestivals) f.name,
+      ];
+      for (final n in all) {
+        for (final l in Lang.values) {
+          expect(n.of(l).trim(), isNotEmpty, reason: '${n.en} / $l');
+        }
+        expect(TuluLipi.hasKannada(n.kn), isTrue, reason: n.en);
+        expect(TuluLipi.hasKannada(n.tcy), isTrue, reason: n.en);
       }
-      expect(TuluLipi.hasKannada(n.kn), isTrue, reason: n.en);
-      expect(TuluLipi.hasKannada(n.tcy), isTrue, reason: n.en);
-    }
-  });
+    },
+  );
 
   test('Tulu month names (Paggu … Suggi) and Tulu weekdays', () {
     expect(tuluMonthNames.map((n) => n.en).toList(), [
