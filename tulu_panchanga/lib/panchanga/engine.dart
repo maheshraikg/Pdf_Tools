@@ -458,9 +458,9 @@ class PanchangaEngine {
     final ss = sunset(d);
     final nsr = sunrise(addDays(d, 1));
     final pss = sunset(addDays(d, -1));
-    final mid = localMidnight(d);
-    final moon = moonRiseSet(mid, localMidnight(addDays(d, 1)), place.lat,
-        place.lon);
+    // Moonrise/moonset within the Hindu day (sunrise to next sunrise), as in
+    // printed panchangas; one after midnight belongs to this day.
+    final moon = moonRiseSet(sr, nsr, place.lat, place.lon);
     final wd = d.weekday % 7;
 
     final tithis = spans(elongation, 30, _tithiRate, sr, nsr);

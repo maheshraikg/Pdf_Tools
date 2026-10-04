@@ -57,9 +57,11 @@ class LunarTithiRule extends FestivalRule {
   final int tithi;
   final Kaala kaala;
 
+  /// [month] −1 means every month (recurring vratas).
   @override
-  String describe() =>
-      '${lunarMonthNames[month].en} ${_tithiLabel(tithi)} ${kaala.label.en} (amanta, nija masa)';
+  String describe() => month < 0
+      ? '${tithiName(tithi).en} ${kaala.label.en}, every paksha/month'
+      : '${lunarMonthNames[month].en} ${_tithiLabel(tithi)} ${kaala.label.en} (amanta, nija masa)';
 }
 
 /// Tithi [tithi] falling in solar month [solarMonth] (0 = Mesha).
@@ -391,7 +393,7 @@ const Festival ekadashi = Festival(
     id: 'ekadashi',
     name: Name('Ekadashi', 'ಏಕಾದಶಿ'),
     category: FestivalCategory.vrata,
-    rule: LunarTithiRule(-1, 10, Kaala.sunrise),
+    rule: LunarTithiRule(-1, 10, Kaala.sunrise), // and Krishna (25)
     confidence: Confidence.medium,
     note: 'Smarta reckoning (Ekadashi at sunrise). Madhwa (arunodaya) '
         'variant noted when it differs.');
@@ -604,7 +606,7 @@ class FestivalCalculator {
     for (final s in tithis) {
       final rec = switch (s.index) {
         10 || 25 => ekadashi,
-        19 => sankashti,
+        18 => sankashti,
         12 || 27 => pradosha,
         14 => purnima,
         29 => amavasya,

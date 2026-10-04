@@ -128,6 +128,7 @@ void main() {
     // Widely published 2026/2027 dates for Karnataka.
     final known = <(int, String, DateTime)>[
       (2026, 'makara_sankranti', DateTime.utc(2026, 1, 14)),
+      (2026, 'sankashti', DateTime.utc(2026, 1, 6)),
       (2026, 'shivaratri', DateTime.utc(2026, 2, 15)),
       (2026, 'ugadi', DateTime.utc(2026, 3, 19)),
       (2026, 'bisu', DateTime.utc(2026, 4, 14)),
