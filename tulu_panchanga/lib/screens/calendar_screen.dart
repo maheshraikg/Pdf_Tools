@@ -298,7 +298,7 @@ class _Grid extends StatelessWidget {
           child: GridView.count(
             padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
             crossAxisCount: 7,
-            childAspectRatio: 0.5,
+            childAspectRatio: 0.46,
             children: cells,
           ),
         ),
@@ -337,13 +337,19 @@ class _Grid extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(
-                  big(d),
-                  style: t.textTheme.titleMedium?.copyWith(
-                    color: d.weekday == 0 ? t.colorScheme.error : null,
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      big(d),
+                      style: t.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: d.weekday == 0 ? t.colorScheme.error : null,
+                      ),
+                    ),
                   ),
                 ),
-                const Spacer(),
                 Text(special, style: t.textTheme.labelSmall),
               ],
             ),
@@ -366,7 +372,7 @@ class _Grid extends StatelessWidget {
               FestivalArt.of(
                 major.first.festival,
                 size: 24,
-                animate: false,
+                animate: true,
                 circle: true,
               ),
               const SizedBox(height: 1),

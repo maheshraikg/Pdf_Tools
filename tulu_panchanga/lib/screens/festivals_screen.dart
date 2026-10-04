@@ -156,7 +156,7 @@ class _FestivalsScreenState extends State<FestivalsScreen> {
                                   child: FestivalArt.of(
                                     o.festival,
                                     size: 56,
-                                    animate: isToday,
+                                    animate: true,
                                   ),
                                 ),
                                 const SizedBox(width: 12),

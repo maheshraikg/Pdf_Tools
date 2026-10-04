@@ -118,10 +118,10 @@ class InfoRow extends StatelessWidget {
               decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             ),
           SizedBox(
-            width: 120,
+            width: 104,
             child: LipiText(
               label,
-              style: t.textTheme.bodyMedium?.copyWith(
+              style: t.textTheme.titleSmall?.copyWith(
                 color: t.colorScheme.onSurfaceVariant,
               ),
             ),
@@ -132,14 +132,14 @@ class InfoRow extends StatelessWidget {
               children: [
                 LipiText(
                   value,
-                  style: t.textTheme.bodyLarge?.copyWith(
+                  style: t.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 if (sub != null)
                   LipiText(
                     sub!,
-                    style: t.textTheme.bodySmall?.copyWith(
+                    style: t.textTheme.bodyMedium?.copyWith(
                       color: t.colorScheme.onSurfaceVariant,
                     ),
                   ),
@@ -417,7 +417,7 @@ class FestivalTile extends StatelessWidget {
       leading: FestivalArt.of(
         o.festival,
         size: 44,
-        animate: false,
+        animate: true,
         circle: true,
       ),
       title: LipiText(f.name.of(lang)),

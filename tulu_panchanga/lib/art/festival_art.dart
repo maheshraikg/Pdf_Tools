@@ -201,6 +201,11 @@ class _ArtPainter extends CustomPainter {
     canvas.drawRect(Offset.zero & size, Paint()..color = artBackground(kind));
     canvas.save();
     canvas.scale(size.width / 100, size.height / 100);
+    // Whole-figure bounce and breathing, like a looping sticker GIF.
+    final bounce = math.sin(t * 4 * math.pi);
+    canvas.translate(50, 54);
+    canvas.scale(1 + 0.035 * bounce, 1 - 0.025 * bounce);
+    canvas.translate(-50, -54 - 3.5 * bounce.abs());
     final draw = switch (kind) {
       ArtKind.diya => _diya,
       ArtKind.ganesha => _ganesha,

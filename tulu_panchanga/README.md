@@ -25,6 +25,11 @@ Everything is computed on the phone; there is no network access.
   Ganesha, naga, kalasha, Krishna's flute, Yakshagana crown, paddy sheaf,
   Aati rain, tulasi katte, Sun, Shiva linga, Holi colours and the Moon
   (see `docs/screenshots/art_gallery.png`).
+- **Opens in Kannada** with an animated splash (Yakshagana crown, Tulu-lipi
+  watermark, Kambala race, "ಜೈ ತುಳುನಾಡ್"); Kannada is the default language.
+  Large, rounded Kannada type (Baloo Tamma 2) throughout.
+- **Kambala** buffaloes race through the paddy in the header, and flower
+  petals fall on festival days.
 - **Read aloud**: a speaker button reads the day's panchanga (and any
   festival) using the phone's text-to-speech; English, or a Kannada voice
   for Kannada and Tulu.
@@ -150,5 +155,6 @@ docs/                 VERIFY.md, CSVs, screenshots
 ## Licences
 
 Code: as the repository. Tulu-Tigalari font: Mallige v1.4, SIL OFL 1.1
-(`assets/fonts/OFL.txt`). VSOP87 and ELP/Meeus coefficient tables are
+(`assets/fonts/OFL.txt`). UI font: Baloo Tamma 2, SIL OFL 1.1
+(`assets/fonts/baloo/OFL.txt`; static weights instanced with fontTools). VSOP87 and ELP/Meeus coefficient tables are
 published scientific data.

@@ -29,6 +29,23 @@ class TuluColors {
   );
 }
 
+/// Rounded Kannada/Latin UI font (Baloo Tamma 2).
+const String kUiFont = 'Baloo';
+
+/// Text is drawn this much larger than Material defaults (on top of the
+/// phone's own font-size setting), for easy reading of Kannada script.
+const double kTextScale = 1.15;
+
+/// Wraps the app so all text is [kTextScale] times larger.
+Widget scaleText(BuildContext context, Widget? child) {
+  final mq = MediaQuery.of(context);
+  final user = mq.textScaler.scale(100) / 100;
+  return MediaQuery(
+    data: mq.copyWith(textScaler: TextScaler.linear(user * kTextScale)),
+    child: child ?? const SizedBox.shrink(),
+  );
+}
+
 /// Extra fallback font families (used by the screenshot tool, where no
 /// system Kannada font exists).
 List<String>? debugFontFallback;
@@ -65,13 +82,17 @@ ThemeData buildTheme(Brightness b) {
         ? const Color(0xFFF1DCC0)
         : const Color(0xFF3B2A26),
   );
-  final base = ThemeData(
+  final plain = ThemeData(
     useMaterial3: true,
     colorScheme: scheme,
     scaffoldBackgroundColor: scheme.surface,
+    fontFamily: kUiFont,
     fontFamilyFallback: debugFontFallback,
   );
-  final tt = base.textTheme;
+  final base = plain;
+  final tt = Typography.material2021(platform: TargetPlatform.android)
+      .englishLike
+      .merge(plain.textTheme);
   return base.copyWith(
     appBarTheme: AppBarTheme(
       backgroundColor: scheme.surface,

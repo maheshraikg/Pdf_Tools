@@ -52,9 +52,9 @@ class TimelineBar extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('☀ ${hm(e, d.sunrise)}', style: t.textTheme.bodySmall),
-            Text('☾ ${hm(e, d.sunset)}', style: t.textTheme.bodySmall),
-            Text('☀ ${hm(e, d.nextSunrise)}', style: t.textTheme.bodySmall),
+            Text('☀ ${hm(e, d.sunrise)}', style: t.textTheme.bodyMedium),
+            Text('☾ ${hm(e, d.sunset)}', style: t.textTheme.bodyMedium),
+            Text('☀ ${hm(e, d.nextSunrise)}', style: t.textTheme.bodyMedium),
           ],
         ),
         const SizedBox(height: 6),
@@ -80,12 +80,12 @@ class TimelineBar extends StatelessWidget {
                   color: t.colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: 6),
-                Text(m.time, style: t.textTheme.bodySmall),
+                Text(m.time, style: t.textTheme.bodyMedium),
                 const SizedBox(width: 6),
                 Expanded(
                   child: LipiText(
                     m.label,
-                    style: t.textTheme.bodySmall,
+                    style: t.textTheme.bodyMedium,
                     overflow: TextOverflow.fade,
                   ),
                 ),

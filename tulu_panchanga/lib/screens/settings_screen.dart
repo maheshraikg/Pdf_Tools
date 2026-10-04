@@ -176,7 +176,7 @@ class SettingsScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              'Tulu-Tigalari font: Mallige (SIL OFL 1.1).',
+              'Fonts: Baloo Tamma 2 and Mallige (Tulu-Tigalari), SIL OFL 1.1.',
               style: t.textTheme.bodySmall,
             ),
           ),

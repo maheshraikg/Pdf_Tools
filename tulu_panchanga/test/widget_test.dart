@@ -10,7 +10,7 @@ Future<AppSettings> pumpApp(WidgetTester tester, {Lang lang = Lang.en}) async {
   final settings = AppSettings.memory()..lang = lang;
   await tester.binding.setSurfaceSize(const Size(420, 900));
   await tester.pumpWidget(
-    TuluPanchangaApp(settings: settings, background: false),
+    TuluPanchangaApp(settings: settings, background: false, splash: false),
   );
   await tester.pump();
   return settings;

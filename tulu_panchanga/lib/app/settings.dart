@@ -20,7 +20,8 @@ class AppSettings extends ChangeNotifier {
     return AppSettings._(prefs).._read();
   }
 
-  Lang lang = Lang.en;
+  /// Kannada by default; English and Tulu are a tap away in Settings.
+  Lang lang = Lang.kn;
   bool tuluLipi = false;
   Place place = presetPlaces.first;
   PanchangaConfig config = const PanchangaConfig();
@@ -37,7 +38,8 @@ class AppSettings extends ChangeNotifier {
 
   void _read() {
     final p = _prefs!;
-    lang = Lang.fromCode(p.getString('lang'));
+    final code = p.getString('lang');
+    lang = code == null ? Lang.kn : Lang.fromCode(code);
     tuluLipi = p.getBool('tuluLipi') ?? false;
     final placeJson = p.getString('place');
     if (placeJson != null) {

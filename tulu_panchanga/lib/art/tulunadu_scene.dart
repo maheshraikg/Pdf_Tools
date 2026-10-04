@@ -9,6 +9,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../app/theme.dart';
+import 'kambala.dart';
 
 class TulunaduScene extends StatefulWidget {
   const TulunaduScene({
@@ -266,6 +267,21 @@ class _ScenePainter extends CustomPainter {
     canvas.drawRect(Rect.fromLTWH(hx + 6, hy - 15, 7, 6), win);
     canvas.drawRect(Rect.fromLTWH(hx + 33, hy - 15, 7, 6), win);
 
+    // --- Kambala race through the paddy (daytime) --------------------------
+    {
+      final p = ((t * 2) % 1) / 0.72;
+      if (p <= 1) {
+        final x = -70 + (w + 140) * p;
+        paintKambala(
+          canvas,
+          Offset(x, h * 0.95),
+          h / 210,
+          (t * 30) % 1,
+          night: night,
+        );
+      }
+    }
+
     // --- Coconut palms --------------------------------------------------------
     _palm(canvas, Offset(w * 0.12, h * 1.0), h * 0.62, _w(t * 2) * 0.05, night);
     _palm(
@@ -312,6 +328,29 @@ class _ScenePainter extends CustomPainter {
           ..color = const Color(0xFF6D4C41)
           ..strokeWidth = 1,
       );
+    }
+
+    // --- Flower petals falling on festival days (marigold and jasmine) ---
+    if (festive) {
+      final rnd = math.Random(3);
+      for (var i = 0; i < 22; i++) {
+        final x0 = rnd.nextDouble() * w;
+        final speed = 0.6 + rnd.nextDouble() * 0.8;
+        final p = (t * speed * 3 + rnd.nextDouble()) % 1;
+        final x = x0 + 18 * math.sin((p * 4 + i) * math.pi);
+        final y = -10 + p * (h + 20);
+        final color = i % 3 == 0
+            ? Colors.white
+            : (i.isEven ? const Color(0xFFFF9800) : TuluColors.turmeric);
+        canvas.save();
+        canvas.translate(x, y);
+        canvas.rotate(p * 6 + i);
+        canvas.drawOval(
+          const Rect.fromLTRB(-3.5, -2, 3.5, 2),
+          Paint()..color = color.withValues(alpha: 0.95),
+        );
+        canvas.restore();
+      }
     }
 
     // Soft scrim at the bottom so overlaid text stays readable.

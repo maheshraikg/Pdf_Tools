@@ -41,6 +41,10 @@ void main() {
       '$noto/NotoSansKannada-Bold.ttf',
     ]);
     await loadFont('TuluTigalari', ['assets/fonts/mallige_v1.4.ttf']);
+    await loadFont('Baloo', [
+      for (final w in [400, 500, 600, 700, 800])
+        'assets/fonts/baloo/BalooTamma2-$w.ttf',
+    ]);
     await loadFont('DejaVu', [
       '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
     ]);
@@ -69,6 +73,25 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
   }
 
+  testWidgets('splash', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 860));
+    final key = GlobalKey();
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: key,
+        child: TuluPanchangaApp(
+          settings: AppSettings.memory(),
+          background: false,
+        ),
+      ),
+    );
+    for (var i = 0; i < 24; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    await shot(tester, key, 'kn_0_splash');
+    await tester.pump(const Duration(seconds: 2));
+  });
+
   for (final lang in [Lang.en, Lang.kn, Lang.tcy]) {
     testWidgets('screens ${lang.name}', (tester) async {
       await tester.binding.setSurfaceSize(const Size(400, 860));
@@ -79,7 +102,11 @@ void main() {
       await tester.pumpWidget(
         RepaintBoundary(
           key: key,
-          child: TuluPanchangaApp(settings: settings, background: false),
+          child: TuluPanchangaApp(
+            settings: settings,
+            background: false,
+            splash: false,
+          ),
         ),
       );
       await settle(tester);

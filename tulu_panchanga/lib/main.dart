@@ -11,6 +11,7 @@ import 'screens/calendar_screen.dart';
 import 'screens/festivals_screen.dart';
 import 'screens/muhurta_screen.dart';
 import 'screens/settings_screen.dart';
+import 'screens/splash.dart';
 import 'screens/today_screen.dart';
 
 Future<void> main() async {
@@ -24,11 +25,15 @@ class TuluPanchangaApp extends StatefulWidget {
     super.key,
     required this.settings,
     this.background = true,
+    this.splash = true,
   });
   final AppSettings settings;
 
   /// Whether to schedule notifications / update the widget (off in tests).
   final bool background;
+
+  /// Whether to show the animated Kannada opening screen.
+  final bool splash;
 
   @override
   State<TuluPanchangaApp> createState() => _TuluPanchangaAppState();
@@ -83,7 +88,8 @@ class _TuluPanchangaAppState extends State<TuluPanchangaApp>
           theme: buildTheme(Brightness.light),
           darkTheme: buildTheme(Brightness.dark),
           themeMode: widget.settings.themeMode,
-          home: const HomeShell(),
+          builder: scaleText,
+          home: widget.splash ? const _SplashThenHome() : const HomeShell(),
         ),
       ),
     );
@@ -145,4 +151,32 @@ class _HomeShellState extends State<HomeShell> {
       ),
     );
   }
+}
+
+/// Shows the opening animation, then cross-fades to the app.
+class _SplashThenHome extends StatefulWidget {
+  const _SplashThenHome();
+
+  @override
+  State<_SplashThenHome> createState() => _SplashThenHomeState();
+}
+
+class _SplashThenHomeState extends State<_SplashThenHome> {
+  bool _home = false;
+
+  @override
+  Widget build(BuildContext context) => AnimatedSwitcher(
+    duration: const Duration(milliseconds: 700),
+    switchInCurve: Curves.easeOut,
+    transitionBuilder: (c, a) => FadeTransition(
+      opacity: a,
+      child: ScaleTransition(
+        scale: Tween(begin: 1.04, end: 1.0).animate(a),
+        child: c,
+      ),
+    ),
+    child: _home
+        ? const HomeShell()
+        : SplashScreen(onDone: () => setState(() => _home = true)),
+  );
 }
