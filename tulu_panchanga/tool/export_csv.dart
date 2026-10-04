@@ -50,7 +50,7 @@ String _hm(PanchangaEngine e, double? jd, DateTime day) {
   final t =
       '${w.hour.toString().padLeft(2, '0')}:${w.minute.toString().padLeft(2, '0')}';
   final diff = PanchangaEngine.dateOnly(w).difference(day).inDays;
-  return diff == 0 ? t : '$t (+$diff)';
+  return diff == 0 ? t : '$t (${diff > 0 ? '+' : ''}$diff)';
 }
 
 String _date(DateTime d) => d.toIso8601String().substring(0, 10);
