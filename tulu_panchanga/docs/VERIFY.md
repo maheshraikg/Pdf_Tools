@@ -107,6 +107,19 @@ upanayana are not offered.
 - **Tulu lipi**: Kannada → Tulu-Tigalari transliteration is shared with Tulu
   Nighantu; Unicode 16 has no short e/o, so ಎ/ಒ map to ಏ/ಓ forms.
 
+## 4b. Other languages to check with native speakers
+
+- **Konkani** (Kannada script, as used by Mangaluru Konkani speakers): UI
+  words such as ಆಜ್ (today), ಸಣಾಂ (festivals), ವರ್ಸ್ (year), ಜಾಗೊ
+  (place). Panchanga names fall back to Kannada.
+- **Hindi, Malayalam, Telugu**: UI strings are written in each language;
+  tithi, nakshatra, yoga, karana, rashi, month and festival names are the
+  Sanskrit forms transliterated from Kannada script (e.g. ಪ್ರತಿಪದಾ →
+  प्रतिपदा / പ്രതിപദാ / ప్రతిపదా). Local usage may differ (Malayalam
+  Kollam-era month names, Telugu festival spellings such as "Ugadi").
+- Weekday and Gregorian month names are hand-written for every language.
+- Festival rule descriptions in the festival sheet are English only.
+
 ## 5. Not verified (and why)
 
 - **No comparison with a printed Tulu panchanga or drikpanchang.com was

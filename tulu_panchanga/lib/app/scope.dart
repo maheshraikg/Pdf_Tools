@@ -128,17 +128,8 @@ String hmDay(BuildContext context, PanchangaEngine e, double jd, DateTime day) {
   return '$t (${w.day}/${w.month})';
 }
 
-const _monthsEn = [
-  'January', 'February', 'March', 'April', 'May', 'June', 'July', //
-  'August', 'September', 'October', 'November', 'December',
-];
-const _monthsKn = [
-  'ಜನವರಿ', 'ಫೆಬ್ರವರಿ', 'ಮಾರ್ಚ್', 'ಏಪ್ರಿಲ್', 'ಮೇ', 'ಜೂನ್', 'ಜುಲೈ', //
-  'ಆಗಸ್ಟ್', 'ಸೆಪ್ಟೆಂಬರ್', 'ಅಕ್ಟೋಬರ್', 'ನವೆಂಬರ್', 'ಡಿಸೆಂಬರ್',
-];
-
 String gregMonthName(Lang lang, int month) =>
-    (lang == Lang.en ? _monthsEn : _monthsKn)[month - 1];
+    gregorianMonthNames[month - 1].of(lang);
 
 String longDate(Lang lang, DateTime d) =>
     '${d.day} ${gregMonthName(lang, d.month)} ${d.year}';

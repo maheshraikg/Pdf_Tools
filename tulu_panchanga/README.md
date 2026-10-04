@@ -26,13 +26,15 @@ Everything is computed on the phone; there is no network access.
   Aati rain, tulasi katte, Sun, Shiva linga, Holi colours and the Moon
   (see `docs/screenshots/art_gallery.png`).
 - **Opens in Kannada** with an animated splash (Yakshagana crown, Tulu-lipi
-  watermark, Kambala race, "ಜೈ ತುಳುನಾಡ್"); Kannada is the default language.
-  Large, rounded Kannada type (Baloo Tamma 2) throughout.
+  watermark, Kambala race, "ಜೈ ತುಳುನಾಡ್"). On first launch everything is in
+  Kannada and a one-time sheet (in Kannada) offers the other languages; the
+  language can be changed any time in Settings. Large, rounded Kannada type
+  (Baloo Tamma 2) throughout.
 - **Kambala** buffaloes race through the paddy in the header, and flower
   petals fall on festival days.
 - **Read aloud**: a speaker button reads the day's panchanga (and any
-  festival) using the phone's text-to-speech; English, or a Kannada voice
-  for Kannada and Tulu.
+  festival) using the phone's text-to-speech in the chosen language
+  (Kannada voice for Kannada, Tulu and Konkani).
 
 - **Today**: weekday, Gregorian, Tulu (solar) and lunar date; a **timeline
   bar** for sunrise → next sunrise with Rahu kaala, Yamaganda, Gulika,
@@ -55,7 +57,10 @@ Everything is computed on the phone; there is no network access.
 - **Home-screen widget**: today's Tulu date, tithi, nakshatra, sunrise and
   festival/Rahu kaala.
 - **Share card**: shares the day as an image and text.
-- **Languages**: English, Kannada and Tulu (Kannada script), with a
+- **Languages**: ಕನ್ನಡ Kannada (default), ತುಳು Tulu, English, ಕೊಂಕಣಿ
+  Konkani (Kannada script), हिन्दी Hindi, മലയാളം Malayalam and తెలుగు
+  Telugu. Panchanga names in Hindi, Malayalam and Telugu are the Sanskrit
+  forms transliterated from Kannada script (`lib/lipi/indic.dart`). Tulu has a
   **Tulu-lipi toggle** that renders Tulu text in Tulu-Tigalari script
   (Mallige font).
 - **Locations**: 13 presets (Mangaluru, Udupi, Kundapura, Karkala,
@@ -134,8 +139,8 @@ isolate; single days are computed on the UI thread and cached.
 ```
 lib/astro/            astronomy (VSOP87 Sun, Meeus Moon, rise/set, search)
 lib/panchanga/        engine (day panchanga, months), festivals, muhurta, names, places
-lib/lipi/             Kannada → Tulu-Tigalari
-lib/app/              settings, strings (en/kn/tcy), repo (isolates), notifications + widget
+lib/lipi/             Kannada → Tulu-Tigalari, Devanagari, Malayalam, Telugu
+lib/app/              settings, strings (kn/tcy/en/kok/hi/ml/te), repo (isolates), notifications + widget
 lib/screens/          Today, day detail, timeline, calendar, festivals, muhurta, settings, share card
 android/…/TodayWidgetProvider.kt   home-screen widget
 tool/                 CSV export, table/fixture generators, icon, screenshots, bench

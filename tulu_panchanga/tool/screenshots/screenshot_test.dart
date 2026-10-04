@@ -48,7 +48,25 @@ void main() {
     await loadFont('DejaVu', [
       '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
     ]);
-    debugFontFallback = ['NotoKannada', 'DejaVu'];
+    await loadFont('NotoDeva', [
+      '$noto/NotoSansDevanagari-Regular.ttf',
+      '$noto/NotoSansDevanagari-Bold.ttf',
+    ]);
+    await loadFont('NotoMal', [
+      '$noto/NotoSansMalayalam-Regular.ttf',
+      '$noto/NotoSansMalayalam-Bold.ttf',
+    ]);
+    await loadFont('NotoTel', [
+      '$noto/NotoSansTelugu-Regular.ttf',
+      '$noto/NotoSansTelugu-Bold.ttf',
+    ]);
+    debugFontFallback = [
+      'NotoKannada',
+      'NotoDeva',
+      'NotoMal',
+      'NotoTel',
+      'DejaVu',
+    ];
     Directory('docs/screenshots').createSync(recursive: true);
   });
 
@@ -91,6 +109,50 @@ void main() {
     await shot(tester, key, 'kn_0_splash');
     await tester.pump(const Duration(seconds: 2));
   });
+
+  testWidgets('first-run language sheet', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 860));
+    final key = GlobalKey();
+    final settings = AppSettings.memory();
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: key,
+        child: TuluPanchangaApp(settings: settings, background: false),
+      ),
+    );
+    for (var i = 0; i < 50; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    await tester.pump(const Duration(seconds: 1));
+    await shot(tester, key, 'kn_0b_language_sheet');
+    await tester.tap(find.text('हिन्दी'));
+    await tester.pump(const Duration(seconds: 1));
+    await shot(tester, key, 'hi_0b_language_sheet');
+  });
+
+  for (final lang in [Lang.hi, Lang.ml, Lang.te, Lang.kok]) {
+    testWidgets('today ${lang.name}', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(400, 860));
+      final key = GlobalKey();
+      final settings = AppSettings.memory()..lang = lang;
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: TuluPanchangaApp(
+            settings: settings,
+            background: false,
+            splash: false,
+          ),
+        ),
+      );
+      await settle(tester);
+      await shot(tester, key, '${lang.name}_1_today');
+      await tester.tap(find.byIcon(Icons.celebration_outlined).last);
+      await tester.pump();
+      await settle(tester);
+      await shot(tester, key, '${lang.name}_3_festivals');
+    });
+  }
 
   for (final lang in [Lang.en, Lang.kn, Lang.tcy]) {
     testWidgets('screens ${lang.name}', (tester) async {

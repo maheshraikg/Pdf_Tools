@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../app/background.dart';
 import '../app/scope.dart';
+import 'language_picker.dart';
 import '../panchanga/names.dart';
 import '../panchanga/place.dart';
 
@@ -28,22 +29,18 @@ class SettingsScreen extends StatelessWidget {
           header(s.language),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SegmentedButton<Lang>(
-              segments: [
-                for (final l in Lang.values)
-                  ButtonSegment(value: l, label: Text(l.label)),
-              ],
-              selected: {settings.lang},
-              onSelectionChanged: (v) =>
-                  settings.update((x) => x.lang = v.first),
+            child: LanguagePicker(
+              selected: settings.lang,
+              onPick: (l) => settings.update((x) => x.lang = l),
             ),
           ),
-          SwitchListTile(
-            title: LipiText(s.tuluLipi),
-            subtitle: Text(s.tuluLipiHint),
-            value: settings.tuluLipi,
-            onChanged: (v) => settings.update((x) => x.tuluLipi = v),
-          ),
+          if (settings.lang == Lang.tcy)
+            SwitchListTile(
+              title: LipiText(s.tuluLipi),
+              subtitle: Text(s.tuluLipiHint),
+              value: settings.tuluLipi,
+              onChanged: (v) => settings.update((x) => x.tuluLipi = v),
+            ),
           header(s.location),
           ListTile(
             leading: const Icon(Icons.place_outlined),

@@ -207,9 +207,15 @@ class _FestivalsScreenState extends State<FestivalsScreen> {
                                           fontWeight: FontWeight.w800,
                                         ),
                                       ),
-                                      LipiText(
-                                        varaShort[o.date.weekday % 7].of(lang),
-                                        style: t.textTheme.labelSmall,
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: LipiText(
+                                          varaShort[o.date.weekday % 7].of(
+                                            lang,
+                                          ),
+                                          maxLines: 1,
+                                          style: t.textTheme.labelSmall,
+                                        ),
                                       ),
                                     ],
                                   ),

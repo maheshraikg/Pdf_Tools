@@ -17,7 +17,15 @@ class Speech {
   FlutterTts? _tts;
   String? _lang;
 
-  static String voiceFor(Lang lang) => lang == Lang.en ? 'en-IN' : 'kn-IN';
+  /// Konkani and Tulu are written in Kannada script and read with a
+  /// Kannada voice (no TTS engine has Tulu or Konkani voices).
+  static String voiceFor(Lang lang) => switch (lang) {
+    Lang.en => 'en-IN',
+    Lang.hi => 'hi-IN',
+    Lang.ml => 'ml-IN',
+    Lang.te => 'te-IN',
+    Lang.kn || Lang.tcy || Lang.kok => 'kn-IN',
+  };
 
   /// Speaks [text]; returns false if no voice for [lang] is installed.
   Future<bool> speak(String text, Lang lang) async {

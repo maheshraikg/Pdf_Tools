@@ -11,6 +11,7 @@ import 'screens/calendar_screen.dart';
 import 'screens/festivals_screen.dart';
 import 'screens/muhurta_screen.dart';
 import 'screens/settings_screen.dart';
+import 'screens/language_picker.dart';
 import 'screens/splash.dart';
 import 'screens/today_screen.dart';
 
@@ -97,7 +98,10 @@ class _TuluPanchangaAppState extends State<TuluPanchangaApp>
 }
 
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key});
+  const HomeShell({super.key, this.askLanguage = false});
+
+  /// Offer the language sheet on first launch.
+  final bool askLanguage;
 
   @override
   State<HomeShell> createState() => _HomeShellState();
@@ -105,6 +109,16 @@ class HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<HomeShell> {
   int _tab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.askLanguage) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) maybeAskLanguage(context, context.settings);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,36 +132,38 @@ class _HomeShellState extends State<HomeShell> {
     ];
     return Scaffold(
       body: IndexedStack(index: _tab, children: pages),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _tab,
-        onDestinationSelected: (i) => setState(() => _tab = i),
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.wb_sunny_outlined),
-            selectedIcon: const Icon(Icons.wb_sunny),
-            label: s.today,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.calendar_month_outlined),
-            selectedIcon: const Icon(Icons.calendar_month),
-            label: s.calendar,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.celebration_outlined),
-            selectedIcon: const Icon(Icons.celebration),
-            label: s.festivals,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.access_time),
-            selectedIcon: const Icon(Icons.access_time_filled),
-            label: s.muhurta,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.settings_outlined),
-            selectedIcon: const Icon(Icons.settings),
-            label: s.settings,
-          ),
-        ],
+      bottomNavigationBar: _UnscaledText(
+        child: NavigationBar(
+          selectedIndex: _tab,
+          onDestinationSelected: (i) => setState(() => _tab = i),
+          destinations: [
+            NavigationDestination(
+              icon: const Icon(Icons.wb_sunny_outlined),
+              selectedIcon: const Icon(Icons.wb_sunny),
+              label: s.today,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.calendar_month_outlined),
+              selectedIcon: const Icon(Icons.calendar_month),
+              label: s.calendar,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.celebration_outlined),
+              selectedIcon: const Icon(Icons.celebration),
+              label: s.tabFestivals,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.access_time),
+              selectedIcon: const Icon(Icons.access_time_filled),
+              label: s.muhurta,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.settings_outlined),
+              selectedIcon: const Icon(Icons.settings),
+              label: s.tabSettings,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -176,7 +192,24 @@ class _SplashThenHomeState extends State<_SplashThenHome> {
       ),
     ),
     child: _home
-        ? const HomeShell()
+        ? const HomeShell(askLanguage: true)
         : SplashScreen(onDone: () => setState(() => _home = true)),
   );
+}
+
+/// Removes the app-wide text boost (keeps the user's own setting) so
+/// bottom-tab labels fit on one line in every script.
+class _UnscaledText extends StatelessWidget {
+  const _UnscaledText({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
+    final scale = mq.textScaler.scale(100) / 100 / kTextScale;
+    return MediaQuery(
+      data: mq.copyWith(textScaler: TextScaler.linear(scale)),
+      child: child,
+    );
+  }
 }
