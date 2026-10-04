@@ -59,7 +59,14 @@ jobs:
             echo "::warning::No TULU_KEYSTORE_BASE64 secret: APK is debug-signed and will not install over an earlier build."
             exit 0
           fi
-          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/upload.keystore"
+          # Pasted secrets often end in a newline; strip surrounding
+          # whitespace. An empty key password means "same as the store".
+          trim() { printf '%s' "$1" | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | tr -d '\n'; }
+          STORE_PW=$(trim "$STORE_PW")
+          KEY_ALIAS=$(trim "$KEY_ALIAS")
+          KEY_PW=$(trim "$KEY_PW")
+          [ -n "$KEY_PW" ] || KEY_PW="$STORE_PW"
+          echo "$KEYSTORE_B64" | tr -d ' \r\n' | base64 -d > "$RUNNER_TEMP/upload.keystore"
           # keytool's default PKCS12 format ignores a separate key password
           # and protects the key with the store password.
           KS="$RUNNER_TEMP/upload.keystore"
