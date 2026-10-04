@@ -7,10 +7,34 @@ Everything is computed on the phone; there is no network access.
 <img src="docs/screenshots/en_1_today.png" width="200">
 <img src="docs/screenshots/en_2_calendar.png" width="200">
 <img src="docs/screenshots/kn_3_festivals.png" width="200">
-<img src="docs/screenshots/tcy_7_today_lipi.png" width="200">
+<img src="docs/screenshots/en_1b_festival_day.png" width="200">
+<img src="docs/screenshots/en_1c_festival_sheet.png" width="200">
 </p>
 
+**Download:** [tulu-panchanga.apk](https://github.com/maheshraikg/Pdf_Tools/releases/download/tulu-panchanga-latest/tulu-panchanga.apk)
+(latest build from CI, debug-signed).
+
 ## Features
+
+- **Tulunadu look**: Tulu-flag red and turmeric, Mangalore-tile terracotta
+  and paddy green. The Today header is an animated Tulunadu scene: the sky
+  follows the real time of day, the Sun (or the Moon, drawn in its true
+  phase) moves along its arc over the Western Ghats, coconut palms sway,
+  paddy ripples, and Tulu-flag bunting appears on festival days.
+- **Festival illustrations**: cute animated cartoons drawn in code: diya,
+  Ganesha, naga, kalasha, Krishna's flute, Yakshagana crown, paddy sheaf,
+  Aati rain, tulasi katte, Sun, Shiva linga, Holi colours and the Moon
+  (see `docs/screenshots/art_gallery.png`).
+- **Opens in Kannada** with an animated splash (Yakshagana crown, Tulu-lipi
+  watermark, Kambala race, "ಜೈ ತುಳುನಾಡ್"). On first launch everything is in
+  Kannada and a one-time sheet (in Kannada) offers the other languages; the
+  language can be changed any time in Settings. Large, rounded Kannada type
+  (Baloo Tamma 2) throughout.
+- **Kambala** buffaloes race through the paddy in the header, and flower
+  petals fall on festival days.
+- **Read aloud**: a speaker button reads the day's panchanga (and any
+  festival) using the phone's text-to-speech in the chosen language
+  (Kannada voice for Kannada, Tulu and Konkani).
 
 - **Today**: weekday, Gregorian, Tulu (solar) and lunar date; a **timeline
   bar** for sunrise → next sunrise with Rahu kaala, Yamaganda, Gulika,
@@ -33,7 +57,10 @@ Everything is computed on the phone; there is no network access.
 - **Home-screen widget**: today's Tulu date, tithi, nakshatra, sunrise and
   festival/Rahu kaala.
 - **Share card**: shares the day as an image and text.
-- **Languages**: English, Kannada and Tulu (Kannada script), with a
+- **Languages**: ಕನ್ನಡ Kannada (default), ತುಳು Tulu, English, ಕೊಂಕಣಿ
+  Konkani (Kannada script), हिन्दी Hindi, മലയാളം Malayalam and తెలుగు
+  Telugu. Panchanga names in Hindi, Malayalam and Telugu are the Sanskrit
+  forms transliterated from Kannada script (`lib/lipi/indic.dart`). Tulu has a
   **Tulu-lipi toggle** that renders Tulu text in Tulu-Tigalari script
   (Mallige font).
 - **Locations**: 13 presets (Mangaluru, Udupi, Kundapura, Karkala,
@@ -74,7 +101,9 @@ keyAlias, keyPassword) when present, else the debug key.
 
 CI (`.github/workflows/tulu-panchanga.yml`) runs analyze and tests, exports
 the Mangaluru CSVs for the current and next year, builds the release APK and
-uploads both as artifacts.
+uploads both as artifacts. Builds of `master` (and manual runs) also publish
+the APK to the rolling `tulu-panchanga-latest` pre-release, which gives the
+direct download link above.
 
 ## Tools
 
@@ -110,8 +139,8 @@ isolate; single days are computed on the UI thread and cached.
 ```
 lib/astro/            astronomy (VSOP87 Sun, Meeus Moon, rise/set, search)
 lib/panchanga/        engine (day panchanga, months), festivals, muhurta, names, places
-lib/lipi/             Kannada → Tulu-Tigalari
-lib/app/              settings, strings (en/kn/tcy), repo (isolates), notifications + widget
+lib/lipi/             Kannada → Tulu-Tigalari, Devanagari, Malayalam, Telugu
+lib/app/              settings, strings (kn/tcy/en/kok/hi/ml/te), repo (isolates), notifications + widget
 lib/screens/          Today, day detail, timeline, calendar, festivals, muhurta, settings, share card
 android/…/TodayWidgetProvider.kt   home-screen widget
 tool/                 CSV export, table/fixture generators, icon, screenshots, bench
@@ -131,5 +160,6 @@ docs/                 VERIFY.md, CSVs, screenshots
 ## Licences
 
 Code: as the repository. Tulu-Tigalari font: Mallige v1.4, SIL OFL 1.1
-(`assets/fonts/OFL.txt`). VSOP87 and ELP/Meeus coefficient tables are
+(`assets/fonts/OFL.txt`). UI font: Baloo Tamma 2, SIL OFL 1.1
+(`assets/fonts/baloo/OFL.txt`; static weights instanced with fontTools). VSOP87 and ELP/Meeus coefficient tables are
 published scientific data.

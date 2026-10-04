@@ -41,10 +41,32 @@ void main() {
       '$noto/NotoSansKannada-Bold.ttf',
     ]);
     await loadFont('TuluTigalari', ['assets/fonts/mallige_v1.4.ttf']);
+    await loadFont('Baloo', [
+      for (final w in [400, 500, 600, 700, 800])
+        'assets/fonts/baloo/BalooTamma2-$w.ttf',
+    ]);
     await loadFont('DejaVu', [
       '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
     ]);
-    debugFontFallback = ['NotoKannada', 'DejaVu'];
+    await loadFont('NotoDeva', [
+      '$noto/NotoSansDevanagari-Regular.ttf',
+      '$noto/NotoSansDevanagari-Bold.ttf',
+    ]);
+    await loadFont('NotoMal', [
+      '$noto/NotoSansMalayalam-Regular.ttf',
+      '$noto/NotoSansMalayalam-Bold.ttf',
+    ]);
+    await loadFont('NotoTel', [
+      '$noto/NotoSansTelugu-Regular.ttf',
+      '$noto/NotoSansTelugu-Bold.ttf',
+    ]);
+    debugFontFallback = [
+      'NotoKannada',
+      'NotoDeva',
+      'NotoMal',
+      'NotoTel',
+      'DejaVu',
+    ];
     Directory('docs/screenshots').createSync(recursive: true);
   });
 
@@ -69,6 +91,69 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
   }
 
+  testWidgets('splash', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 860));
+    final key = GlobalKey();
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: key,
+        child: TuluPanchangaApp(
+          settings: AppSettings.memory(),
+          background: false,
+        ),
+      ),
+    );
+    for (var i = 0; i < 24; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    await shot(tester, key, 'kn_0_splash');
+    await tester.pump(const Duration(seconds: 2));
+  });
+
+  testWidgets('first-run language sheet', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 860));
+    final key = GlobalKey();
+    final settings = AppSettings.memory();
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: key,
+        child: TuluPanchangaApp(settings: settings, background: false),
+      ),
+    );
+    for (var i = 0; i < 50; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    await tester.pump(const Duration(seconds: 1));
+    await shot(tester, key, 'kn_0b_language_sheet');
+    await tester.tap(find.text('हिन्दी'));
+    await tester.pump(const Duration(seconds: 1));
+    await shot(tester, key, 'hi_0b_language_sheet');
+  });
+
+  for (final lang in [Lang.hi, Lang.ml, Lang.te, Lang.kok]) {
+    testWidgets('today ${lang.name}', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(400, 860));
+      final key = GlobalKey();
+      final settings = AppSettings.memory()..lang = lang;
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: TuluPanchangaApp(
+            settings: settings,
+            background: false,
+            splash: false,
+          ),
+        ),
+      );
+      await settle(tester);
+      await shot(tester, key, '${lang.name}_1_today');
+      await tester.tap(find.byIcon(Icons.celebration_outlined).last);
+      await tester.pump();
+      await settle(tester);
+      await shot(tester, key, '${lang.name}_3_festivals');
+    });
+  }
+
   for (final lang in [Lang.en, Lang.kn, Lang.tcy]) {
     testWidgets('screens ${lang.name}', (tester) async {
       await tester.binding.setSurfaceSize(const Size(400, 860));
@@ -79,11 +164,33 @@ void main() {
       await tester.pumpWidget(
         RepaintBoundary(
           key: key,
-          child: TuluPanchangaApp(settings: settings, background: false),
+          child: TuluPanchangaApp(
+            settings: settings,
+            background: false,
+            splash: false,
+          ),
         ),
       );
       await settle(tester);
       await shot(tester, key, '${lang.name}_1_today');
+      if (lang == Lang.en) {
+        // Mahalaya Amavasya (10 Oct 2026) is six days after 4 Oct.
+        for (var i = 0; i < 6; i++) {
+          await tester.tap(find.byIcon(Icons.chevron_right_rounded).first);
+          await tester.pump(const Duration(milliseconds: 400));
+        }
+        await settle(tester);
+        await tester.pump(const Duration(seconds: 1));
+        await shot(tester, key, 'en_1b_festival_day');
+        await tester.tap(find.text('Mahalaya Amavasya').first);
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+        await shot(tester, key, 'en_1c_festival_sheet');
+        Navigator.of(tester.element(find.text('Mahalaya Amavasya').last)).pop();
+        await tester.pump(const Duration(seconds: 1));
+        await tester.tap(find.byIcon(Icons.today_rounded));
+        await tester.pump(const Duration(seconds: 1));
+      }
 
       for (final (icon, name) in [
         (Icons.calendar_month_outlined, '2_calendar'),

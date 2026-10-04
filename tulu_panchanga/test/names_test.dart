@@ -76,10 +76,41 @@ void main() {
     }
   });
 
+  test('names appear in each language\'s own script', () {
+    bool inBlock(String s, int lo, int hi) =>
+        s.runes.any((r) => r >= lo && r <= hi);
+    final samples = [
+      tithiName(3),
+      tithiName(29),
+      nakshatraNames[17],
+      lunarMonthNames[6],
+      rashiNames[3],
+      varaNames[0],
+      samvatsaraNames[30],
+      tuluMonthNames[3],
+      for (final f in allFestivals) f.name,
+    ];
+    for (final n in samples) {
+      expect(inBlock(n.of(Lang.hi), 0x0900, 0x097F), isTrue, reason: n.en);
+      expect(inBlock(n.of(Lang.ml), 0x0D00, 0x0D7F), isTrue, reason: n.en);
+      expect(inBlock(n.of(Lang.te), 0x0C00, 0x0C7F), isTrue, reason: n.en);
+      expect(TuluLipi.hasKannada(n.of(Lang.kok)), isTrue, reason: n.en);
+      // No Kannada letters leak into other scripts.
+      for (final l in [Lang.hi, Lang.ml, Lang.te]) {
+        expect(TuluLipi.hasKannada(n.of(l)), isFalse, reason: '${n.en} $l');
+      }
+    }
+    expect(tithiName(29).of(Lang.hi), 'अमावस्या');
+    expect(varaNames[0].of(Lang.hi), 'रविवार');
+    expect(lunarMonthNames[6].of(Lang.hi), 'आश्विन');
+    expect(gregorianMonthNames[9].of(Lang.ml), 'ഒക്ടോബർ');
+    expect(varaNames[1].of(Lang.te), 'సోమవారం');
+  });
+
   test('Lang codes round-trip', () {
     for (final l in Lang.values) {
       expect(Lang.fromCode(l.name), l);
     }
-    expect(Lang.fromCode('xx'), Lang.en);
+    expect(Lang.fromCode('xx'), Lang.kn);
   });
 }

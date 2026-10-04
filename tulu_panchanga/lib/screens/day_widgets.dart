@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../app/scope.dart';
+import '../app/theme.dart';
+import '../art/festival_art.dart';
+import 'fancy.dart';
 import '../panchanga/engine.dart';
 import '../panchanga/festivals.dart';
 import '../panchanga/names.dart';
@@ -17,27 +20,58 @@ class KaalaColors {
 
 /// A titled card section.
 class Section extends StatelessWidget {
-  const Section({super.key, required this.title, required this.children});
+  const Section({
+    super.key,
+    required this.title,
+    required this.children,
+    this.icon,
+    this.accent,
+  });
   final String title;
   final List<Widget> children;
+  final IconData? icon;
+  final Color? accent;
 
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context);
+    final accent = this.accent ?? t.colorScheme.primary;
     return Card(
       margin: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      clipBehavior: Clip.antiAlias,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(left: BorderSide(color: accent, width: 4)),
+        ),
+        padding: const EdgeInsets.fromLTRB(14, 12, 16, 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            LipiText(
-              title,
-              style: t.textTheme.titleSmall?.copyWith(
-                color: t.colorScheme.primary,
-              ),
+            Row(
+              children: [
+                if (icon != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: 0.14),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(icon, size: 18, color: accent),
+                  ),
+                  const SizedBox(width: 10),
+                ],
+                Expanded(
+                  child: LipiText(
+                    title,
+                    style: t.textTheme.titleMedium?.copyWith(
+                      color: accent,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             ...children,
           ],
         ),
@@ -84,10 +118,10 @@ class InfoRow extends StatelessWidget {
               decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             ),
           SizedBox(
-            width: 120,
+            width: 104,
             child: LipiText(
               label,
-              style: t.textTheme.bodyMedium?.copyWith(
+              style: t.textTheme.titleSmall?.copyWith(
                 color: t.colorScheme.onSurfaceVariant,
               ),
             ),
@@ -98,14 +132,14 @@ class InfoRow extends StatelessWidget {
               children: [
                 LipiText(
                   value,
-                  style: t.textTheme.bodyLarge?.copyWith(
+                  style: t.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 if (sub != null)
                   LipiText(
                     sub!,
-                    style: t.textTheme.bodySmall?.copyWith(
+                    style: t.textTheme.bodyMedium?.copyWith(
                       color: t.colorScheme.onSurfaceVariant,
                     ),
                   ),
@@ -187,6 +221,7 @@ class ElementsCard extends StatelessWidget {
 
     return Section(
       title: s.panchanga,
+      icon: Icons.auto_awesome_rounded,
       children: [
         spans(s.tithi, d.tithis, (i) => tithiLabel(lang, i)),
         spans(s.nakshatra, d.nakshatras, (i) => nakshatraNames[i].of(lang)),
@@ -212,30 +247,45 @@ class SunMoonCard extends StatelessWidget {
     final s = context.s, e = context.repo.engine, d = day;
     return Section(
       title: s.sunMoon,
+      icon: Icons.wb_twilight_rounded,
+      accent: TuluColors.gold,
       children: [
         Row(
           children: [
-            Expanded(child: InfoRow(s.sunrise, hm(e, d.sunrise))),
-            Expanded(child: InfoRow(s.sunset, hm(e, d.sunset))),
+            _SkyTile(
+              Icons.wb_sunny_rounded,
+              s.sunrise,
+              hm(e, d.sunrise),
+              const [Color(0xFFFFE08A), Color(0xFFFFB74D)],
+            ),
+            const SizedBox(width: 8),
+            _SkyTile(
+              Icons.wb_twilight_rounded,
+              s.sunset,
+              hm(e, d.sunset),
+              const [Color(0xFFFFAB91), Color(0xFFE57373)],
+            ),
           ],
         ),
+        const SizedBox(height: 8),
         Row(
           children: [
-            Expanded(
-              child: InfoRow(
-                s.moonrise,
-                d.moonrise == null
-                    ? s.noMoonrise
-                    : hmDay(context, e, d.moonrise!, d.date),
-              ),
+            _SkyTile(
+              Icons.nightlight_round,
+              s.moonrise,
+              d.moonrise == null
+                  ? s.noMoonrise
+                  : hmDay(context, e, d.moonrise!, d.date),
+              const [Color(0xFFB39DDB), Color(0xFF7986CB)],
             ),
-            Expanded(
-              child: InfoRow(
-                s.moonset,
-                d.moonset == null
-                    ? s.noMoonset
-                    : hmDay(context, e, d.moonset!, d.date),
-              ),
+            const SizedBox(width: 8),
+            _SkyTile(
+              Icons.bedtime_rounded,
+              s.moonset,
+              d.moonset == null
+                  ? s.noMoonset
+                  : hmDay(context, e, d.moonset!, d.date),
+              const [Color(0xFF90A4AE), Color(0xFF5C6BC0)],
             ),
           ],
         ),
@@ -258,6 +308,8 @@ class KaalaCard extends StatelessWidget {
         InfoRow(label, w(x), color: c, highlight: x.contains(now));
     return Section(
       title: '${s.inauspicious} / ${s.auspicious}',
+      icon: Icons.schedule_rounded,
+      accent: TuluColors.terracotta,
       children: [
         row(s.rahu, k.rahu, KaalaColors.rahu),
         row(s.yamaganda, k.yamaganda, KaalaColors.yama),
@@ -280,6 +332,8 @@ class YearCard extends StatelessWidget {
     final s = context.s, lang = context.lang, d = day, e = context.repo.engine;
     return Section(
       title: s.yearAndMonth,
+      icon: Icons.event_note_rounded,
+      accent: TuluColors.areca,
       children: [
         InfoRow(
           s.samvatsara,
@@ -329,6 +383,7 @@ class FestivalsCard extends StatelessWidget {
         if (list == null || list.isEmpty) return const SizedBox.shrink();
         return Section(
           title: s.festivalsToday,
+          icon: Icons.celebration_rounded,
           children: [for (final o in list) FestivalTile(o: o, dense: true)],
         );
       },
@@ -349,14 +404,8 @@ class FestivalTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = Theme.of(context), lang = context.lang, s = context.s;
+    final lang = context.lang, s = context.s;
     final f = o.festival;
-    final icon = switch (f.category) {
-      FestivalCategory.major => Icons.celebration_outlined,
-      FestivalCategory.tulu => Icons.local_florist_outlined,
-      FestivalCategory.vrata => Icons.brightness_3_outlined,
-      FestivalCategory.sankramana => Icons.wb_sunny_outlined,
-    };
     final details = <String>[
       if (o.instant != null) hm(context.repo.engine, o.instant!),
       if (o.detail.isNotEmpty && f.category == FestivalCategory.vrata) o.detail,
@@ -365,45 +414,67 @@ class FestivalTile extends StatelessWidget {
     return ListTile(
       dense: dense,
       contentPadding: dense ? EdgeInsets.zero : null,
-      leading: Icon(icon, color: t.colorScheme.primary),
+      leading: FestivalArt.of(
+        o.festival,
+        size: 44,
+        animate: true,
+        circle: true,
+      ),
       title: LipiText(f.name.of(lang)),
       subtitle: details.isEmpty ? null : Text(details.join(' · ')),
-      onTap:
-          onTap ??
-          () => showModalBottomSheet<void>(
-            context: context,
-            showDragHandle: true,
-            builder: (_) => _FestivalSheet(o: o),
-          ),
+      onTap: onTap ?? () => showFestivalSheet(context, o),
     );
   }
 }
 
-class _FestivalSheet extends StatelessWidget {
-  const _FestivalSheet({required this.o});
-  final FestivalOccurrence o;
+class _SkyTile extends StatelessWidget {
+  const _SkyTile(this.icon, this.label, this.value, this.colors);
+  final IconData icon;
+  final String label;
+  final String value;
+  final List<Color> colors;
 
   @override
   Widget build(BuildContext context) {
-    final t = Theme.of(context), lang = context.lang, s = context.s;
-    final f = o.festival;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          LipiText(f.name.of(lang), style: t.textTheme.titleLarge),
-          Text(longDate(lang, o.date), style: t.textTheme.titleMedium),
-          const SizedBox(height: 12),
-          Text('${s.rule}: ${f.rule.describe()}'),
-          if (o.detail.isNotEmpty) Text(o.detail),
-          if (f.note.isNotEmpty) ...[const SizedBox(height: 8), Text(f.note)],
-          if (f.confidence == Confidence.low) ...[
-            const SizedBox(height: 8),
-            Text(s.confidenceLow, style: TextStyle(color: t.colorScheme.error)),
+    final t = Theme.of(context).textTheme;
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            colors: colors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.white, size: 26),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  LipiText(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: t.labelMedium?.copyWith(color: Colors.white),
+                  ),
+                  Text(
+                    value,
+                    maxLines: 2,
+                    style: t.titleMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
-        ],
+        ),
       ),
     );
   }

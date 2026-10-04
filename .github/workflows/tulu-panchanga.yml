@@ -8,6 +8,9 @@ on:
     paths: [ 'tulu_panchanga/**', '.github/workflows/tulu-panchanga.yml' ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Analyze, test and build release APK
@@ -41,8 +44,50 @@ jobs:
             dart run tool/export_csv.dart --year $y --place mangaluru --out build/csv
           done
 
+      # Signs with a fixed key so each build installs as an update. Set the
+      # repository secrets TULU_KEYSTORE_BASE64 (base64 of a .jks/.p12),
+      # TULU_KEYSTORE_PASSWORD, TULU_KEY_ALIAS and TULU_KEY_PASSWORD; without
+      # them the APK is signed with this runner's throwaway debug key.
+      - name: Signing key from secrets
+        env:
+          KEYSTORE_B64: ${{ secrets.TULU_KEYSTORE_BASE64 }}
+          STORE_PW: ${{ secrets.TULU_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.TULU_KEY_ALIAS }}
+          KEY_PW: ${{ secrets.TULU_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_B64" ]; then
+            echo "::warning::No TULU_KEYSTORE_BASE64 secret: APK is debug-signed and will not install over an earlier build."
+            exit 0
+          fi
+          # Pasted secrets often end in a newline; strip surrounding
+          # whitespace. An empty key password means "same as the store".
+          trim() { printf '%s' "$1" | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | tr -d '\n'; }
+          STORE_PW=$(trim "$STORE_PW")
+          KEY_ALIAS=$(trim "$KEY_ALIAS")
+          KEY_PW=$(trim "$KEY_PW")
+          [ -n "$KEY_PW" ] || KEY_PW="$STORE_PW"
+          echo "$KEYSTORE_B64" | tr -d ' \r\n' | base64 -d > "$RUNNER_TEMP/upload.keystore"
+          # keytool's default PKCS12 format ignores a separate key password
+          # and protects the key with the store password.
+          KS="$RUNNER_TEMP/upload.keystore"
+          keytool -list -keystore "$KS" -storepass "$STORE_PW" \
+            -alias "$KEY_ALIAS" >/dev/null 2>&1 || {
+            echo "::error::TULU_KEYSTORE_PASSWORD or TULU_KEY_ALIAS does not match the keystore."
+            exit 1
+          }
+          INFO=$(keytool -list -keystore "$KS" -storepass "$STORE_PW" 2>/dev/null)
+          if echo "$INFO" | grep -qi 'Keystore type: PKCS12'; then
+            KEY_PW="$STORE_PW"
+          fi
+          {
+            echo "storeFile=$RUNNER_TEMP/upload.keystore"
+            echo "storePassword=$STORE_PW"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPassword=$KEY_PW"
+          } > android/key.properties
+
       - name: Build release APK
-        run: flutter build apk --release
+        run: flutter build apk --release --build-number=${{ github.run_number }}
 
       - name: APK size
         run: |
@@ -60,3 +105,19 @@ jobs:
         with:
           name: tulu-panchanga-mangaluru-csv
           path: tulu_panchanga/build/csv/
+
+      # Direct download link (no zip):
+      # https://github.com/<owner>/<repo>/releases/download/tulu-panchanga-latest/tulu-panchanga.apk
+      # A rolling pre-release, replaced on every master build or manual run;
+      # marked not-latest so it never shadows the PDF app's releases.
+      - name: Publish APK to the tulu-panchanga-latest release
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/master')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp build/app/outputs/flutter-apk/app-release.apk build/tulu-panchanga.apk
+          gh release delete tulu-panchanga-latest --yes --cleanup-tag || true
+          gh release create tulu-panchanga-latest build/tulu-panchanga.apk \
+            --target "${{ github.sha }}" --prerelease --latest=false \
+            --title "Tulu Panchanga (latest build)" \
+            --notes "Release APK built from ${{ github.sha }} (build ${{ github.run_number }}). Direct link: https://github.com/${{ github.repository }}/releases/download/tulu-panchanga-latest/tulu-panchanga.apk"

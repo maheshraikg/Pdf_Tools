@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app/scope.dart';
+import '../art/festival_art.dart';
 import '../panchanga/engine.dart';
 import '../panchanga/festivals.dart';
 import '../panchanga/names.dart';
@@ -297,7 +298,7 @@ class _Grid extends StatelessWidget {
           child: GridView.count(
             padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
             crossAxisCount: 7,
-            childAspectRatio: 0.58,
+            childAspectRatio: 0.46,
             children: cells,
           ),
         ),
@@ -336,13 +337,19 @@ class _Grid extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(
-                  big(d),
-                  style: t.textTheme.titleMedium?.copyWith(
-                    color: d.weekday == 0 ? t.colorScheme.error : null,
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      big(d),
+                      style: t.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: d.weekday == 0 ? t.colorScheme.error : null,
+                      ),
+                    ),
                   ),
                 ),
-                const Spacer(),
                 Text(special, style: t.textTheme.labelSmall),
               ],
             ),
@@ -361,7 +368,14 @@ class _Grid extends StatelessWidget {
               style: t.textTheme.labelSmall,
             ),
             const Spacer(),
-            if (major.isNotEmpty)
+            if (major.isNotEmpty) ...[
+              FestivalArt.of(
+                major.first.festival,
+                size: 24,
+                animate: true,
+                circle: true,
+              ),
+              const SizedBox(height: 1),
               LipiText(
                 major.first.festival.name.of(lang),
                 maxLines: 1,
@@ -371,8 +385,8 @@ class _Grid extends StatelessWidget {
                   fontSize: 9,
                   color: t.colorScheme.onTertiaryContainer,
                 ),
-              )
-            else if (f.isNotEmpty)
+              ),
+            ] else if (f.isNotEmpty)
               Icon(Icons.brightness_3, size: 10, color: t.colorScheme.primary),
           ],
         ),

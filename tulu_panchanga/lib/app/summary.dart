@@ -1,4 +1,5 @@
 import '../panchanga/engine.dart';
+import '../panchanga/festivals.dart';
 import '../panchanga/names.dart';
 import 'scope.dart';
 import 'strings.dart';
@@ -40,4 +41,36 @@ String daySummary(
     '${s.sunrise} ${hm(e, d.sunrise)} · ${s.sunset} ${hm(e, d.sunset)}',
     '${s.rahu}: ${hm(e, d.kaalas.rahu.start)}–${hm(e, d.kaalas.rahu.end)}',
   ].join('\n');
+}
+
+/// Text read aloud for a day: date, Tulu and lunar date, tithi, nakshatra,
+/// sunrise/sunset, Rahu kaala and festivals.
+String daySpeech(
+  S s,
+  Lang lang,
+  PanchangaEngine e,
+  DayPanchanga d,
+  List<FestivalOccurrence> festivals,
+) {
+  final t = d.tithis.first, n = d.nakshatras.first;
+  String w(Window x) => lang == Lang.en
+      ? '${s.from} ${hm(e, x.start)} ${s.to} ${hm(e, x.end)}'
+      : '${hm(e, x.start)} ${s.from} ${hm(e, x.end)} ${s.to}';
+  final names = festivals
+      .where(
+        (o) =>
+            o.festival.category != FestivalCategory.vrata ||
+            o.festival.id == 'ekadashi',
+      )
+      .map((o) => o.festival.name.of(lang));
+  return [
+    '${varaNames[d.weekday].of(lang)}, ${longDate(lang, d.date)}',
+    if (names.isNotEmpty) names.join(', '),
+    '${s.tuluMonth} ${tuluDate(lang, d)}',
+    '${lunarMonthLabel(lang, d.lunarMonth)}, ${pakshaNames[d.paksha].of(lang)}',
+    '${s.tithi} ${tithiName(t.index).of(lang)}, ${_end(s, e, d, t)}',
+    '${s.nakshatra} ${nakshatraNames[n.index].of(lang)}, ${_end(s, e, d, n)}',
+    '${s.sunrise} ${hm(e, d.sunrise)}, ${s.sunset} ${hm(e, d.sunset)}',
+    '${s.rahu} ${w(d.kaalas.rahu)}',
+  ].join('. ');
 }

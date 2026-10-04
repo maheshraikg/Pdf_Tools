@@ -5,10 +5,14 @@ import 'package:flutter/material.dart';
 import 'app/background.dart';
 import 'app/scope.dart';
 import 'app/settings.dart';
+export 'app/theme.dart' show debugFontFallback;
+import 'app/theme.dart';
 import 'screens/calendar_screen.dart';
 import 'screens/festivals_screen.dart';
 import 'screens/muhurta_screen.dart';
 import 'screens/settings_screen.dart';
+import 'screens/language_picker.dart';
+import 'screens/splash.dart';
 import 'screens/today_screen.dart';
 
 Future<void> main() async {
@@ -17,38 +21,20 @@ Future<void> main() async {
   runApp(TuluPanchangaApp(settings: settings));
 }
 
-/// Seed colours: Tulunadu red and turmeric yellow.
-const Color kSeed = Color(0xFFB3261E);
-const Color kAccent = Color(0xFFF2C94C);
-
-/// Extra fallback font families (used by the screenshot tool, where no
-/// system Kannada font exists).
-List<String>? debugFontFallback;
-
-ThemeData buildTheme(Brightness b) {
-  final scheme = ColorScheme.fromSeed(
-    seedColor: kSeed,
-    brightness: b,
-    tertiary: b == Brightness.light ? const Color(0xFF7A5900) : kAccent,
-  );
-  return ThemeData(
-    useMaterial3: true,
-    colorScheme: scheme,
-    fontFamilyFallback: debugFontFallback,
-    cardTheme: const CardThemeData(elevation: 0.5),
-  );
-}
-
 class TuluPanchangaApp extends StatefulWidget {
   const TuluPanchangaApp({
     super.key,
     required this.settings,
     this.background = true,
+    this.splash = true,
   });
   final AppSettings settings;
 
   /// Whether to schedule notifications / update the widget (off in tests).
   final bool background;
+
+  /// Whether to show the animated Kannada opening screen.
+  final bool splash;
 
   @override
   State<TuluPanchangaApp> createState() => _TuluPanchangaAppState();
@@ -103,7 +89,8 @@ class _TuluPanchangaAppState extends State<TuluPanchangaApp>
           theme: buildTheme(Brightness.light),
           darkTheme: buildTheme(Brightness.dark),
           themeMode: widget.settings.themeMode,
-          home: const HomeShell(),
+          builder: scaleText,
+          home: widget.splash ? const _SplashThenHome() : const HomeShell(),
         ),
       ),
     );
@@ -111,7 +98,10 @@ class _TuluPanchangaAppState extends State<TuluPanchangaApp>
 }
 
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key});
+  const HomeShell({super.key, this.askLanguage = false});
+
+  /// Offer the language sheet on first launch.
+  final bool askLanguage;
 
   @override
   State<HomeShell> createState() => _HomeShellState();
@@ -119,6 +109,16 @@ class HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<HomeShell> {
   int _tab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.askLanguage) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) maybeAskLanguage(context, context.settings);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,37 +132,84 @@ class _HomeShellState extends State<HomeShell> {
     ];
     return Scaffold(
       body: IndexedStack(index: _tab, children: pages),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _tab,
-        onDestinationSelected: (i) => setState(() => _tab = i),
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.wb_sunny_outlined),
-            selectedIcon: const Icon(Icons.wb_sunny),
-            label: s.today,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.calendar_month_outlined),
-            selectedIcon: const Icon(Icons.calendar_month),
-            label: s.calendar,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.celebration_outlined),
-            selectedIcon: const Icon(Icons.celebration),
-            label: s.festivals,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.access_time),
-            selectedIcon: const Icon(Icons.access_time_filled),
-            label: s.muhurta,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.settings_outlined),
-            selectedIcon: const Icon(Icons.settings),
-            label: s.settings,
-          ),
-        ],
+      bottomNavigationBar: _UnscaledText(
+        child: NavigationBar(
+          selectedIndex: _tab,
+          onDestinationSelected: (i) => setState(() => _tab = i),
+          destinations: [
+            NavigationDestination(
+              icon: const Icon(Icons.wb_sunny_outlined),
+              selectedIcon: const Icon(Icons.wb_sunny),
+              label: s.today,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.calendar_month_outlined),
+              selectedIcon: const Icon(Icons.calendar_month),
+              label: s.calendar,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.celebration_outlined),
+              selectedIcon: const Icon(Icons.celebration),
+              label: s.tabFestivals,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.access_time),
+              selectedIcon: const Icon(Icons.access_time_filled),
+              label: s.muhurta,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.settings_outlined),
+              selectedIcon: const Icon(Icons.settings),
+              label: s.tabSettings,
+            ),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+/// Shows the opening animation, then cross-fades to the app.
+class _SplashThenHome extends StatefulWidget {
+  const _SplashThenHome();
+
+  @override
+  State<_SplashThenHome> createState() => _SplashThenHomeState();
+}
+
+class _SplashThenHomeState extends State<_SplashThenHome> {
+  bool _home = false;
+
+  @override
+  Widget build(BuildContext context) => AnimatedSwitcher(
+    duration: const Duration(milliseconds: 700),
+    switchInCurve: Curves.easeOut,
+    transitionBuilder: (c, a) => FadeTransition(
+      opacity: a,
+      child: ScaleTransition(
+        scale: Tween(begin: 1.04, end: 1.0).animate(a),
+        child: c,
+      ),
+    ),
+    child: _home
+        ? const HomeShell(askLanguage: true)
+        : SplashScreen(onDone: () => setState(() => _home = true)),
+  );
+}
+
+/// Removes the app-wide text boost (keeps the user's own setting) so
+/// bottom-tab labels fit on one line in every script.
+class _UnscaledText extends StatelessWidget {
+  const _UnscaledText({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
+    final scale = mq.textScaler.scale(100) / 100 / kTextScale;
+    return MediaQuery(
+      data: mq.copyWith(textScaler: TextScaler.linear(scale)),
+      child: child,
     );
   }
 }
