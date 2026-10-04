@@ -60,6 +60,18 @@ jobs:
             exit 0
           fi
           echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/upload.keystore"
+          # keytool's default PKCS12 format ignores a separate key password
+          # and protects the key with the store password.
+          KS="$RUNNER_TEMP/upload.keystore"
+          keytool -list -keystore "$KS" -storepass "$STORE_PW" \
+            -alias "$KEY_ALIAS" >/dev/null 2>&1 || {
+            echo "::error::TULU_KEYSTORE_PASSWORD or TULU_KEY_ALIAS does not match the keystore."
+            exit 1
+          }
+          INFO=$(keytool -list -keystore "$KS" -storepass "$STORE_PW" 2>/dev/null)
+          if echo "$INFO" | grep -qi 'Keystore type: PKCS12'; then
+            KEY_PW="$STORE_PW"
+          fi
           {
             echo "storeFile=$RUNNER_TEMP/upload.keystore"
             echo "storePassword=$STORE_PW"
