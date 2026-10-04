@@ -44,8 +44,31 @@ jobs:
             dart run tool/export_csv.dart --year $y --place mangaluru --out build/csv
           done
 
+      # Signs with a fixed key so each build installs as an update. Set the
+      # repository secrets TULU_KEYSTORE_BASE64 (base64 of a .jks/.p12),
+      # TULU_KEYSTORE_PASSWORD, TULU_KEY_ALIAS and TULU_KEY_PASSWORD; without
+      # them the APK is signed with this runner's throwaway debug key.
+      - name: Signing key from secrets
+        env:
+          KEYSTORE_B64: ${{ secrets.TULU_KEYSTORE_BASE64 }}
+          STORE_PW: ${{ secrets.TULU_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.TULU_KEY_ALIAS }}
+          KEY_PW: ${{ secrets.TULU_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_B64" ]; then
+            echo "::warning::No TULU_KEYSTORE_BASE64 secret: APK is debug-signed and will not install over an earlier build."
+            exit 0
+          fi
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/upload.keystore"
+          {
+            echo "storeFile=$RUNNER_TEMP/upload.keystore"
+            echo "storePassword=$STORE_PW"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPassword=$KEY_PW"
+          } > android/key.properties
+
       - name: Build release APK
-        run: flutter build apk --release
+        run: flutter build apk --release --build-number=${{ github.run_number }}
 
       - name: APK size
         run: |
@@ -78,4 +101,4 @@ jobs:
           gh release create tulu-panchanga-latest build/tulu-panchanga.apk \
             --target "${{ github.sha }}" --prerelease --latest=false \
             --title "Tulu Panchanga (latest build)" \
-            --notes "Release APK built from ${{ github.sha }} (debug-signed). Direct link: https://github.com/${{ github.repository }}/releases/download/tulu-panchanga-latest/tulu-panchanga.apk"
+            --notes "Release APK built from ${{ github.sha }} (build ${{ github.run_number }}). Direct link: https://github.com/${{ github.repository }}/releases/download/tulu-panchanga-latest/tulu-panchanga.apk"
