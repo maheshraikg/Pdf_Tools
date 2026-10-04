@@ -7,13 +7,27 @@ Everything is computed on the phone; there is no network access.
 <img src="docs/screenshots/en_1_today.png" width="200">
 <img src="docs/screenshots/en_2_calendar.png" width="200">
 <img src="docs/screenshots/kn_3_festivals.png" width="200">
-<img src="docs/screenshots/tcy_7_today_lipi.png" width="200">
+<img src="docs/screenshots/en_1b_festival_day.png" width="200">
+<img src="docs/screenshots/en_1c_festival_sheet.png" width="200">
 </p>
 
 **Download:** [tulu-panchanga.apk](https://github.com/maheshraikg/Pdf_Tools/releases/download/tulu-panchanga-latest/tulu-panchanga.apk)
 (latest build from CI, debug-signed).
 
 ## Features
+
+- **Tulunadu look**: Tulu-flag red and turmeric, Mangalore-tile terracotta
+  and paddy green. The Today header is an animated Tulunadu scene: the sky
+  follows the real time of day, the Sun (or the Moon, drawn in its true
+  phase) moves along its arc over the Western Ghats, coconut palms sway,
+  paddy ripples, and Tulu-flag bunting appears on festival days.
+- **Festival illustrations**: cute animated cartoons drawn in code: diya,
+  Ganesha, naga, kalasha, Krishna's flute, Yakshagana crown, paddy sheaf,
+  Aati rain, tulasi katte, Sun, Shiva linga, Holi colours and the Moon
+  (see `docs/screenshots/art_gallery.png`).
+- **Read aloud**: a speaker button reads the day's panchanga (and any
+  festival) using the phone's text-to-speech; English, or a Kannada voice
+  for Kannada and Tulu.
 
 - **Today**: weekday, Gregorian, Tulu (solar) and lunar date; a **timeline
   bar** for sunrise → next sunrise with Rahu kaala, Yamaganda, Gulika,

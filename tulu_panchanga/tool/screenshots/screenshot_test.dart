@@ -84,6 +84,24 @@ void main() {
       );
       await settle(tester);
       await shot(tester, key, '${lang.name}_1_today');
+      if (lang == Lang.en) {
+        // Mahalaya Amavasya (10 Oct 2026) is six days after 4 Oct.
+        for (var i = 0; i < 6; i++) {
+          await tester.tap(find.byIcon(Icons.chevron_right_rounded).first);
+          await tester.pump(const Duration(milliseconds: 400));
+        }
+        await settle(tester);
+        await tester.pump(const Duration(seconds: 1));
+        await shot(tester, key, 'en_1b_festival_day');
+        await tester.tap(find.text('Mahalaya Amavasya').first);
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+        await shot(tester, key, 'en_1c_festival_sheet');
+        Navigator.of(tester.element(find.text('Mahalaya Amavasya').last)).pop();
+        await tester.pump(const Duration(seconds: 1));
+        await tester.tap(find.byIcon(Icons.today_rounded));
+        await tester.pump(const Duration(seconds: 1));
+      }
 
       for (final (icon, name) in [
         (Icons.calendar_month_outlined, '2_calendar'),

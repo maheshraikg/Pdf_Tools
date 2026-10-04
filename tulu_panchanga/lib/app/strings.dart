@@ -174,4 +174,20 @@ class S {
   String get confidenceLow =>
       _t('Please verify locally', 'ಸ್ಥಳೀಯವಾಗಿ ಖಚಿತಪಡಿಸಿ');
   String get adhika => _t('Adhika', 'ಅಧಿಕ');
+
+  String get listen => _t('Listen', 'ಕೇಳಿ', 'ಕೇಣ್ಲೆ');
+  String get stopListening => _t('Stop', 'ನಿಲ್ಲಿಸಿ');
+  String get noVoice => _t(
+    'No voice for this language on the phone. Install it in Settings › '
+        'Text-to-speech.',
+    'ಫೋನ್‌ನಲ್ಲಿ ಕನ್ನಡ ಧ್ವನಿ ಇಲ್ಲ. ಸೆಟ್ಟಿಂಗ್ಸ್ › ಪಠ್ಯದಿಂದ ಧ್ವನಿ ಯಲ್ಲಿ '
+        'ಸ್ಥಾಪಿಸಿ.',
+  );
+  String get todayFestival => _t('Today', 'ಇಂದಿನ ಹಬ್ಬ', 'ಇನಿತ ಪರ್ಬ');
+  String get comingUp => _t('Coming up', 'ಮುಂದಿನ ಹಬ್ಬ', 'ಬರ್ಪಿನ ಪರ್ಬ');
+  String inDays(int n) => n == 1
+      ? _t('tomorrow', 'ನಾಳೆ', 'ಎಲ್ಲೆ')
+      : _t('in $n days', '$n ದಿನಗಳಲ್ಲಿ', '$n ದಿನೊಡು');
+  String get from => _t('from', 'ಇಂದ');
+  String get to => _t('to', 'ವರೆಗೆ', 'ಮುಟ್ಟ');
 }

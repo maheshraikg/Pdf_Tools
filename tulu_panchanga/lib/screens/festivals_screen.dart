@@ -4,7 +4,9 @@ import '../app/scope.dart';
 import '../panchanga/festivals.dart';
 import '../panchanga/names.dart';
 import 'day_detail_screen.dart';
-import 'day_widgets.dart';
+import '../app/theme.dart';
+import '../art/festival_art.dart';
+import 'fancy.dart';
 
 /// Year list of festivals, vratas and sankramanas, grouped by month.
 class FestivalsScreen extends StatefulWidget {
@@ -101,48 +103,121 @@ class _FestivalsScreenState extends State<FestivalsScreen> {
                     month = o.date.month;
                     items.add(
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-                        child: Text(
-                          gregMonthName(lang, month),
-                          style: t.textTheme.titleMedium?.copyWith(
-                            color: t.colorScheme.primary,
-                          ),
+                        padding: const EdgeInsets.fromLTRB(16, 18, 16, 6),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: TuluColors.flagGradient,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Text(
+                                gregMonthName(lang, month),
+                                style: t.textTheme.titleSmall?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                            const Expanded(child: FlowerDivider()),
+                          ],
                         ),
                       ),
                     );
                   }
                   final past = o.date.isBefore(today);
+                  final isToday = o.date == today;
                   items.add(
                     Opacity(
                       opacity: past ? 0.55 : 1,
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 64,
-                            child: Column(
+                      child: Card(
+                        margin: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+                        color: isToday
+                            ? t.colorScheme.secondaryContainer
+                            : null,
+                        clipBehavior: Clip.antiAlias,
+                        child: InkWell(
+                          onTap: () => showFestivalSheet(context, o),
+                          onLongPress: () => Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => DayDetailScreen(date: o.date),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
                               children: [
-                                Text(
-                                  '${o.date.day}',
-                                  style: t.textTheme.titleLarge,
+                                Hero(
+                                  tag: 'art-${o.festival.id}-${o.date}',
+                                  child: FestivalArt.of(
+                                    o.festival,
+                                    size: 56,
+                                    animate: isToday,
+                                  ),
                                 ),
-                                LipiText(
-                                  varaShort[o.date.weekday % 7].of(lang),
-                                  style: t.textTheme.labelSmall,
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      LipiText(
+                                        o.festival.name.of(lang),
+                                        style: t.textTheme.titleMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                      ),
+                                      LipiText(
+                                        [
+                                          varaNames[o.date.weekday % 7].of(
+                                            lang,
+                                          ),
+                                          if (o.festival.category ==
+                                                  FestivalCategory.vrata &&
+                                              o.detail.isNotEmpty)
+                                            o.detail.split(';').first,
+                                        ].join(' · '),
+                                        style: t.textTheme.bodySmall,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  width: 48,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: TuluColors.red.withValues(
+                                      alpha: 0.08,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        '${o.date.day}',
+                                        style: t.textTheme.titleLarge?.copyWith(
+                                          color: TuluColors.red,
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                      ),
+                                      LipiText(
+                                        varaShort[o.date.weekday % 7].of(lang),
+                                        style: t.textTheme.labelSmall,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                          Expanded(
-                            child: FestivalTile(
-                              o: o,
-                              onTap: () => Navigator.of(context).push(
-                                MaterialPageRoute<void>(
-                                  builder: (_) => DayDetailScreen(date: o.date),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   );

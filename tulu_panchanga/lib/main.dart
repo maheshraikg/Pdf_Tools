@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'app/background.dart';
 import 'app/scope.dart';
 import 'app/settings.dart';
+export 'app/theme.dart' show debugFontFallback;
+import 'app/theme.dart';
 import 'screens/calendar_screen.dart';
 import 'screens/festivals_screen.dart';
 import 'screens/muhurta_screen.dart';
@@ -15,28 +17,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final settings = await AppSettings.load();
   runApp(TuluPanchangaApp(settings: settings));
-}
-
-/// Seed colours: Tulunadu red and turmeric yellow.
-const Color kSeed = Color(0xFFB3261E);
-const Color kAccent = Color(0xFFF2C94C);
-
-/// Extra fallback font families (used by the screenshot tool, where no
-/// system Kannada font exists).
-List<String>? debugFontFallback;
-
-ThemeData buildTheme(Brightness b) {
-  final scheme = ColorScheme.fromSeed(
-    seedColor: kSeed,
-    brightness: b,
-    tertiary: b == Brightness.light ? const Color(0xFF7A5900) : kAccent,
-  );
-  return ThemeData(
-    useMaterial3: true,
-    colorScheme: scheme,
-    fontFamilyFallback: debugFontFallback,
-    cardTheme: const CardThemeData(elevation: 0.5),
-  );
 }
 
 class TuluPanchangaApp extends StatefulWidget {

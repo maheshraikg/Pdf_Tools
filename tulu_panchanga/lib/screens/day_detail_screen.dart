@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../app/scope.dart';
 import '../panchanga/engine.dart';
 import 'day_widgets.dart';
+import 'fancy.dart';
 import 'share_card.dart';
 import 'timeline_bar.dart';
 
@@ -51,7 +52,7 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
               ),
             ],
           ),
-          FestivalsCard(date: _date),
+          FestivalBanner(date: _date),
           ElementsCard(day: day, full: true),
           TimelineBar(day: day),
           KaalaCard(day: day, full: true),

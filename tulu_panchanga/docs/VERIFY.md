@@ -101,7 +101,8 @@ upanayana are not offered.
 - **UI words**: ಇನಿ (today), ಪರ್ಬೊಲು (festivals), ಮುಟ್ಟ (until), ಎಲ್ಲೆ
   (tomorrow / next day), ಇತ್ತೆ (now), ಜಾಗೆ (place), ಬಾಸೆ (language), ಪುದರ್
   (name), ವರ್ಸ (year), ದಿನೊಕುಲು (days), ದಾಲ ಇಜ್ಜಿ (nothing), ಮಾತ (all),
-  ತಿಂಗೊಲು (month), ತುಳು ಲಿಪಿಡ್ ತೋಜಾಲೆ (show in Tulu lipi). Everything else
+  ತಿಂಗೊಲು (month), ತುಳು ಲಿಪಿಡ್ ತೋಜಾಲೆ (show in Tulu lipi), ಕೇಣ್ಲೆ (listen),
+  ಇನಿತ ಪರ್ಬ (today's festival), ಬರ್ಪಿನ ಪರ್ಬ (coming festival), ದಿನೊಡು (in … days). Everything else
   in Tulu mode uses the Kannada word.
 - **Tulu lipi**: Kannada → Tulu-Tigalari transliteration is shared with Tulu
   Nighantu; Unicode 16 has no short e/o, so ಎ/ಒ map to ಏ/ಓ forms.
@@ -119,5 +120,9 @@ upanayana are not offered.
   temple jatres, kambala dates and Bhuta kola calendars are local
   announcements, not computed.
 - **Keddasa** reckoning and the **Udupi Sauramana Krishna Jayanti** rule.
+- **Read-aloud** uses the phone's text-to-speech engine: English (en-IN) or
+  a Kannada (kn-IN) voice. No engine has a Tulu voice, so Tulu text is read
+  with Kannada pronunciation; if no Kannada voice is installed the app says
+  so and falls back to English.
 - **Android device behaviour** (widget, scheduled notifications, sharing)
   could not be run on a device here; it is built in CI only.
