@@ -21,6 +21,10 @@ Future<void> main() async {
 const Color kSeed = Color(0xFFB3261E);
 const Color kAccent = Color(0xFFF2C94C);
 
+/// Extra fallback font families (used by the screenshot tool, where no
+/// system Kannada font exists).
+List<String>? debugFontFallback;
+
 ThemeData buildTheme(Brightness b) {
   final scheme = ColorScheme.fromSeed(
     seedColor: kSeed,
@@ -30,6 +34,7 @@ ThemeData buildTheme(Brightness b) {
   return ThemeData(
     useMaterial3: true,
     colorScheme: scheme,
+    fontFamilyFallback: debugFontFallback,
     cardTheme: const CardThemeData(elevation: 0.5),
   );
 }

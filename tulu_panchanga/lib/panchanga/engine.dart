@@ -225,7 +225,10 @@ class PanchangaEngine {
   final Map<int, DayPanchanga> _days = {};
   final Map<int, double> _sunrises = {};
   final Map<int, double> _sunsets = {};
-  final Map<int, LunarMonth> _lunar = {};
+  final List<LunarMonth> _lunarMonths = [];
+
+  /// Known solar-month intervals: (sankramana, next sankramana, rashi).
+  final List<(double, double, int)> _solarMonths = [];
 
   static const double _tithiRate = 12.19;
   static const double _moonRate = 13.18;
@@ -355,14 +358,16 @@ class PanchangaEngine {
   /// at the opening new moon (+1); adhika when the Sun does not change rashi
   /// between the two new moons.
   LunarMonth lunarMonthAt(double jd) {
+    for (final m in _lunarMonths) {
+      if (jd >= m.newMoonStart && jd < m.newMoonEnd) return m;
+    }
     final nm1 = prevCrossing(elongation, jd, 0, _tithiRate);
-    final key = (nm1 * 4).round();
-    return _lunar.putIfAbsent(key, () {
-      final nm2 = nextCrossing(elongation, nm1 + 20, 0, _tithiRate);
-      final r1 = (siderealSun(nm1) / 30).floor();
-      final r2 = (siderealSun(nm2) / 30).floor();
-      return LunarMonth((r1 + 1) % 12, r1 == r2, nm1, nm2);
-    });
+    final nm2 = nextCrossing(elongation, nm1 + 20, 0, _tithiRate);
+    final r1 = (siderealSun(nm1) / 30).floor();
+    final r2 = (siderealSun(nm2) / 30).floor();
+    final m = LunarMonth((r1 + 1) % 12, r1 == r2, nm1, nm2);
+    _lunarMonths.add(m);
+    return m;
   }
 
   /// All new moons in [a, b).
@@ -403,17 +408,26 @@ class PanchangaEngine {
     return out;
   }
 
+  /// The sidereal solar month containing [jd]: (sankramana that began it,
+  /// the next sankramana, rashi). Cached.
+  (double, double, int) solarMonthAt(double jd) {
+    for (final m in _solarMonths) {
+      if (jd >= m.$1 && jd < m.$2) return m;
+    }
+    final r = (siderealSun(jd) / 30).floor();
+    final a = prevCrossing(siderealSun, jd, r * 30.0, _sunRate);
+    final b = nextCrossing(siderealSun, jd, ((r + 1) % 12) * 30.0, _sunRate);
+    final m = (a, b, r);
+    _solarMonths.add(m);
+    return m;
+  }
+
   SolarDate solarDate(DateTime date) {
     final d = dateOnly(date);
     final sr = sunrise(d);
-    // Sankramana in progress today that may already start a new month.
-    final r = (siderealSun(sr) / 30).floor();
-    final nextS = nextCrossing(
-      siderealSun,
-      sr,
-      ((r + 1) % 12) * 30.0,
-      _sunRate,
-    );
+    final (s, nextS, r) = solarMonthAt(sr);
+    // A sankramana later today may already make today day 1 of the next
+    // month.
     if (nextS < sunrise(addDays(d, 1))) {
       final start = monthStartFor(nextS);
       if (!start.isAfter(d)) {
@@ -425,9 +439,8 @@ class PanchangaEngine {
         );
       }
     }
-    // The month in force began at the last sankramana before sunrise (its
-    // day 1 can be no later than today).
-    final s = prevCrossing(siderealSun, sr, r * 30.0, _sunRate);
+    // Otherwise the month that began at the last sankramana before sunrise
+    // (its day 1 can be no later than today).
     final start = monthStartFor(s);
     return SolarDate(
       month: r,
@@ -494,23 +507,40 @@ class PanchangaEngine {
     final moon = moonRiseSet(sr, nsr, place.lat, place.lon);
     final wd = d.weekday % 7;
 
-    final tithis = spans(elongation, 30, _tithiRate, sr, nsr);
     final naks = spans(siderealMoon, 27, _moonRate, sr, nsr);
     final yogas = spans(yogaAngle, 27, _yogaRate, sr, nsr);
     final karanas = spans(elongation, 60, _tithiRate, sr, nsr);
+    // Tithis are pairs of karanas.
+    final tithis = <Span>[];
+    for (final k in karanas) {
+      final t = k.index ~/ 2;
+      if (tithis.isNotEmpty && tithis.last.index == t) {
+        tithis[tithis.length - 1] = Span(t, tithis.last.start, k.end);
+      } else {
+        tithis.add(
+          Span(
+            t,
+            k.index.isOdd
+                ? prevCrossing(elongation, k.start, t * 12.0, _tithiRate)
+                : k.start,
+            k.index.isEven
+                ? nextCrossing(
+                    elongation,
+                    k.start + 1e-6,
+                    (t + 1) * 12.0 % 360,
+                    _tithiRate,
+                  )
+                : k.end,
+          ),
+        );
+      }
+    }
     final rashis = spans(siderealMoon, 12, _moonRate, sr, nsr);
-    final sunSid = siderealSun(sr);
     final moonSid = siderealMoon(sr);
     final pada = ((moonSid % _nakSize) / (_nakSize / 4)).floor() + 1;
 
     final solar = solarDate(d);
-    final r = (sunSid / 30).floor();
-    final nextS = nextCrossing(
-      siderealSun,
-      sr,
-      ((r + 1) % 12) * 30.0,
-      _sunRate,
-    );
+    final (_, nextS, r) = solarMonthAt(sr);
 
     final result = DayPanchanga(
       date: d,

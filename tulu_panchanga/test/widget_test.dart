@@ -77,11 +77,21 @@ void main() {
     settings.tuluLipi = true;
     await settings.update((_) {});
     await tester.pump();
+    bool hasTuluRun(InlineSpan? span) {
+      var found = false;
+      span?.visitChildren((c) {
+        if (c is TextSpan &&
+            c.style?.fontFamily == kTuluFontFamily &&
+            (c.text ?? '').runes.any((r) => r >= 0x11380 && r <= 0x113FF)) {
+          found = true;
+        }
+        return !found;
+      });
+      return found;
+    }
+
     final lipi = find.byWidgetPredicate(
-      (w) =>
-          w is Text &&
-          w.style?.fontFamily == kTuluFontFamily &&
-          (w.data ?? '').runes.any((r) => r >= 0x11380 && r <= 0x113FF),
+      (w) => w is Text && hasTuluRun(w.textSpan),
     );
     expect(lipi, findsWidgets);
   });

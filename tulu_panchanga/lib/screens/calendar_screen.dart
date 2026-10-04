@@ -270,25 +270,38 @@ class _Grid extends StatelessWidget {
     final t = Theme.of(context), lang = context.lang;
     final today = todayAt(context.repo.engine);
     final cells = <Widget>[
-      for (var i = 0; i < 7; i++)
-        Center(
-          child: LipiText(
-            varaShort[i].of(lang),
-            style: t.textTheme.labelSmall?.copyWith(
-              color: i == 0 ? t.colorScheme.error : null,
-            ),
-          ),
-        ),
       for (var i = 0; i < leading; i++) const SizedBox.shrink(),
       for (final d in days) _cell(context, d, today),
     ];
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
-      child: GridView.count(
-        crossAxisCount: 7,
-        childAspectRatio: 0.62,
-        children: cells,
-      ),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+          child: Row(
+            children: [
+              for (var i = 0; i < 7; i++)
+                Expanded(
+                  child: Center(
+                    child: LipiText(
+                      varaShort[i].of(lang),
+                      style: t.textTheme.labelSmall?.copyWith(
+                        color: i == 0 ? t.colorScheme.error : null,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: GridView.count(
+            padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
+            crossAxisCount: 7,
+            childAspectRatio: 0.58,
+            children: cells,
+          ),
+        ),
+      ],
     );
   }
 
@@ -351,7 +364,7 @@ class _Grid extends StatelessWidget {
             if (major.isNotEmpty)
               LipiText(
                 major.first.festival.name.of(lang),
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
                 style: t.textTheme.labelSmall?.copyWith(

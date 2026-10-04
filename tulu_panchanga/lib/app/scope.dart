@@ -64,14 +64,46 @@ class LipiText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lipi = context.settings.useTuluLipi && TuluLipi.hasKannada(text);
-    return Text(
-      lipi ? TuluLipi.fromKannada(text) : text,
-      style: lipi
-          ? (style ?? const TextStyle()).copyWith(
-              fontFamily: kTuluFontFamily,
-              fontFamilyFallback: const ['sans-serif'],
-            )
-          : style,
+    if (!lipi) {
+      return Text(
+        text,
+        style: style,
+        maxLines: maxLines,
+        textAlign: textAlign,
+        overflow: overflow,
+      );
+    }
+    // The Tigalari font only for Tigalari runs; digits and punctuation keep
+    // the normal font.
+    final converted = TuluLipi.fromKannada(text);
+    final spans = <TextSpan>[];
+    final buf = StringBuffer();
+    bool? inTulu;
+    void flush() {
+      if (buf.isEmpty) return;
+      spans.add(
+        TextSpan(
+          text: buf.toString(),
+          style: inTulu == true
+              ? const TextStyle(fontFamily: kTuluFontFamily)
+              : null,
+        ),
+      );
+      buf.clear();
+    }
+
+    for (final r in converted.runes) {
+      final tulu = r >= 0x11380 && r <= 0x113FF;
+      if (tulu != inTulu) {
+        flush();
+        inTulu = tulu;
+      }
+      buf.writeCharCode(r);
+    }
+    flush();
+    return Text.rich(
+      TextSpan(children: spans),
+      style: style,
       maxLines: maxLines,
       textAlign: textAlign,
       overflow: overflow,

@@ -419,7 +419,7 @@ double? sunRiseSet(
     final a1 = alt(t1);
     if ((a0 < 0) != (a1 < 0)) {
       var lo = t0, hi = t1, alo = a0;
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 18; i++) {
         final mid = (lo + hi) / 2;
         final am = alt(mid);
         if ((am < 0) == (alo < 0)) {
@@ -457,10 +457,12 @@ double crossingNear(
 ) {
   var t = guess;
   const h = 1.0 / 1440.0;
+  // The rate is measured once (quasi-Newton): these angles change slowly
+  // enough that the iteration still converges in a few steps.
+  var r = norm180(f(t + h) - f(t - h)) / (2 * h);
+  if (r <= 0) r = rate;
   for (var i = 0; i < 50; i++) {
     final diff = norm180(target - f(t));
-    var r = norm180(f(t + h) - f(t - h)) / (2 * h);
-    if (r <= 0) r = rate;
     var dt = diff / r;
     final maxStep = 90.0 / rate;
     if (dt.abs() > maxStep) dt = dt.sign * maxStep;

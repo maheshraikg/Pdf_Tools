@@ -158,7 +158,7 @@ String _spanEnd(
   Span s,
 ) {
   if (s.end >= d.nextSunrise) return context.s.untilNextSunrise;
-  return '${hmDay(context, e, s.end, d.date)} ${context.s.until}';
+  return context.s.untilTime(hmDay(context, e, s.end, d.date));
 }
 
 /// Tithi, nakshatra, yoga, karana, rashi with end times.
@@ -171,14 +171,17 @@ class ElementsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.s, lang = context.lang, e = context.repo.engine;
     final d = day;
-    final now = jdNow();
     Widget spans(String label, List<Span> list, String Function(int) name) {
       final shown = full ? list : list.take(2).toList();
       return InfoRow(
         label,
-        shown.map((x) => name(x.index)).join(' → '),
-        sub: shown.map((x) => _spanEnd(context, e, d, x)).join(' · '),
-        highlight: !full && list.any((x) => x.contains(now)),
+        name(shown.first.index),
+        sub: [
+          _spanEnd(context, e, d, shown.first),
+          for (final x in shown.skip(1))
+            '→ ${name(x.index)}'
+                '${x.end < d.nextSunrise ? ' (${_spanEnd(context, e, d, x)})' : ''}',
+        ].join('\n'),
       );
     }
 

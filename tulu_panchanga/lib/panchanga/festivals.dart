@@ -632,7 +632,7 @@ class FestivalCalculator {
         case SolarDayRule(:final solarMonth, :final day):
           for (final d in days) {
             if (d.solar.month == solarMonth && d.solar.day == day) {
-              add(d, f, '', d.solar.sankranti);
+              add(d, f, '', day == 1 ? d.solar.sankranti : null);
             }
           }
         case SankrantiRule(:final rashi):

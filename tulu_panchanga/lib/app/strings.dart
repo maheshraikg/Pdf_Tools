@@ -62,6 +62,10 @@ class S {
   String get auspicious => _t('Good times', 'ಶುಭ ಕಾಲ');
 
   String get until => _t('until', 'ವರೆಗೆ', 'ಮುಟ್ಟ');
+
+  /// "until 05:40" / "05:40 ವರೆಗೆ" (word order differs).
+  String untilTime(String time) =>
+      lang == Lang.en ? 'until $time' : '$time $until';
   String get nextDay => _t('next day', 'ಮರುದಿನ', 'ಎಲ್ಲೆ');
   String get untilNextSunrise =>
       _t('till next sunrise', 'ಮರುದಿನ ಸೂರ್ಯೋದಯದವರೆಗೆ', 'ಎಲ್ಲೆ ಸೂರ್ಯೋದಯ ಮುಟ್ಟ');

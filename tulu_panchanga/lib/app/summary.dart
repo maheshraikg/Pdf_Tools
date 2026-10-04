@@ -13,7 +13,7 @@ String hmPlain(S s, PanchangaEngine e, double jd, DateTime day) {
 String _end(S s, PanchangaEngine e, DayPanchanga d, Span x) =>
     x.end >= d.nextSunrise
     ? s.untilNextSunrise
-    : '${hmPlain(s, e, x.end, d.date)} ${s.until}';
+    : s.untilTime(hmPlain(s, e, x.end, d.date));
 
 /// One-line headline: "Paggu 12 · Chaitra Shukla Navami".
 String dayHeadline(Lang lang, DayPanchanga d) =>
