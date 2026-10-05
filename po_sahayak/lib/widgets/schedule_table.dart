@@ -12,8 +12,7 @@ class ScheduleTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = context.s;
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
+    return _FullWidth(
       child: DataTable(
         columnSpacing: 18,
         horizontalMargin: 8,
@@ -53,8 +52,7 @@ class PairTable extends StatelessWidget {
   final List<(String, String)> rows;
 
   @override
-  Widget build(BuildContext context) => SingleChildScrollView(
-    scrollDirection: Axis.horizontal,
+  Widget build(BuildContext context) => _FullWidth(
     child: DataTable(
       columnSpacing: 24,
       horizontalMargin: 8,
@@ -67,6 +65,24 @@ class PairTable extends StatelessWidget {
         for (final (a, b) in rows)
           DataRow(cells: [DataCell(Text(a)), DataCell(Text(b))]),
       ],
+    ),
+  );
+}
+
+/// Scrolls sideways when the table is wider than the card, and otherwise
+/// stretches it to the card's full width.
+class _FullWidth extends StatelessWidget {
+  const _FullWidth({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, c) => SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minWidth: c.maxWidth),
+        child: child,
+      ),
     ),
   );
 }

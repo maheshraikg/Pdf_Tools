@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 import '../app/format.dart';
 import '../app/scope.dart';
 import '../app/strings.dart';
+import '../app/theme.dart';
 import '../domain/models/result.dart';
 
 /// Plain-text version of the result, sent along with the image.
@@ -112,38 +113,88 @@ class ShareCard extends StatelessWidget {
     );
     return Container(
       width: 320,
-      padding: const EdgeInsets.all(16),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF1F5FA8), width: 2),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            s.schemeName(r.scheme),
-            style: t.titleMedium?.copyWith(
-              color: const Color(0xFF1F5FA8),
-              fontWeight: FontWeight.bold,
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+            decoration: BoxDecoration(gradient: r.scheme.gradient),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(r.scheme.icon, color: Colors.white, size: 22),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        s.schemeName(r.scheme),
+                        style: t.titleSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  s.maturityValue,
+                  style: t.bodySmall?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.85),
+                  ),
+                ),
+                Text(
+                  rupee(r.maturityValue),
+                  style: t.headlineMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 8),
-          line(s.amountLabel(r.scheme.amountKind), rupee(r.input.amount)),
-          line(s.openingDate, dmy(r.input.opening)),
-          line(s.rate, '${pct(r.input.rate)}%'),
-          if (p != null && r.periodicPayout != null)
-            line(s.payout(p), rupee(r.periodicPayout!)),
-          line(s.totalInterest, rupee(r.totalInterest)),
-          line(s.maturityDate, dmy(r.maturityDate)),
-          const Divider(),
-          line(s.maturityValue, rupee(r.maturityValue), big: true),
-          const SizedBox(height: 8),
-          Text(s.estimateOnly, style: t.bodySmall?.copyWith(color: muted)),
-          Text(
-            '${s.appTitle} · ${s.tagline}',
-            style: t.bodySmall?.copyWith(color: muted),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                line(s.amountLabel(r.scheme.amountKind), rupee(r.input.amount)),
+                line(s.openingDate, dmy(r.input.opening)),
+                line(s.rate, '${pct(r.input.rate)}%'),
+                if (p != null && r.periodicPayout != null)
+                  line(s.payout(p), rupee(r.periodicPayout!)),
+                line(s.totalInterest, rupee(r.totalInterest)),
+                line(s.maturityDate, dmy(r.maturityDate)),
+                const SizedBox(height: 8),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Brand.yellowSoft,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    s.estimateOnly,
+                    style: t.bodySmall?.copyWith(color: Brand.ink),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  '${s.appTitle} · ${s.tagline}',
+                  style: t.bodySmall?.copyWith(color: muted),
+                ),
+              ],
+            ),
           ),
         ],
       ),

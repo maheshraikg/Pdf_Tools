@@ -27,11 +27,12 @@ Future<void> pumpApp(WidgetTester tester, {String lang = 'en'}) async {
 void main() {
   testWidgets('home shows scheme tiles and switches language', (tester) async {
     await pumpApp(tester);
-    expect(find.text('Current rates'), findsOneWidget);
+    expect(find.text('Deposits'), findsOneWidget);
+    expect(find.text('Highest rate now'), findsOneWidget);
     expect(find.text('TD5'), findsOneWidget);
     await tester.tap(find.text('ಕನ್ನಡ'));
     await tester.pumpAndSettle();
-    expect(find.text('ಈಗಿನ ಬಡ್ಡಿ ದರಗಳು'), findsOneWidget);
+    expect(find.text('ಠೇವಣಿಗಳು'), findsOneWidget);
   });
 
   testWidgets('TD5 calculation, save and My accounts', (tester) async {
@@ -39,20 +40,24 @@ void main() {
     await tester.tap(find.text('TD5'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField).first, '100000');
+    await tester.ensureVisible(find.text('Calculate'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Calculate'));
     await tester.pumpAndSettle();
-    expect(find.text('₹7,714'), findsWidgets);
+    expect(find.textContaining('₹7,714'), findsWidgets);
     expect(find.text('₹1,38,570'), findsWidgets);
 
+    await tester.ensureVisible(find.text('Save account'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Save account'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField).last, 'Amma TD');
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
 
-    await tester.pageBack();
-    await tester.pumpAndSettle();
-    await tester.pageBack();
+    tester
+        .state<NavigatorState>(find.byType(Navigator).first)
+        .popUntil((r) => r.isFirst);
     await tester.pumpAndSettle();
     await tester.tap(find.text('My accounts').last);
     await tester.pumpAndSettle();

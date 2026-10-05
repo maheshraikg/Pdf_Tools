@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 
 import '../../app/format.dart';
 import '../../app/scope.dart';
+import '../../app/theme.dart';
 import '../../domain/engine/closure.dart';
 import '../../domain/models/result.dart';
 import '../../domain/models/scheme.dart';
+import '../../widgets/charts.dart';
 import '../../widgets/common.dart';
+import '../../widgets/motion.dart';
 import '../../widgets/schedule_table.dart';
 import '../../widgets/share_card.dart';
 
@@ -29,90 +32,129 @@ class ResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = context.s, r = result, scheme = r.scheme;
-    final payout = scheme.payout;
     final fyRows = r.interestByFy;
+    final c = scheme.color;
+    var i = 0;
+    Widget step(Widget w) => Appear(delay: Appear.step(i++, ms: 70), child: w);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(s.schemeName(scheme)),
-        actions: [
-          IconButton(
-            tooltip: s.share,
-            icon: const Icon(Icons.share),
-            onPressed: () => showShareCard(context, r),
-          ),
-        ],
-      ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.zero,
         children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  if (scheme == Scheme.sb)
-                    ValueTile(
-                      s.yearlyInterestSb,
-                      rupee(r.totalInterest),
-                      emphasis: true,
-                    )
-                  else ...[
-                    ValueTile(
-                      payout == null ? s.maturityValue : s.totalReceived,
-                      rupee(r.maturityValue),
-                      emphasis: true,
+          _Hero(result: r),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (scheme != Scheme.sb) step(_Breakup(result: r)),
+                if (!saved)
+                  step(
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FilledButton.icon(
+                            style: FilledButton.styleFrom(
+                              backgroundColor: c,
+                              foregroundColor: Colors.white,
+                            ),
+                            onPressed: () => _save(context),
+                            icon: const Icon(Icons.bookmark_add_rounded),
+                            label: Text(
+                              s.saveAccount,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        IconButton.filledTonal(
+                          tooltip: s.share,
+                          iconSize: 26,
+                          style: IconButton.styleFrom(
+                            minimumSize: const Size(56, 56),
+                            backgroundColor: Brand.yellowSoft,
+                            foregroundColor: Brand.ink,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          onPressed: () => showShareCard(context, r),
+                          icon: const Icon(Icons.share_rounded),
+                        ),
+                      ],
                     ),
-                    if (payout != null && r.periodicPayout != null)
-                      ValueTile(s.payout(payout), rupee(r.periodicPayout!)),
-                    ValueTile(s.totalDeposit, rupee(r.totalDeposit)),
-                    ValueTile(s.totalInterest, rupee(r.totalInterest)),
-                    ValueTile(s.maturityDate, dmy(r.maturityDate)),
-                  ],
-                ],
-              ),
+                  ),
+                const SizedBox(height: 6),
+                if (scheme != Scheme.sb && r.schedule.length > 1)
+                  step(
+                    SectionCard(
+                      icon: Icons.insights_rounded,
+                      title: s.growth,
+                      color: c,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GrowthBars(rows: r.schedule, color: c),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 16,
+                            children: [
+                              LegendDot(c, s.deposit),
+                              LegendDot(Brand.yellow, s.interest),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                if (scheme != Scheme.sb)
+                  step(
+                    SectionCard(
+                      icon: Icons.table_chart_rounded,
+                      title: s.yearWise,
+                      color: c,
+                      child: ScheduleTable(rows: r.schedule),
+                    ),
+                  ),
+                if (scheme.showsTaxableInterest && fyRows.isNotEmpty)
+                  step(
+                    SectionCard(
+                      icon: Icons.receipt_long_rounded,
+                      title: s.fyInterest,
+                      color: c,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          PairTable(
+                            head1: s.fy,
+                            head2: s.interest,
+                            rows: [
+                              for (final e in fyRows.entries)
+                                (e.key, rupee(e.value)),
+                            ],
+                          ),
+                          if (scheme == Scheme.nsc) Note(s.nscTaxNote),
+                        ],
+                      ),
+                    ),
+                  ),
+                if (scheme != Scheme.sb) step(_ClosureSection(result: r)),
+                ..._extensions(context).map(step),
+                ..._withdrawals(context).map(step),
+                const SizedBox(height: 8),
+                Note(
+                  s.rateUsed(
+                    pct(r.input.rate),
+                    r.input.rateFrom == null ? null : dmy(r.input.rateFrom!),
+                  ),
+                  icon: Icons.percent_rounded,
+                ),
+                if (scheme.rateFloats) Note(s.rateFloats),
+                Note(s.estimateOnly, icon: Icons.warning_amber_rounded),
+                Note(s.notAffiliated, icon: Icons.gpp_maybe_outlined),
+              ],
             ),
           ),
-          Note(
-            s.rateUsed(
-              pct(r.input.rate),
-              r.input.rateFrom == null ? null : dmy(r.input.rateFrom!),
-            ),
-            icon: Icons.percent,
-          ),
-          if (scheme.rateFloats) Note(s.rateFloats),
-          Note(s.estimateOnly, icon: Icons.warning_amber),
-          if (!saved) ...[
-            const SizedBox(height: 12),
-            FilledButton.icon(
-              onPressed: () => _save(context),
-              icon: const Icon(Icons.bookmark_add),
-              label: Text(s.saveAccount),
-            ),
-            const SizedBox(height: 8),
-            OutlinedButton.icon(
-              onPressed: () => showShareCard(context, r),
-              icon: const Icon(Icons.share),
-              label: Text(s.share),
-            ),
-          ],
-          if (scheme != Scheme.sb) ...[
-            SectionTitle(s.yearWise),
-            ScheduleTable(rows: r.schedule),
-          ],
-          if (scheme.showsTaxableInterest && fyRows.isNotEmpty) ...[
-            SectionTitle(s.fyInterest),
-            PairTable(
-              head1: s.fy,
-              head2: s.interest,
-              rows: [for (final e in fyRows.entries) (e.key, rupee(e.value))],
-            ),
-            if (scheme == Scheme.nsc) Note(s.nscTaxNote),
-          ],
-          if (scheme != Scheme.sb) _ClosureSection(result: r),
-          ..._extensions(context),
-          ..._withdrawals(context),
-          const SizedBox(height: 16),
-          Note(s.notAffiliated),
         ],
       ),
     );
@@ -123,53 +165,74 @@ class ResultScreen extends StatelessWidget {
     final opts = extensions(result, context.rates.current(result.scheme).rate);
     if (opts.isEmpty) return const [];
     return [
-      SectionTitle(s.extension),
-      for (final o in opts)
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  s.extensionKind(o.kind),
-                  style: Theme.of(context).textTheme.titleMedium,
+      SectionCard(
+        icon: Icons.update_rounded,
+        title: s.extension,
+        color: result.scheme.color,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final (n, o) in opts.indexed) ...[
+              if (n > 0) const Divider(height: 20),
+              Text(
+                s.extensionKind(o.kind),
+                style: Theme.of(context).textTheme.titleSmall
+                    ?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              if (o.result.periodicPayout != null &&
+                  o.result.scheme.payout != null)
+                ValueTile(
+                  s.payout(o.result.scheme.payout!),
+                  rupee(o.result.periodicPayout!),
                 ),
-                if (o.result.periodicPayout != null &&
-                    o.result.scheme.payout != null)
-                  ValueTile(
-                    s.payout(o.result.scheme.payout!),
-                    rupee(o.result.periodicPayout!),
-                  ),
-                ValueTile(s.maturityValue, rupee(o.result.maturityValue)),
-                ValueTile(s.maturityDate, dmy(o.result.maturityDate)),
-              ],
-            ),
-          ),
+              ValueTile(s.maturityValue, rupee(o.result.maturityValue)),
+              ValueTile(s.maturityDate, dmy(o.result.maturityDate)),
+            ],
+          ],
         ),
+      ),
     ];
   }
 
   List<Widget> _withdrawals(BuildContext context) {
     final s = context.s;
+    final c = result.scheme.color;
     if (result.scheme == Scheme.ppf) {
       final limits = ppfWithdrawals(result);
       return [
-        SectionTitle(s.withdrawals),
-        Note(s.ppfWithdrawalNote),
-        PairTable(
-          head1: s.year,
-          head2: s.limit,
-          rows: [for (final l in limits) ('${l.year}', rupee(l.limit))],
+        SectionCard(
+          icon: Icons.savings_rounded,
+          title: s.withdrawals,
+          color: c,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Note(s.ppfWithdrawalNote),
+              PairTable(
+                head1: s.year,
+                head2: s.limit,
+                rows: [for (final l in limits) ('${l.year}', rupee(l.limit))],
+              ),
+            ],
+          ),
         ),
       ];
     }
     if (result.scheme == Scheme.ssy) {
       final w = girlAge == null ? null : ssyWithdrawal(result, girlAge!);
       return [
-        SectionTitle(s.withdrawals),
-        Note(s.ssyWithdrawalNote),
-        if (w != null) ValueTile('${s.year} ${w.year}', rupee(w.limit)),
+        SectionCard(
+          icon: Icons.school_rounded,
+          title: s.withdrawals,
+          color: c,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Note(s.ssyWithdrawalNote),
+              if (w != null) ValueTile('${s.year} ${w.year}', rupee(w.limit)),
+            ],
+          ),
+        ),
       ];
     }
     return const [];
@@ -255,57 +318,245 @@ class _ClosureSectionState extends State<_ClosureSection> {
       sbRate: rates.current(Scheme.sb).rate,
       td3Rate: rates.entryOn(Scheme.td3, r.input.opening)?.rate,
     );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SectionTitle(s.prematureClosure),
-        if (c.rule != ClosureRule.useWithdrawal &&
-            c.rule != ClosureRule.notAllowed)
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.event_busy),
-            title: Text(s.closingDate),
-            subtitle: Text(
-              dmy(closeOn),
-              style: Theme.of(context).textTheme.titleMedium,
+    final col = r.scheme.color;
+    return SectionCard(
+      icon: Icons.lock_open_rounded,
+      title: s.prematureClosure,
+      color: col,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (c.rule != ClosureRule.useWithdrawal &&
+              c.rule != ClosureRule.notAllowed)
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.event_busy_rounded, color: col),
+              title: Text(s.closingDate),
+              subtitle: Text(
+                dmy(closeOn),
+                style: Theme.of(context).textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              trailing: Icon(Icons.edit_calendar_rounded, color: col),
+              onTap: () async {
+                final d = await pickDate(
+                  context,
+                  closeOn,
+                  first: r.input.opening,
+                  last: r.maturityDate,
+                );
+                if (d != null) setState(() => _closeOn = d);
+              },
             ),
-            trailing: const Icon(Icons.edit_calendar),
-            onTap: () async {
-              final d = await pickDate(
-                context,
-                closeOn,
-                first: r.input.opening,
-                last: r.maturityDate,
-              );
-              if (d != null) setState(() => _closeOn = d);
-            },
+          Note(
+            s.closureRule(
+              c.rule,
+              months: c.minMonths,
+              rate: c.rateUsed == null ? null : pct(c.rateUsed!),
+            ),
+            icon: Icons.rule_rounded,
           ),
-        Note(
-          s.closureRule(
-            c.rule,
-            months: c.minMonths,
-            rate: c.rateUsed == null ? null : pct(c.rateUsed!),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeOut,
+            child: !c.allowed
+                ? const SizedBox(width: double.infinity)
+                : Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: col.withValues(alpha: 0.07),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Column(
+                      children: [
+                        ValueTile(s.payable, rupee(c.payable!), emphasis: true),
+                        if (c.interest != null)
+                          ValueTile(s.interestAllowed, rupee(c.interest!)),
+                        if (c.alreadyPaid != null &&
+                            c.alreadyPaid! > Decimal.zero)
+                          ValueTile(s.alreadyPaid, rupee(c.alreadyPaid!)),
+                        if (c.deduction != null)
+                          ValueTile(s.deduction, rupee(c.deduction!)),
+                      ],
+                    ),
+                  ),
           ),
-          icon: Icons.rule,
-        ),
-        if (c.allowed)
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
+        ],
+      ),
+    );
+  }
+}
+
+/// Gradient header: total counting up, maturity date, rate and payout pills.
+class _Hero extends StatelessWidget {
+  const _Hero({required this.result});
+  final CalcResult result;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = context.s, r = result, scheme = r.scheme;
+    final t = Theme.of(context).textTheme;
+    final payout = scheme.payout;
+    final white = Colors.white.withValues(alpha: 0.85);
+    final title = scheme == Scheme.sb
+        ? s.yearlyInterestSb
+        : payout == null
+        ? s.maturityValue
+        : s.totalReceived;
+    return GradientHeader(
+      gradient: scheme.gradient,
+      padding: const EdgeInsets.fromLTRB(8, 4, 20, 26),
+      child: SafeArea(
+        bottom: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const BackButton(color: Colors.white),
+                Hero(
+                  tag: 'scheme-${scheme.code}',
+                  child: Icon(scheme.icon, color: Colors.white, size: 26),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    s.schemeName(scheme),
+                    style: t.titleMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 12, top: 14),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ValueTile(s.payable, rupee(c.payable!), emphasis: true),
-                  if (c.interest != null)
-                    ValueTile(s.interestAllowed, rupee(c.interest!)),
-                  if (c.alreadyPaid != null && c.alreadyPaid! > Decimal.zero)
-                    ValueTile(s.alreadyPaid, rupee(c.alreadyPaid!)),
-                  if (c.deduction != null)
-                    ValueTile(s.deduction, rupee(c.deduction!)),
+                  Text(title, style: t.bodyLarge?.copyWith(color: white)),
+                  const SizedBox(height: 2),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: AnimatedRupee(
+                      scheme == Scheme.sb ? r.totalInterest : r.maturityValue,
+                      style: t.displaySmall?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      if (scheme != Scheme.sb)
+                        Pill(
+                          '${s.maturityDate}: ${dmy(r.maturityDate)}',
+                          icon: Icons.event_available_rounded,
+                          background: Brand.yellow,
+                          foreground: Brand.ink,
+                        ),
+                      Pill(
+                        s.perYear(pct(r.input.rate)),
+                        icon: Icons.percent_rounded,
+                        background: Colors.white.withValues(alpha: 0.18),
+                        foreground: Colors.white,
+                      ),
+                      if (payout != null && r.periodicPayout != null)
+                        Pill(
+                          '${s.payout(payout)}: ${rupee(r.periodicPayout!)}',
+                          icon: Icons.payments_rounded,
+                          background: Colors.white.withValues(alpha: 0.18),
+                          foreground: Colors.white,
+                        ),
+                    ],
+                  ),
                 ],
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Donut of deposit vs interest with the amounts beside it.
+class _Breakup extends StatelessWidget {
+  const _Breakup({required this.result});
+  final CalcResult result;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = context.s, r = result, c = r.scheme.color;
+    final t = Theme.of(context).textTheme;
+    final growth = r.totalDeposit == Decimal.zero
+        ? Decimal.zero
+        : (r.totalInterest * Decimal.fromInt(100) / r.totalDeposit).toDecimal(
+            scaleOnInfinitePrecision: 4,
+          );
+    Widget amount(Color dot, String label, Decimal v) => Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          LegendDot(dot, label),
+          const SizedBox(height: 2),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: AnimatedRupee(
+              v,
+              style: t.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+            ),
           ),
-      ],
+        ],
+      ),
+    );
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            DonutChart(
+              deposit: r.totalDeposit,
+              interest: r.totalInterest,
+              color: c,
+              size: 128,
+              center: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    s.growthPct(growth.round(scale: 1).toString()),
+                    style: t.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: r.scheme.textColor(context),
+                    ),
+                  ),
+                  Text(s.interest, style: t.labelSmall),
+                ],
+              ),
+            ),
+            const SizedBox(width: 18),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  amount(c, s.yourMoney, r.totalDeposit),
+                  amount(Brand.yellow, s.interestEarned, r.totalInterest),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

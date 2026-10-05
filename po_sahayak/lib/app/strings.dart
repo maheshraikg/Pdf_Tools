@@ -325,7 +325,7 @@ class S {
   String get documents => _t('Documents needed', 'ಬೇಕಾದ ದಾಖಲೆಗಳು');
   String get quickCalc => _t('Quick calculation', 'ತ್ವರಿತ ಲೆಕ್ಕ');
   String get eligible => _t('Eligible', 'ಅರ್ಹರು');
-  String get age => _t('Age (years)', 'ವಯಸ್ಸು (ವರ್ಷ)');
+  String get age => _t('Age', 'ವಯಸ್ಸು');
   String holding(Holding h) => switch (h) {
     Holding.single => _t('Single', 'ಏಕ'),
     Holding.joint => _t('Joint', 'ಜಂಟಿ'),
@@ -376,4 +376,36 @@ class S {
   );
   String get version => _t('Version', 'ಆವೃತ್ತಿ');
   String get ok => _t('OK', 'ಸರಿ');
+
+  // Redesign: home groups, charts, labels
+  String get groupDeposits => _t('Deposits', 'ಠೇವಣಿಗಳು');
+  String get groupIncome => _t('Regular income', 'ನಿಯಮಿತ ಆದಾಯ');
+  String get groupCertificates => _t('Savings certificates', 'ಉಳಿತಾಯ ಪತ್ರಗಳು');
+  String get groupLongTerm =>
+      _t('Long term & tax saving', 'ದೀರ್ಘಾವಧಿ ಮತ್ತು ತೆರಿಗೆ ಉಳಿತಾಯ');
+  String get highestRate => _t('Highest rate now', 'ಈಗಿನ ಅತ್ಯಧಿಕ ದರ');
+  String get tapToCalculate =>
+      _t('Tap a scheme to calculate', 'ಲೆಕ್ಕ ಮಾಡಲು ಯೋಜನೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ');
+  String get noAdsOffline => _t(
+    'No ads · Works offline · Kannada & English',
+    'ಜಾಹೀರಾತು ಇಲ್ಲ · ಆಫ್‌ಲೈನ್ · ಕನ್ನಡ ಮತ್ತು ಇಂಗ್ಲಿಷ್',
+  );
+  String get yourMoney => _t('Your deposit', 'ನಿಮ್ಮ ಠೇವಣಿ');
+  String get interestEarned => _t('Interest earned', 'ಗಳಿಸಿದ ಬಡ್ಡಿ');
+  String get growth => _t('Growth year by year', 'ವರ್ಷವಾರು ಬೆಳವಣಿಗೆ');
+  String get breakup => _t('Deposit and interest', 'ಠೇವಣಿ ಮತ್ತು ಬಡ್ಡಿ');
+  String growthPct(String p) => _t('+$p%', '+$p%');
+  String get quickAmounts => _t('Quick amounts', 'ತ್ವರಿತ ಮೊತ್ತಗಳು');
+  String get highestReturn => _t('Highest return', 'ಅತ್ಯಧಿಕ ಆದಾಯ');
+  String get tenure => _t('Tenure', 'ಅವಧಿ');
+  String years(int y) => _t(y == 1 ? '1 year' : '$y years', '$y ವರ್ಷ');
+  String tenureOf(Scheme s) => switch (s) {
+    Scheme.sb => _t('No fixed term', 'ನಿಗದಿತ ಅವಧಿ ಇಲ್ಲ'),
+    Scheme.kvp => months(115),
+    Scheme.mssc => years(2),
+    _ => years(s.tenureMonths ~/ 12),
+  };
+  String percentDone(int p) => _t('$p% of term done', 'ಅವಧಿಯ $p% ಮುಗಿದಿದೆ');
+  String get details => _t('Details', 'ವಿವರಗಳು');
+  String get saveShare => _t('Save or share', 'ಉಳಿಸಿ ಅಥವಾ ಹಂಚಿಕೊಳ್ಳಿ');
 }

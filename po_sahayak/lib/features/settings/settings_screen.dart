@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import '../../app/format.dart';
 import '../../app/scope.dart';
 import '../../app/strings.dart';
+import '../../app/theme.dart';
 import '../../widgets/common.dart';
 
-const String kAppVersion = '1.0.0';
+const String kAppVersion = '1.1.0';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -13,82 +14,139 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = context.s, settings = context.settings, rates = context.rates;
+    final t = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(title: Text(s.settings)),
       body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: EdgeInsets.zero,
         children: [
-          ListTile(title: Text(s.language)),
-          RadioGroup<Lang>(
-            groupValue: settings.lang,
-            onChanged: (v) {
-              if (v != null) settings.lang = v;
-            },
-            child: const Column(
-              children: [
-                RadioListTile(value: Lang.kn, title: Text('ಕನ್ನಡ')),
-                RadioListTile(value: Lang.en, title: Text('English')),
-              ],
-            ),
-          ),
-          const Divider(),
-          ListTile(title: Text(s.theme)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SegmentedButton<ThemeMode>(
-              segments: [
-                ButtonSegment(
-                  value: ThemeMode.system,
-                  label: Text(s.themeSystem),
-                ),
-                ButtonSegment(
-                  value: ThemeMode.light,
-                  label: Text(s.themeLight),
-                ),
-                ButtonSegment(value: ThemeMode.dark, label: Text(s.themeDark)),
-              ],
-              selected: {settings.themeMode},
-              onSelectionChanged: (v) => settings.themeMode = v.first,
-            ),
-          ),
-          const Divider(height: 32),
-          ListTile(title: Text(s.about)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${s.appTitle} – ${s.tagline}',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                Note(s.notAffiliated, icon: Icons.gpp_maybe_outlined),
-                Note(
-                  '${s.rateVersion}: ${rates.version} · '
-                  '${s.validFrom(dmy(rates.validFrom))}',
-                  icon: Icons.percent,
-                ),
-                Note('${s.version} $kAppVersion', icon: Icons.tag),
-                Note(s.estimateOnly),
-              ],
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.privacy_tip_outlined),
-            title: Text(s.privacy),
-            onTap: () => showDialog<void>(
-              context: context,
-              builder: (c) => AlertDialog(
-                title: Text(s.privacy),
-                content: Text(s.privacyText),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(c),
-                    child: Text(s.ok),
+          GradientHeader(
+            child: SafeArea(
+              bottom: false,
+              child: Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: Brand.yellow,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(
+                      Icons.settings_rounded,
+                      color: Brand.redDark,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      s.settings,
+                      style: t.headlineSmall?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
                 ],
               ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SectionCard(
+                  icon: Icons.translate_rounded,
+                  title: s.language,
+                  child: SegmentedButton<Lang>(
+                    segments: const [
+                      ButtonSegment(value: Lang.kn, label: Text('ಕನ್ನಡ')),
+                      ButtonSegment(value: Lang.en, label: Text('English')),
+                    ],
+                    selected: {settings.lang},
+                    onSelectionChanged: (v) => settings.lang = v.first,
+                  ),
+                ),
+                SectionCard(
+                  icon: Icons.palette_rounded,
+                  title: s.theme,
+                  child: SegmentedButton<ThemeMode>(
+                    segments: [
+                      ButtonSegment(
+                        value: ThemeMode.system,
+                        icon: const Icon(Icons.brightness_auto_rounded),
+                        label: Text(s.themeSystem),
+                      ),
+                      ButtonSegment(
+                        value: ThemeMode.light,
+                        icon: const Icon(Icons.light_mode_rounded),
+                        label: Text(s.themeLight),
+                      ),
+                      ButtonSegment(
+                        value: ThemeMode.dark,
+                        icon: const Icon(Icons.dark_mode_rounded),
+                        label: Text(s.themeDark),
+                      ),
+                    ],
+                    showSelectedIcon: false,
+                    selected: {settings.themeMode},
+                    onSelectionChanged: (v) => settings.themeMode = v.first,
+                  ),
+                ),
+                SectionCard(
+                  icon: Icons.info_rounded,
+                  title: s.about,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        '${s.appTitle} – ${s.tagline}',
+                        style: t.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Note(s.notAffiliated, icon: Icons.gpp_maybe_outlined),
+                      Note(
+                        '${s.rateVersion}: ${rates.version} · '
+                        '${s.validFrom(dmy(rates.validFrom))}',
+                        icon: Icons.percent_rounded,
+                      ),
+                      Note('${s.version} $kAppVersion', icon: Icons.tag),
+                      Note(s.estimateOnly),
+                    ],
+                  ),
+                ),
+                Card(
+                  child: ListTile(
+                    leading: const IconBadge(
+                      Icons.privacy_tip_rounded,
+                      Brand.red,
+                      size: 36,
+                    ),
+                    title: Text(s.privacy),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => showDialog<void>(
+                      context: context,
+                      builder: (c) => AlertDialog(
+                        icon: const Icon(
+                          Icons.privacy_tip_rounded,
+                          color: Brand.red,
+                        ),
+                        title: Text(s.privacy),
+                        content: Text(s.privacyText),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(c),
+                            child: Text(s.ok),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

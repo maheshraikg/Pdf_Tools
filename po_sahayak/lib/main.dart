@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'app/scope.dart';
 import 'app/settings.dart';
 import 'app/strings.dart';
+import 'app/theme.dart';
 import 'data/saved_account_repository.dart';
 import 'domain/rates/rate_repository.dart';
 import 'features/accounts/accounts_screen.dart';
@@ -22,37 +23,6 @@ Future<void> main() async {
   final settings = await AppSettings.load();
   final accounts = await SavedAccountRepository.load();
   runApp(PoSahayakApp(settings: settings, rates: rates, accounts: accounts));
-}
-
-/// India Post-neutral blue (no India Post colours or emblem).
-const Color kSeed = Color(0xFF1F5FA8);
-
-ThemeData buildTheme(Brightness b) {
-  final scheme = ColorScheme.fromSeed(seedColor: kSeed, brightness: b);
-  // Larger text and touch targets for senior citizens. Sizes live in the
-  // script geometries (Kannada uses "tall"), so scale all three.
-  TextTheme big(TextTheme t) => t.apply(fontSizeFactor: 1.12);
-  return ThemeData(
-    useMaterial3: true,
-    colorScheme: scheme,
-    typography: Typography.material2021(
-      platform: TargetPlatform.android,
-      colorScheme: scheme,
-      englishLike: big(Typography.englishLike2021),
-      dense: big(Typography.dense2021),
-      tall: big(Typography.tall2021),
-    ),
-    filledButtonTheme: FilledButtonThemeData(
-      style: FilledButton.styleFrom(minimumSize: const Size(64, 52)),
-    ),
-    outlinedButtonTheme: OutlinedButtonThemeData(
-      style: OutlinedButton.styleFrom(minimumSize: const Size(64, 52)),
-    ),
-    inputDecorationTheme: const InputDecorationTheme(
-      border: OutlineInputBorder(),
-    ),
-    cardTheme: const CardThemeData(elevation: 0.5),
-  );
 }
 
 class PoSahayakApp extends StatefulWidget {
@@ -151,26 +121,30 @@ class _HomeShellState extends State<HomeShell> {
         destinations: [
           NavigationDestination(
             icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home),
+            selectedIcon: const Icon(Icons.home_rounded, color: Brand.red),
             label: s.home,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.compare_arrows),
+            icon: const Icon(Icons.bar_chart_outlined),
+            selectedIcon: const Icon(Icons.bar_chart_rounded, color: Brand.red),
             label: s.compare,
           ),
           NavigationDestination(
             icon: const Icon(Icons.account_balance_wallet_outlined),
-            selectedIcon: const Icon(Icons.account_balance_wallet),
+            selectedIcon: const Icon(
+              Icons.account_balance_wallet_rounded,
+              color: Brand.red,
+            ),
             label: s.myAccounts,
           ),
           NavigationDestination(
             icon: const Icon(Icons.badge_outlined),
-            selectedIcon: const Icon(Icons.badge),
+            selectedIcon: const Icon(Icons.badge_rounded, color: Brand.red),
             label: s.staff,
           ),
           NavigationDestination(
             icon: const Icon(Icons.settings_outlined),
-            selectedIcon: const Icon(Icons.settings),
+            selectedIcon: const Icon(Icons.settings_rounded, color: Brand.red),
             label: s.settings,
           ),
         ],

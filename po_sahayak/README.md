@@ -7,6 +7,25 @@ the "PO Sahayak – Claude Code Build Plan" (version 1 scope).
 Not affiliated with India Post or the Government of India. Every result is an
 estimate; confirm at the post office.
 
+## Screenshots
+
+| Home | Calculator | Result |
+| --- | --- | --- |
+| ![](docs/screenshots/en_1_home.png) | ![](docs/screenshots/en_2_calculator.png) | ![](docs/screenshots/en_3_result.png) |
+| **Compare** | **My accounts** | **Kannada** |
+| ![](docs/screenshots/en_5_compare.png) | ![](docs/screenshots/en_6_accounts.png) | ![](docs/screenshots/kn_1_home.png) |
+
+Regenerate with `flutter test tool/screenshots/screenshot_test.dart` (needs
+`fonts-noto-core` for Kannada).
+
+## Design
+
+Postal red and yellow (no India Post logo, emblem or name), one colour and
+icon per scheme, gradient headers, counting totals, a deposit/interest donut,
+year-by-year growth bars, animated compare bars, tenure progress on saved
+accounts, staggered entrance animations and fade page transitions. Light and
+dark themes.
+
 ## What's in version 1
 
 | Screen | What it does |
