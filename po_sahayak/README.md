@@ -7,6 +7,15 @@ the "PO Sahayak – Claude Code Build Plan" (version 1 scope).
 Not affiliated with India Post or the Government of India. Every result is an
 estimate; confirm at the post office.
 
+## Store listing
+
+Play Store title: **PO Sahayak: PO Calculator** (the launcher label stays
+"PO Sahayak"). Title, short and full descriptions in English and Kannada are
+in `store/listing/en-IN` and `store/listing/kn-IN`, within Play's limits (30,
+80 and 4000 characters). They use the search terms people type ("post office
+calculator", "PO calculator", RD, TD, MIS, SCSS, PPF, SSY, NSC, KVP) but never
+"India Post" as a name.
+
 ## Screenshots
 
 | Home | Calculator | Result |

@@ -1,0 +1,32 @@
+PO Sahayak is a free, offline Post Office calculator in Kannada and English. Work out maturity amount, interest and maturity date for every Post Office small savings scheme in seconds, with no ads and no internet.
+
+SCHEMES
+• Recurring Deposit (RD) calculator
+• Time Deposit (TD / Post Office FD) 1, 2, 3 and 5 years
+• Monthly Income Scheme (MIS) calculator
+• Senior Citizens Savings Scheme (SCSS)
+• National Savings Certificate (NSC)
+• Kisan Vikas Patra (KVP)
+• Public Provident Fund (PPF) calculator
+• Sukanya Samriddhi Yojana (SSY) calculator
+• Savings Account (SB) and Mahila Samman (MSSC, existing accounts)
+
+WHAT YOU GET
+• Maturity value, total interest and maturity date
+• Year-wise table and growth chart
+• Taxable interest for each financial year (TD, RD, MIS, SCSS, NSC)
+• Premature closure amount for any date, including the 5-year TD rule
+• PPF and SCSS extension, PPF and SSY withdrawal limits
+• Compare schemes side by side for the same amount
+• Save your accounts and get a reminder before maturity
+• Share a clean result card on WhatsApp
+• Staff and agent mode: eligibility check and document checklist
+
+LATEST RATES
+Rates for October–December 2026 are included, with the "valid from" date shown on every result. You can also type the rate from your passbook for older accounts.
+
+PRIVATE AND OFFLINE
+No login, no ads, no internet permission. Your saved accounts stay on your phone.
+
+Results are estimates; confirm at your post office.
+Not affiliated with India Post or the Government of India.

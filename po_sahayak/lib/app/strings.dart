@@ -18,7 +18,7 @@ class S {
   // App
   String get appTitle => _t('PO Sahayak', 'ಪಿಒ ಸಹಾಯಕ');
   String get tagline =>
-      _t('Post Office savings calculator', 'ಅಂಚೆ ಕಚೇರಿ ಉಳಿತಾಯ ಲೆಕ್ಕಾಚಾರ');
+      _t('PO Calculator · Post Office interest', 'ಪಿಒ ಕ್ಯಾಲ್ಕುಲೇಟರ್ · ಅಂಚೆ ಕಚೇರಿ ಬಡ್ಡಿ');
   String get notAffiliated => _t(
     'Not affiliated with India Post or the Government of India.',
     'ಭಾರತೀಯ ಅಂಚೆ ಅಥವಾ ಭಾರತ ಸರ್ಕಾರದೊಂದಿಗೆ ಸಂಬಂಧವಿಲ್ಲ.',
