@@ -1,0 +1,50 @@
+name: Vesha Puzzles – fetch photos
+
+# Downloads freely licensed puzzle photos from Wikimedia Commons with
+# vesha_puzzles/tool/fetch_photos.dart (licence checked per file) and
+# commits them, with attribution in pack.json, to the same branch.
+# Runs when the photo source list or the tool changes, or by hand.
+on:
+  push:
+    branches-ignore: [ master, main ]
+    paths:
+      - 'vesha_puzzles/tool/photo_sources.json'
+      - 'vesha_puzzles/tool/fetch_photos.dart'
+      - '.github/workflows/vesha-photos.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: vesha_puzzles
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Fetch photos
+        run: dart run tool/fetch_photos.dart | tee build-photos.log
+
+      - name: Commit photos
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/packs
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Vesha Puzzles: puzzle photos from Wikimedia Commons (fetched by CI)" -m "$(tail -n 40 build-photos.log)"
+            git push
+          fi
