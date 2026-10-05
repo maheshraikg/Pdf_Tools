@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
 import 'screens/browse_screen.dart';
+import 'screens/downloads_screen.dart';
 import 'screens/home_screen.dart';
 
 /// Bottom navigation: Home · Browse · Downloads · Search · More.
@@ -27,7 +28,7 @@ class AppShellState extends State<AppShell> {
     final pages = [
       const HomeScreen(),
       const BrowseScreen(),
-      Center(child: Text(l.navDownloads)),
+      const DownloadsScreen(),
       Center(child: Text(l.navSearch)),
       Center(child: Text(l.navMore)),
     ];
