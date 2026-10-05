@@ -5,6 +5,7 @@ import '../data/repository.dart';
 import '../data/site_config.dart';
 import '../data/store.dart';
 import '../downloads/download_manager.dart';
+import '../notifications/push_service.dart';
 
 /// User preferences (persisted in the `prefs` box).
 class Settings extends ChangeNotifier {
@@ -212,6 +213,7 @@ class AppServices {
     required this.inbox,
     required this.downloads,
     required this.network,
+    this.push,
   });
 
   final Stores stores;
@@ -223,6 +225,9 @@ class AppServices {
   final Inbox inbox;
   final DownloadManager downloads;
   final NetworkStatus network;
+
+  /// Null in tests; disabled (but present) until Firebase is configured.
+  PushService? push;
 }
 
 class AppScope extends InheritedWidget {

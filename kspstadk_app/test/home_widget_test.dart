@@ -10,7 +10,7 @@ import 'helpers/test_app.dart';
 void main() {
   testWidgets('Home shows header, latest carousel, tiles, classes and sections (Kannada)', (tester) async {
     final services = testServices();
-    await pumpApp(tester, services, home: const AppShell());
+    await pumpApp(tester, services, home: const AppShell(showSplash: false));
 
     expect(find.text('ನಮಸ್ಕಾರ, ಶಿಕ್ಷಕರೇ 🙏'), findsOneWidget);
     expect(find.text('ಇತ್ತೀಚಿನವು'), findsOneWidget);
@@ -27,7 +27,7 @@ void main() {
 
   testWidgets('English toggle switches the UI language', (tester) async {
     final services = testServices(locale: 'en');
-    await pumpApp(tester, services, home: const AppShell());
+    await pumpApp(tester, services, home: const AppShell(showSplash: false));
     expect(find.text('Namaskara, teachers 🙏'), findsOneWidget);
     expect(find.text('Latest'), findsOneWidget);
     expect(find.text('LBA Question Bank'), findsWidgets);
@@ -41,7 +41,7 @@ void main() {
         ..onGet('/categories', (s) => s.throws(0, offline));
     });
     services.network.online = false;
-    await pumpApp(tester, services, home: const AppShell());
+    await pumpApp(tester, services, home: const AppShell(showSplash: false));
     expect(find.text('ಇಂಟರ್ನೆಟ್ ಇಲ್ಲ — ಉಳಿಸಿದ ವಿಷಯ ತೋರಿಸಲಾಗುತ್ತಿದೆ'), findsOneWidget);
     expect(find.text('ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ'), findsWidgets);
   });

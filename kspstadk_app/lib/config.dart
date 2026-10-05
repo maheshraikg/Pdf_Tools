@@ -11,6 +11,7 @@ class AppConfig {
   static const siteHosts = {'kspstadk.com', 'www.kspstadk.com'};
 
   static const appName = 'KSPSTADK';
+  static const appVersion = '1.0.0';
   static const contactEmail = 'kspstadk@gmail.com';
   static const privacyPolicyUrl = '$siteUrl/privacy-policy-2/';
   static const aboutUrl = '$siteUrl/about-us/';
