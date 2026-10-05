@@ -68,10 +68,12 @@ class PostCard extends StatelessWidget {
                 children: [
                   Text(post.title, maxLines: 3, overflow: TextOverflow.ellipsis, style: t.textTheme.titleSmall?.copyWith(height: 1.4)),
                   const SizedBox(height: 6),
-                  Row(
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      if (label.isNotEmpty) Flexible(child: TagChip(label: label, color: postColor(context, post))),
-                      const SizedBox(width: 8),
+                      if (label.isNotEmpty) TagChip(label: label, color: postColor(context, post)),
                       Text(friendlyDate(context, post.date),
                           style: t.textTheme.labelSmall?.copyWith(color: t.colorScheme.onSurfaceVariant)),
                     ],
@@ -128,8 +130,10 @@ class PostHeroCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TagChip(label: postLabel(context, post), color: Colors.white),
-                      const SizedBox(height: 6),
+                      if (MediaQuery.textScalerOf(context).scale(1) < 1.3) ...[
+                        TagChip(label: postLabel(context, post), color: Colors.white),
+                        const SizedBox(height: 6),
+                      ],
                       Text(post.title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,

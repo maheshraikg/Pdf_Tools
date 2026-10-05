@@ -39,7 +39,7 @@ class PushService {
     try {
       await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
       await _local.initialize(
-        settings: const InitializationSettings(android: AndroidInitializationSettings('@mipmap/ic_launcher')),
+        settings: const InitializationSettings(android: AndroidInitializationSettings('@drawable/ic_stat_notify')),
         onDidReceiveNotificationResponse: (r) {
           final id = int.tryParse(r.payload ?? '');
           if (id != null) onOpen(PostTarget(id));

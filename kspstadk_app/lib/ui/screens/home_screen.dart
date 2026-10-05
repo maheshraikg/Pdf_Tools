@@ -250,7 +250,8 @@ class _LatestCarouselState extends State<_LatestCarousel> {
             }
             return Column(children: [
               SizedBox(
-                height: 205,
+                // Taller cards for large accessibility text sizes.
+                height: 205 * MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 1.5),
                 child: PageView.builder(
                   controller: _controller,
                   padEnds: false,
@@ -431,7 +432,7 @@ class _ContinueReading extends StatelessWidget {
           children: [
             SectionHeader(title: l.continueReading, icon: Icons.history_rounded),
             SizedBox(
-              height: 176,
+              height: 176 * MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 1.6),
               child: ListView.separated(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                 scrollDirection: Axis.horizontal,
@@ -467,7 +468,7 @@ class _Popular extends StatelessWidget {
           builder: (context, s) {
             final posts = s.data?.posts ?? const <Post>[];
             return SizedBox(
-              height: 176,
+              height: 176 * MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 1.6),
               child: posts.isEmpty
                   ? ListView(
                       scrollDirection: Axis.horizontal,
