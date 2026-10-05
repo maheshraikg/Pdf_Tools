@@ -1,0 +1,20 @@
+{
+  "version": "2026-Q3",
+  "validFrom": "2026-10-01",
+  "note": "Rates for Oct-Dec 2026 (Q3 FY 2026-27), unchanged since 1 Jan 2024. Add earlier rates from Ministry of Finance notifications, newest first.",
+  "schemes": {
+    "SB": [{ "from": "2024-01-01", "rate": 4.0 }],
+    "RD": [{ "from": "2024-01-01", "rate": 6.7 }],
+    "TD1": [{ "from": "2024-01-01", "rate": 6.9 }],
+    "TD2": [{ "from": "2024-01-01", "rate": 7.0 }],
+    "TD3": [{ "from": "2024-01-01", "rate": 7.1 }],
+    "TD5": [{ "from": "2024-01-01", "rate": 7.5 }],
+    "MIS": [{ "from": "2024-01-01", "rate": 7.4 }],
+    "SCSS": [{ "from": "2024-01-01", "rate": 8.2 }],
+    "NSC": [{ "from": "2024-01-01", "rate": 7.7 }],
+    "KVP": [{ "from": "2024-01-01", "rate": 7.5 }],
+    "PPF": [{ "from": "2024-01-01", "rate": 7.1 }],
+    "SSY": [{ "from": "2024-01-01", "rate": 8.2 }],
+    "MSSC": [{ "from": "2024-01-01", "rate": 7.5 }]
+  }
+}
