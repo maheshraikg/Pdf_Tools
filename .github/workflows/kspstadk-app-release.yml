@@ -1,0 +1,72 @@
+name: KSPSTADK app — publish APK (GitHub Release)
+
+# Builds the release APKs and attaches them to the GitHub Release
+# `kspstadk-app-v<version>` so they have permanent, public download links:
+#   https://github.com/maheshraikg/Pdf_Tools/releases/download/kspstadk-app-v1.0.0/kspstadk-arm64.apk
+# Re-running replaces the files of the same version (bump `version:` in
+# kspstadk_app/pubspec.yaml for a new release).
+on:
+  push:
+    branches: [ master, main, claude/kspstadk-flutter-android-app-pfa9z4 ]
+    paths: [ 'kspstadk_app/**', '.github/workflows/kspstadk-app-release.yml' ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kspstadk-app-release
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: kspstadk_app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Build APKs
+        run: |
+          flutter build apk --release
+          mkdir -p "$RUNNER_TEMP/out"
+          cp build/app/outputs/flutter-apk/app-release.apk "$RUNNER_TEMP/out/kspstadk-universal.apk"
+          flutter build apk --release --split-per-abi
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "$RUNNER_TEMP/out/kspstadk-arm64.apk"
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk "$RUNNER_TEMP/out/kspstadk-armv7.apk"
+          ls -l "$RUNNER_TEMP/out"
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//; s/+.*//')
+          TAG="kspstadk-app-v$VERSION"
+          NOTES="KSPSTADK Android app $VERSION (built from ${GITHUB_SHA::7}).
+
+          * kspstadk-arm64.apk — most phones (recommended)
+          * kspstadk-armv7.apk — older 32-bit phones
+          * kspstadk-universal.apk — any phone (bigger)
+
+          Test build signed with the debug key. Install: open the APK on the phone and allow 'Install unknown apps'."
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --notes "$NOTES"
+          else
+            gh release create "$TAG" --target "$GITHUB_SHA" --prerelease --title "KSPSTADK app $VERSION" --notes "$NOTES"
+          fi
+          gh release upload "$TAG" "$RUNNER_TEMP"/out/*.apk --clobber
+          {
+            echo "### Download"
+            for f in "$RUNNER_TEMP"/out/*.apk; do
+              n=$(basename "$f")
+              echo "* [$n](https://github.com/${GITHUB_REPOSITORY}/releases/download/$TAG/$n) — $(du -h "$f" | cut -f1)"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
