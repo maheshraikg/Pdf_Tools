@@ -72,6 +72,10 @@ def get_all(base, path, params, max_pages=20):
 PATTERNS = {
     "kl-grid": r'class="[^"]*\bkl-grid\b',
     "kl-card": r'class="[^"]*\bkl-(card|item|box)\b',
+    "kl_any_class": r'class="[^"]*\bkl\d*-',
+    "kh_hub": r'class="ksp-hub"',
+    "whatsapp_join": r"(chat\.whatsapp\.com/|whatsapp\.com/channel/)",
+    "telegram_join": r"t\.me/(?!share/)[\w+]",
     "drive_uc_download": r"drive\.google\.com/uc\?[^\"'\s]*id=",
     "drive_file_d": r"drive\.google\.com/file/d/[\w-]+",
     "drive_open_id": r"drive\.google\.com/open\?id=",
@@ -132,6 +136,112 @@ def tree_lines(cats):
 
     walk(0, 0)
     return out
+
+
+def strip_noise(h):
+    h = re.sub(r"<style.*?</style>", "<STYLE/>", h, flags=re.S)
+    h = re.sub(r"<svg.*?</svg>", "<SVG/>", h, flags=re.S)
+    return re.sub(r"<script.*?</script>", "<SCRIPT/>", h, flags=re.S)
+
+
+def deep_sample(base, w, recent):
+    """Second pass: content-heavy categories, hub children, nav + home page."""
+    w("## 12. Navigation block and HOME page\n")
+    status, nav, _, _ = get(base, "/wp-json/wp/v2/navigation", {"per_page": 10})
+    if isinstance(nav, list):
+        save("navigation.json", nav)
+        for n in nav:
+            raw = n.get("content", {}).get("rendered", "") or ""
+            links = re.findall(r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>', raw, re.S)
+            w("Navigation `%s` (id %s): %d links" % (n.get("slug"), n.get("id"), len(links)))
+            for href, label in links[:60]:
+                w("  - %s → %s" % (re.sub(r"<[^>]+>", "", html.unescape(label)).strip(), href))
+    status, home, _, _ = get(base, "/wp-json/wp/v2/pages/50200", {"_fields": "id,title,content"})
+    if isinstance(home, dict) and "content" in home:
+        h = home["content"]["rendered"]
+        save("page_home.json", {"id": home["id"], "content": h})
+        w("\nHOME page content: %d chars. Classes: %s\n" % (len(h), ", ".join("`%s`×%d" % kv for kv in classes_in(h).most_common(30))))
+        links = re.findall(r'<a[^>]+href="([^"]+)"', h)
+        w("HOME links (%d): %s\n" % (len(links), ", ".join(sorted(set(links))[:120])))
+    w("")
+
+    # Gather a broad set of content posts.
+    seen = {p["id"] for p in recent}
+    pool = []
+    for slug in ("lba", "pdf-materials", "study-materials", "quiz", "mygov-quiz", "odu-karnataka",
+                 "pdf-books", "question-paper-fa-sa", "video-lessons", "tools", "nali-kali", "kalika-chetarike"):
+        cat = get(base, "/wp-json/wp/v2/categories", {"slug": slug, "_fields": "id"})[1]
+        if not (isinstance(cat, list) and cat):
+            continue
+        st, items, _, _ = get(base, "/wp-json/wp/v2/posts", {
+            "categories": cat[0]["id"], "per_page": 15,
+            "_fields": "id,slug,link,title,categories,content"})
+        for it in items if isinstance(items, list) else []:
+            if it["id"] not in seen:
+                seen.add(it["id"])
+                it["_src"] = slug
+                pool.append(it)
+    # Children linked from hub cards (subject pages with lesson-wise downloads).
+    hub_links = []
+    for p in recent:
+        for m in re.finditer(r'class="kh-card[^"]*" href="https://kspstadk\.com/([^/"]+)/?"', p["content"]["rendered"]):
+            hub_links.append(m.group(1))
+    for slug in list(dict.fromkeys(hub_links))[:12]:
+        st, items, _, _ = get(base, "/wp-json/wp/v2/posts", {"slug": slug, "_fields": "id,slug,link,title,categories,content"})
+        for it in items if isinstance(items, list) else []:
+            if it["id"] not in seen:
+                seen.add(it["id"])
+                it["_src"] = "hub-child"
+                pool.append(it)
+
+    w("## 13. Deep sample (%d more posts from content categories + hub children)\n" % len(pool))
+    pat_posts = collections.Counter()
+    cls = collections.Counter()
+    hosts = collections.Counter()
+    best = {}
+    w("| src | id | slug | len | patterns |\n|---|---|---|---|---|")
+    for p in pool:
+        h = p["content"]["rendered"]
+        found = []
+        for k, rx in PATTERNS.items():
+            n = len(re.findall(rx, h, re.I))
+            if n:
+                pat_posts[k] += 1
+                found.append("%s×%d" % (k, n))
+                if k not in best or n > best[k][1]:
+                    best[k] = (p["id"], n)
+        cls.update(classes_in(h))
+        hosts.update(hosts_in(h))
+        w("| %s | %d | %s | %d | %s |" % (p["_src"], p["id"], p["slug"][:50], len(h), " ".join(found)))
+    w("\nPattern → posts: %s\n" % ", ".join("%s=%d" % kv for kv in pat_posts.most_common()))
+    w("Classes: %s\n" % ", ".join("`%s`×%d" % kv for kv in cls.most_common(80)))
+    w("Hosts: %s\n" % ", ".join("`%s`×%d" % kv for kv in hosts.most_common(40)))
+
+    # Save representative bodies: richest example of each interesting pattern.
+    keep = {}
+    for k in ("drive_file_d", "drive_uc_download", "drive_open_id", "direct_pdf", "direct_zip", "wp_uploads_link",
+              "whatsapp", "telegram", "youtube", "table", "related_kannada", "pdf_embed_plugin", "quiz_plugin",
+              "kl-grid", "drive_folder", "iframe", "shortcode_leftover"):
+        if k in best:
+            keep.setdefault(best[k][0], []).append(k)
+    by_id = {p["id"]: p for p in pool}
+    w("## 14. Representative bodies saved as fixtures\n")
+    for pid, ks in keep.items():
+        p = by_id[pid]
+        save("deep_%d.json" % pid, {"id": pid, "slug": p["slug"], "link": p["link"],
+                                     "title": p["title"], "categories": p["categories"],
+                                     "content": {"rendered": p["content"]["rendered"]}})
+        w("- deep_%d.json (%s): %s" % (pid, p["slug"], ", ".join(ks)))
+    w("")
+    w("## 15. Stripped snippets around key patterns\n")
+    for k in ("drive_file_d", "drive_uc_download", "drive_open_id", "direct_pdf", "whatsapp", "telegram",
+              "youtube", "kl-grid", "pdf_embed_plugin", "quiz_plugin", "shortcode_leftover", "drive_folder"):
+        if k not in best:
+            continue
+        h = strip_noise(by_id[best[k][0]]["content"]["rendered"])
+        m = re.search(PATTERNS[k], h, re.I)
+        if m:
+            w("### %s (post %d)\n\n```html\n%s\n```\n" % (k, best[k][0], h[max(0, m.start() - 1200): m.end() + 1500].replace("```", "``")))
 
 
 def main():
@@ -298,6 +408,8 @@ def main():
         w("")
         w("Embedded keys on a post: `%s`\n" % "`, `".join(posts[0].get("_embedded", {}).keys()))
         w("Top-level keys on a post: `%s`\n" % "`, `".join(posts[0].keys()))
+
+    deep_sample(base, w, posts)
 
     os.makedirs(DOCS, exist_ok=True)
     with open(os.path.join(DOCS, "site_inspection.md"), "w", encoding="utf-8") as f:
