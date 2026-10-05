@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
+import 'screens/browse_screen.dart';
+import 'screens/home_screen.dart';
 
 /// Bottom navigation: Home · Browse · Downloads · Search · More.
 class AppShell extends StatefulWidget {
@@ -23,8 +25,8 @@ class AppShellState extends State<AppShell> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final pages = [
-      Center(child: Text(l.navHome)),
-      Center(child: Text(l.navBrowse)),
+      const HomeScreen(),
+      const BrowseScreen(),
       Center(child: Text(l.navDownloads)),
       Center(child: Text(l.navSearch)),
       Center(child: Text(l.navMore)),

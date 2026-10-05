@@ -134,6 +134,22 @@ class Repository {
     return post.id;
   }
 
+  Future<Category?> categoryBySlug(String slug) async {
+    final cached = cache.read('/categories');
+    if (cached?.value is List) {
+      for (final c in cached!.value as List) {
+        final cat = Category.fromJson(Map<String, dynamic>.from(c as Map));
+        if (cat.slug == slug) return cat;
+      }
+    }
+    final list = await api.categories();
+    await cache.write('/categories', [for (final c in list) c.toJson()]);
+    for (final c in list) {
+      if (c.slug == slug) return c;
+    }
+    return null;
+  }
+
   Future<Post?> page(String slug) async {
     final key = '/pages/$slug';
     try {

@@ -187,6 +187,19 @@ class Inbox extends ChangeNotifier {
   }
 }
 
+/// Online/offline flag for the offline banner. Starts optimistic; `main()`
+/// wires it to connectivity_plus, tests leave it alone.
+class NetworkStatus extends ChangeNotifier {
+  bool _online = true;
+  bool get online => _online;
+
+  set online(bool v) {
+    if (v == _online) return;
+    _online = v;
+    notifyListeners();
+  }
+}
+
 /// Everything screens need, created once in `main()`.
 class AppServices {
   AppServices({
@@ -198,6 +211,7 @@ class AppServices {
     required this.history,
     required this.inbox,
     required this.downloads,
+    required this.network,
   });
 
   final Stores stores;
@@ -208,6 +222,7 @@ class AppServices {
   final History history;
   final Inbox inbox;
   final DownloadManager downloads;
+  final NetworkStatus network;
 }
 
 class AppScope extends InheritedWidget {

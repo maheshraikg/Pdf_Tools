@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
 import 'app.dart';
@@ -14,6 +15,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final services = await createServices();
   runApp(KspstadkApp(services: services));
+  _watchConnectivity(services.network);
 }
 
 Future<AppServices> createServices({Stores? stores, WpApi? api}) async {
@@ -32,5 +34,13 @@ Future<AppServices> createServices({Stores? stores, WpApi? api}) async {
     history: History(s.history),
     inbox: Inbox(s.inbox),
     downloads: DownloadManager(s.downloads),
+    network: NetworkStatus(),
   );
+}
+
+void _watchConnectivity(NetworkStatus status) {
+  bool online(List<ConnectivityResult> r) => r.any((c) => c != ConnectivityResult.none);
+  final c = Connectivity();
+  c.checkConnectivity().then((r) => status.online = online(r), onError: (_) => true);
+  c.onConnectivityChanged.listen((r) => status.online = online(r), onError: (_) {});
 }
