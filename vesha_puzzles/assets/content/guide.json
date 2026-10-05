@@ -1,0 +1,115 @@
+{
+  "images": {
+    "idle": "vesha_idle.png",
+    "happy": "vesha_happy.png",
+    "think": "vesha_think.png"
+  },
+  "lines": [
+    {
+      "id": "home.1",
+      "mood": "happy",
+      "text": {
+        "en": "Namaskara! I'm Vesha. Shall we build a picture together?",
+        "kn": "ನಮಸ್ಕಾರ! ನಾನು ವೇಷ. ಒಟ್ಟಿಗೆ ಒಂದು ಚಿತ್ರ ಜೋಡಿಸೋಣವೇ?",
+        "tcy": "ನಮಸ್ಕಾರ! ಯಾನ್ ವೇಷ. ಬಲೆ, ಒಟ್ಟುಗು ಒಂಜಿ ಚಿತ್ರ ಜೋಡಿಸುಗ!"
+      }
+    },
+    {
+      "id": "home.2",
+      "mood": "idle",
+      "text": {
+        "en": "Every finished puzzle opens a new story. Which one will you find today?",
+        "kn": "ಪ್ರತಿ ಪಝಲ್ ಮುಗಿದಾಗ ಹೊಸ ಕಥೆ ತೆರೆಯುತ್ತದೆ. ಇಂದು ಯಾವುದು?"
+      }
+    },
+    {
+      "id": "home.3",
+      "mood": "think",
+      "text": {
+        "en": "Tip: start with the edge pieces. The frame makes the rest easier!",
+        "kn": "ಸಲಹೆ: ಮೊದಲು ಅಂಚಿನ ತುಂಡುಗಳನ್ನು ಜೋಡಿಸಿ. ಚೌಕಟ್ಟು ಸಿದ್ಧವಾದರೆ ಉಳಿದದ್ದು ಸುಲಭ!"
+      }
+    },
+    {
+      "id": "home.4",
+      "mood": "happy",
+      "text": {
+        "en": "Have you tried dressing up like a Yakshagana king?",
+        "kn": "ಯಕ್ಷಗಾನದ ರಾಜನಂತೆ ವೇಷ ತೊಟ್ಟು ನೋಡಿದ್ದೀರಾ?"
+      }
+    },
+    {
+      "id": "home.5",
+      "mood": "idle",
+      "text": {
+        "en": "The daily puzzle is the same for everyone today. Can you finish it?",
+        "kn": "ಇಂದಿನ ಪಝಲ್ ಎಲ್ಲರಿಗೂ ಒಂದೇ. ನೀವು ಮುಗಿಸಬಲ್ಲಿರಾ?"
+      }
+    },
+    {
+      "id": "done.1",
+      "mood": "happy",
+      "text": {
+        "en": "Shabbash! The picture is complete!",
+        "kn": "ಶಹಬ್ಬಾಸ್! ಚಿತ್ರ ಪೂರ್ಣವಾಯಿತು!",
+        "tcy": "ಶಹಬ್ಬಾಸ್! ಚಿತ್ರ ಪೂರ್ತಿ ಆಂಡ್!"
+      }
+    },
+    {
+      "id": "done.2",
+      "mood": "happy",
+      "text": {
+        "en": "Even the chende drummer is cheering for you!",
+        "kn": "ಚೆಂಡೆಯವರೂ ನಿಮಗಾಗಿ ಬಾರಿಸುತ್ತಿದ್ದಾರೆ!"
+      }
+    },
+    {
+      "id": "done.3",
+      "mood": "happy",
+      "text": {
+        "en": "Well done! Now read the story behind this picture.",
+        "kn": "ಚೆನ್ನಾಗಿದೆ! ಈಗ ಈ ಚಿತ್ರದ ಹಿಂದಿನ ಕಥೆ ಓದಿ."
+      }
+    },
+    {
+      "id": "story.1",
+      "mood": "think",
+      "text": {
+        "en": "Stories like these were told all night long under the stars.",
+        "kn": "ಇಂತಹ ಕಥೆಗಳನ್ನು ನಕ್ಷತ್ರಗಳ ಕೆಳಗೆ ಇಡೀ ರಾತ್ರಿ ಹೇಳುತ್ತಿದ್ದರು."
+      }
+    },
+    {
+      "id": "story.2",
+      "mood": "idle",
+      "text": {
+        "en": "Ask your grandparents if they have watched a Yakshagana all night!",
+        "kn": "ಅಜ್ಜ-ಅಜ್ಜಿಯರನ್ನು ಕೇಳಿ, ಅವರು ಇಡೀ ರಾತ್ರಿ ಯಕ್ಷಗಾನ ನೋಡಿದ್ದಾರೆಯೇ ಎಂದು!"
+      }
+    },
+    {
+      "id": "dress.1",
+      "mood": "happy",
+      "text": {
+        "en": "Pick a face paint first, then the crown. That is how artists do it too!",
+        "kn": "ಮೊದಲು ಮುಖವರ್ಣಿಕೆ, ನಂತರ ಕಿರೀಟ. ಕಲಾವಿದರೂ ಹೀಗೆಯೇ ಮಾಡುತ್ತಾರೆ!"
+      }
+    },
+    {
+      "id": "dress.2",
+      "mood": "think",
+      "text": {
+        "en": "Locked pieces open when you finish the matching puzzle.",
+        "kn": "ಲಾಕ್ ಆದವು ಸಂಬಂಧಿಸಿದ ಪಝಲ್ ಮುಗಿಸಿದಾಗ ತೆರೆಯುತ್ತವೆ."
+      }
+    },
+    {
+      "id": "tip.tray",
+      "mood": "idle",
+      "text": {
+        "en": "Drag a piece up from the tray, or just tap it. Pieces click together when they fit!",
+        "kn": "ಕೆಳಗಿನ ಪಟ್ಟಿಯಿಂದ ತುಂಡನ್ನು ಮೇಲಕ್ಕೆ ಎಳೆಯಿರಿ ಅಥವಾ ಒತ್ತಿ. ಹೊಂದಿದಾಗ ತುಂಡುಗಳು ಜೋಡುತ್ತವೆ!"
+      }
+    }
+  ]
+}

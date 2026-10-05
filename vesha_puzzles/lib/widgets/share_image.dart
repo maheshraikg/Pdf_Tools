@@ -10,13 +10,20 @@ import 'package:share_plus/share_plus.dart';
 
 import '../app/theme.dart';
 
-Future<Uint8List?> renderShareImage(ui.Image picture, String title, String caption) async {
+Future<Uint8List?> renderShareImage(
+  ui.Image picture,
+  String title,
+  String caption,
+) async {
   const w = 1080.0;
   final ph = w * picture.height / picture.width;
   const band = 190.0;
   final rec = ui.PictureRecorder();
   final c = Canvas(rec);
-  c.drawRect(Rect.fromLTWH(0, 0, w, ph + band), Paint()..color = VeshaColors.black);
+  c.drawRect(
+    Rect.fromLTWH(0, 0, w, ph + band),
+    Paint()..color = VeshaColors.black,
+  );
   c.drawImageRect(
     picture,
     Rect.fromLTWH(0, 0, picture.width.toDouble(), picture.height.toDouble()),
@@ -27,7 +34,10 @@ Future<Uint8List?> renderShareImage(ui.Image picture, String title, String capti
   c.drawRect(Rect.fromLTWH(0, ph, w, 10), Paint()..color = VeshaColors.gold);
   void text(String s, double y, double size, Color color, FontWeight wt) {
     final tp = TextPainter(
-      text: TextSpan(text: s, style: TextStyle(fontSize: size, color: color, fontWeight: wt)),
+      text: TextSpan(
+        text: s,
+        style: TextStyle(fontSize: size, color: color, fontWeight: wt),
+      ),
       textDirection: TextDirection.ltr,
       maxLines: 1,
       ellipsis: '…',
@@ -44,7 +54,9 @@ Future<Uint8List?> renderShareImage(ui.Image picture, String title, String capti
 }
 
 Future<void> shareImage(Uint8List? png, String name, String text) async {
-  final file = png == null ? null : XFile.fromData(png, mimeType: 'image/png', name: name);
+  final file = png == null
+      ? null
+      : XFile.fromData(png, mimeType: 'image/png', name: name);
   await SharePlus.instance.share(
     ShareParams(
       text: text,

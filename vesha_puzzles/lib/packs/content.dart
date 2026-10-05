@@ -220,7 +220,8 @@ class DressUpDef {
   final Review review;
   final Credits credits;
 
-  List<DressSlot> get slotsByZ => [...slots]..sort((a, b) => a.z.compareTo(b.z));
+  List<DressSlot> get slotsByZ =>
+      [...slots]..sort((a, b) => a.z.compareTo(b.z));
 }
 
 class GuideLine {

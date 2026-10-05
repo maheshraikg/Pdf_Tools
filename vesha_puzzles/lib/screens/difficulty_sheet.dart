@@ -27,7 +27,9 @@ class _DifficultySheet extends StatelessWidget {
     final lang = app.settings.lang;
     final save = app.saves.load(puzzle.id);
     final rec = app.progress.records[puzzle.id];
-    final story = puzzle.storyId == null ? null : app.content.stories[puzzle.storyId];
+    final story = puzzle.storyId == null
+        ? null
+        : app.content.stories[puzzle.storyId];
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -39,13 +41,20 @@ class _DifficultySheet extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(puzzle.title.of(lang), style: Theme.of(context).textTheme.titleLarge),
+                Text(
+                  puzzle.title.of(lang),
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
                 const SizedBox(height: 12),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: AspectRatio(
                     aspectRatio: aspect,
-                    child: Image.asset(puzzle.image, fit: BoxFit.cover, cacheWidth: 900),
+                    child: Image.asset(
+                      puzzle.image,
+                      fit: BoxFit.cover,
+                      cacheWidth: 900,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -61,10 +70,16 @@ class _DifficultySheet extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 8),
-                  Text(s.startOver, style: Theme.of(context).textTheme.labelLarge),
+                  Text(
+                    s.startOver,
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
                   const SizedBox(height: 4),
                 ] else
-                  Text(s.chooseDifficulty, style: Theme.of(context).textTheme.labelLarge),
+                  Text(
+                    s.chooseDifficulty,
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
                 const SizedBox(height: 4),
                 for (final d in Difficulty.values)
                   Card(
@@ -74,14 +89,19 @@ class _DifficultySheet extends StatelessWidget {
                       subtitle: Text(
                         [
                           s.pieces(gridFor(d.targetPieces, aspect).count),
-                          if (rec?.bestMs[d.name] != null) s.best(formatDuration(rec!.bestMs[d.name]!)),
+                          if (rec?.bestMs[d.name] != null)
+                            s.best(formatDuration(rec!.bestMs[d.name]!)),
                         ].join(' · '),
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           for (var i = 0; i < (rec?.stars[d.name] ?? 0); i++)
-                            Icon(Icons.star, size: 16, color: Theme.of(context).colorScheme.secondary),
+                            Icon(
+                              Icons.star,
+                              size: 16,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
                           const Icon(Icons.chevron_right),
                         ],
                       ),

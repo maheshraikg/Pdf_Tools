@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vesha_puzzles/jigsaw/board.dart';
 import 'package:vesha_puzzles/jigsaw/cut.dart';
@@ -15,7 +16,11 @@ void main() {
             reason: '$d $aspect -> $g',
           );
           final pieceAspect = aspect * g.rows / g.cols;
-          expect(pieceAspect, inInclusiveRange(0.7, 1.45), reason: '$d $aspect');
+          expect(
+            pieceAspect,
+            inInclusiveRange(0.7, 1.45),
+            reason: '$d $aspect',
+          );
         }
       }
     });
@@ -60,25 +65,40 @@ void main() {
 
     test('edge and corner pieces', () {
       final cut = JigsawCut.generate(3, 4, 1);
-      expect([for (var i = 0; i < 12; i++) if (cut.isCorner(i)) i], [0, 3, 8, 11]);
-      expect([for (var i = 0; i < 12; i++) if (!cut.isEdgePiece(i)) i], [5, 6]);
+      expect(
+        [
+          for (var i = 0; i < 12; i++)
+            if (cut.isCorner(i)) i,
+        ],
+        [0, 3, 8, 11],
+      );
+      expect(
+        [
+          for (var i = 0; i < 12; i++)
+            if (!cut.isEdgePiece(i)) i,
+        ],
+        [5, 6],
+      );
     });
   });
 
   group('paths', () {
-    test('piece paths stay within cell + margin and contain the cell centre', () {
-      final b = JigsawBoard(cut: JigsawCut.generate(4, 4, 3), cellH: 80);
-      final m = b.paths.margin;
-      for (var id = 0; id < b.cut.count; id++) {
-        final p = b.paths.pathOf(id);
-        final bounds = p.getBounds();
-        expect(bounds.left, greaterThanOrEqualTo(-m - 0.01));
-        expect(bounds.top, greaterThanOrEqualTo(-m - 0.01));
-        expect(bounds.right, lessThanOrEqualTo(100 + m + 0.01));
-        expect(bounds.bottom, lessThanOrEqualTo(80 + m + 0.01));
-        expect(p.contains(const Offset(50, 40)), isTrue);
-      }
-    });
+    test(
+      'piece paths stay within cell + margin and contain the cell centre',
+      () {
+        final b = JigsawBoard(cut: JigsawCut.generate(4, 4, 3), cellH: 80);
+        final m = b.paths.margin;
+        for (var id = 0; id < b.cut.count; id++) {
+          final p = b.paths.pathOf(id);
+          final bounds = p.getBounds();
+          expect(bounds.left, greaterThanOrEqualTo(-m - 0.01));
+          expect(bounds.top, greaterThanOrEqualTo(-m - 0.01));
+          expect(bounds.right, lessThanOrEqualTo(100 + m + 0.01));
+          expect(bounds.bottom, lessThanOrEqualTo(80 + m + 0.01));
+          expect(p.contains(const Offset(50, 40)), isTrue);
+        }
+      },
+    );
 
     test('a knob of one piece fills the hole of its neighbour', () {
       final b = JigsawBoard(cut: JigsawCut.generate(1, 2, 9), cellH: 100);
@@ -94,7 +114,8 @@ void main() {
   });
 
   group('board', () {
-    JigsawBoard make() => JigsawBoard(cut: JigsawCut.generate(3, 4, 11), cellH: 90);
+    JigsawBoard make() =>
+        JigsawBoard(cut: JigsawCut.generate(3, 4, 11), cellH: 90);
 
     test('starts with every piece in the tray', () {
       final b = make();

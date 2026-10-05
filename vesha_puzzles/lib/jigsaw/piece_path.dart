@@ -10,8 +10,7 @@ import 'cut.dart';
 /// [cellW] × [cellH] world units. Paths are in piece-local coordinates:
 /// (0, 0) is the top-left corner of the piece's home cell.
 class PiecePaths {
-  PiecePaths(this.cut, this.cellW, this.cellH)
-    : _knob = math.min(cellW, cellH);
+  PiecePaths(this.cut, this.cellW, this.cellH) : _knob = math.min(cellW, cellH);
 
   final JigsawCut cut;
   final double cellW;

@@ -91,7 +91,8 @@ class SaveStore {
   /// Removes daily saves older than [keepFrom].
   Future<void> pruneDaily(String todayKey) async {
     for (final k in store.keys.toList()) {
-      if (k.startsWith('${_prefix}daily-') && k != '${_prefix}daily-$todayKey') {
+      if (k.startsWith('${_prefix}daily-') &&
+          k != '${_prefix}daily-$todayKey') {
         await store.remove(k);
       }
     }

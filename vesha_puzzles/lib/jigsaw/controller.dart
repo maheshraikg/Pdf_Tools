@@ -41,7 +41,10 @@ class JigsawController extends ChangeNotifier {
     viewSize = size;
     if (size.isEmpty) return;
     final f = board.frame;
-    _fitScale = math.min(size.width / (f.width * 1.12), size.height / (f.height * 1.12));
+    _fitScale = math.min(
+      size.width / (f.width * 1.12),
+      size.height / (f.height * 1.12),
+    );
     scale = _fitScale;
     pan = Offset(
       (size.width - f.width * scale) / 2,
@@ -147,8 +150,7 @@ class JigsawController extends ChangeNotifier {
   }
 
   /// Snap distance: generous on small screens (at least ~14 dp).
-  double get _tolerance =>
-      math.max(board.defaultTolerance, 14 / scale);
+  double get _tolerance => math.max(board.defaultTolerance, 14 / scale);
 
   void dropFromTray(int id, Offset screen) {
     final centre = toWorld(screen);
@@ -162,11 +164,21 @@ class JigsawController extends ChangeNotifier {
   /// Tap on a tray piece: drop it somewhere visible near the frame.
   void dropFromTrayAuto(int id) {
     final rnd = math.Random(id * 31 + moves);
-    final v = Rect.fromPoints(toWorld(Offset.zero), toWorld(viewSize.bottomRight(Offset.zero)));
+    final v = Rect.fromPoints(
+      toWorld(Offset.zero),
+      toWorld(viewSize.bottomRight(Offset.zero)),
+    );
     final f = board.frame;
     // Prefer the strip below the frame if visible, else anywhere visible.
-    final below = Rect.fromLTRB(v.left, f.bottom + board.cellH * 0.2, v.right, v.bottom);
-    final area = below.height > board.cellH ? below : v.deflate(board.cellW / 2);
+    final below = Rect.fromLTRB(
+      v.left,
+      f.bottom + board.cellH * 0.2,
+      v.right,
+      v.bottom,
+    );
+    final area = below.height > board.cellH
+        ? below
+        : v.deflate(board.cellW / 2);
     final p = Offset(
       area.left + rnd.nextDouble() * math.max(1, area.width - board.cellW),
       area.top + rnd.nextDouble() * math.max(1, area.height - board.cellH),

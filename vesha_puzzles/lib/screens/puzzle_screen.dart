@@ -25,7 +25,9 @@ import 'story_screen.dart';
 /// Decodes an asset into a GPU image, capped at [maxWidth] pixels wide.
 Future<ui.Image> loadUiImage(String asset, {int maxWidth = 2048}) async {
   final data = await rootBundle.load(asset);
-  final buffer = await ui.ImmutableBuffer.fromUint8List(data.buffer.asUint8List());
+  final buffer = await ui.ImmutableBuffer.fromUint8List(
+    data.buffer.asUint8List(),
+  );
   final desc = await ui.ImageDescriptor.encoded(buffer);
   final codec = await desc.instantiateCodec(
     targetWidth: desc.width > maxWidth ? maxWidth : null,
@@ -44,7 +46,9 @@ Future<double> imageAspect(String asset) async {
   final cached = _aspects[asset];
   if (cached != null) return cached;
   final data = await rootBundle.load(asset);
-  final buffer = await ui.ImmutableBuffer.fromUint8List(data.buffer.asUint8List());
+  final buffer = await ui.ImmutableBuffer.fromUint8List(
+    data.buffer.asUint8List(),
+  );
   final desc = await ui.ImageDescriptor.encoded(buffer);
   final a = desc.width / desc.height;
   desc.dispose();
@@ -108,7 +112,8 @@ class PuzzleScreen extends StatefulWidget {
   State<PuzzleScreen> createState() => _PuzzleScreenState();
 }
 
-class _PuzzleScreenState extends State<PuzzleScreen> with WidgetsBindingObserver {
+class _PuzzleScreenState extends State<PuzzleScreen>
+    with WidgetsBindingObserver {
   JigsawController? _c;
   ui.Image? _image;
   Object? _error;
@@ -125,6 +130,9 @@ class _PuzzleScreenState extends State<PuzzleScreen> with WidgetsBindingObserver
   late final AppState app = AppScope.read(context);
 
   int get _elapsed => _baseMs + _watch.elapsedMilliseconds;
+
+  @visibleForTesting
+  JigsawController? get debugController => _c;
   int get _hintsLeft => hintAllowance(_difficulty) - _hints;
 
   @override
@@ -144,7 +152,8 @@ class _PuzzleScreenState extends State<PuzzleScreen> with WidgetsBindingObserver
           board = JigsawBoard.fromJson(r.board);
           _baseMs = r.elapsedMs;
           _hints = r.hints;
-        } catch (_) {
+        } catch (e) {
+          debugPrint('Ignoring unreadable save: $e');
           board = null; // corrupt save: start fresh
         }
       }
@@ -180,7 +189,10 @@ class _PuzzleScreenState extends State<PuzzleScreen> with WidgetsBindingObserver
     const cellW = 100.0;
     final cellH = cellW * (img.height / g.rows) / (img.width / g.cols);
     final seed = widget.seed ?? math.Random().nextInt(1 << 31);
-    return JigsawBoard(cut: JigsawCut.generate(g.rows, g.cols, seed), cellH: cellH);
+    return JigsawBoard(
+      cut: JigsawCut.generate(g.rows, g.cols, seed),
+      cellH: cellH,
+    );
   }
 
   void _onSnap(SnapResult r) {
@@ -249,7 +261,10 @@ class _PuzzleScreenState extends State<PuzzleScreen> with WidgetsBindingObserver
     app.notifySaves();
     app.audio.play(Sfx.complete);
     if (outcome.achievements.isNotEmpty) {
-      Future.delayed(const Duration(milliseconds: 900), () => app.audio.play(Sfx.unlock));
+      Future.delayed(
+        const Duration(milliseconds: 900),
+        () => app.audio.play(Sfx.unlock),
+      );
     }
     setState(() {
       _result = _Result(
@@ -280,8 +295,14 @@ class _PuzzleScreenState extends State<PuzzleScreen> with WidgetsBindingObserver
       builder: (ctx) => AlertDialog(
         content: Text(s.restartConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(s.cancel)),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(s.restart)),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(s.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(s.restart),
+          ),
         ],
       ),
     );
@@ -325,7 +346,10 @@ class _PuzzleScreenState extends State<PuzzleScreen> with WidgetsBindingObserver
       context: context,
       builder: (ctx) => Dialog(
         clipBehavior: Clip.antiAlias,
-        child: InkWell(onTap: () => Navigator.pop(ctx), child: Image.asset(img)),
+        child: InkWell(
+          onTap: () => Navigator.pop(ctx),
+          child: Image.asset(img),
+        ),
       ),
     );
   }
@@ -355,7 +379,11 @@ class _PuzzleScreenState extends State<PuzzleScreen> with WidgetsBindingObserver
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.puzzle.title.of(lang), maxLines: 1, overflow: TextOverflow.ellipsis),
+            Text(
+              widget.puzzle.title.of(lang),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
             if (c != null)
               Text(
                 '${formatDuration(_elapsed)} · ${s.placed(c.board.placedCount, c.board.cut.count)}',
@@ -364,7 +392,11 @@ class _PuzzleScreenState extends State<PuzzleScreen> with WidgetsBindingObserver
           ],
         ),
         actions: [
-          IconButton(tooltip: s.preview, icon: const Icon(Icons.image_outlined), onPressed: _showPreview),
+          IconButton(
+            tooltip: s.preview,
+            icon: const Icon(Icons.image_outlined),
+            onPressed: _showPreview,
+          ),
           PopupMenuButton<String>(
             onSelected: (v) {
               if (v == 'restart') _restart();
@@ -406,14 +438,21 @@ class _PuzzleScreenState extends State<PuzzleScreen> with WidgetsBindingObserver
                         child: VeshaGuide(
                           compact: true,
                           size: 48,
-                          line: app.content.line('tip.tray') ??
-                              GuideLine('tip.tray', LText({'en': s.trayHelp}), 'idle'),
+                          line:
+                              app.content.line('tip.tray') ??
+                              GuideLine(
+                                'tip.tray',
+                                LText({'en': s.trayHelp}),
+                                'idle',
+                              ),
                         ),
                       ),
                     SafeArea(
                       top: false,
                       child: Material(
-                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         child: JigsawTray(controller: c, height: 96),
                       ),
                     ),
@@ -438,7 +477,11 @@ class _PuzzleScreenState extends State<PuzzleScreen> with WidgetsBindingObserver
 }
 
 class _Toolbar extends StatelessWidget {
-  const _Toolbar({required this.controller, required this.hintsLeft, required this.onHint});
+  const _Toolbar({
+    required this.controller,
+    required this.hintsLeft,
+    required this.onHint,
+  });
   final JigsawController controller;
   final int hintsLeft;
   final VoidCallback onHint;
@@ -466,8 +509,16 @@ class _Toolbar extends StatelessWidget {
               onPressed: controller.toggleEdgesOnly,
             ),
             const Spacer(),
-            IconButton(tooltip: s.zoomOut, icon: const Icon(Icons.zoom_out), onPressed: () => controller.zoomBy(1 / 1.4)),
-            IconButton(tooltip: s.zoomIn, icon: const Icon(Icons.zoom_in), onPressed: () => controller.zoomBy(1.4)),
+            IconButton(
+              tooltip: s.zoomOut,
+              icon: const Icon(Icons.zoom_out),
+              onPressed: () => controller.zoomBy(1 / 1.4),
+            ),
+            IconButton(
+              tooltip: s.zoomIn,
+              icon: const Icon(Icons.zoom_in),
+              onPressed: () => controller.zoomBy(1.4),
+            ),
             const SizedBox(width: 4),
             Badge(
               label: Text('$hintsLeft'),
@@ -486,7 +537,12 @@ class _Toolbar extends StatelessWidget {
 }
 
 class _Result {
-  const _Result({required this.ms, required this.hints, required this.best, required this.achievements});
+  const _Result({
+    required this.ms,
+    required this.hints,
+    required this.best,
+    required this.achievements,
+  });
   final int ms;
   final int hints;
   final bool best;
@@ -515,10 +571,14 @@ class _CompletionOverlay extends StatelessWidget {
     final s = S.of(context);
     final lang = app.settings.lang;
     final scheme = Theme.of(context).colorScheme;
-    final story = puzzle.storyId == null ? null : app.content.stories[puzzle.storyId];
+    final story = puzzle.storyId == null
+        ? null
+        : app.content.stories[puzzle.storyId];
     final pack = app.content.pack(puzzle.packId);
     final nextIdx = puzzle.index + 1;
-    final next = pack != null && nextIdx < pack.puzzles.length ? pack.puzzles[nextIdx] : null;
+    final next = pack != null && nextIdx < pack.puzzles.length
+        ? pack.puzzles[nextIdx]
+        : null;
     final title = puzzle.title.of(lang);
     final time = formatDuration(result.ms);
 
@@ -537,16 +597,27 @@ class _CompletionOverlay extends StatelessWidget {
                   children: [
                     VeshaGuide(
                       size: 64,
-                      line: VeshaGuide.pick(app.content, 'done.', salt: result.ms),
+                      line: VeshaGuide.pick(
+                        app.content,
+                        'done.',
+                        salt: result.ms,
+                      ),
                     ),
                     const SizedBox(height: 8),
-                    Text(s.wellDone, style: Theme.of(context).textTheme.headlineSmall),
+                    Text(
+                      s.wellDone,
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         for (var i = 0; i < 3; i++)
-                          Icon(i < result.stars ? Icons.star : Icons.star_border, size: 40, color: scheme.secondary),
+                          Icon(
+                            i < result.stars ? Icons.star : Icons.star_border,
+                            size: 40,
+                            color: scheme.secondary,
+                          ),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -554,21 +625,39 @@ class _CompletionOverlay extends StatelessWidget {
                     if (result.best)
                       Padding(
                         padding: const EdgeInsets.only(top: 4),
-                        child: Text(s.newBest, style: TextStyle(color: scheme.primary, fontWeight: FontWeight.w700)),
+                        child: Text(
+                          s.newBest,
+                          style: TextStyle(
+                            color: scheme.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ),
                     for (final a in result.achievements)
                       ListTile(
                         dense: true,
-                        leading: Icon(Icons.emoji_events, color: scheme.secondary),
+                        leading: Icon(
+                          Icons.emoji_events,
+                          color: scheme.secondary,
+                        ),
                         title: Text(s.unlockedAchievement),
-                        subtitle: Text(s.achievementTitle(a, packName: app.content.pack(a.replaceFirst('pack_', ''))?.title.of(lang))),
+                        subtitle: Text(
+                          s.achievementTitle(
+                            a,
+                            packName: app.content
+                                .pack(a.replaceFirst('pack_', ''))
+                                ?.title
+                                .of(lang),
+                          ),
+                        ),
                       ),
                     const SizedBox(height: 12),
                     if (story != null)
                       FilledButton.icon(
                         icon: const Icon(Icons.menu_book),
                         label: Text(s.readStory),
-                        onPressed: () => openStory(context, story, puzzle: puzzle),
+                        onPressed: () =>
+                            openStory(context, story, puzzle: puzzle),
                       ),
                     const SizedBox(height: 8),
                     Wrap(
@@ -581,7 +670,11 @@ class _CompletionOverlay extends StatelessWidget {
                           label: Text(s.share),
                           onPressed: () async {
                             final text = s.shareText(title, time);
-                            final png = await renderShareImage(image, title, '${s.appTitle} · $time');
+                            final png = await renderShareImage(
+                              image,
+                              title,
+                              '${s.appTitle} · $time',
+                            );
                             await shareImage(png, '${puzzle.id}.png', text);
                           },
                         ),
@@ -595,18 +688,22 @@ class _CompletionOverlay extends StatelessWidget {
                           OutlinedButton.icon(
                             icon: const Icon(Icons.skip_next),
                             label: Text(s.next),
-                            onPressed: () => Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (_) => PuzzleScreen(
-                                  puzzle: next,
-                                  difficulty: _lastDifficulty(context),
-                                  saveKey: next.id,
-                                  resume: app.saves.load(next.id),
+                            onPressed: () =>
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (_) => PuzzleScreen(
+                                      puzzle: next,
+                                      difficulty: _lastDifficulty(context),
+                                      saveKey: next.id,
+                                      resume: app.saves.load(next.id),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
                           ),
-                        TextButton(onPressed: () => Navigator.pop(context), child: Text(s.done)),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(s.done),
+                        ),
                       ],
                     ),
                   ],
@@ -620,5 +717,6 @@ class _CompletionOverlay extends StatelessWidget {
   }
 
   Difficulty _lastDifficulty(BuildContext context) =>
-      context.findAncestorStateOfType<_PuzzleScreenState>()?._difficulty ?? Difficulty.medium;
+      context.findAncestorStateOfType<_PuzzleScreenState>()?._difficulty ??
+      Difficulty.medium;
 }

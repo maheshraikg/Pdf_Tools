@@ -24,7 +24,12 @@ class AudioService {
 
   static String _file(Sfx s) => 'audio/${s.name}.wav';
 
-  void configure({required bool sfx, required bool music, required double volume, required bool haptics}) {
+  void configure({
+    required bool sfx,
+    required bool music,
+    required double volume,
+    required bool haptics,
+  }) {
     sfxOn = sfx;
     this.volume = volume;
     hapticsOn = haptics;
@@ -67,7 +72,10 @@ class AudioService {
     try {
       _music ??= AudioPlayer();
       await _music!.setReleaseMode(ReleaseMode.loop);
-      await _music!.play(AssetSource('audio/music_loop.wav'), volume: volume * 0.4);
+      await _music!.play(
+        AssetSource('audio/music_loop.wav'),
+        volume: volume * 0.4,
+      );
     } catch (e) {
       debugPrint('music failed: $e');
     }

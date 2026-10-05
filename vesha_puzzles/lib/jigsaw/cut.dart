@@ -102,7 +102,8 @@ class JigsawCut {
     final rnd = math.Random(seed);
     const j = 0.04;
     double u() => (rnd.nextDouble() * 2 - 1) * j;
-    EdgeShape edge() => EdgeShape(rnd.nextBool() ? 1 : -1, u(), u(), u(), u(), u());
+    EdgeShape edge() =>
+        EdgeShape(rnd.nextBool() ? 1 : -1, u(), u(), u(), u(), u());
     final h = List.generate((rows - 1) * cols, (_) => edge());
     final v = List.generate(rows * (cols - 1), (_) => edge());
     return JigsawCut._(rows, cols, seed, h, v);

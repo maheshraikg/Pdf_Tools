@@ -114,20 +114,34 @@ class PuzzleTile extends StatelessWidget {
                   children: [
                     ColorFiltered(
                       colorFilter: unlocked
-                          ? const ColorFilter.mode(Colors.transparent, BlendMode.dst)
+                          ? const ColorFilter.mode(
+                              Colors.transparent,
+                              BlendMode.dst,
+                            )
                           : const ColorFilter.matrix(_greyscale),
-                      child: Image.asset(puzzle.image, fit: BoxFit.cover, cacheWidth: 400),
+                      child: Image.asset(
+                        puzzle.image,
+                        fit: BoxFit.cover,
+                        cacheWidth: 400,
+                      ),
                     ),
                     if (!unlocked)
                       Container(
                         color: Colors.black38,
-                        child: const Icon(Icons.lock, color: Colors.white, size: 36),
+                        child: const Icon(
+                          Icons.lock,
+                          color: Colors.white,
+                          size: 36,
+                        ),
                       ),
                     if (save != null && unlocked)
                       Positioned(
                         left: 6,
                         top: 6,
-                        child: _Badge(s.percentDone((save.fraction * 100).round()), scheme.secondary),
+                        child: _Badge(
+                          s.percentDone((save.fraction * 100).round()),
+                          scheme.secondary,
+                        ),
                       ),
                   ],
                 ),
@@ -147,7 +161,9 @@ class PuzzleTile extends StatelessWidget {
                       children: [
                         for (var i = 0; i < 3; i++)
                           Icon(
-                            i < (rec?.bestStars ?? 0) ? Icons.star : Icons.star_border,
+                            i < (rec?.bestStars ?? 0)
+                                ? Icons.star
+                                : Icons.star_border,
                             size: 16,
                             color: scheme.secondary,
                           ),
@@ -165,10 +181,26 @@ class PuzzleTile extends StatelessWidget {
 }
 
 const _greyscale = <double>[
-  0.2126, 0.7152, 0.0722, 0, 0,
-  0.2126, 0.7152, 0.0722, 0, 0,
-  0.2126, 0.7152, 0.0722, 0, 0,
-  0, 0, 0, 1, 0,
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
 ];
 
 class _Badge extends StatelessWidget {
@@ -179,7 +211,17 @@ class _Badge extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-    decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(8)),
-    child: Text(text, style: const TextStyle(color: Colors.black, fontSize: 11, fontWeight: FontWeight.w600)),
+    decoration: BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Text(
+      text,
+      style: const TextStyle(
+        color: Colors.black,
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
   );
 }

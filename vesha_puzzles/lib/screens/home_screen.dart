@@ -29,7 +29,10 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(s.appTitle, style: const TextStyle(fontWeight: FontWeight.w700)),
+        title: Text(
+          s.appTitle,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
         actions: [
           IconButton(
             tooltip: s.settings,
@@ -43,7 +46,11 @@ class HomeScreen extends StatelessWidget {
         children: [
           if (app.settings.guideTips)
             VeshaGuide(
-              line: VeshaGuide.pick(app.content, 'home.', salt: today.day + today.month),
+              line: VeshaGuide.pick(
+                app.content,
+                'home.',
+                salt: today.day + today.month,
+              ),
             ),
           const SizedBox(height: 12),
           for (final e in events) _EventBanner(event: e, lang: lang),
@@ -58,11 +65,27 @@ class HomeScreen extends StatelessWidget {
             crossAxisSpacing: 12,
             childAspectRatio: 1.35,
             children: [
-              _Tile(Icons.extension, s.puzzles, () => _push(context, const LibraryScreen())),
-              _Tile(Icons.menu_book, s.stories, () => _push(context, const StoriesScreen())),
+              _Tile(
+                Icons.extension,
+                s.puzzles,
+                () => _push(context, const LibraryScreen()),
+              ),
+              _Tile(
+                Icons.menu_book,
+                s.stories,
+                () => _push(context, const StoriesScreen()),
+              ),
               if (app.content.dressUp != null)
-                _Tile(Icons.face_retouching_natural, s.dressUp, () => _push(context, const DressUpScreen())),
-              _Tile(Icons.emoji_events, s.achievements, () => _push(context, const ProgressScreen())),
+                _Tile(
+                  Icons.face_retouching_natural,
+                  s.dressUp,
+                  () => _push(context, const DressUpScreen()),
+                ),
+              _Tile(
+                Icons.emoji_events,
+                s.achievements,
+                () => _push(context, const ProgressScreen()),
+              ),
             ],
           ),
         ],
@@ -107,7 +130,10 @@ class _Tile extends StatelessWidget {
               Text(
                 label,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.w600, color: scheme.onPrimaryContainer),
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: scheme.onPrimaryContainer,
+                ),
               ),
             ],
           ),
@@ -127,9 +153,7 @@ class _EventBanner extends StatelessWidget {
     final s = S.of(context);
     final scheme = Theme.of(context).colorScheme;
     final app = AppScope.of(context);
-    final featured = [
-      for (final id in event.featured) ?app.content.puzzle(id),
-    ];
+    final featured = [for (final id in event.featured) ?app.content.puzzle(id)];
     return Card(
       color: scheme.tertiaryContainer,
       margin: const EdgeInsets.only(bottom: 12),
@@ -142,16 +166,26 @@ class _EventBanner extends StatelessWidget {
               children: [
                 Icon(Icons.celebration, color: scheme.onTertiaryContainer),
                 const SizedBox(width: 8),
-                Text(s.eventNow, style: TextStyle(color: scheme.onTertiaryContainer, fontSize: 12)),
+                Text(
+                  s.eventNow,
+                  style: TextStyle(
+                    color: scheme.onTertiaryContainer,
+                    fontSize: 12,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 6),
             Text(
               event.title.of(lang),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: scheme.onTertiaryContainer),
+              style: Theme.of(context).textTheme.titleMedium
+                  ?.copyWith(color: scheme.onTertiaryContainer),
             ),
             const SizedBox(height: 4),
-            Text(event.blurb.of(lang), style: TextStyle(color: scheme.onTertiaryContainer)),
+            Text(
+              event.blurb.of(lang),
+              style: TextStyle(color: scheme.onTertiaryContainer),
+            ),
             if (featured.isNotEmpty) ...[
               const SizedBox(height: 8),
               Wrap(
@@ -161,7 +195,9 @@ class _EventBanner extends StatelessWidget {
                     ActionChip(
                       avatar: const Icon(Icons.extension, size: 18),
                       label: Text(p.title.of(lang)),
-                      onPressed: app.isUnlocked(p) ? () => showDifficultySheet(context, p) : null,
+                      onPressed: app.isUnlocked(p)
+                          ? () => showDifficultySheet(context, p)
+                          : null,
                     ),
                 ],
               ),
@@ -194,7 +230,11 @@ class _DailyCard extends StatelessWidget {
             SizedBox(
               width: 120,
               height: 100,
-              child: Image.asset(pick.puzzle.image, fit: BoxFit.cover, cacheWidth: 360),
+              child: Image.asset(
+                pick.puzzle.image,
+                fit: BoxFit.cover,
+                cacheWidth: 360,
+              ),
             ),
             Expanded(
               child: Padding(
@@ -202,19 +242,28 @@ class _DailyCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(s.daily, style: Theme.of(context).textTheme.labelMedium),
+                    Text(
+                      s.daily,
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
                     Text(
                       pick.puzzle.title.of(lang),
                       style: Theme.of(context).textTheme.titleMedium,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Text('${s.difficulty(pick.difficulty)}${streak > 0 ? ' · ${s.streakDays(streak)}' : ''}'),
+                    Text(
+                      '${s.difficulty(pick.difficulty)}${streak > 0 ? ' · ${s.streakDays(streak)}' : ''}',
+                    ),
                     const SizedBox(height: 4),
                     if (done)
                       Row(
                         children: [
-                          const Icon(Icons.check_circle, size: 18, color: Colors.green),
+                          const Icon(
+                            Icons.check_circle,
+                            size: 18,
+                            color: Colors.green,
+                          ),
                           const SizedBox(width: 4),
                           Text(s.dailyDone),
                         ],
@@ -253,10 +302,18 @@ class _ContinueCard extends StatelessWidget {
       child: ListTile(
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: Image.asset(puzzle.image, width: 56, height: 56, fit: BoxFit.cover, cacheWidth: 168),
+          child: Image.asset(
+            puzzle.image,
+            width: 56,
+            height: 56,
+            fit: BoxFit.cover,
+            cacheWidth: 168,
+          ),
         ),
         title: Text(puzzle.title.of(app.settings.lang)),
-        subtitle: Text('${s.difficulty(save.difficulty)} · ${s.percentDone(pct)}'),
+        subtitle: Text(
+          '${s.difficulty(save.difficulty)} · ${s.percentDone(pct)}',
+        ),
         trailing: FilledButton(
           onPressed: () => openPuzzle(context, puzzle: puzzle, resume: save),
           child: Text(s.continueGame),

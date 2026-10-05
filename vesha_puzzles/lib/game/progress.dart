@@ -20,8 +20,12 @@ class PuzzleRecord {
 
   factory PuzzleRecord.fromJson(Map json) {
     final r = PuzzleRecord()..completions = (json['n'] as num?)?.toInt() ?? 0;
-    (json['t'] as Map? ?? const {}).forEach((k, v) => r.bestMs['$k'] = (v as num).toInt());
-    (json['s'] as Map? ?? const {}).forEach((k, v) => r.stars['$k'] = (v as num).toInt());
+    (json['t'] as Map? ?? const {}).forEach(
+      (k, v) => r.bestMs['$k'] = (v as num).toInt(),
+    );
+    (json['s'] as Map? ?? const {}).forEach(
+      (k, v) => r.stars['$k'] = (v as num).toInt(),
+    );
     return r;
   }
 }
@@ -79,8 +83,10 @@ class Progress {
   int expertFinishes = 0;
   int fastFinishes = 0;
 
-  int get totalCompletions => records.values.fold(0, (a, r) => a + r.completions);
-  int get distinctCompleted => records.values.where((r) => r.completions > 0).length;
+  int get totalCompletions =>
+      records.values.fold(0, (a, r) => a + r.completions);
+  int get distinctCompleted =>
+      records.values.where((r) => r.completions > 0).length;
   bool completed(String puzzleId) => (records[puzzleId]?.completions ?? 0) > 0;
 
   /// Applies a finished game. Returns true if it is a new best time.
@@ -119,11 +125,14 @@ class Progress {
   }
 
   int bestDailyStreak() {
-    final days = dailyDone.map(parseDayKey).whereType<DateTime>().toList()..sort();
+    final days = dailyDone.map(parseDayKey).whereType<DateTime>().toList()
+      ..sort();
     var best = 0, run = 0;
     DateTime? prev;
     for (final d in days) {
-      run = (prev != null && DateTime(prev.year, prev.month, prev.day + 1) == d) ? run + 1 : 1;
+      run = (prev != null && DateTime(prev.year, prev.month, prev.day + 1) == d)
+          ? run + 1
+          : 1;
       if (run > best) best = run;
       prev = d;
     }
@@ -148,10 +157,18 @@ class Progress {
     (json['records'] as Map? ?? const {}).forEach(
       (k, v) => p.records['$k'] = PuzzleRecord.fromJson(v as Map),
     );
-    p.dailyDone.addAll([for (final s in json['daily'] as List? ?? const []) '$s']);
-    p.storiesRead.addAll([for (final s in json['stories'] as List? ?? const []) '$s']);
-    p.eventBadges.addAll([for (final s in json['events'] as List? ?? const []) '$s']);
-    (json['ach'] as Map? ?? const {}).forEach((k, v) => p.achievements['$k'] = '$v');
+    p.dailyDone.addAll([
+      for (final s in json['daily'] as List? ?? const []) '$s',
+    ]);
+    p.storiesRead.addAll([
+      for (final s in json['stories'] as List? ?? const []) '$s',
+    ]);
+    p.eventBadges.addAll([
+      for (final s in json['events'] as List? ?? const []) '$s',
+    ]);
+    (json['ach'] as Map? ?? const {}).forEach(
+      (k, v) => p.achievements['$k'] = '$v',
+    );
     int i(String k) => (json[k] as num?)?.toInt() ?? 0;
     p
       ..looksSaved = i('looks')

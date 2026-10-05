@@ -32,7 +32,8 @@ class S {
   // Home
   String get puzzles => _t('Puzzles', 'ಪಝಲ್‌ಗಳು', 'ಪಝಲ್‌ಲು');
   String get daily => _t('Daily puzzle', 'ಇಂದಿನ ಪಝಲ್', 'ಇನಿತ ಪಝಲ್');
-  String get dailyDone => _t('Done for today!', 'ಇಂದಿನದು ಮುಗಿಯಿತು!', 'ಇನಿತ ಮುಗಿಂಡ್!');
+  String get dailyDone =>
+      _t('Done for today!', 'ಇಂದಿನದು ಮುಗಿಯಿತು!', 'ಇನಿತ ಮುಗಿಂಡ್!');
   String get play => _t('Play', 'ಆಡಿ', 'ಗೊಬ್ಬುಲೆ');
   String get continueGame => _t('Continue', 'ಮುಂದುವರಿಸಿ');
   String get dressUp => _t('Dress-up', 'ವೇಷ ತೊಡಿಸಿ');
@@ -43,7 +44,8 @@ class S {
   String get stories => _t('Stories', 'ಕಥೆಗಳು', 'ಕತೆಲು');
   String streakDays(int n) =>
       _t('$n-day streak', '$n ದಿನಗಳ ಸರಣಿ', '$n ದಿನೊತ ಸರಣಿ');
-  String get eventNow => _t('Happening now', 'ಈಗ ನಡೆಯುತ್ತಿದೆ', 'ಇತ್ತೆ ನಡತೊಂದುಂಡು');
+  String get eventNow =>
+      _t('Happening now', 'ಈಗ ನಡೆಯುತ್ತಿದೆ', 'ಇತ್ತೆ ನಡತೊಂದುಂಡು');
   String get featured => _t('Featured', 'ವಿಶೇಷ');
 
   // Library
@@ -58,7 +60,8 @@ class S {
   String percentDone(int pct) => _t('$pct% done', '$pct% ಮುಗಿದಿದೆ');
 
   // Difficulty
-  String get chooseDifficulty => _t('Choose difficulty', 'ಕಷ್ಟದ ಮಟ್ಟ ಆಯ್ಕೆಮಾಡಿ');
+  String get chooseDifficulty =>
+      _t('Choose difficulty', 'ಕಷ್ಟದ ಮಟ್ಟ ಆಯ್ಕೆಮಾಡಿ');
   String difficulty(Difficulty d) => switch (d) {
     Difficulty.easy => _t('Easy', 'ಸುಲಭ'),
     Difficulty.medium => _t('Medium', 'ಮಧ್ಯಮ'),
@@ -88,12 +91,14 @@ class S {
   );
   String get cancel => _t('Cancel', 'ರದ್ದು');
   String get ok => _t('OK', 'ಸರಿ', 'ಆವು');
-  String get trayEmpty => _t('All pieces are on the board', 'ಎಲ್ಲ ತುಂಡುಗಳು ಬೋರ್ಡಿನಲ್ಲಿವೆ');
+  String get trayEmpty =>
+      _t('All pieces are on the board', 'ಎಲ್ಲ ತುಂಡುಗಳು ಬೋರ್ಡಿನಲ್ಲಿವೆ');
   String get trayHelp => _t(
     'Drag a piece up onto the board, or tap it. Double-tap a loose piece to send it back.',
     'ತುಂಡನ್ನು ಮೇಲಕ್ಕೆ ಎಳೆಯಿರಿ ಅಥವಾ ಒತ್ತಿ. ಬಿಡಿ ತುಂಡನ್ನು ಎರಡು ಬಾರಿ ಒತ್ತಿದರೆ ಹಿಂದೆ ಹೋಗುತ್ತದೆ.',
   );
-  String get loadFailed => _t('Could not open this picture.', 'ಈ ಚಿತ್ರ ತೆರೆಯಲಾಗಲಿಲ್ಲ.');
+  String get loadFailed =>
+      _t('Could not open this picture.', 'ಈ ಚಿತ್ರ ತೆರೆಯಲಾಗಲಿಲ್ಲ.');
 
   // Completion
   String get wellDone => _t('Well done!', 'ಶಹಬ್ಬಾಸ್!', 'ಭಾರೀ ಎಡ್ಡೆ!');
@@ -109,15 +114,15 @@ class S {
     'I finished "$title" in $time on Vesha Puzzles!',
     'ವೇಷ ಪಝಲ್‌ನಲ್ಲಿ "$title" ಅನ್ನು $time ಸಮಯದಲ್ಲಿ ಮುಗಿಸಿದೆ!',
   );
-  String get unlockedAchievement => _t('Achievement unlocked', 'ಸಾಧನೆ ತೆರೆಯಿತು');
+  String get unlockedAchievement =>
+      _t('Achievement unlocked', 'ಸಾಧನೆ ತೆರೆಯಿತು');
   String get newStory => _t('New story unlocked', 'ಹೊಸ ಕಥೆ ತೆರೆಯಿತು');
 
   // Stories
-  String get didYouKnow => _t('Did you know?', 'ನಿಮಗೆ ಗೊತ್ತೇ?', 'ಇರೆಗ್ ಗೊತ್ತುಂಡಾ?');
-  String get underReview => _t(
-    'Draft – awaiting expert review',
-    'ಕರಡು – ತಜ್ಞರ ಪರಿಶೀಲನೆ ಬಾಕಿ',
-  );
+  String get didYouKnow =>
+      _t('Did you know?', 'ನಿಮಗೆ ಗೊತ್ತೇ?', 'ಇರೆಗ್ ಗೊತ್ತುಂಡಾ?');
+  String get underReview =>
+      _t('Draft – awaiting expert review', 'ಕರಡು – ತಜ್ಞರ ಪರಿಶೀಲನೆ ಬಾಕಿ');
   String get storyLocked => _t(
     'Finish the puzzle to unlock this story.',
     'ಈ ಕಥೆ ತೆರೆಯಲು ಪಝಲ್ ಮುಗಿಸಿ.',
@@ -163,17 +168,29 @@ class S {
 
   String achievementDesc(String id, int goal) => switch (id) {
     'first_puzzle' => _t('Finish your first puzzle.', 'ಮೊದಲ ಪಝಲ್ ಮುಗಿಸಿ.'),
-    'five_puzzles' => _t('Finish 5 different puzzles.', '5 ಬೇರೆ ಪಝಲ್‌ಗಳನ್ನು ಮುಗಿಸಿ.'),
+    'five_puzzles' => _t(
+      'Finish 5 different puzzles.',
+      '5 ಬೇರೆ ಪಝಲ್‌ಗಳನ್ನು ಮುಗಿಸಿ.',
+    ),
     'all_puzzles' => _t('Finish every puzzle.', 'ಎಲ್ಲ ಪಝಲ್‌ಗಳನ್ನು ಮುಗಿಸಿ.'),
-    'no_hints' => _t('Finish a puzzle without hints.', 'ಸುಳಿವಿಲ್ಲದೆ ಪಝಲ್ ಮುಗಿಸಿ.'),
+    'no_hints' => _t(
+      'Finish a puzzle without hints.',
+      'ಸುಳಿವಿಲ್ಲದೆ ಪಝಲ್ ಮುಗಿಸಿ.',
+    ),
     'expert' => _t('Finish an Expert puzzle.', 'ಪರಿಣತ ಮಟ್ಟದ ಪಝಲ್ ಮುಗಿಸಿ.'),
     'speedy' => _t(
       'Finish Medium or harder in under 5 minutes.',
       'ಮಧ್ಯಮ ಅಥವಾ ಕಠಿಣ ಪಝಲ್ 5 ನಿಮಿಷದೊಳಗೆ ಮುಗಿಸಿ.',
     ),
     'daily_1' => _t('Finish a daily puzzle.', 'ಒಂದು ದೈನಂದಿನ ಪಝಲ್ ಮುಗಿಸಿ.'),
-    'streak_3' => _t('Daily puzzles 3 days in a row.', 'ಸತತ 3 ದಿನ ದೈನಂದಿನ ಪಝಲ್.'),
-    'streak_7' => _t('Daily puzzles 7 days in a row.', 'ಸತತ 7 ದಿನ ದೈನಂದಿನ ಪಝಲ್.'),
+    'streak_3' => _t(
+      'Daily puzzles 3 days in a row.',
+      'ಸತತ 3 ದಿನ ದೈನಂದಿನ ಪಝಲ್.',
+    ),
+    'streak_7' => _t(
+      'Daily puzzles 7 days in a row.',
+      'ಸತತ 7 ದಿನ ದೈನಂದಿನ ಪಝಲ್.',
+    ),
     'stories_5' => _t('Read 5 stories.', '5 ಕಥೆಗಳನ್ನು ಓದಿ.'),
     'dress_up' => _t('Save a dress-up look.', 'ಒಂದು ವೇಷ ಉಳಿಸಿ.'),
     'event_badge' => _t(
@@ -193,7 +210,8 @@ class S {
   String get music => _t('Music', 'ಸಂಗೀತ');
   String get volume => _t('Volume', 'ಧ್ವನಿ ಮಟ್ಟ');
   String get haptics => _t('Vibration', 'ಕಂಪನ');
-  String get ghostDefault => _t('Show faint picture on the board', 'ಬೋರ್ಡಿನಲ್ಲಿ ಮಸುಕು ಚಿತ್ರ ತೋರಿಸಿ');
+  String get ghostDefault =>
+      _t('Show faint picture on the board', 'ಬೋರ್ಡಿನಲ್ಲಿ ಮಸುಕು ಚಿತ್ರ ತೋರಿಸಿ');
   String get reduceMotion => _t('Reduce motion', 'ಕಡಿಮೆ ಚಲನೆ');
   String get theme => _t('Theme', 'ಥೀಮ್');
   String get themeSystem => _t('System', 'ಸಿಸ್ಟಮ್');
@@ -207,12 +225,11 @@ class S {
   );
   String get delete => _t('Delete', 'ಅಳಿಸಿ');
   String get supportArtists => _t('Support the artists', 'ಕಲಾವಿದರಿಗೆ ಬೆಂಬಲ');
-  String get supportUnavailable => _t(
-    'Not available in this build.',
-    'ಈ ಆವೃತ್ತಿಯಲ್ಲಿ ಲಭ್ಯವಿಲ್ಲ.',
-  );
+  String get supportUnavailable =>
+      _t('Not available in this build.', 'ಈ ಆವೃತ್ತಿಯಲ್ಲಿ ಲಭ್ಯವಿಲ್ಲ.');
   String get about => _t('About', 'ಬಗ್ಗೆ');
-  String get licences => _t('Open-source licences', 'ಮುಕ್ತ ತಂತ್ರಾಂಶ ಪರವಾನಗಿಗಳು');
+  String get licences =>
+      _t('Open-source licences', 'ಮುಕ್ತ ತಂತ್ರಾಂಶ ಪರವಾನಗಿಗಳು');
   String get artCredits => _t('Art', 'ಚಿತ್ರಕಲೆ');
   String get contentCredits => _t('Stories and facts', 'ಕಥೆ ಮತ್ತು ಮಾಹಿತಿ');
   String get contentNote => _t(

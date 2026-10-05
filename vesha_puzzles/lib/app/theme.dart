@@ -19,7 +19,9 @@ ThemeData buildTheme(Brightness b) {
     brightness: b,
     secondary: VeshaColors.gold,
     tertiary: VeshaColors.green,
-    surface: b == Brightness.light ? VeshaColors.cream : const Color(0xFF1E1714),
+    surface: b == Brightness.light
+        ? VeshaColors.cream
+        : const Color(0xFF1E1714),
   );
   return ThemeData(
     useMaterial3: true,
@@ -45,7 +47,8 @@ ThemeData buildTheme(Brightness b) {
 }
 
 /// Board background and frame colours.
-({Color background, Color frame}) boardColors(Brightness b) => b == Brightness.light
+({Color background, Color frame}) boardColors(Brightness b) =>
+    b == Brightness.light
     ? (background: const Color(0xFFEFE3CC), frame: const Color(0xFFE2D2B4))
     : (background: const Color(0xFF15100E), frame: const Color(0xFF241C18));
 

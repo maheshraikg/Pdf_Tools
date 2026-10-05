@@ -18,13 +18,20 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(title: Text(s.settings)),
       body: ListView(
         children: [
-          ListTile(title: Text(s.language), leading: const Icon(Icons.translate)),
+          ListTile(
+            title: Text(s.language),
+            leading: const Icon(Icons.translate),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SegmentedButton<Lang>(
-              segments: [for (final l in Lang.values) ButtonSegment(value: l, label: Text(l.nativeName))],
+              segments: [
+                for (final l in Lang.values)
+                  ButtonSegment(value: l, label: Text(l.nativeName)),
+              ],
               selected: {st.lang},
-              onSelectionChanged: (v) => app.updateSettings((x) => x.lang = v.first),
+              onSelectionChanged: (v) =>
+                  app.updateSettings((x) => x.lang = v.first),
             ),
           ),
           const SizedBox(height: 8),
@@ -72,17 +79,27 @@ class SettingsScreen extends StatelessWidget {
             value: st.guideTips,
             onChanged: (v) => app.updateSettings((x) => x.guideTips = v),
           ),
-          ListTile(leading: const Icon(Icons.palette_outlined), title: Text(s.theme)),
+          ListTile(
+            leading: const Icon(Icons.palette_outlined),
+            title: Text(s.theme),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SegmentedButton<ThemeMode>(
               segments: [
-                ButtonSegment(value: ThemeMode.system, label: Text(s.themeSystem)),
-                ButtonSegment(value: ThemeMode.light, label: Text(s.themeLight)),
+                ButtonSegment(
+                  value: ThemeMode.system,
+                  label: Text(s.themeSystem),
+                ),
+                ButtonSegment(
+                  value: ThemeMode.light,
+                  label: Text(s.themeLight),
+                ),
                 ButtonSegment(value: ThemeMode.dark, label: Text(s.themeDark)),
               ],
               selected: {st.themeMode},
-              onSelectionChanged: (v) => app.updateSettings((x) => x.themeMode = v.first),
+              onSelectionChanged: (v) =>
+                  app.updateSettings((x) => x.themeMode = v.first),
             ),
           ),
           const Divider(height: 32),
@@ -97,10 +114,14 @@ class SettingsScreen extends StatelessWidget {
             leading: const Icon(Icons.info_outline),
             title: Text(s.credits),
             subtitle: Text(s.privacy),
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CreditsScreen())),
+            onTap: () => Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const CreditsScreen())),
           ),
           ListTile(
-            leading: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
+            leading: Icon(
+              Icons.delete_outline,
+              color: Theme.of(context).colorScheme.error,
+            ),
             title: Text(s.resetProgress),
             onTap: () async {
               final ok = await showDialog<bool>(
@@ -108,8 +129,14 @@ class SettingsScreen extends StatelessWidget {
                 builder: (ctx) => AlertDialog(
                   content: Text(s.resetConfirm),
                   actions: [
-                    TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(s.cancel)),
-                    FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(s.delete)),
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: Text(s.cancel),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: Text(s.delete),
+                    ),
                   ],
                 ),
               );

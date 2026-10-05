@@ -61,6 +61,26 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  # Art packs, content and sounds. Replace files in place; see docs/ART_GUIDE.md.
+  assets:
+    - assets/packs/
+    - assets/packs/yakshagana/
+    - assets/packs/yakshagana/images/
+    - assets/packs/karavali/
+    - assets/packs/karavali/images/
+    - assets/content/
+    - assets/dressup/
+    - assets/dressup/layers/
+    - assets/dressup/layers/face/
+    - assets/dressup/layers/costume/
+    - assets/dressup/layers/chest/
+    - assets/dressup/layers/shoulders/
+    - assets/dressup/layers/ears/
+    - assets/dressup/layers/crown/
+    - assets/dressup/layers/prop/
+    - assets/guide/
+    - assets/audio/
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

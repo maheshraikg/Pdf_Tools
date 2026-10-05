@@ -1,0 +1,121 @@
+{
+  "events": [
+    {
+      "id": "navaratri_pili",
+      "title": {
+        "en": "Navaratri: Pili Vesha",
+        "kn": "ನವರಾತ್ರಿ: ಹುಲಿ ವೇಷ",
+        "tcy": "ನವರಾತ್ರಿ: ಪಿಲಿ ವೇಷ"
+      },
+      "blurb": {
+        "en": "The tigers are dancing in the streets! Finish the featured puzzles for a festival badge.",
+        "kn": "ಬೀದಿಗಳಲ್ಲಿ ಹುಲಿಗಳ ಕುಣಿತ! ವಿಶೇಷ ಪಝಲ್ ಮುಗಿಸಿ ಹಬ್ಬದ ಬ್ಯಾಡ್ಜ್ ಪಡೆಯಿರಿ."
+      },
+      "windows": [
+        {
+          "from": "2026-10-11",
+          "to": "2026-10-20"
+        },
+        {
+          "from": "2027-09-30",
+          "to": "2027-10-09"
+        }
+      ],
+      "featured": [
+        "c01_pili_vesha",
+        "y02_bannada_vesha"
+      ],
+      "review": {
+        "status": "pending",
+        "notes": "Dates = Navaratri begins → Vijayadashami for Mangaluru, from tulu_panchanga/docs/csv (computed, priest check pending)."
+      }
+    },
+    {
+      "id": "deepavali",
+      "title": {
+        "en": "Deepavali lights",
+        "kn": "ದೀಪಾವಳಿ ಬೆಳಕು"
+      },
+      "blurb": {
+        "en": "Lamps everywhere! The green-room lamp puzzle is featured this week.",
+        "kn": "ಎಲ್ಲೆಡೆ ದೀಪಗಳು! ಈ ವಾರ ಚೌಕಿಯ ದೀಪದ ಪಝಲ್ ವಿಶೇಷ."
+      },
+      "windows": [
+        {
+          "from": "2026-11-07",
+          "to": "2026-11-11"
+        },
+        {
+          "from": "2027-10-27",
+          "to": "2027-10-31"
+        }
+      ],
+      "featured": [
+        "y06_chowki"
+      ],
+      "review": {
+        "status": "pending",
+        "notes": "Window built around Naraka Chaturdashi / Deepavali Amavasya / Bali Padyami from tulu_panchanga CSVs."
+      }
+    },
+    {
+      "id": "yakshagana_season",
+      "title": {
+        "en": "Yakshagana season opens",
+        "kn": "ಯಕ್ಷಗಾನ ತಿರುಗಾಟ ಆರಂಭ"
+      },
+      "blurb": {
+        "en": "Many melas begin their touring season after Deepavali. Play the king and the musicians!",
+        "kn": "ದೀಪಾವಳಿಯ ನಂತರ ಅನೇಕ ಮೇಳಗಳ ತಿರುಗಾಟ ಆರಂಭ. ರಾಜ ಮತ್ತು ಹಿಮ್ಮೇಳದ ಪಝಲ್ ಆಡಿ!"
+      },
+      "windows": [
+        {
+          "from": "2026-11-12",
+          "to": "2026-11-30"
+        },
+        {
+          "from": "2027-11-01",
+          "to": "2027-11-21"
+        }
+      ],
+      "featured": [
+        "y01_raja_vesha",
+        "y05_himmela"
+      ],
+      "review": {
+        "status": "pending",
+        "notes": "Season start varies by mela; confirm wording and window with a Yakshagana artist."
+      }
+    },
+    {
+      "id": "bisu",
+      "title": {
+        "en": "Bisu – Tulu New Year",
+        "kn": "ಬಿಸು – ತುಳು ಹೊಸ ವರ್ಷ",
+        "tcy": "ಬಿಸು ಪರ್ಬ"
+      },
+      "blurb": {
+        "en": "Happy Bisu! Mallige and the temple car are featured this week.",
+        "kn": "ಬಿಸು ಹಬ್ಬದ ಶುಭಾಶಯ! ಈ ವಾರ ಮಲ್ಲಿಗೆ ಮತ್ತು ರಥೋತ್ಸವ ಪಝಲ್ ವಿಶೇಷ."
+      },
+      "windows": [
+        {
+          "from": "2026-04-14",
+          "to": "2026-04-20"
+        },
+        {
+          "from": "2027-04-14",
+          "to": "2027-04-20"
+        }
+      ],
+      "featured": [
+        "c04_mallige",
+        "c02_rathotsava"
+      ],
+      "review": {
+        "status": "pending",
+        "notes": "Bisu = Mesha sankramana day (Paggu 1) from tulu_panchanga CSVs; check Tulu greeting text."
+      }
+    }
+  ]
+}

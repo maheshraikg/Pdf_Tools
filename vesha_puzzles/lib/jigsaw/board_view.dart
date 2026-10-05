@@ -1,6 +1,7 @@
 /// Board canvas (drag, pinch-zoom, pan, tray drops) and the piece tray.
 library;
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -37,6 +38,7 @@ class _JigsawBoardViewState extends State<JigsawBoardView>
     duration: const Duration(milliseconds: 700),
   );
   Offset? _doubleTapAt;
+  Timer? _pulseTimer;
 
   JigsawController get c => widget.controller;
 
@@ -58,7 +60,8 @@ class _JigsawBoardViewState extends State<JigsawBoardView>
   void _onController() {
     if (c.highlightPiece != null && !_pulse.isAnimating) {
       _pulse.repeat(reverse: true);
-      Future.delayed(const Duration(milliseconds: 2100), () {
+      _pulseTimer?.cancel();
+      _pulseTimer = Timer(const Duration(milliseconds: 2100), () {
         if (!mounted) return;
         _pulse.stop();
         c.clearHighlight();
@@ -69,6 +72,7 @@ class _JigsawBoardViewState extends State<JigsawBoardView>
   @override
   void dispose() {
     c.removeListener(_onController);
+    _pulseTimer?.cancel();
     _pulse.dispose();
     super.dispose();
   }
@@ -176,7 +180,12 @@ class _BoardPainter extends CustomPainter {
     if (c.showGhost) {
       canvas.drawImageRect(
         c.image,
-        Rect.fromLTWH(0, 0, c.image.width.toDouble(), c.image.height.toDouble()),
+        Rect.fromLTWH(
+          0,
+          0,
+          c.image.width.toDouble(),
+          c.image.height.toDouble(),
+        ),
         frame,
         Paint()
           ..color = const Color(0x4DFFFFFF)
@@ -194,16 +203,29 @@ class _BoardPainter extends CustomPainter {
     if (c.cache.isReady) {
       final local = c.cache.localRect;
       final shadow = Paint()
-        ..colorFilter = const ColorFilter.mode(Color(0x55000000), BlendMode.srcIn);
+        ..colorFilter = const ColorFilter.mode(
+          Color(0x55000000),
+          BlendMode.srcIn,
+        );
       final paint = Paint()..filterQuality = FilterQuality.medium;
       for (final g in b.groupsBottomToTop) {
         final lifting = g.id == c.draggingGroup;
         for (final id in g.pieces) {
           final img = c.cache[id]!;
-          final src = Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble());
+          final src = Rect.fromLTWH(
+            0,
+            0,
+            img.width.toDouble(),
+            img.height.toDouble(),
+          );
           final dst = local.shift(b.positionOf(id));
           if (lifting) {
-            canvas.drawImageRect(img, src, dst.shift(Offset(4, 6) / c.scale), shadow);
+            canvas.drawImageRect(
+              img,
+              src,
+              dst.shift(Offset(4, 6) / c.scale),
+              shadow,
+            );
           }
           canvas.drawImageRect(img, src, dst, paint);
         }
@@ -285,7 +307,11 @@ class _TrayPiece extends StatelessWidget {
     final thumb = Center(
       child: SizedBox.square(
         dimension: size,
-        child: RawImage(image: img, fit: BoxFit.contain, filterQuality: FilterQuality.medium),
+        child: RawImage(
+          image: img,
+          fit: BoxFit.contain,
+          filterQuality: FilterQuality.medium,
+        ),
       ),
     );
     final r = c.cache.localRect;

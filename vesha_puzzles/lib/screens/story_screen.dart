@@ -6,10 +6,15 @@ import '../monetization/flags.dart';
 import '../packs/content.dart';
 import '../widgets/vesha_guide.dart';
 
-Future<void> openStory(BuildContext context, Story story, {PuzzleDef? puzzle}) =>
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => StoryScreen(story: story, puzzle: puzzle)),
-    );
+Future<void> openStory(
+  BuildContext context,
+  Story story, {
+  PuzzleDef? puzzle,
+}) => Navigator.of(context).push(
+  MaterialPageRoute(
+    builder: (_) => StoryScreen(story: story, puzzle: puzzle),
+  ),
+);
 
 class StoryScreen extends StatefulWidget {
   const StoryScreen({super.key, required this.story, this.puzzle});
@@ -31,7 +36,11 @@ class _StoryScreenState extends State<StoryScreen> {
       if (fresh.isNotEmpty) {
         final s = S.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${s.unlockedAchievement}: ${fresh.map(s.achievementTitle).join(', ')}')),
+          SnackBar(
+            content: Text(
+              '${s.unlockedAchievement}: ${fresh.map(s.achievementTitle).join(', ')}',
+            ),
+          ),
         );
       }
     });
@@ -55,7 +64,11 @@ class _StoryScreenState extends State<StoryScreen> {
           if (widget.puzzle != null)
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: Image.asset(widget.puzzle!.image, fit: BoxFit.cover, cacheWidth: 1080),
+              child: Image.asset(
+                widget.puzzle!.image,
+                fit: BoxFit.cover,
+                cacheWidth: 1080,
+              ),
             ),
           const SizedBox(height: 16),
           Text(story.title.of(lang), style: t.headlineSmall),
@@ -64,9 +77,18 @@ class _StoryScreenState extends State<StoryScreen> {
               padding: const EdgeInsets.only(top: 8),
               child: Row(
                 children: [
-                  Icon(Icons.rate_review_outlined, size: 18, color: scheme.error),
+                  Icon(
+                    Icons.rate_review_outlined,
+                    size: 18,
+                    color: scheme.error,
+                  ),
                   const SizedBox(width: 6),
-                  Flexible(child: Text(s.underReview, style: t.labelMedium?.copyWith(color: scheme.error))),
+                  Flexible(
+                    child: Text(
+                      s.underReview,
+                      style: t.labelMedium?.copyWith(color: scheme.error),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -98,7 +120,13 @@ class _StoryScreenState extends State<StoryScreen> {
           ],
           const SizedBox(height: 16),
           if (app.settings.guideTips)
-            VeshaGuide(line: VeshaGuide.pick(app.content, 'story.', salt: story.id.hashCode)),
+            VeshaGuide(
+              line: VeshaGuide.pick(
+                app.content,
+                'story.',
+                salt: story.id.hashCode,
+              ),
+            ),
         ],
       ),
     );

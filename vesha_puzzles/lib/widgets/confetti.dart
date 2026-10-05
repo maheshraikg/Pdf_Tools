@@ -6,7 +6,11 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class Confetti extends StatefulWidget {
-  const Confetti({super.key, this.count = 90, this.duration = const Duration(milliseconds: 2600)});
+  const Confetti({
+    super.key,
+    this.count = 90,
+    this.duration = const Duration(milliseconds: 2600),
+  });
   final int count;
   final Duration duration;
 
@@ -37,8 +41,12 @@ class _Bit {
   ];
 }
 
-class _ConfettiState extends State<Confetti> with SingleTickerProviderStateMixin {
-  late final AnimationController _c = AnimationController(vsync: this, duration: widget.duration);
+class _ConfettiState extends State<Confetti>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: widget.duration,
+  );
   late final List<_Bit> _bits;
 
   @override
@@ -57,9 +65,13 @@ class _ConfettiState extends State<Confetti> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).disableAnimations) return const SizedBox.shrink();
+    if (MediaQuery.of(context).disableAnimations)
+      return const SizedBox.shrink();
     return IgnorePointer(
-      child: CustomPaint(painter: _ConfettiPainter(_c, _bits), size: Size.infinite),
+      child: CustomPaint(
+        painter: _ConfettiPainter(_c, _bits),
+        size: Size.infinite,
+      ),
     );
   }
 }
@@ -76,15 +88,30 @@ class _ConfettiPainter extends CustomPainter {
       final k = ((t.value - b.delay) / (1 - b.delay)).clamp(0.0, 1.0);
       if (k <= 0 || k >= 1) continue;
       final y = -20 + k * b.speed * (size.height + 40) * 1.2;
-      final x = (b.x + b.drift * k + 0.02 * math.sin(k * 12 + b.x * 9)) * size.width;
+      final x =
+          (b.x + b.drift * k + 0.02 * math.sin(k * 12 + b.x * 9)) * size.width;
       p.color = b.color.withValues(alpha: k > 0.8 ? (1 - k) * 5 : 1);
       canvas.save();
       canvas.translate(x, y);
       canvas.rotate(b.spin * k);
       if (b.petal) {
-        canvas.drawOval(Rect.fromCenter(center: Offset.zero, width: b.size, height: b.size * 1.6), p);
+        canvas.drawOval(
+          Rect.fromCenter(
+            center: Offset.zero,
+            width: b.size,
+            height: b.size * 1.6,
+          ),
+          p,
+        );
       } else {
-        canvas.drawRect(Rect.fromCenter(center: Offset.zero, width: b.size, height: b.size * 0.5), p);
+        canvas.drawRect(
+          Rect.fromCenter(
+            center: Offset.zero,
+            width: b.size,
+            height: b.size * 0.5,
+          ),
+          p,
+        );
       }
       canvas.restore();
     }

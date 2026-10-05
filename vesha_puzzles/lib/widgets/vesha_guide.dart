@@ -55,7 +55,10 @@ class VeshaGuide extends StatelessWidget {
             const SizedBox(width: 8),
             Flexible(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
                 margin: EdgeInsets.only(bottom: size * 0.25),
                 decoration: BoxDecoration(
                   color: scheme.secondaryContainer,
@@ -70,7 +73,10 @@ class VeshaGuide extends StatelessWidget {
                   l.text.of(app.settings.lang),
                   maxLines: compact ? 3 : null,
                   overflow: compact ? TextOverflow.ellipsis : null,
-                  style: TextStyle(color: scheme.onSecondaryContainer, height: 1.3),
+                  style: TextStyle(
+                    color: scheme.onSecondaryContainer,
+                    height: 1.3,
+                  ),
                 ),
               ),
             ),
@@ -94,11 +100,23 @@ class _FallbackVesha extends CustomPainter {
     final crown = Paint()..color = const Color(0xFFE0A100);
     for (var i = 0; i < 9; i++) {
       final a = math.pi + i * math.pi / 8;
-      canvas.drawCircle(c + Offset(math.cos(a), math.sin(a)) * r * 1.35, r * 0.28, crown);
+      canvas.drawCircle(
+        c + Offset(math.cos(a), math.sin(a)) * r * 1.35,
+        r * 0.28,
+        crown,
+      );
     }
     canvas.drawCircle(c, r, Paint()..color = const Color(0xFFF2B98A));
-    canvas.drawCircle(c + Offset(-r * 0.35, -r * 0.1), r * 0.1, Paint()..color = Colors.black);
-    canvas.drawCircle(c + Offset(r * 0.35, -r * 0.1), r * 0.1, Paint()..color = Colors.black);
+    canvas.drawCircle(
+      c + Offset(-r * 0.35, -r * 0.1),
+      r * 0.1,
+      Paint()..color = Colors.black,
+    );
+    canvas.drawCircle(
+      c + Offset(r * 0.35, -r * 0.1),
+      r * 0.1,
+      Paint()..color = Colors.black,
+    );
     canvas.drawArc(
       Rect.fromCircle(center: c + Offset(0, r * 0.2), radius: r * 0.4),
       0.2,

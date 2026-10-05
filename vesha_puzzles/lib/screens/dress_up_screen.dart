@@ -38,11 +38,15 @@ class _DressUpScreenState extends State<DressUpScreen> {
     try {
       final raw = app.store.getString(_storeKey);
       if (raw != null) {
-        (jsonDecode(raw) as Map).forEach((k, v) => _choice['$k'] = v as String?);
+        (jsonDecode(raw) as Map).forEach(
+          (k, v) => _choice['$k'] = v as String?,
+        );
       }
     } catch (_) {}
     for (final slot in def.slots) {
-      if (!_choice.containsKey(slot.id) && !slot.optional && slot.options.isNotEmpty) {
+      if (!_choice.containsKey(slot.id) &&
+          !slot.optional &&
+          slot.options.isNotEmpty) {
         _choice[slot.id] = slot.options.first.id;
       }
     }
@@ -61,7 +65,9 @@ class _DressUpScreenState extends State<DressUpScreen> {
       for (final slot in def.slots) {
         final opts = slot.options.where(app.optionUnlocked).toList();
         if (opts.isEmpty) continue;
-        _choice[slot.id] = slot.optional && r.nextInt(5) == 0 ? null : opts[r.nextInt(opts.length)].id;
+        _choice[slot.id] = slot.optional && r.nextInt(5) == 0
+            ? null
+            : opts[r.nextInt(opts.length)].id;
       }
     });
     app.store.setString(_storeKey, jsonEncode(_choice));
@@ -72,14 +78,16 @@ class _DressUpScreenState extends State<DressUpScreen> {
     setState(() {
       _choice.clear();
       for (final slot in def.slots) {
-        if (!slot.optional && slot.options.isNotEmpty) _choice[slot.id] = slot.options.first.id;
+        if (!slot.optional && slot.options.isNotEmpty)
+          _choice[slot.id] = slot.options.first.id;
       }
     });
     app.store.remove(_storeKey);
   }
 
   Future<ui.Image?> _capture() async {
-    final b = _canvasKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+    final b =
+        _canvasKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
     return b?.toImage(pixelRatio: 3);
   }
 
@@ -90,7 +98,11 @@ class _DressUpScreenState extends State<DressUpScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          [s.lookSaved, if (fresh.isNotEmpty) '${s.unlockedAchievement}: ${fresh.map(s.achievementTitle).join(', ')}'].join(' '),
+          [
+            s.lookSaved,
+            if (fresh.isNotEmpty)
+              '${s.unlockedAchievement}: ${fresh.map(s.achievementTitle).join(', ')}',
+          ].join(' '),
         ),
         action: SnackBarAction(
           label: s.share,
@@ -113,7 +125,9 @@ class _DressUpScreenState extends State<DressUpScreen> {
     final lang = app.settings.lang;
     final def = app.content.dressUp!;
     final slot = def.slots.where((x) => x.id == _slot).firstOrNull;
-    final selected = slot?.options.where((o) => o.id == _choice[slot.id]).firstOrNull;
+    final selected = slot?.options
+        .where((o) => o.id == _choice[slot.id])
+        .firstOrNull;
     final scheme = Theme.of(context).colorScheme;
 
     final layers = <String>[
@@ -126,9 +140,21 @@ class _DressUpScreenState extends State<DressUpScreen> {
       appBar: AppBar(
         title: Text(s.dressUp),
         actions: [
-          IconButton(tooltip: s.surprise, icon: const Icon(Icons.casino_outlined), onPressed: () => _surprise(def, app)),
-          IconButton(tooltip: s.reset, icon: const Icon(Icons.restart_alt), onPressed: () => _reset(def, app)),
-          IconButton(tooltip: s.saveLook, icon: const Icon(Icons.bookmark_add_outlined), onPressed: () => _saveLook(app, s)),
+          IconButton(
+            tooltip: s.surprise,
+            icon: const Icon(Icons.casino_outlined),
+            onPressed: () => _surprise(def, app),
+          ),
+          IconButton(
+            tooltip: s.reset,
+            icon: const Icon(Icons.restart_alt),
+            onPressed: () => _reset(def, app),
+          ),
+          IconButton(
+            tooltip: s.saveLook,
+            icon: const Icon(Icons.bookmark_add_outlined),
+            onPressed: () => _saveLook(app, s),
+          ),
         ],
       ),
       body: Column(
@@ -150,7 +176,12 @@ class _DressUpScreenState extends State<DressUpScreen> {
                       fit: StackFit.expand,
                       children: [
                         for (final l in layers)
-                          Image.asset(l, key: ValueKey(l), fit: BoxFit.contain, gaplessPlayback: true),
+                          Image.asset(
+                            l,
+                            key: ValueKey(l),
+                            fit: BoxFit.contain,
+                            gaplessPlayback: true,
+                          ),
                       ],
                     ),
                   ),
@@ -163,7 +194,9 @@ class _DressUpScreenState extends State<DressUpScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               child: Text(
                 selected.about.of(lang) +
-                    (kShowReviewFlags && def.review.pending ? '  (${s.underReview})' : ''),
+                    (kShowReviewFlags && def.review.pending
+                        ? '  (${s.underReview})'
+                        : ''),
                 style: Theme.of(context).textTheme.bodySmall,
                 textAlign: TextAlign.center,
               ),
@@ -171,7 +204,15 @@ class _DressUpScreenState extends State<DressUpScreen> {
           else if (app.settings.guideTips)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: VeshaGuide(compact: true, size: 44, line: VeshaGuide.pick(app.content, 'dress.', salt: _choice.length)),
+              child: VeshaGuide(
+                compact: true,
+                size: 44,
+                line: VeshaGuide.pick(
+                  app.content,
+                  'dress.',
+                  salt: _choice.length,
+                ),
+              ),
             ),
           SizedBox(
             height: 48,
@@ -211,7 +252,9 @@ class _DressUpScreenState extends State<DressUpScreen> {
                       Builder(
                         builder: (context) {
                           final unlocked = app.optionUnlocked(o);
-                          final needed = o.unlockPuzzle == null ? null : app.content.puzzle(o.unlockPuzzle!);
+                          final needed = o.unlockPuzzle == null
+                              ? null
+                              : app.content.puzzle(o.unlockPuzzle!);
                           return _OptionCard(
                             label: o.name.of(lang),
                             selected: _choice[slot.id] == o.id,
@@ -219,11 +262,21 @@ class _DressUpScreenState extends State<DressUpScreen> {
                             onTap: unlocked
                                 ? () => _set(slot.id, o.id)
                                 : () => ScaffoldMessenger.of(context)
-                                  ..hideCurrentSnackBar()
-                                  ..showSnackBar(
-                                    SnackBar(content: Text(s.unlockBy(needed?.title.of(lang) ?? '?'))),
-                                  ),
-                            child: Image.asset(o.image!, fit: BoxFit.contain, cacheWidth: 240),
+                                    ..hideCurrentSnackBar()
+                                    ..showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          s.unlockBy(
+                                            needed?.title.of(lang) ?? '?',
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                            child: Image.asset(
+                              o.image!,
+                              fit: BoxFit.contain,
+                              cacheWidth: 240,
+                            ),
                           );
                         },
                       ),
@@ -269,7 +322,10 @@ class _OptionCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: scheme.surfaceContainerHigh,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: selected ? scheme.primary : Colors.transparent, width: 3),
+              border: Border.all(
+                color: selected ? scheme.primary : Colors.transparent,
+                width: 3,
+              ),
             ),
             child: Column(
               children: [
@@ -277,14 +333,24 @@ class _OptionCard extends StatelessWidget {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Padding(padding: const EdgeInsets.all(4), child: Opacity(opacity: locked ? 0.3 : 1, child: child)),
-                      if (locked) const Center(child: Icon(Icons.lock, size: 28)),
+                      Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Opacity(opacity: locked ? 0.3 : 1, child: child),
+                      ),
+                      if (locked)
+                        const Center(child: Icon(Icons.lock, size: 28)),
                     ],
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
-                  child: Text(label, maxLines: 2, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11)),
+                  child: Text(
+                    label,
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 11),
+                  ),
                 ),
               ],
             ),

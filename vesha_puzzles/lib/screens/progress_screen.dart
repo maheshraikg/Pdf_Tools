@@ -36,14 +36,20 @@ class ProgressScreen extends StatelessWidget {
     Widget stat(String label, String value, IconData icon) => Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: scheme.primary),
-            const SizedBox(height: 4),
-            Text(value, style: Theme.of(context).textTheme.titleLarge),
-            Text(label, textAlign: TextAlign.center, style: Theme.of(context).textTheme.labelSmall),
-          ],
+        child: FittedBox(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: scheme.primary),
+              const SizedBox(height: 4),
+              Text(value, style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -59,8 +65,16 @@ class ProgressScreen extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             childAspectRatio: 1.05,
             children: [
-              stat(s.completedPuzzles, '${p.distinctCompleted}/$total', Icons.extension),
-              stat(s.currentStreak, '${p.dailyStreak(today)}', Icons.local_fire_department),
+              stat(
+                s.completedPuzzles,
+                '${p.distinctCompleted}/$total',
+                Icons.extension,
+              ),
+              stat(
+                s.currentStreak,
+                '${p.dailyStreak(today)}',
+                Icons.local_fire_department,
+              ),
               stat(s.bestStreak, '${p.bestDailyStreak()}', Icons.whatshot),
               stat(s.storiesRead, '${p.storiesRead.length}', Icons.menu_book),
               stat(s.totalHints, '${p.hintsUsed}', Icons.lightbulb_outline),
@@ -81,8 +95,13 @@ class ProgressScreen extends StatelessWidget {
                 return Card(
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: got ? scheme.secondary : scheme.surfaceContainerHighest,
-                      child: Icon(_icons[a.icon] ?? Icons.emoji_events, color: got ? Colors.black : scheme.outline),
+                      backgroundColor: got
+                          ? scheme.secondary
+                          : scheme.surfaceContainerHighest,
+                      child: Icon(
+                        _icons[a.icon] ?? Icons.emoji_events,
+                        color: got ? Colors.black : scheme.outline,
+                      ),
                     ),
                     title: Text(s.achievementTitle(a.id, packName: packName)),
                     subtitle: Column(
@@ -91,11 +110,16 @@ class ProgressScreen extends StatelessWidget {
                         Text(s.achievementDesc(a.id, a.goal)),
                         if (!got && a.goal > 1) ...[
                           const SizedBox(height: 4),
-                          LinearProgressIndicator(value: v / a.goal, borderRadius: BorderRadius.circular(4)),
+                          LinearProgressIndicator(
+                            value: v / a.goal,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
                         ],
                       ],
                     ),
-                    trailing: got ? const Icon(Icons.check_circle, color: Colors.green) : Text('$v/${a.goal}'),
+                    trailing: got
+                        ? const Icon(Icons.check_circle, color: Colors.green)
+                        : Text('$v/${a.goal}'),
                   ),
                 );
               },

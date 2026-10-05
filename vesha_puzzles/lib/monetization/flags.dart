@@ -12,4 +12,7 @@ const bool kEnableAds = bool.fromEnvironment('ENABLE_ADS');
 const bool kEnableIap = bool.fromEnvironment('ENABLE_IAP');
 
 /// Shows expert-review badges on stories in release builds too.
-const bool kShowReviewFlags = bool.fromEnvironment('SHOW_REVIEW_FLAGS', defaultValue: true);
+const bool kShowReviewFlags = bool.fromEnvironment(
+  'SHOW_REVIEW_FLAGS',
+  defaultValue: true,
+);

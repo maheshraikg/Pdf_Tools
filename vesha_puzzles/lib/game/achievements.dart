@@ -17,19 +17,26 @@ class Achievement {
   /// Current count for [p].
   final int Function(Progress p, Content c, DateTime today) value;
 
-  bool unlocked(Progress p, Content c, DateTime today) => value(p, c, today) >= goal;
+  bool unlocked(Progress p, Content c, DateTime today) =>
+      value(p, c, today) >= goal;
 }
 
 int _packDone(Progress p, Content c, String packId) =>
     c.pack(packId)?.puzzles.where((z) => p.completed(z.id)).length ?? 0;
 
-int _packSize(Content c, String packId) => c.pack(packId)?.puzzles.length ?? 1 << 30;
+int _packSize(Content c, String packId) =>
+    c.pack(packId)?.puzzles.length ?? 1 << 30;
 
 /// All achievements, in display order. Goals that depend on content
 /// (whole packs) are computed so that they stay correct when packs grow.
 List<Achievement> achievementsFor(Content c) => [
   Achievement('first_puzzle', 'extension', 1, (p, _, _) => p.distinctCompleted),
-  Achievement('five_puzzles', 'collections', 5, (p, _, _) => p.distinctCompleted),
+  Achievement(
+    'five_puzzles',
+    'collections',
+    5,
+    (p, _, _) => p.distinctCompleted,
+  ),
   Achievement(
     'all_puzzles',
     'workspace_premium',
@@ -47,11 +54,26 @@ List<Achievement> achievementsFor(Content c) => [
   Achievement('expert', 'military_tech', 1, (p, _, _) => p.expertFinishes),
   Achievement('speedy', 'bolt', 1, (p, _, _) => p.fastFinishes),
   Achievement('daily_1', 'today', 1, (p, _, _) => p.dailyDone.length),
-  Achievement('streak_3', 'local_fire_department', 3, (p, _, _) => p.bestDailyStreak()),
+  Achievement(
+    'streak_3',
+    'local_fire_department',
+    3,
+    (p, _, _) => p.bestDailyStreak(),
+  ),
   Achievement('streak_7', 'whatshot', 7, (p, _, _) => p.bestDailyStreak()),
   Achievement('stories_5', 'menu_book', 5, (p, _, _) => p.storiesRead.length),
-  Achievement('dress_up', 'face_retouching_natural', 1, (p, _, _) => p.looksSaved),
-  Achievement('event_badge', 'celebration', 1, (p, _, _) => p.eventBadges.length),
+  Achievement(
+    'dress_up',
+    'face_retouching_natural',
+    1,
+    (p, _, _) => p.looksSaved,
+  ),
+  Achievement(
+    'event_badge',
+    'celebration',
+    1,
+    (p, _, _) => p.eventBadges.length,
+  ),
 ];
 
 /// Unlocks newly earned achievements in [p]; returns their ids.

@@ -38,15 +38,18 @@ class ContentLoader {
     // Packs.
     final index = await json('$root/packs/index.json');
     final packs = <ArtPack>[];
-    for (final id in (index is Map ? index['packs'] as List? : null) ?? const []) {
+    for (final id
+        in (index is Map ? index['packs'] as List? : null) ?? const []) {
       final dir = '$root/packs/$id';
       final raw = await json('$dir/pack.json');
       if (raw is! Map) continue;
       final puzzles = <PuzzleDef>[];
       for (final p in (raw['puzzles'] as List? ?? const []).cast<Map>()) {
-        final image = '$dir/${p['image']}';
+        final image = joinAsset(dir, '${p['image']}');
         if (!exists(image)) {
-          warnings.add('Pack $id: missing image $image (puzzle ${p['id']} skipped)');
+          warnings.add(
+            'Pack $id: missing image $image (puzzle ${p['id']} skipped)',
+          );
           continue;
         }
         puzzles.add(
@@ -61,14 +64,16 @@ class ContentLoader {
           ),
         );
       }
-      final cover = '$dir/${raw['cover'] ?? ''}';
+      final cover = joinAsset(dir, '${raw['cover'] ?? ''}');
       packs.add(
         ArtPack(
           id: '$id',
           version: (raw['version'] as num?)?.toInt() ?? 1,
           title: LText.fromJson(raw['title']),
           description: LText.fromJson(raw['description']),
-          cover: exists(cover) ? cover : (puzzles.isEmpty ? '' : puzzles.first.image),
+          cover: exists(cover)
+              ? cover
+              : (puzzles.isEmpty ? '' : puzzles.first.image),
           credits: Credits.fromJson(raw['credits']),
           placeholder: raw['placeholder'] == true,
           puzzles: puzzles,
@@ -79,8 +84,10 @@ class ContentLoader {
     // Stories.
     final storiesRaw = await json('$root/content/stories.json');
     final stories = <String, Story>{
-      for (final s in ((storiesRaw is Map ? storiesRaw['stories'] : null) as List? ?? const [])
-          .cast<Map>())
+      for (final s
+          in ((storiesRaw is Map ? storiesRaw['stories'] : null) as List? ??
+                  const [])
+              .cast<Map>())
         s['id'] as String: Story.fromJson(s),
     };
     for (final p in packs.expand((p) => p.puzzles)) {
@@ -98,7 +105,7 @@ class ContentLoader {
       for (final s in (d['slots'] as List? ?? const []).cast<Map>()) {
         final options = <DressOption>[];
         for (final o in (s['options'] as List? ?? const []).cast<Map>()) {
-          final img = '$dir/${o['image']}';
+          final img = joinAsset(dir, '${o['image']}');
           if (!exists(img)) {
             warnings.add('Dress-up: missing layer $img');
             continue;
@@ -123,7 +130,7 @@ class ContentLoader {
           ),
         );
       }
-      final base = '$dir/${d['base']}';
+      final base = joinAsset(dir, '${d['base']}');
       if (exists(base)) {
         dressUp = DressUpDef(
           base: base,
@@ -144,10 +151,16 @@ class ContentLoader {
     final images = <String, String>{};
     if (g is Map) {
       for (final l in (g['lines'] as List? ?? const []).cast<Map>()) {
-        lines.add(GuideLine(l['id'] as String, LText.fromJson(l['text']), (l['mood'] as String?) ?? 'idle'));
+        lines.add(
+          GuideLine(
+            l['id'] as String,
+            LText.fromJson(l['text']),
+            (l['mood'] as String?) ?? 'idle',
+          ),
+        );
       }
       for (final e in ((g['images'] as Map?) ?? const {}).entries) {
-        final path = '$root/guide/${e.value}';
+        final path = joinAsset('$root/guide', '${e.value}');
         if (exists(path)) {
           images['${e.key}'] = path;
         } else {
@@ -159,7 +172,9 @@ class ContentLoader {
     // Events.
     final ev = await json('$root/content/events.json');
     final events = <EventDef>[];
-    for (final e in ((ev is Map ? ev['events'] : null) as List? ?? const []).cast<Map>()) {
+    for (final e
+        in ((ev is Map ? ev['events'] : null) as List? ?? const [])
+            .cast<Map>()) {
       final windows = <(DateTime, DateTime)>[];
       for (final w in (e['windows'] as List? ?? const []).cast<Map>()) {
         final a = DateTime.tryParse('${w['from']}');
@@ -172,7 +187,9 @@ class ContentLoader {
           title: LText.fromJson(e['title']),
           blurb: LText.fromJson(e['blurb']),
           windows: windows,
-          featured: [for (final f in (e['featured'] as List? ?? const [])) '$f'],
+          featured: [
+            for (final f in (e['featured'] as List? ?? const [])) '$f',
+          ],
           review: Review.fromJson(e['review']),
         ),
       );
@@ -188,4 +205,19 @@ class ContentLoader {
       warnings: warnings,
     );
   }
+}
+
+/// Joins an asset directory and a relative path, resolving `.` and `..`
+/// so packs can share files (e.g. `../other_pack/images/x.jpg`).
+String joinAsset(String dir, String rel) {
+  final out = <String>[];
+  for (final part in '$dir/$rel'.split('/')) {
+    if (part.isEmpty || part == '.') continue;
+    if (part == '..') {
+      if (out.isNotEmpty) out.removeLast();
+    } else {
+      out.add(part);
+    }
+  }
+  return out.join('/');
 }
