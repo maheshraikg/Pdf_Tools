@@ -1,0 +1,65 @@
+[
+ {
+  "id": 55494,
+  "slug": "akshara-dasoha-daily-meal-calculator",
+  "link": "https://kspstadk.com/akshara-dasoha-daily-meal-calculator/",
+  "title": {
+   "rendered": "ನಿಮ್ಮ ಶಾಲೆಯ &#8216;ಅಕ್ಷರ ದಾಸೋಹ&#8217; ದಿನಸಿ ಲೆಕ್ಕಾಚಾರವನ್ನು ಈಗಲೇ ಸುಲಭವಾಗಿ ಪಡೆದುಕೊಳ್ಳಿ!"
+  },
+  "parent": 0
+ },
+ {
+  "id": 50200,
+  "slug": "home",
+  "link": "https://kspstadk.com/",
+  "title": {
+   "rendered": "HOME"
+  },
+  "parent": 0
+ },
+ {
+  "id": 5930,
+  "slug": "contact-us",
+  "link": "https://kspstadk.com/contact-us/",
+  "title": {
+   "rendered": "Contact Us"
+  },
+  "parent": 0
+ },
+ {
+  "id": 27,
+  "slug": "privacy-policy-2",
+  "link": "https://kspstadk.com/privacy-policy-2/",
+  "title": {
+   "rendered": "Privacy Policy"
+  },
+  "parent": 0
+ },
+ {
+  "id": 25,
+  "slug": "disclaimer",
+  "link": "https://kspstadk.com/disclaimer/",
+  "title": {
+   "rendered": "Disclaimer"
+  },
+  "parent": 0
+ },
+ {
+  "id": 23,
+  "slug": "copyright-policy",
+  "link": "https://kspstadk.com/copyright-policy/",
+  "title": {
+   "rendered": "Copyright Policy"
+  },
+  "parent": 0
+ },
+ {
+  "id": 18,
+  "slug": "about-us",
+  "link": "https://kspstadk.com/about-us/",
+  "title": {
+   "rendered": "About us"
+  },
+  "parent": 0
+ }
+]

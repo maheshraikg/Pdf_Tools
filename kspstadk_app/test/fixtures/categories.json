@@ -1,0 +1,848 @@
+[
+ {
+  "id": 1365,
+  "count": 2,
+  "description": "",
+  "link": "https://kspstadk.com/category/1-st-standard/",
+  "name": "1 ನೇ ತರಗತಿ",
+  "slug": "1-st-standard",
+  "parent": 0
+ },
+ {
+  "id": 286,
+  "count": 13,
+  "description": "",
+  "link": "https://kspstadk.com/category/10-th-standard/",
+  "name": "10 ನೇ ತರಗತಿ",
+  "slug": "10-th-standard",
+  "parent": 0
+ },
+ {
+  "id": 285,
+  "count": 12,
+  "description": "",
+  "link": "https://kspstadk.com/category/10th-standard/",
+  "name": "10TH STANDARD",
+  "slug": "10th-standard",
+  "parent": 0
+ },
+ {
+  "id": 1364,
+  "count": 2,
+  "description": "",
+  "link": "https://kspstadk.com/category/1st-standard/",
+  "name": "1ST STANDARD",
+  "slug": "1st-standard",
+  "parent": 0
+ },
+ {
+  "id": 1363,
+  "count": 0,
+  "description": "",
+  "link": "https://kspstadk.com/category/2-nd-standard/",
+  "name": "2 ನೇ ತರಗತಿ",
+  "slug": "2-nd-standard",
+  "parent": 0
+ },
+ {
+  "id": 1362,
+  "count": 0,
+  "description": "",
+  "link": "https://kspstadk.com/category/2nd-standard/",
+  "name": "2ND STANDARD",
+  "slug": "2nd-standard",
+  "parent": 0
+ },
+ {
+  "id": 1279,
+  "count": 4,
+  "description": "",
+  "link": "https://kspstadk.com/category/3rd-standard/",
+  "name": "3 ನೇ ತರಗತಿ",
+  "slug": "3rd-standard",
+  "parent": 0
+ },
+ {
+  "id": 1361,
+  "count": 0,
+  "description": "",
+  "link": "https://kspstadk.com/category/3rd-standard-2/",
+  "name": "3RD STANDARD",
+  "slug": "3rd-standard-2",
+  "parent": 0
+ },
+ {
+  "id": 409,
+  "count": 50,
+  "description": "",
+  "link": "https://kspstadk.com/category/4-th-standard/",
+  "name": "4 TH STANDARD",
+  "slug": "4-th-standard",
+  "parent": 0
+ },
+ {
+  "id": 408,
+  "count": 50,
+  "description": "",
+  "link": "https://kspstadk.com/category/4th-standard/",
+  "name": "4 ನೇ ತರಗತಿ",
+  "slug": "4th-standard",
+  "parent": 0
+ },
+ {
+  "id": 411,
+  "count": 44,
+  "description": "",
+  "link": "https://kspstadk.com/category/5-th-standard/",
+  "name": "5 TH STANDARD",
+  "slug": "5-th-standard",
+  "parent": 0
+ },
+ {
+  "id": 410,
+  "count": 44,
+  "description": "",
+  "link": "https://kspstadk.com/category/5th-standard/",
+  "name": "5 ನೇ ತರಗತಿ",
+  "slug": "5th-standard",
+  "parent": 0
+ },
+ {
+  "id": 1360,
+  "count": 19,
+  "description": "",
+  "link": "https://kspstadk.com/category/6-th-standard/",
+  "name": "6 ನೇ ತರಗತಿ",
+  "slug": "6-th-standard",
+  "parent": 0
+ },
+ {
+  "id": 1359,
+  "count": 19,
+  "description": "",
+  "link": "https://kspstadk.com/category/6th-standard/",
+  "name": "6TH STANDARD",
+  "slug": "6th-standard",
+  "parent": 0
+ },
+ {
+  "id": 473,
+  "count": 18,
+  "description": "",
+  "link": "https://kspstadk.com/category/7-th-standard/",
+  "name": "7 TH STANDARD",
+  "slug": "7-th-standard",
+  "parent": 0
+ },
+ {
+  "id": 474,
+  "count": 18,
+  "description": "",
+  "link": "https://kspstadk.com/category/7th-standard/",
+  "name": "7 ನೇ ತರಗತಿ",
+  "slug": "7th-standard",
+  "parent": 0
+ },
+ {
+  "id": 288,
+  "count": 11,
+  "description": "",
+  "link": "https://kspstadk.com/category/8-th-standard/",
+  "name": "8 ನೇ ತರಗತಿ",
+  "slug": "8-th-standard",
+  "parent": 0
+ },
+ {
+  "id": 287,
+  "count": 11,
+  "description": "",
+  "link": "https://kspstadk.com/category/8th-standard/",
+  "name": "8TH STANDARD",
+  "slug": "8th-standard",
+  "parent": 0
+ },
+ {
+  "id": 290,
+  "count": 12,
+  "description": "",
+  "link": "https://kspstadk.com/category/9-th-standard/",
+  "name": "9 ನೇ ತರಗತಿ",
+  "slug": "9-th-standard",
+  "parent": 0
+ },
+ {
+  "id": 289,
+  "count": 11,
+  "description": "",
+  "link": "https://kspstadk.com/category/9th-standard/",
+  "name": "9TH STANDARD",
+  "slug": "9th-standard",
+  "parent": 0
+ },
+ {
+  "id": 1282,
+  "count": 2,
+  "description": "",
+  "link": "https://kspstadk.com/category/class-3/",
+  "name": "Class 3",
+  "slug": "class-3",
+  "parent": 0
+ },
+ {
+  "id": 1306,
+  "count": 1,
+  "description": "",
+  "link": "https://kspstadk.com/category/class-4/",
+  "name": "Class 4",
+  "slug": "class-4",
+  "parent": 0
+ },
+ {
+  "id": 378,
+  "count": 1,
+  "description": "",
+  "link": "https://kspstadk.com/category/dictionary/",
+  "name": "DICTIONARY",
+  "slug": "dictionary",
+  "parent": 0
+ },
+ {
+  "id": 255,
+  "count": 19,
+  "description": "",
+  "link": "https://kspstadk.com/category/english/",
+  "name": "ENGLISH",
+  "slug": "english",
+  "parent": 0
+ },
+ {
+  "id": 1350,
+  "count": 21,
+  "description": "",
+  "link": "https://kspstadk.com/category/english-medium/",
+  "name": "ENGLISH MEDIUM",
+  "slug": "english-medium",
+  "parent": 0
+ },
+ {
+  "id": 1371,
+  "count": 4,
+  "description": "",
+  "link": "https://kspstadk.com/category/environmental-studies/",
+  "name": "ENVIRONMENTAL STUDIES",
+  "slug": "environmental-studies",
+  "parent": 0
+ },
+ {
+  "id": 1345,
+  "count": 0,
+  "description": "",
+  "link": "https://kspstadk.com/category/government-scheme/",
+  "name": "GOVERNMENT SCHEMES",
+  "slug": "government-scheme",
+  "parent": 0
+ },
+ {
+  "id": 1366,
+  "count": 7,
+  "description": "",
+  "link": "https://kspstadk.com/category/hindi/",
+  "name": "HINDI",
+  "slug": "hindi",
+  "parent": 0
+ },
+ {
+  "id": 8,
+  "count": 863,
+  "description": "",
+  "link": "https://kspstadk.com/category/information/",
+  "name": "INFORMATION",
+  "slug": "information",
+  "parent": 0
+ },
+ {
+  "id": 1353,
+  "count": 1,
+  "description": "",
+  "link": "https://kspstadk.com/category/job/",
+  "name": "JOB",
+  "slug": "job",
+  "parent": 0
+ },
+ {
+  "id": 584,
+  "count": 10,
+  "description": "",
+  "link": "https://kspstadk.com/category/kalika-chetarike/",
+  "name": "KALIKA CHETARIKE",
+  "slug": "kalika-chetarike",
+  "parent": 0
+ },
+ {
+  "id": 1357,
+  "count": 7,
+  "description": "",
+  "link": "https://kspstadk.com/category/kannada/",
+  "name": "KANNADA",
+  "slug": "kannada",
+  "parent": 0
+ },
+ {
+  "id": 1349,
+  "count": 20,
+  "description": "",
+  "link": "https://kspstadk.com/category/kannada-medium/",
+  "name": "KANNADA MEDIUM",
+  "slug": "kannada-medium",
+  "parent": 0
+ },
+ {
+  "id": 76,
+  "count": 3,
+  "description": "",
+  "link": "https://kspstadk.com/category/karnataka-textbooks/",
+  "name": "KARNATAKA TEXTBOOKS",
+  "slug": "karnataka-textbooks",
+  "parent": 0
+ },
+ {
+  "id": 10,
+  "count": 1569,
+  "description": "",
+  "link": "https://kspstadk.com/category/latest-news/",
+  "name": "LATEST NEWS",
+  "slug": "latest-news",
+  "parent": 0
+ },
+ {
+  "id": 1341,
+  "count": 89,
+  "description": "",
+  "link": "https://kspstadk.com/category/lba/",
+  "name": "LBA",
+  "slug": "lba",
+  "parent": 0
+ },
+ {
+  "id": 374,
+  "count": 2,
+  "description": "",
+  "link": "https://kspstadk.com/category/lesson-plans/",
+  "name": "LESSON PLANS",
+  "slug": "lesson-plans",
+  "parent": 0
+ },
+ {
+  "id": 349,
+  "count": 1,
+  "description": "",
+  "link": "https://kspstadk.com/category/magazine/",
+  "name": "MAGAZINE",
+  "slug": "magazine",
+  "parent": 0
+ },
+ {
+  "id": 1348,
+  "count": 16,
+  "description": "",
+  "link": "https://kspstadk.com/category/mathematics/",
+  "name": "MATHEMATICS",
+  "slug": "mathematics",
+  "parent": 0
+ },
+ {
+  "id": 282,
+  "count": 18,
+  "description": "",
+  "link": "https://kspstadk.com/category/maths/",
+  "name": "MATHS",
+  "slug": "maths",
+  "parent": 0
+ },
+ {
+  "id": 130,
+  "count": 4,
+  "description": "",
+  "link": "https://kspstadk.com/category/model-teachers/",
+  "name": "MODEL TEACHERS",
+  "slug": "model-teachers",
+  "parent": 0
+ },
+ {
+  "id": 490,
+  "count": 23,
+  "description": "",
+  "link": "https://kspstadk.com/category/mygov-quiz/",
+  "name": "MYGOV QUIZ",
+  "slug": "mygov-quiz",
+  "parent": 0
+ },
+ {
+  "id": 135,
+  "count": 6,
+  "description": "",
+  "link": "https://kspstadk.com/category/nali-kali/",
+  "name": "NALI KALI",
+  "slug": "nali-kali",
+  "parent": 0
+ },
+ {
+  "id": 1389,
+  "count": 1,
+  "description": "",
+  "link": "https://kspstadk.com/category/navodaya/",
+  "name": "NAVODAYA",
+  "slug": "navodaya",
+  "parent": 0
+ },
+ {
+  "id": 1,
+  "count": 591,
+  "description": "",
+  "link": "https://kspstadk.com/category/news/",
+  "name": "NEWS",
+  "slug": "news",
+  "parent": 0
+ },
+ {
+  "id": 413,
+  "count": 34,
+  "description": "",
+  "link": "https://kspstadk.com/category/odu-karnataka/",
+  "name": "ODU KARNATAKA",
+  "slug": "odu-karnataka",
+  "parent": 0
+ },
+ {
+  "id": 77,
+  "count": 9,
+  "description": "",
+  "link": "https://kspstadk.com/category/pdf-books/",
+  "name": "PDF BOOKS",
+  "slug": "pdf-books",
+  "parent": 0
+ },
+ {
+  "id": 66,
+  "count": 100,
+  "description": "",
+  "link": "https://kspstadk.com/category/pdf-materials/",
+  "name": "PDF MATERIALS",
+  "slug": "pdf-materials",
+  "parent": 0
+ },
+ {
+  "id": 1277,
+  "count": 2,
+  "description": "",
+  "link": "https://kspstadk.com/category/pdf-question-paper/",
+  "name": "PDF QUESTION PAPER",
+  "slug": "pdf-question-paper",
+  "parent": 0
+ },
+ {
+  "id": 644,
+  "count": 1,
+  "description": "",
+  "link": "https://kspstadk.com/category/qr-code/",
+  "name": "QR CODE",
+  "slug": "qr-code",
+  "parent": 0
+ },
+ {
+  "id": 1346,
+  "count": 0,
+  "description": "",
+  "link": "https://kspstadk.com/category/question-papers/",
+  "name": "QUESTION PAPERS",
+  "slug": "question-papers",
+  "parent": 0
+ },
+ {
+  "id": 444,
+  "count": 43,
+  "description": "",
+  "link": "https://kspstadk.com/category/quiz/",
+  "name": "QUIZ",
+  "slug": "quiz",
+  "parent": 0
+ },
+ {
+  "id": 243,
+  "count": 0,
+  "description": "",
+  "link": "https://kspstadk.com/category/recruitment/",
+  "name": "RECRUITMENT",
+  "slug": "recruitment",
+  "parent": 0
+ },
+ {
+  "id": 185,
+  "count": 0,
+  "description": "",
+  "link": "https://kspstadk.com/category/samveda/",
+  "name": "SAMVEDA",
+  "slug": "samveda",
+  "parent": 0
+ },
+ {
+  "id": 215,
+  "count": 11,
+  "description": "",
+  "link": "https://kspstadk.com/category/scholorship/",
+  "name": "SCHOLORSHIP",
+  "slug": "scholorship",
+  "parent": 0
+ },
+ {
+  "id": 468,
+  "count": 37,
+  "description": "",
+  "link": "https://kspstadk.com/category/science/",
+  "name": "SCIENCE",
+  "slug": "science",
+  "parent": 0
+ },
+ {
+  "id": 1368,
+  "count": 11,
+  "description": "",
+  "link": "https://kspstadk.com/category/social-science/",
+  "name": "SOCIAL SCIENCE",
+  "slug": "social-science",
+  "parent": 0
+ },
+ {
+  "id": 43,
+  "count": 127,
+  "description": "",
+  "link": "https://kspstadk.com/category/study-materials/",
+  "name": "STUDY MATERIALS",
+  "slug": "study-materials",
+  "parent": 0
+ },
+ {
+  "id": 391,
+  "count": 85,
+  "description": "",
+  "link": "https://kspstadk.com/category/teachers-articles/",
+  "name": "TEACHERS ARTICLES",
+  "slug": "teachers-articles",
+  "parent": 0
+ },
+ {
+  "id": 144,
+  "count": 0,
+  "description": "",
+  "link": "https://kspstadk.com/category/technology/",
+  "name": "TECHNOLOGY",
+  "slug": "technology",
+  "parent": 0
+ },
+ {
+  "id": 1552,
+  "count": 1,
+  "description": "",
+  "link": "https://kspstadk.com/category/text-book/",
+  "name": "TEXT BOOK",
+  "slug": "text-book",
+  "parent": 0
+ },
+ {
+  "id": 949,
+  "count": 40,
+  "description": "",
+  "link": "https://kspstadk.com/category/today-news-papers/",
+  "name": "TODAY NEWS PAPERS",
+  "slug": "today-news-papers",
+  "parent": 0
+ },
+ {
+  "id": 1536,
+  "count": 7,
+  "description": "",
+  "link": "https://kspstadk.com/category/tools/",
+  "name": "TOOLS",
+  "slug": "tools",
+  "parent": 0
+ },
+ {
+  "id": 3,
+  "count": 14,
+  "description": "",
+  "link": "https://kspstadk.com/category/union-activities/",
+  "name": "UNION ACTIVITIES",
+  "slug": "union-activities",
+  "parent": 0
+ },
+ {
+  "id": 145,
+  "count": 28,
+  "description": "",
+  "link": "https://kspstadk.com/category/video-information/",
+  "name": "VIDEO INFORMATION",
+  "slug": "video-information",
+  "parent": 0
+ },
+ {
+  "id": 89,
+  "count": 33,
+  "description": "",
+  "link": "https://kspstadk.com/category/video-lessons/",
+  "name": "VIDEO LESSONS",
+  "slug": "video-lessons",
+  "parent": 0
+ },
+ {
+  "id": 88,
+  "count": 0,
+  "description": "",
+  "link": "https://kspstadk.com/category/video-materials/",
+  "name": "VIDEO MATERIALS",
+  "slug": "video-materials",
+  "parent": 0
+ },
+ {
+  "id": 150,
+  "count": 4,
+  "description": "",
+  "link": "https://kspstadk.com/category/app/",
+  "name": "ಆ್ಯಪ್",
+  "slug": "app",
+  "parent": 0
+ },
+ {
+  "id": 1356,
+  "count": 13,
+  "description": "",
+  "link": "https://kspstadk.com/category/english-2/",
+  "name": "ಇಂಗ್ಲೀಷ್",
+  "slug": "english-2",
+  "parent": 0
+ },
+ {
+  "id": 1287,
+  "count": 22,
+  "description": "",
+  "link": "https://kspstadk.com/category/english-madyama/",
+  "name": "ಇಂಗ್ಲೀಷ್ ಮಾಧ್ಯಮ",
+  "slug": "english-madyama",
+  "parent": 0
+ },
+ {
+  "id": 1354,
+  "count": 0,
+  "description": "",
+  "link": "https://kspstadk.com/category/udyoga/",
+  "name": "ಉದ್ಯೋಗ",
+  "slug": "udyoga",
+  "parent": 0
+ },
+ {
+  "id": 412,
+  "count": 33,
+  "description": "",
+  "link": "https://kspstadk.com/category/odukarnataka/",
+  "name": "ಓದು ಕರ್ನಾಟಕ",
+  "slug": "odukarnataka",
+  "parent": 0
+ },
+ {
+  "id": 1358,
+  "count": 7,
+  "description": "",
+  "link": "https://kspstadk.com/category/kannada-2/",
+  "name": "ಕನ್ನಡ",
+  "slug": "kannada-2",
+  "parent": 0
+ },
+ {
+  "id": 1286,
+  "count": 22,
+  "description": "",
+  "link": "https://kspstadk.com/category/kannada-madyama/",
+  "name": "ಕನ್ನಡ ಮಾಧ್ಯಮ",
+  "slug": "kannada-madyama",
+  "parent": 0
+ },
+ {
+  "id": 585,
+  "count": 10,
+  "description": "",
+  "link": "https://kspstadk.com/category/kalika-chetharike/",
+  "name": "ಕಲಿಕಾ ಚೇತರಿಕೆ",
+  "slug": "kalika-chetharike",
+  "parent": 0
+ },
+ {
+  "id": 417,
+  "count": 14,
+  "description": "",
+  "link": "https://kspstadk.com/category/kruthi-parichaya/",
+  "name": "ಕೃತಿ ಪರಿಚಯ",
+  "slug": "kruthi-parichaya",
+  "parent": 0
+ },
+ {
+  "id": 283,
+  "count": 18,
+  "description": "",
+  "link": "https://kspstadk.com/category/ganitha/",
+  "name": "ಗಣಿತ",
+  "slug": "ganitha",
+  "parent": 0
+ },
+ {
+  "id": 22,
+  "count": 29,
+  "description": "",
+  "link": "https://kspstadk.com/category/grubhyo-namaha/",
+  "name": "ಗುರುಭ್ಯೋ ನಮಃ",
+  "slug": "grubhyo-namaha",
+  "parent": 0
+ },
+ {
+  "id": 32,
+  "count": 9,
+  "description": "",
+  "link": "https://kspstadk.com/category/guruseve/",
+  "name": "ಗುರುಸೇವೆ",
+  "slug": "guruseve",
+  "parent": 0
+ },
+ {
+  "id": 134,
+  "count": 5,
+  "description": "",
+  "link": "https://kspstadk.com/category/nalikali/",
+  "name": "ನಲಿ ಕಲಿ",
+  "slug": "nalikali",
+  "parent": 0
+ },
+ {
+  "id": 1352,
+  "count": 0,
+  "description": "",
+  "link": "https://kspstadk.com/category/nemakathi/",
+  "name": "ನೇಮಕಾತಿ",
+  "slug": "nemakathi",
+  "parent": 0
+ },
+ {
+  "id": 1370,
+  "count": 6,
+  "description": "",
+  "link": "https://kspstadk.com/category/evs/",
+  "name": "ಪರಿಸರ ಅಧ್ಯಯನ",
+  "slug": "evs",
+  "parent": 0
+ },
+ {
+  "id": 1347,
+  "count": 0,
+  "description": "",
+  "link": "https://kspstadk.com/category/question-papers-2/",
+  "name": "ಪ್ರಶ್ನೆ ಪತ್ರಿಕೆ",
+  "slug": "question-papers-2",
+  "parent": 0
+ },
+ {
+  "id": 1275,
+  "count": 9,
+  "description": "",
+  "link": "https://kspstadk.com/category/question-paper-fa-sa/",
+  "name": "ಪ್ರಶ್ನೆಪತ್ರಿಕೆ (FA, SA)",
+  "slug": "question-paper-fa-sa",
+  "parent": 0
+ },
+ {
+  "id": 1355,
+  "count": 1,
+  "description": "",
+  "link": "https://kspstadk.com/category/rasaprashne/",
+  "name": "ರಸಪ್ರಶ್ನೆ",
+  "slug": "rasaprashne",
+  "parent": 0
+ },
+ {
+  "id": 469,
+  "count": 39,
+  "description": "",
+  "link": "https://kspstadk.com/category/vijnana/",
+  "name": "ವಿಜ್ಞಾನ",
+  "slug": "vijnana",
+  "parent": 0
+ },
+ {
+  "id": 143,
+  "count": 50,
+  "description": "",
+  "link": "https://kspstadk.com/category/video-info/",
+  "name": "ವಿಡಿಯೋ ಮಾಹಿತಿ",
+  "slug": "video-info",
+  "parent": 0
+ },
+ {
+  "id": 1351,
+  "count": 0,
+  "description": "",
+  "link": "https://kspstadk.com/category/vidyarthi-vethana/",
+  "name": "ವಿದ್ಯಾರ್ಥಿ ವೇತನ",
+  "slug": "vidyarthi-vethana",
+  "parent": 0
+ },
+ {
+  "id": 260,
+  "count": 3,
+  "description": "",
+  "link": "https://kspstadk.com/category/website/",
+  "name": "ವೆಬ್ಸೈಟ್",
+  "slug": "website",
+  "parent": 0
+ },
+ {
+  "id": 390,
+  "count": 84,
+  "description": "",
+  "link": "https://kspstadk.com/category/teachers-article/",
+  "name": "ಶಿಕ್ಷಕರ ಲೇಖನಗಳು",
+  "slug": "teachers-article",
+  "parent": 0
+ },
+ {
+  "id": 1369,
+  "count": 12,
+  "description": "",
+  "link": "https://kspstadk.com/category/samaja-vijnana/",
+  "name": "ಸಮಾಜ ವಿಜ್ಞಾನ",
+  "slug": "samaja-vijnana",
+  "parent": 0
+ },
+ {
+  "id": 1321,
+  "count": 1,
+  "description": "",
+  "link": "https://kspstadk.com/category/government-schemes/",
+  "name": "ಸರ್ಕಾರಿ ಯೋಜನೆಗಳು",
+  "slug": "government-schemes",
+  "parent": 0
+ },
+ {
+  "id": 186,
+  "count": 1,
+  "description": "",
+  "link": "https://kspstadk.com/category/samvedaa/",
+  "name": "ಸಂವೇದ",
+  "slug": "samvedaa",
+  "parent": 0
+ },
+ {
+  "id": 1367,
+  "count": 7,
+  "description": "",
+  "link": "https://kspstadk.com/category/hindii/",
+  "name": "ಹಿಂದಿ",
+  "slug": "hindii",
+  "parent": 0
+ }
+]
