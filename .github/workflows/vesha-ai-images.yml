@@ -53,5 +53,6 @@ jobs:
           git add assets/packs assets/guide
           if git diff --cached --quiet; then echo "No changes."; else
             git commit -m "Vesha Puzzles: AI-generated pictures" -m "$(tail -n 30 build-ai.log)"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
             git push
           fi
