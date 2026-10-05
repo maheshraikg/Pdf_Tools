@@ -34,6 +34,9 @@ jobs:
       - run: flutter analyze
       - run: flutter test
 
+      - name: Notifier script tests
+        run: python3 -m unittest discover -s tool -v
+
       - name: Build release APK
         run: flutter build apk --release
 
