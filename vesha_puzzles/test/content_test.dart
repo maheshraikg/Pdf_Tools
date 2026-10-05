@@ -84,6 +84,19 @@ void main() {
     expect(c.guide.images.keys, containsAll(['idle', 'happy', 'think']));
   });
 
+  test('photo credit is read from pack.json', () async {
+    final bundle = _OverrideBundle({
+      'assets/packs/index.json': '{"packs":["x"]}',
+      'assets/packs/x/pack.json':
+          '{"id":"x","title":"X","puzzles":[{"id":"p","image":"../yakshagana/images/y01_raja_vesha.jpg",'
+          '"credit":{"author":"A. Photographer","licence":"CC BY-SA 4.0","source":"https://commons.wikimedia.org/wiki/File:X.jpg"}}]}',
+    });
+    final r = await ContentLoader(bundle).load();
+    final c = r.allPuzzles.single.credit!;
+    expect(c.short, 'Photo: A. Photographer · CC BY-SA 4.0');
+    expect(c.source, contains('commons.wikimedia.org'));
+  });
+
   test('LText falls back Tulu → Kannada → English', () {
     const t = LText({'en': 'Hello', 'kn': 'ನಮಸ್ಕಾರ'});
     expect(t.of(Lang.tcy), 'ನಮಸ್ಕಾರ');

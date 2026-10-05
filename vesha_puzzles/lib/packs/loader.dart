@@ -61,6 +61,7 @@ class ContentLoader {
             storyId: p['story'] as String?,
             index: puzzles.length,
             tags: [for (final t in (p['tags'] as List? ?? const [])) '$t'],
+            credit: PhotoCredit.fromJson(p['credit']),
           ),
         );
       }

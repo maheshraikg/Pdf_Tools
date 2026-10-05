@@ -84,6 +84,33 @@ class Credits {
   }
 }
 
+/// Attribution for a picture taken from an openly licensed source.
+class PhotoCredit {
+  const PhotoCredit({
+    required this.author,
+    required this.licence,
+    required this.source,
+    this.changes = '',
+  });
+  final String author;
+  final String licence;
+  final String source;
+  final String changes;
+
+  static PhotoCredit? fromJson(Object? json) {
+    if (json is! Map) return null;
+    return PhotoCredit(
+      author: '${json['author'] ?? ''}',
+      licence: '${json['licence'] ?? ''}',
+      source: '${json['source'] ?? ''}',
+      changes: '${json['changes'] ?? ''}',
+    );
+  }
+
+  /// Short attribution line, e.g. `Photo: A. Name · CC BY-SA 4.0`.
+  String get short => 'Photo: $author · $licence';
+}
+
 class PuzzleDef {
   const PuzzleDef({
     required this.id,
@@ -93,10 +120,14 @@ class PuzzleDef {
     required this.storyId,
     required this.index,
     this.tags = const [],
+    this.credit,
   });
 
   final String id;
   final String packId;
+
+  /// Set when the picture is a third-party photo that needs attribution.
+  final PhotoCredit? credit;
 
   /// Full asset path of the picture.
   final String image;

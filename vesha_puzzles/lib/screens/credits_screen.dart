@@ -39,6 +39,21 @@ class CreditsScreen extends StatelessWidget {
                 ].join(' · '),
               ),
             ),
+          for (final p in app.content.allPuzzles)
+            if (p.credit case final c?)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+                title: Text(p.title.of(lang)),
+                subtitle: Text(
+                  [
+                    c.author,
+                    c.licence,
+                    if (c.changes.isNotEmpty) c.changes,
+                    c.source,
+                  ].join(' · '),
+                ),
+              ),
           if (d != null)
             ListTile(
               contentPadding: EdgeInsets.zero,

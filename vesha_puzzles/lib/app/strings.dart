@@ -230,7 +230,7 @@ class S {
   String get about => _t('About', 'ಬಗ್ಗೆ');
   String get licences =>
       _t('Open-source licences', 'ಮುಕ್ತ ತಂತ್ರಾಂಶ ಪರವಾನಗಿಗಳು');
-  String get artCredits => _t('Art', 'ಚಿತ್ರಕಲೆ');
+  String get artCredits => _t('Pictures', 'ಚಿತ್ರಗಳು');
   String get contentCredits => _t('Stories and facts', 'ಕಥೆ ಮತ್ತು ಮಾಹಿತಿ');
   String get contentNote => _t(
     'Stories and cultural notes were drafted for this app and are being '

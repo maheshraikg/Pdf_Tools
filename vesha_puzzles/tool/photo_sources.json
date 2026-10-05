@@ -1,0 +1,15 @@
+{
+  "_comment": "Wikimedia Commons candidates per puzzle, best first. 'File:' = a specific file, 'Category:' = search that category (largest suitable file wins). tool/fetch_photos.dart checks the licence of each file through the Commons API and only accepts CC0, public domain, CC BY and CC BY-SA. Candidates were found by web search on 2026-10-05; the licence check happens at fetch time.",
+  "y01_raja_vesha": ["File:Yakshagana bhima.JPG", "File:Yakshagana.jpg", "File:Yakshagana Performance.jpg", "Category:Yakshagana"],
+  "y02_bannada_vesha": ["File:Rakkasa vesha (Demon) in Yakshagana.jpg", "File:Yakshagana Veerabhadra Thenkuthittu.JPG", "Category:Yakshagana"],
+  "y03_stri_vesha": ["File:Yakshagana Bhasmasura-Mohini.jpg", "File:Yakshagana prepping.jpg", "Category:Yakshagana"],
+  "y04_hasyagara": ["File:Yakshagana photo.jpg", "File:Badagu vesha.jpg", "Category:Yakshagana"],
+  "y05_himmela": ["File:Yakshagana Performance.jpg", "File:Yakshagana.jpg", "Category:Yakshagana"],
+  "y06_chowki": ["File:Yakshagana makeup room- \"Chowki\".jpg", "File:Yakshagana - Makeup.jpg", "File:Yakshagana prepping.jpg"],
+  "y07_abhimanyu": ["File:Lord krishna and Arjuna (1).JPG", "File:Yakshagana Veerabhadra Thenkuthittu.JPG", "File:Badagu vesha.jpg", "Category:Yakshagana"],
+  "y08_tala_maddale": ["Category:Talamaddale", "Category:Tala maddale", "Category:Yakshagana"],
+  "c01_pili_vesha": ["Category:Hulivesha"],
+  "c02_rathotsava": ["File:Decorated chariot, Udupi, India.jpg", "File:Rathas at Udupi Krishna Temple.jpg", "File:The Brahma ratha (chariot), Udupi Krishna temple, Karnataka, India (464069620).jpg"],
+  "c03_harbour_boats": ["File:Malpe Port.jpg", "File:Malpe(24-1-08).JPG"],
+  "c04_mallige": ["File:Mangaluru Mallige (Mangalore Jasmine Flower) 6.jpg", "File:Mangaluru Mallige (Mangalore Jasmine Flower) 7.jpg", "File:Mangaluru Mallige (Mangalore Jasmine Flower) 4.jpg"]
+}
