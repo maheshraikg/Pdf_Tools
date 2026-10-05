@@ -1,0 +1,213 @@
+{
+  "@@locale": "kn",
+  "appTitle": "KSPSTADK",
+  "appSubtitle": "ಶಿಕ್ಷಕರ ಸೇವೆಯೇ ಸಂಘದ ಗುರಿ",
+  "navHome": "ಮುಖಪುಟ",
+  "navBrowse": "ವಿಭಾಗಗಳು",
+  "navDownloads": "ಡೌನ್‌ಲೋಡ್",
+  "navSearch": "ಹುಡುಕಿ",
+  "navMore": "ಇನ್ನಷ್ಟು",
+  "greeting": "ನಮಸ್ಕಾರ, ಶಿಕ್ಷಕರೇ 🙏",
+  "homeTagline": "ಅಧ್ಯಯನ ಸಾಮಗ್ರಿ, LBA ಪ್ರಶ್ನಾ ಕೋಶ, ಆದೇಶಗಳು — ಒಂದೇ ಕಡೆ",
+  "searchHint": "ಪೋಸ್ಟ್, ಪಾಠ, ವಿಷಯ ಹುಡುಕಿ…",
+  "latest": "ಇತ್ತೀಚಿನವು",
+  "quickAccess": "ತ್ವರಿತ ಪ್ರವೇಶ",
+  "classes": "ತರಗತಿಗಳು",
+  "continueReading": "ಓದು ಮುಂದುವರಿಸಿ",
+  "popularDownloads": "ಜನಪ್ರಿಯ ಡೌನ್‌ಲೋಡ್‌ಗಳು",
+  "seeAll": "ಎಲ್ಲಾ ನೋಡಿ",
+  "joinTitle": "ಶಿಕ್ಷಕರ ಗುಂಪಿಗೆ ಸೇರಿ",
+  "joinSubtitle": "ಹೊಸ ಮಾಹಿತಿ ತಕ್ಷಣ ನಿಮ್ಮ ಮೊಬೈಲ್‌ಗೆ",
+  "joinWhatsapp": "WhatsApp ಗುಂಪು",
+  "joinTelegram": "Telegram ಚಾನೆಲ್",
+  "offlineBanner": "ಇಂಟರ್ನೆಟ್ ಇಲ್ಲ — ಉಳಿಸಿದ ವಿಷಯ ತೋರಿಸಲಾಗುತ್ತಿದೆ",
+  "retry": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+  "errorGeneric": "ಏನೋ ತಪ್ಪಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "errorOffline": "ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಇಲ್ಲ",
+  "errorOfflineHint": "ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ. ಉಳಿಸಿದ ಪೋಸ್ಟ್‌ಗಳು ಮತ್ತು PDF ಗಳು ಆಫ್‌ಲೈನ್‌ನಲ್ಲೂ ಲಭ್ಯ.",
+  "emptyPosts": "ಇಲ್ಲಿ ಇನ್ನೂ ಯಾವುದೇ ಪೋಸ್ಟ್ ಇಲ್ಲ",
+  "share": "ಹಂಚಿಕೊಳ್ಳಿ",
+  "bookmark": "ಉಳಿಸಿ",
+  "bookmarked": "ಉಳಿಸಲಾಗಿದೆ",
+  "bookmarkAdded": "ಬುಕ್‌ಮಾರ್ಕ್‌ಗೆ ಸೇರಿಸಲಾಗಿದೆ — ಆಫ್‌ಲೈನ್‌ನಲ್ಲೂ ಓದಬಹುದು",
+  "bookmarkRemoved": "ಬುಕ್‌ಮಾರ್ಕ್ ತೆಗೆಯಲಾಗಿದೆ",
+  "relatedPosts": "ಇವುಗಳನ್ನೂ ಓದಿ",
+  "questions": "ಪ್ರಶ್ನೆಗಳು",
+  "answers": "ಉತ್ತರಗಳು",
+  "open": "ತೆರೆಯಿರಿ",
+  "download": "ಡೌನ್‌ಲೋಡ್",
+  "downloading": "ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
+  "savedOffline": "ಆಫ್‌ಲೈನ್‌ಗೆ ಉಳಿಸಲಾಗಿದೆ",
+  "downloadFailed": "ಡೌನ್‌ಲೋಡ್ ವಿಫಲವಾಗಿದೆ",
+  "downloadNotPublic": "ಈ ಫೈಲ್ ಸಾರ್ವಜನಿಕವಾಗಿಲ್ಲ ಅಥವಾ ತುಂಬಾ ದೊಡ್ಡದು. ಬ್ರೌಸರ್‌ನಲ್ಲಿ ತೆರೆಯಿರಿ.",
+  "openInBrowser": "ಬ್ರೌಸರ್‌ನಲ್ಲಿ ತೆರೆಯಿರಿ",
+  "playVideo": "ವಿಡಿಯೋ ನೋಡಿ",
+  "openTool": "ಉಪಕರಣ ತೆರೆಯಿರಿ",
+  "interactiveNotice": "ಈ ಪುಟದಲ್ಲಿ ಆನ್‌ಲೈನ್ ಉಪಕರಣವಿದೆ. ಬಳಸಲು ಕೆಳಗಿನ ಬಟನ್ ಒತ್ತಿರಿ.",
+  "files": "ಫೈಲ್‌ಗಳು",
+  "allSubjects": "ಎಲ್ಲಾ ವಿಷಯಗಳು",
+  "subjects": "ವಿಷಯಗಳು",
+  "allPosts": "ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು",
+  "allCategories": "ಎಲ್ಲಾ ವಿಭಾಗಗಳು",
+  "sections": "ವಿಭಾಗಗಳು",
+  "moreCategories": "ಇತರ ವಿಭಾಗಗಳು",
+  "other": "ಇತರೆ",
+  "myDownloads": "ನನ್ನ ಡೌನ್‌ಲೋಡ್‌ಗಳು",
+  "delete": "ಅಳಿಸಿ",
+  "cancel": "ರದ್ದುಮಾಡಿ",
+  "noDownloads": "ಇನ್ನೂ ಯಾವುದೇ ಡೌನ್‌ಲೋಡ್ ಇಲ್ಲ",
+  "noDownloadsHint": "ಯಾವುದೇ ಪೋಸ್ಟ್‌ನಲ್ಲಿ PDF ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ — ಇಲ್ಲಿ ಇಂಟರ್ನೆಟ್ ಇಲ್ಲದೆಯೂ ಸಿಗುತ್ತದೆ.",
+  "searchDownloads": "ಡೌನ್‌ಲೋಡ್‌ಗಳಲ್ಲಿ ಹುಡುಕಿ",
+  "recentSearches": "ಇತ್ತೀಚಿನ ಹುಡುಕಾಟಗಳು",
+  "clear": "ಅಳಿಸಿ",
+  "filterAll": "ಎಲ್ಲಾ",
+  "noResults": "ಯಾವುದೇ ಫಲಿತಾಂಶ ಸಿಗಲಿಲ್ಲ",
+  "searchPrompt": "ತರಗತಿ, ವಿಷಯ ಅಥವಾ ಪಾಠದ ಹೆಸರು ಟೈಪ್ ಮಾಡಿ",
+  "bookmarks": "ಬುಕ್‌ಮಾರ್ಕ್‌ಗಳು",
+  "noBookmarks": "ಉಳಿಸಿದ ಪೋಸ್ಟ್‌ಗಳಿಲ್ಲ",
+  "noBookmarksHint": "ಪೋಸ್ಟ್‌ನಲ್ಲಿ 🔖 ಒತ್ತಿ — ಆಫ್‌ಲೈನ್‌ನಲ್ಲೂ ಓದಬಹುದು.",
+  "quizzes": "ರಸಪ್ರಶ್ನೆಗಳು",
+  "tools": "KSPSTADK ಉಪಕರಣಗಳು",
+  "toolsSubtitle": "ಉಚಿತ ಶಾಲಾ ಆನ್‌ಲೈನ್ ಉಪಕರಣಗಳು",
+  "notifications": "ಅಧಿಸೂಚನೆಗಳು",
+  "noNotifications": "ಇನ್ನೂ ಯಾವುದೇ ಅಧಿಸೂಚನೆ ಇಲ್ಲ",
+  "noNotificationsHint": "ಹೊಸ ಪೋಸ್ಟ್ ಪ್ರಕಟವಾದಾಗ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.",
+  "settings": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+  "language": "ಭಾಷೆ",
+  "theme": "ಥೀಮ್",
+  "themeSystem": "ಸಿಸ್ಟಮ್",
+  "themeLight": "ಬೆಳಕು",
+  "themeDark": "ಕತ್ತಲೆ",
+  "notificationTopics": "ಅಧಿಸೂಚನೆ ವಿಷಯಗಳು",
+  "notificationsUnavailable": "ಅಧಿಸೂಚನೆಗಳನ್ನು ಇನ್ನೂ ಸಕ್ರಿಯಗೊಳಿಸಲಾಗಿಲ್ಲ",
+  "topicAll": "ಎಲ್ಲಾ ಹೊಸ ಪೋಸ್ಟ್‌ಗಳು",
+  "topicLba": "LBA ಪ್ರಶ್ನಾ ಕೋಶ",
+  "topicInfo": "ಮಾಹಿತಿ / ಆದೇಶ / ಸುತ್ತೋಲೆ",
+  "topicStudy": "ಅಧ್ಯಯನ ಸಾಮಗ್ರಿ",
+  "topicQuiz": "ರಸಪ್ರಶ್ನೆ",
+  "clearCache": "ಕ್ಯಾಶ್ ಅಳಿಸಿ",
+  "cacheCleared": "ಕ್ಯಾಶ್ ಅಳಿಸಲಾಗಿದೆ",
+  "storage": "ಸಂಗ್ರಹಣೆ",
+  "rateApp": "ಆ್ಯಪ್‌ಗೆ ರೇಟಿಂಗ್ ನೀಡಿ",
+  "shareApp": "ಆ್ಯಪ್ ಹಂಚಿಕೊಳ್ಳಿ",
+  "about": "KSPSTADK ಬಗ್ಗೆ",
+  "contact": "ಸಂಪರ್ಕಿಸಿ",
+  "privacyPolicy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+  "licences": "ಮುಕ್ತ ಮೂಲ ಪರವಾನಗಿಗಳು",
+  "appearance": "ನೋಟ",
+  "general": "ಸಾಮಾನ್ಯ",
+  "nightMode": "ರಾತ್ರಿ ಮೋಡ್",
+  "goToPage": "ಪುಟಕ್ಕೆ ಹೋಗಿ",
+  "go": "ಹೋಗಿ",
+  "pdfLoadFailed": "PDF ತೆರೆಯಲು ಆಗಲಿಲ್ಲ",
+  "viewOnSite": "ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ ನೋಡಿ",
+  "saveOffline": "ಆಫ್‌ಲೈನ್‌ಗೆ ಉಳಿಸಿ",
+  "kannada": "ಕನ್ನಡ",
+  "english": "English",
+  "today": "ಇಂದು",
+  "yesterday": "ನಿನ್ನೆ",
+  "contentWarning": "ಈ ಆ್ಯಪ್ ಯಾವುದೇ ಸರ್ಕಾರಿ ಸಂಸ್ಥೆಯೊಂದಿಗೆ ಸಂಬಂಧ ಹೊಂದಿಲ್ಲ. ಮಾಹಿತಿ kspstadk.com ನಿಂದ.",
+  "aboutText": "KSPSTADK — ಕರ್ನಾಟಕದ ಶಿಕ್ಷಕರಿಗಾಗಿ ಅಧ್ಯಯನ ಸಾಮಗ್ರಿ, LBA ಪ್ರಶ್ನಾ ಕೋಶಗಳು, PDF ಗಳು, ಆದೇಶಗಳು ಮತ್ತು ರಸಪ್ರಶ್ನೆಗಳ ಕನ್ನಡ ತಾಣ. ಈ ಆ್ಯಪ್ kspstadk.com ನ ವಿಷಯವನ್ನು ನೇರವಾಗಿ ತೋರಿಸುತ್ತದೆ.",
+  "updatedAgo": "ಕೊನೆಯ ನವೀಕರಣ: {time}",
+  "@updatedAgo": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "readingTime": "{minutes} ನಿಮಿಷ ಓದು",
+  "@readingTime": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "classN": "{n} ನೇ ತರಗತಿ",
+  "@classN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "postsCount": "{count} ಪೋಸ್ಟ್‌ಗಳು",
+  "@postsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filesCount": "{count} ಫೈಲ್‌ಗಳು",
+  "@filesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "storageUsed": "ಬಳಸಿದ ಸ್ಥಳ: {size}",
+  "@storageUsed": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteConfirm": "\"{name}\" ಅಳಿಸಬೇಕೇ?",
+  "@deleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pageOf": "{page} / {total}",
+  "@pageOf": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "shareAppText": "ಶಿಕ್ಷಕರಿಗಾಗಿ KSPSTADK ಆ್ಯಪ್ — ಅಧ್ಯಯನ ಸಾಮಗ್ರಿ, LBA ಪ್ರಶ್ನಾ ಕೋಶ, ಆದೇಶಗಳು: {url}",
+  "@shareAppText": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "sharePostText": "{title}\n\nಇನ್ನಷ್ಟು ಓದಿ 👉 {url}\n\n— KSPSTADK",
+  "@sharePostText": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "lessonN": "ಪಾಠ {n}",
+  "@lessonN": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "version": "ಆವೃತ್ತಿ {version}",
+  "@version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  }
+}

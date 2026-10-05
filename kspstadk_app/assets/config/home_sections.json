@@ -5,56 +5,383 @@
     "telegram": "https://t.me/joinchat/T0UhHpW1"
   },
   "classes": [
-    {"n": 1, "ids": [1365, 1364]},
-    {"n": 2, "ids": [1363, 1362]},
-    {"n": 3, "ids": [1279, 1361, 1282]},
-    {"n": 4, "ids": [408, 409, 1306]},
-    {"n": 5, "ids": [410, 411]},
-    {"n": 6, "ids": [1360, 1359]},
-    {"n": 7, "ids": [474, 473]},
-    {"n": 8, "ids": [288, 287]},
-    {"n": 9, "ids": [290, 289]},
-    {"n": 10, "ids": [286, 285]}
+    {
+      "n": 1,
+      "ids": [
+        1365,
+        1364
+      ]
+    },
+    {
+      "n": 2,
+      "ids": [
+        1363,
+        1362
+      ]
+    },
+    {
+      "n": 3,
+      "ids": [
+        1279,
+        1361,
+        1282
+      ]
+    },
+    {
+      "n": 4,
+      "ids": [
+        408,
+        409,
+        1306
+      ]
+    },
+    {
+      "n": 5,
+      "ids": [
+        410,
+        411
+      ]
+    },
+    {
+      "n": 6,
+      "ids": [
+        1360,
+        1359
+      ]
+    },
+    {
+      "n": 7,
+      "ids": [
+        474,
+        473
+      ]
+    },
+    {
+      "n": 8,
+      "ids": [
+        288,
+        287
+      ]
+    },
+    {
+      "n": 9,
+      "ids": [
+        290,
+        289
+      ]
+    },
+    {
+      "n": 10,
+      "ids": [
+        286,
+        285
+      ]
+    }
   ],
   "subjects": [
-    {"key": "kannada", "kn": "ಕನ್ನಡ", "en": "Kannada", "color": "#DB2777", "ids": [1358, 1357]},
-    {"key": "english", "kn": "ಇಂಗ್ಲೀಷ್", "en": "English", "color": "#7C3AED", "ids": [1356, 255]},
-    {"key": "hindi", "kn": "ಹಿಂದಿ", "en": "Hindi", "color": "#EA580C", "ids": [1367, 1366]},
-    {"key": "maths", "kn": "ಗಣಿತ", "en": "Maths", "color": "#2563EB", "ids": [283, 282, 1348]},
-    {"key": "science", "kn": "ವಿಜ್ಞಾನ", "en": "Science", "color": "#059669", "ids": [469, 468]},
-    {"key": "social", "kn": "ಸಮಾಜ ವಿಜ್ಞಾನ", "en": "Social Science", "color": "#D97706", "ids": [1369, 1368]},
-    {"key": "evs", "kn": "ಪರಿಸರ ಅಧ್ಯಯನ", "en": "EVS", "color": "#0D9488", "ids": [1370, 1371]}
+    {
+      "key": "kannada",
+      "kn": "ಕನ್ನಡ",
+      "en": "Kannada",
+      "color": "#DB2777",
+      "ids": [
+        1358,
+        1357
+      ]
+    },
+    {
+      "key": "english",
+      "kn": "ಇಂಗ್ಲೀಷ್",
+      "en": "English",
+      "color": "#7C3AED",
+      "ids": [
+        1356,
+        255
+      ]
+    },
+    {
+      "key": "hindi",
+      "kn": "ಹಿಂದಿ",
+      "en": "Hindi",
+      "color": "#EA580C",
+      "ids": [
+        1367,
+        1366
+      ]
+    },
+    {
+      "key": "maths",
+      "kn": "ಗಣಿತ",
+      "en": "Maths",
+      "color": "#2563EB",
+      "ids": [
+        283,
+        282,
+        1348
+      ]
+    },
+    {
+      "key": "science",
+      "kn": "ವಿಜ್ಞಾನ",
+      "en": "Science",
+      "color": "#059669",
+      "ids": [
+        469,
+        468
+      ]
+    },
+    {
+      "key": "social",
+      "kn": "ಸಮಾಜ ವಿಜ್ಞಾನ",
+      "en": "Social Science",
+      "color": "#D97706",
+      "ids": [
+        1369,
+        1368
+      ]
+    },
+    {
+      "key": "evs",
+      "kn": "ಪರಿಸರ ಅಧ್ಯಯನ",
+      "en": "EVS",
+      "color": "#0D9488",
+      "ids": [
+        1370,
+        1371
+      ]
+    }
   ],
   "mediums": [
-    {"key": "km", "kn": "ಕನ್ನಡ ಮಾಧ್ಯಮ", "en": "Kannada medium", "ids": [1286, 1349]},
-    {"key": "em", "kn": "ಇಂಗ್ಲೀಷ್ ಮಾಧ್ಯಮ", "en": "English medium", "ids": [1287, 1350]}
+    {
+      "key": "km",
+      "kn": "ಕನ್ನಡ ಮಾಧ್ಯಮ",
+      "en": "Kannada medium",
+      "ids": [
+        1286,
+        1349
+      ]
+    },
+    {
+      "key": "em",
+      "kn": "ಇಂಗ್ಲೀಷ್ ಮಾಧ್ಯಮ",
+      "en": "English medium",
+      "ids": [
+        1287,
+        1350
+      ]
+    }
   ],
   "tiles": [
-    {"key": "lba", "kn": "LBA ಪ್ರಶ್ನಾ ಕೋಶ", "en": "LBA Question Bank", "icon": "quiz", "color": "#16A34A", "ids": [1341]},
-    {"key": "study", "kn": "ಅಧ್ಯಯನ ಸಾಮಗ್ರಿ", "en": "Study materials", "icon": "menu_book", "color": "#2563EB", "ids": [43, 66, 77, 76, 1552]},
-    {"key": "papers", "kn": "ಪ್ರಶ್ನೆಪತ್ರಿಕೆ FA/SA", "en": "Question papers", "icon": "description", "color": "#7C3AED", "ids": [1275, 1277]},
-    {"key": "info", "kn": "ಮಾಹಿತಿ / ಆದೇಶ", "en": "Info & orders", "icon": "campaign", "color": "#DC2626", "ids": [8]},
-    {"key": "articles", "kn": "ಶಿಕ್ಷಕರ ಲೇಖನಗಳು", "en": "Teacher articles", "icon": "edit_note", "color": "#DB2777", "ids": [391, 390, 22, 32]},
-    {"key": "quiz", "kn": "ರಸಪ್ರಶ್ನೆ", "en": "Quizzes", "icon": "emoji_events", "color": "#EA580C", "ids": [444, 490, 1355]},
-    {"key": "video", "kn": "ವಿಡಿಯೋ", "en": "Videos", "icon": "smart_display", "color": "#E11D48", "ids": [143, 145, 89]},
-    {"key": "nalikali", "kn": "ನಲಿ-ಕಲಿ", "en": "Nali Kali", "icon": "child_care", "color": "#0D9488", "ids": [135, 134]},
-    {"key": "tools", "kn": "ಉಪಕರಣಗಳು", "en": "Tools", "icon": "construction", "color": "#475569", "ids": [1536]},
-    {"key": "news", "kn": "ಇತ್ತೀಚಿನ ಸುದ್ದಿ", "en": "Latest news", "icon": "newspaper", "color": "#0284C7", "ids": [10, 1]}
+    {
+      "key": "lba",
+      "kn": "LBA ಪ್ರಶ್ನಾ ಕೋಶ",
+      "en": "LBA Question Bank",
+      "icon": "quiz",
+      "color": "#16A34A",
+      "ids": [
+        1341
+      ]
+    },
+    {
+      "key": "study",
+      "kn": "ಅಧ್ಯಯನ ಸಾಮಗ್ರಿ",
+      "en": "Study materials",
+      "icon": "menu_book",
+      "color": "#2563EB",
+      "ids": [
+        43,
+        66,
+        77,
+        76,
+        1552
+      ]
+    },
+    {
+      "key": "papers",
+      "kn": "ಪ್ರಶ್ನೆಪತ್ರಿಕೆ FA/SA",
+      "en": "Question papers",
+      "icon": "description",
+      "color": "#7C3AED",
+      "ids": [
+        1275,
+        1277
+      ]
+    },
+    {
+      "key": "info",
+      "kn": "ಮಾಹಿತಿ / ಆದೇಶ",
+      "en": "Info & orders",
+      "icon": "campaign",
+      "color": "#DC2626",
+      "ids": [
+        8
+      ]
+    },
+    {
+      "key": "articles",
+      "kn": "ಶಿಕ್ಷಕರ ಲೇಖನಗಳು",
+      "en": "Teacher articles",
+      "icon": "edit_note",
+      "color": "#DB2777",
+      "ids": [
+        391,
+        390,
+        22,
+        32
+      ]
+    },
+    {
+      "key": "quiz",
+      "kn": "ರಸಪ್ರಶ್ನೆ",
+      "en": "Quizzes",
+      "icon": "emoji_events",
+      "color": "#EA580C",
+      "ids": [
+        444,
+        490,
+        1355
+      ]
+    },
+    {
+      "key": "video",
+      "kn": "ವಿಡಿಯೋ",
+      "en": "Videos",
+      "icon": "smart_display",
+      "color": "#E11D48",
+      "ids": [
+        143,
+        145,
+        89
+      ]
+    },
+    {
+      "key": "nalikali",
+      "kn": "ನಲಿ-ಕಲಿ",
+      "en": "Nali Kali",
+      "icon": "child_care",
+      "color": "#0D9488",
+      "ids": [
+        135,
+        134
+      ]
+    },
+    {
+      "key": "tools",
+      "kn": "ಉಪಕರಣಗಳು",
+      "en": "Tools",
+      "icon": "construction",
+      "color": "#475569",
+      "ids": [
+        1536
+      ]
+    },
+    {
+      "key": "news",
+      "kn": "ಇತ್ತೀಚಿನ ಸುದ್ದಿ",
+      "en": "Latest news",
+      "icon": "newspaper",
+      "color": "#0284C7",
+      "ids": [
+        10,
+        1
+      ]
+    }
   ],
   "popular": [
-    {"post": 57951},
-    {"post": 57946}, {"post": 57942}, {"post": 57939},
-    {"post": 57935}, {"post": 57932}, {"post": 57918}
+    {
+      "post": 57951
+    },
+    {
+      "post": 57946
+    },
+    {
+      "post": 57942
+    },
+    {
+      "post": 57939
+    },
+    {
+      "post": 57935
+    },
+    {
+      "post": 57932
+    },
+    {
+      "post": 57918
+    }
   ],
   "sections": [
-    {"type": "latest", "count": 8},
-    {"type": "tiles"},
-    {"type": "classes"},
-    {"type": "continue"},
-    {"type": "popular"},
-    {"type": "category", "kn": "LBA ಪ್ರಶ್ನಾ ಕೋಶ", "en": "LBA Question Bank", "ids": [1341], "count": 6},
-    {"type": "join"},
-    {"type": "category", "kn": "ಮಾಹಿತಿ / ಆದೇಶ", "en": "Information & orders", "ids": [8], "count": 5}
+    {
+      "type": "latest",
+      "count": 8
+    },
+    {
+      "type": "tiles"
+    },
+    {
+      "type": "classes"
+    },
+    {
+      "type": "continue"
+    },
+    {
+      "type": "popular"
+    },
+    {
+      "type": "category",
+      "kn": "LBA ಪ್ರಶ್ನಾ ಕೋಶ",
+      "en": "LBA Question Bank",
+      "ids": [
+        1341
+      ],
+      "count": 6
+    },
+    {
+      "type": "join"
+    },
+    {
+      "type": "category",
+      "kn": "ಮಾಹಿತಿ / ಆದೇಶ",
+      "en": "Information & orders",
+      "ids": [
+        8
+      ],
+      "count": 5
+    }
   ],
-  "tools_url": "https://tools.kspstadk.com/"
+  "tools_url": "https://tools.kspstadk.com/",
+  "twins": [
+    [
+      413,
+      412
+    ],
+    [
+      584,
+      585
+    ],
+    [
+      1345,
+      1321
+    ],
+    [
+      1351,
+      215
+    ],
+    [
+      1352,
+      243
+    ],
+    [
+      1354,
+      1353
+    ],
+    [
+      185,
+      186
+    ],
+    [
+      1346,
+      1347
+    ]
+  ]
 }
