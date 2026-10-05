@@ -235,10 +235,12 @@ Future<void> main(List<String> args) async {
     for (final p in (pack['puzzles'] as List).cast<Map<String, dynamic>>()) {
       final id = p['id'] as String;
       if (only != null && !only.contains(id)) continue;
-      // Photos already used by another puzzle in this run are not reused.
+      // Photos kept by puzzles outside this run are not reused.
       for (final c in (pack['puzzles'] as List).cast<Map>()) {
         final src = (c['credit'] as Map?)?['title'];
-        if (src != null && c['id'] != id) used.add('$src');
+        if (src != null && only != null && !only.contains(c['id'])) {
+          used.add('$src');
+        }
       }
       stdout.writeln('$id:');
       final c = await pick(
