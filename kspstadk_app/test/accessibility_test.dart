@@ -41,8 +41,8 @@ void main() {
     final handle = tester.ensureSemantics();
     await pumpApp(tester, testServices(), home: const PostScreen(postId: 58008));
     // Icon buttons expose their tooltip to TalkBack.
-    expect(tester.getSemantics(find.byTooltip('ಉಳಿಸಿ')), containsSemantics(tooltip: 'ಉಳಿಸಿ', isButton: true, hasTapAction: true));
-    expect(tester.getSemantics(find.byTooltip('ಹಂಚಿಕೊಳ್ಳಿ').first), containsSemantics(tooltip: 'ಹಂಚಿಕೊಳ್ಳಿ', isButton: true));
+    expect(tester.getSemantics(find.byTooltip('ಉಳಿಸಿ')), isSemantics(tooltip: 'ಉಳಿಸಿ', isButton: true, hasTapAction: true));
+    expect(tester.getSemantics(find.byTooltip('ಹಂಚಿಕೊಳ್ಳಿ').first), isSemantics(tooltip: 'ಹಂಚಿಕೊಳ್ಳಿ', isButton: true));
     // The post title is announced as a heading.
     expect(find.bySemanticsLabel(RegExp('LBA 2026-27')), findsWidgets);
     handle.dispose();
