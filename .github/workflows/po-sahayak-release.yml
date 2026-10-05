@@ -1,13 +1,16 @@
 name: PO Sahayak release (direct APK link)
 
-# Push a tag like po-sahayak-keep-v1.0.0 to build the release APK and publish
-# it as a pre-release (never marked "latest", so the PDF Toolkit releases are
-# unaffected). Direct link:
-# https://github.com/<owner>/<repo>/releases/download/<tag>/po_sahayak.apk
+# Builds the release APK whenever the app changes and publishes it as the
+# pre-release po-sahayak-keep-v<pubspec version> (never marked "latest", so the
+# PDF Toolkit releases are unaffected). The same version is re-uploaded in
+# place; bump `version:` in pubspec.yaml for a new release. Direct link:
+# https://github.com/<owner>/<repo>/releases/download/po-sahayak-keep-v1.0.0/po_sahayak.apk
 # "keep" in the tag protects it from manage-releases.yml pruning.
 on:
   push:
-    tags: [ 'po-sahayak-*' ]
+    branches: [ master, main, ccr-6e593026-40nzag ]
+    paths: [ 'po_sahayak/**', '.github/workflows/po-sahayak-release.yml' ]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -45,11 +48,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="${GITHUB_REF_NAME}"
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//; s/+.*//')
+          TAG="po-sahayak-keep-v$VERSION"
           NOTES="PO Sahayak: offline Kannada/English calculator for Post Office savings schemes. Install: download po_sahayak.apk on your phone, open it, and allow installing from this source. Estimate only, confirm at your post office. Not affiliated with India Post."
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" po_sahayak.apk --clobber
           else
-            gh release create "$TAG" po_sahayak.apk --title "PO Sahayak ${TAG#po-sahayak-keep-}" \
-              --notes "$NOTES" --prerelease --latest=false --verify-tag
+            gh release create "$TAG" po_sahayak.apk --title "PO Sahayak v$VERSION" \
+              --notes "$NOTES" --prerelease --latest=false --target "$GITHUB_SHA"
           fi
