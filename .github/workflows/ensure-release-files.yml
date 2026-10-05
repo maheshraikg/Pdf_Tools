@@ -47,6 +47,8 @@ jobs:
           
           for TAG in $RELEASES; do
             echo "Checking release: $TAG"
+            # PO Sahayak releases hold only the PO Sahayak APK.
+            case "$TAG" in po-sahayak-*) echo "  → PO Sahayak release, skipping"; continue ;; esac
             
             # Check what files exist in the release
             ASSETS=$(gh release view "$TAG" --json assets --jq '.assets[].name' 2>/dev/null || echo "")
