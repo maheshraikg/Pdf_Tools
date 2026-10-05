@@ -1,0 +1,310 @@
+#!/usr/bin/env python3
+"""Read-only inspection of the KSPSTADK WordPress REST API.
+
+Only GET requests to public endpoints are made; nothing on the site changes.
+
+Outputs:
+  test/fixtures/*.json         raw API responses used by the Dart tests
+  docs/site_inspection.md      machine-generated report (category tree,
+                               menus, HTML pattern counts, link samples)
+
+Usage:  python3 tool/inspect_site.py [--base https://kspstadk.com]
+"""
+
+import argparse
+import collections
+import html
+import json
+import os
+import re
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
+UA = "KSPSTADK-App-Inspector/1.0 (+https://kspstadk.com; read-only)"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FIX = os.path.join(ROOT, "test", "fixtures")
+DOCS = os.path.join(ROOT, "docs")
+
+
+def get(base, path, params=None):
+    url = base.rstrip("/") + path
+    if params:
+        url += "?" + urllib.parse.urlencode(params)
+    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            body = r.read().decode("utf-8", "replace")
+            headers = {k.lower(): v for k, v in r.headers.items()}
+            try:
+                return r.status, json.loads(body), headers, url
+            except json.JSONDecodeError:
+                return r.status, {"_non_json": body[:2000]}, headers, url
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", "replace")[:2000]
+        return e.code, {"_error": body}, {k.lower(): v for k, v in e.headers.items()}, url
+    except Exception as e:  # network / TLS
+        return 0, {"_error": repr(e)}, {}, url
+
+
+def save(name, data):
+    os.makedirs(FIX, exist_ok=True)
+    with open(os.path.join(FIX, name), "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
+
+
+def get_all(base, path, params, max_pages=20):
+    items, page = [], 1
+    while page <= max_pages:
+        p = dict(params, per_page=100, page=page)
+        status, data, headers, _ = get(base, path, p)
+        if status != 200 or not isinstance(data, list):
+            break
+        items += data
+        total_pages = int(headers.get("x-wp-totalpages", "1") or 1)
+        if page >= total_pages:
+            break
+        page += 1
+    return items
+
+
+PATTERNS = {
+    "kl-grid": r'class="[^"]*\bkl-grid\b',
+    "kl-card": r'class="[^"]*\bkl-(card|item|box)\b',
+    "drive_uc_download": r"drive\.google\.com/uc\?[^\"'\s]*id=",
+    "drive_file_d": r"drive\.google\.com/file/d/[\w-]+",
+    "drive_open_id": r"drive\.google\.com/open\?id=",
+    "drive_usercontent": r"drive\.usercontent\.google\.com",
+    "drive_folder": r"drive\.google\.com/drive/(u/\d+/)?folders/",
+    "docs_google": r"docs\.google\.com/",
+    "direct_pdf": r"href=\"[^\"]+\.pdf(\?[^\"]*)?\"",
+    "direct_zip": r"href=\"[^\"]+\.zip(\?[^\"]*)?\"",
+    "wp_uploads_link": r"href=\"https?://kspstadk\.com/wp-content/uploads/",
+    "whatsapp": r"(chat\.whatsapp\.com|wa\.me|whatsapp\.com/channel)",
+    "telegram": r"(t\.me/|telegram\.me/)",
+    "youtube": r"(youtube\.com/(embed|watch)|youtu\.be/)",
+    "iframe": r"<iframe",
+    "table": r"<table",
+    "img": r"<img",
+    "related_kannada": r"ಇವುಗಳನ್ನೂ\s*ಓದಿ",
+    "shortcode_leftover": r"\[[a-z_][\w-]*[^\]]*\]",
+    "script_tag": r"<script",
+    "style_tag": r"<style",
+    "ad_ins": r"<ins[^>]+adsbygoogle",
+    "gradient_inline": r"linear-gradient",
+    "button_class": r"class=\"[^\"]*(btn|button)[^\"]*\"",
+    "wp_block_file": r"wp-block-file",
+    "wp_block_button": r"wp-block-button",
+    "pdf_embed_plugin": r"(pdfemb|pdf-embedder|ead-|embed-pdf|3d-flip|dflip)",
+    "quiz_plugin": r"(quiz|hdq|ays-quiz|wp-quiz|watu)",
+}
+
+
+def classes_in(html_s):
+    c = collections.Counter()
+    for m in re.finditer(r'class="([^"]+)"', html_s):
+        for cl in m.group(1).split():
+            c[cl] += 1
+    return c
+
+
+def hosts_in(html_s):
+    c = collections.Counter()
+    for m in re.finditer(r'href="(https?://[^"]+)"', html_s):
+        c[urllib.parse.urlparse(html.unescape(m.group(1))).netloc.lower()] += 1
+    return c
+
+
+def tree_lines(cats):
+    by_parent = collections.defaultdict(list)
+    for c in cats:
+        by_parent[c["parent"]].append(c)
+    for v in by_parent.values():
+        v.sort(key=lambda c: -c.get("count", 0))
+    out = []
+
+    def walk(pid, depth):
+        for c in by_parent.get(pid, []):
+            out.append("%s- %s  `%s` (id %d, %d posts)" % (
+                "  " * depth, html.unescape(c["name"]), c["slug"], c["id"], c.get("count", 0)))
+            walk(c["id"], depth + 1)
+
+    walk(0, 0)
+    return out
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--base", default="https://kspstadk.com")
+    a = ap.parse_args()
+    base = a.base
+    rep = []
+    w = rep.append
+    w("# KSPSTADK site inspection (auto-generated)\n")
+    w("Generated by `tool/inspect_site.py` (read-only GET requests).\n")
+
+    # 1. Reachability
+    w("## 1. Endpoint reachability\n")
+    w("| Endpoint | HTTP | Notes |\n|---|---|---|")
+    endpoints = [
+        ("/wp-json/", None),
+        ("/wp-json/wp/v2/", None),
+        ("/wp-json/wp/v2/posts", {"per_page": 1}),
+        ("/wp-json/wp/v2/categories", {"per_page": 1}),
+        ("/wp-json/wp/v2/tags", {"per_page": 1}),
+        ("/wp-json/wp/v2/pages", {"per_page": 1}),
+        ("/wp-json/wp/v2/media", {"per_page": 1}),
+        ("/wp-json/wp/v2/search", {"search": "LBA", "per_page": 1}),
+        ("/wp-json/wp/v2/menu-items", None),
+        ("/wp-json/wp/v2/menus", None),
+        ("/wp-json/wp/v2/navigation", None),
+        ("/wp-json/wp/v2/users", None),
+    ]
+    root_info = {}
+    for path, params in endpoints:
+        status, data, headers, url = get(base, path, params)
+        note = ""
+        if isinstance(data, dict) and "_error" in data:
+            note = re.sub(r"\s+", " ", data["_error"])[:140]
+        elif isinstance(data, dict) and "_non_json" in data:
+            note = "non-JSON response (security plugin / cache page?): " + re.sub(r"\s+", " ", data["_non_json"])[:120]
+        elif isinstance(data, list):
+            note = "total=%s pages=%s" % (headers.get("x-wp-total"), headers.get("x-wp-totalpages"))
+        if path == "/wp-json/":
+            root_info = data if isinstance(data, dict) else {}
+        server = headers.get("server", "")
+        extra = [h for h in ("cf-ray", "x-litespeed-cache", "x-cache", "x-powered-by") if h in headers]
+        if server or extra:
+            note += " | server=%s %s" % (server, ",".join(extra))
+        w("| `%s` | %s | %s |" % (path, status, note.replace("|", "/")))
+    w("")
+    if root_info:
+        w("Site name: **%s** — %s" % (html.unescape(root_info.get("name", "")), html.unescape(root_info.get("description", ""))))
+        ns = root_info.get("namespaces", [])
+        w("\nREST namespaces (reveal installed plugins): `%s`\n" % "`, `".join(ns))
+        save("site_root_min.json", {k: root_info.get(k) for k in ("name", "description", "url", "home", "gmt_offset", "timezone_string", "namespaces", "site_icon_url")})
+
+    # 2. Categories
+    cats = get_all(base, "/wp-json/wp/v2/categories", {"_fields": "id,name,slug,parent,count,description,link"})
+    save("categories.json", cats)
+    w("## 2. Category tree (%d categories)\n" % len(cats))
+    w("\n".join(tree_lines(cats)) or "_none_")
+    w("")
+
+    # 3. Tags
+    tags = get_all(base, "/wp-json/wp/v2/tags", {"_fields": "id,name,slug,count", "orderby": "count", "order": "desc"}, max_pages=3)
+    save("tags_top.json", tags[:100])
+    w("## 3. Tags (%d fetched; top 40 by count)\n" % len(tags))
+    w(", ".join("%s (%d)" % (html.unescape(t["name"]), t["count"]) for t in sorted(tags, key=lambda t: -t["count"])[:40]) or "_none_")
+    w("")
+
+    # 4. Pages
+    pages = get_all(base, "/wp-json/wp/v2/pages", {"_fields": "id,title,slug,link,parent"}, max_pages=3)
+    save("pages.json", pages)
+    w("## 4. Pages (%d)\n" % len(pages))
+    for p in pages:
+        w("- %s — `%s` (id %d)" % (html.unescape(p["title"]["rendered"]), p["link"], p["id"]))
+    w("")
+
+    # 5. Menus
+    w("## 5. Menus\n")
+    for path in ("/wp-json/wp/v2/menu-items", "/wp-json/wp/v2/menus", "/wp-json/menus/v1/menus"):
+        status, data, _, _ = get(base, path, {"per_page": 100})
+        w("- `%s` → HTTP %s%s" % (path, status, "" if status == 200 else " (needs auth or not available)"))
+        if status == 200 and isinstance(data, list):
+            save("menu_" + path.strip("/").replace("/", "_") + ".json", data)
+            for it in data[:80]:
+                t = it.get("title", {})
+                t = t.get("rendered", t) if isinstance(t, dict) else t
+                w("  - %s → %s" % (html.unescape(str(t or it.get("name", ""))), it.get("url", it.get("slug", ""))))
+    w("")
+
+    # 6. Posts sample
+    status, posts, headers, _ = get(base, "/wp-json/wp/v2/posts", {"per_page": 20, "_embed": 1})
+    if not isinstance(posts, list):
+        posts = []
+    save("posts_embed_20.json", posts)
+    w("## 6. Recent posts sample (%d, total posts on site: %s)\n" % (len(posts), headers.get("x-wp-total")))
+    status, small, _, _ = get(base, "/wp-json/wp/v2/posts", {
+        "per_page": 20, "_fields": "id,date,modified,slug,link,title,excerpt,categories,tags,featured_media", })
+    if isinstance(small, list):
+        save("posts_list_fields.json", small)
+    status, srch, _, _ = get(base, "/wp-json/wp/v2/search", {"search": "LBA", "per_page": 10})
+    if isinstance(srch, list):
+        save("search_lba.json", srch)
+    status, media, _, _ = get(base, "/wp-json/wp/v2/media", {"per_page": 5})
+    if isinstance(media, list):
+        save("media_5.json", media)
+
+    pat_posts = collections.Counter()
+    pat_total = collections.Counter()
+    cls = collections.Counter()
+    hosts = collections.Counter()
+    samples = collections.defaultdict(list)
+    lengths = []
+    w("| # | id | date | title | categories | len | patterns |\n|---|---|---|---|---|---|---|")
+    for i, p in enumerate(posts, 1):
+        h = p.get("content", {}).get("rendered", "")
+        lengths.append(len(h))
+        found = []
+        for k, rx in PATTERNS.items():
+            ms = list(re.finditer(rx, h, re.I))
+            if ms:
+                pat_posts[k] += 1
+                pat_total[k] += len(ms)
+                found.append("%s×%d" % (k, len(ms)))
+                if len(samples[k]) < 4:
+                    m = ms[0]
+                    samples[k].append((p["id"], h[max(0, m.start() - 300): m.end() + 500]))
+        cls.update(classes_in(h))
+        hosts.update(hosts_in(h))
+        cat_names = []
+        for group in p.get("_embedded", {}).get("wp:term", []):
+            for t in group:
+                if t.get("taxonomy") == "category":
+                    cat_names.append(html.unescape(t["name"]))
+        w("| %d | %d | %s | %s | %s | %d | %s |" % (
+            i, p["id"], p["date"][:10], html.unescape(p["title"]["rendered"])[:70].replace("|", "/"),
+            ", ".join(cat_names)[:60], len(h), " ".join(found)))
+        if i <= 3:
+            save("post_%d_content.html.json" % p["id"], {"id": p["id"], "content": h})
+    w("")
+    if lengths:
+        w("Average content length: %d chars; max %d.\n" % (sum(lengths) // len(lengths), max(lengths)))
+
+    w("## 7. Pattern frequency across sampled posts\n")
+    w("| Pattern | posts | occurrences |\n|---|---|---|")
+    for k in PATTERNS:
+        w("| %s | %d | %d |" % (k, pat_posts[k], pat_total[k]))
+    w("")
+    w("## 8. Most common CSS classes in post bodies\n")
+    w(", ".join("`%s`×%d" % kv for kv in cls.most_common(60)))
+    w("")
+    w("## 9. Link hosts in post bodies\n")
+    w(", ".join("`%s`×%d" % kv for kv in hosts.most_common(40)))
+    w("")
+    w("## 10. HTML snippets per pattern (trimmed)\n")
+    for k, lst in samples.items():
+        w("### %s\n" % k)
+        for pid, snip in lst[:2]:
+            w("Post %d:\n\n```html\n%s\n```\n" % (pid, snip.replace("```", "``")))
+    # Featured media sizes available
+    if posts:
+        fm = posts[0].get("_embedded", {}).get("wp:featuredmedia", [{}])[0]
+        sizes = fm.get("media_details", {}).get("sizes", {}) if isinstance(fm, dict) else {}
+        w("## 11. Featured image sizes available\n")
+        w(", ".join("`%s` %sx%s" % (k, v.get("width"), v.get("height")) for k, v in sizes.items()) or "_none_")
+        w("")
+        w("Embedded keys on a post: `%s`\n" % "`, `".join(posts[0].get("_embedded", {}).keys()))
+        w("Top-level keys on a post: `%s`\n" % "`, `".join(posts[0].keys()))
+
+    os.makedirs(DOCS, exist_ok=True)
+    with open(os.path.join(DOCS, "site_inspection.md"), "w", encoding="utf-8") as f:
+        f.write("\n".join(rep) + "\n")
+    print("\n".join(rep))
+    return 0 if posts else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
