@@ -31,27 +31,34 @@ android {
     }
 
     // Release signing: android/key.properties (storeFile, storePassword,
-    // keyAlias, keyPassword) when present; otherwise the debug key, so that
-    // `flutter build apk --release` always produces an installable APK.
+    // keyAlias, keyPassword) when present — use that upload key for the Play
+    // Store. Otherwise the committed sideload key (app/sideload-signing.p12),
+    // so every CI/test build has the same signature and installs over the
+    // previous one. That key is public: use it only for test downloads.
     val keyProps = Properties().apply {
         val f = rootProject.file("key.properties")
         if (f.exists()) f.inputStream().use { load(it) }
     }
     signingConfigs {
-        if (keyProps.containsKey("storeFile")) {
-            create("release") {
+        create("release") {
+            if (keyProps.containsKey("storeFile")) {
                 storeFile = file(keyProps.getProperty("storeFile"))
                 storePassword = keyProps.getProperty("storePassword")
                 keyAlias = keyProps.getProperty("keyAlias")
                 keyPassword = keyProps.getProperty("keyPassword")
+            } else {
+                storeFile = file("sideload-signing.p12")
+                storeType = "pkcs12"
+                storePassword = "posahayak"
+                keyAlias = "sideload"
+                keyPassword = "posahayak"
             }
         }
     }
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.findByName("release")
-                ?: signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }

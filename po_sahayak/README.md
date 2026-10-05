@@ -9,8 +9,7 @@ estimate; confirm at the post office.
 
 ## Store listing
 
-Play Store title: **PO Sahayak: PO Calculator** (the launcher label stays
-"PO Sahayak"). Title, short and full descriptions in English and Kannada are
+Play Store title and launcher label: **PO Sahayak: PO Calculator**. Title, short and full descriptions in English and Kannada are
 in `store/listing/en-IN` and `store/listing/kn-IN`, within Play's limits (30,
 80 and 4000 characters). They use the search terms people type ("post office
 calculator", "PO calculator", RD, TD, MIS, SCSS, PPF, SSY, NSC, KVP) but never
@@ -102,8 +101,10 @@ keyAlias=upload
 keyPassword=...
 ```
 
-Without it, release builds are signed with the debug key: fine for installing
-and testing, not for the Play Store. For Play, build an app bundle with
+Without it, release builds are signed with the committed test key
+`android/app/sideload-signing.p12`, so every test build has the same signature
+and installs over the previous one. That key is public: it is only for the
+GitHub download links, never for the Play Store. For Play, build an app bundle with
 `flutter build appbundle --release --obfuscate --split-debug-info=build/symbols`
 and keep the symbols to read crash traces.
 
