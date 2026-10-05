@@ -32,8 +32,8 @@ class PieceImageCache {
   /// were (re)built.
   bool ensureScale(double requested) {
     final budget = math.sqrt(
-      48e6 / 4 / (board.cut.count * _cellPxArea(1)),
-    ); // ~48 MB total
+      24e6 / 4 / (board.cut.count * _cellPxArea(1)),
+    ); // ~24 MB total
     final target = math.min(requested, math.min(maxScale, budget));
     if (_scale > 0 && target <= _scale * 1.35 && target >= _scale * 0.5) {
       return false;

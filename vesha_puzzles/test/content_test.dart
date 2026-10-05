@@ -109,10 +109,11 @@ class _OverrideBundle extends CachingAssetBundle {
   @override
   Future<ByteData> load(String key) {
     final f = files[key];
-    if (f != null)
+    if (f != null) {
       return Future.value(
         ByteData.sublistView(Uint8List.fromList(f.codeUnits)),
       );
+    }
     return rootBundle.load(key);
   }
 

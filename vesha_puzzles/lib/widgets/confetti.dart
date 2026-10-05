@@ -65,8 +65,9 @@ class _ConfettiState extends State<Confetti>
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).disableAnimations)
+    if (MediaQuery.of(context).disableAnimations) {
       return const SizedBox.shrink();
+    }
     return IgnorePointer(
       child: CustomPaint(
         painter: _ConfettiPainter(_c, _bits),

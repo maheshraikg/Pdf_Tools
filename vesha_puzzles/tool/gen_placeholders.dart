@@ -316,8 +316,9 @@ final Map<String, (String, Painter)> puzzles = {
       c.gradient(0xFFE082, 0xF57C00);
       for (var x = 0; x < c.w; x += 100) {
         for (var y = 0; y < c.h; y += 100) {
-          if ((x + y) ~/ 100 % 2 == 0)
+          if ((x + y) ~/ 100 % 2 == 0) {
             c.rect(x, y, x + 100, y + 100, white, 60);
+          }
         }
       }
       performer(c, 600, 220, 230, body: blue, skirt: red);
@@ -866,12 +867,13 @@ void sounds(String dir) {
       drum(b % 4 == 0 ? 150 : 210, 0.2, vol: b % 4 == 0 ? 0.35 : 0.18, seed: b),
       b * 0.25,
     );
-    if (b % 2 == 0)
+    if (b % 2 == 0) {
       music = mixAt(
         music,
         tone(notes[r.nextInt(notes.length)], 0.45, decay: 5, vol: 0.14),
         b * 0.25,
       );
+    }
   }
   w('music_loop.wav', music.sublist(0, 8 * rate));
 }

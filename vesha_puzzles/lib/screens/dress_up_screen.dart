@@ -78,8 +78,9 @@ class _DressUpScreenState extends State<DressUpScreen> {
     setState(() {
       _choice.clear();
       for (final slot in def.slots) {
-        if (!slot.optional && slot.options.isNotEmpty)
+        if (!slot.optional && slot.options.isNotEmpty) {
           _choice[slot.id] = slot.options.first.id;
+        }
       }
     });
     app.store.remove(_storeKey);

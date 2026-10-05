@@ -13,6 +13,10 @@ class VeshaColors {
   static const saffron = Color(0xFFF57C00);
 }
 
+/// Font fallback used only by the screenshot tool (tests have no system
+/// fonts); null in the app.
+List<String>? debugFontFallback;
+
 ThemeData buildTheme(Brightness b) {
   final scheme = ColorScheme.fromSeed(
     seedColor: VeshaColors.red,
@@ -25,6 +29,7 @@ ThemeData buildTheme(Brightness b) {
   );
   return ThemeData(
     useMaterial3: true,
+    fontFamilyFallback: debugFontFallback,
     colorScheme: scheme,
     scaffoldBackgroundColor: scheme.surface,
     appBarTheme: AppBarTheme(
