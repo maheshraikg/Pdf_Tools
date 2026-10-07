@@ -1,5 +1,5 @@
 {
-  "_style": "Detailed children's picture-book illustration, warm gouache and ink texture, rich saturated colours, soft lamp light, detail and texture spread across the whole picture (it will be cut into jigsaw pieces), respectful and authentic depiction of coastal Karnataka culture, no text, no letters, no watermark, no frame, no borders.",
+  "_style": "Photorealistic documentary photograph, shot on a full-frame DSLR with a 35mm lens, natural colours, sharp focus, rich fine detail and texture across the whole frame (it will be cut into jigsaw pieces), authentic and respectful depiction of coastal Karnataka culture, real people, no text, no letters, no watermark, no frame, no borders.",
   "puzzles": {
     "y01_raja_vesha": "A Yakshagana king (raja vesha) dancing on an open-air village stage at night: tall golden kireeta crown set with tiny mirrors, painted face with bold black eyebrows, layered gold chest and shoulder ornaments, red and gold costume with a full skirt; oil lamps at the stage edge, musicians faintly behind, villagers watching.",
     "y02_bannada_vesha": "A Yakshagana bannada vesha (demon role) making a dramatic entry: huge wide headgear, bold red, white and black face paint patterns, arms raised, swirling dark costume with gold trim, a held-up curtain being dropped by two helpers, drummers in the background.",
@@ -15,8 +15,8 @@
     "c04_mallige": "Hands stringing fresh white Udupi mallige jasmine buds on thread at a market stall, heaps of jasmine strings and banana leaves, marigolds and a smiling flower seller in the background, morning light."
   },
   "guide": {
-    "vesha_idle": "Head-and-shoulders portrait of a friendly cartoon child Yakshagana performer named Vesha with a small golden kireeta crown, red costume, gentle smile, looking at the viewer, plain light cream background, simple bold shapes, readable at small size.",
-    "vesha_happy": "The same friendly cartoon child Yakshagana performer with small golden kireeta crown and red costume, laughing happily with rosy cheeks, plain light cream background, simple bold shapes.",
-    "vesha_think": "The same friendly cartoon child Yakshagana performer with small golden kireeta crown and red costume, thinking with a finger on the chin, looking up, plain light cream background, simple bold shapes."
+    "vesha_idle": "Photorealistic portrait of a smiling 10-year-old Indian child dressed as a Yakshagana performer with a small golden kireeta crown, red costume and gold ornaments, looking at the camera, plain warm cream studio background, soft light.",
+    "vesha_happy": "Photorealistic portrait of the same 10-year-old Indian child in Yakshagana costume with a small golden kireeta crown, laughing joyfully, plain warm cream studio background, soft light.",
+    "vesha_think": "Photorealistic portrait of the same 10-year-old Indian child in Yakshagana costume with a small golden kireeta crown, thinking with a finger on the chin and looking up, plain warm cream studio background, soft light."
   }
 }
