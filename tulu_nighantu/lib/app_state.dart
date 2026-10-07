@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ai/gemini_client.dart';
+import 'ai/suggest_client.dart';
 import 'lipi/stroke_guide.dart';
 import 'lipi/tulu_lipi.dart';
 import 'models/word.dart';
@@ -20,6 +21,7 @@ class AppState extends ChangeNotifier {
   static const _favKey = 'favourites';
   static const _starsKey = 'stars';
   static const _customKey = 'custom_words';
+  static const _sentKey = 'sent_suggestions';
   static const _aiKeyKey = 'gemini_api_key';
   static const _aiModelKey = 'gemini_model';
 
@@ -52,6 +54,32 @@ class AppState extends ChangeNotifier {
     return null;
   }
 
+  // ------------------------------------------------------ word suggestions
+
+  /// Whether new words can be sent to the dictionary team (built-in server).
+  static bool get canSuggest => hasBuiltInAi;
+
+  /// Ids of the user's words already sent to the dictionary team.
+  final Set<String> sentSuggestions = {};
+
+  /// Sends a user word for review; [client] is for tests. Throws
+  /// [AiException] with a displayable message on failure.
+  Future<void> sendSuggestion(
+    Word w, {
+    String note = '',
+    SuggestClient? client,
+  }) async {
+    final c =
+        client ?? (canSuggest ? SuggestClient(proxyUrl: kAiProxyUrl) : null);
+    if (c == null) {
+      throw const AiException('Sending words is not available in this build.');
+    }
+    await c.send(w, note: note);
+    sentSuggestions.add(w.id);
+    _save(() => _prefs?.setStringList(_sentKey, sentSuggestions.toList()));
+    notifyListeners();
+  }
+
   SharedPreferences? _prefs;
 
   List<WordCategory> categories = const [];
@@ -79,6 +107,7 @@ class AppState extends ChangeNotifier {
           (k, v) => stars[k] = (v as num).toInt().clamp(0, 3),
         );
       }
+      sentSuggestions.addAll(_prefs!.getStringList(_sentKey) ?? const []);
       aiKey = _prefs!.getString(_aiKeyKey) ?? '';
       aiModel = _prefs!.getString(_aiModelKey) ?? kDefaultGeminiModel;
       final c = _prefs!.getString(_customKey);

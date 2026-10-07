@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../ai/gemini_client.dart';
 import '../app_state.dart';
 import '../lipi/tulu_lipi.dart';
 import '../models/word.dart';
@@ -28,6 +29,9 @@ class _AddWordScreenState extends State<AddWordScreen> {
   final _form = GlobalKey<FormState>();
   late final TextEditingController _tulu, _roman, _kn, _en;
   late String _cat;
+
+  /// Also send the word to the dictionary team (built-in server only).
+  bool _send = AppState.canSuggest;
 
   bool get _editing => widget.initial != null;
 
@@ -67,9 +71,12 @@ class _AddWordScreenState extends State<AddWordScreen> {
       custom: true,
     );
     _editing ? state.updateCustomWord(w) : state.addCustomWord(w);
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('${w.tulu} ಉಳಿಸಲಾಗಿದೆ · saved')));
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
+      SnackBar(content: Text('${w.tulu} ಉಳಿಸಲಾಗಿದೆ · saved')),
+    );
     Navigator.of(context).pop(w);
+    if (_send) sendSuggestions(messenger, [w]);
   }
 
   Future<void> _delete() async {
@@ -185,6 +192,18 @@ class _AddWordScreenState extends State<AddWordScreen> {
               ],
               onChanged: (v) => setState(() => _cat = v ?? 'words'),
             ),
+            if (AppState.canSuggest) ...[
+              const SizedBox(height: 8),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                value: _send,
+                onChanged: (v) => setState(() => _send = v),
+                title: const Text('ನಿಘಂಟಿಗೆ ಕಳುಹಿಸಿ · Send to the dictionary'),
+                subtitle: const Text(
+                  'Checked words are added to the app for everyone.',
+                ),
+              ),
+            ],
             const SizedBox(height: 20),
             FilledButton.icon(
               style: FilledButton.styleFrom(
@@ -196,10 +215,15 @@ class _AddWordScreenState extends State<AddWordScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'ಈ ಪದ ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲಿ ಮಾತ್ರ ಉಳಿಯುತ್ತದೆ. ಎಲ್ಲರಿಗೂ ಸೇರಿಸಲು '
-              '"ಉಳಿಸಿದವು › ನನ್ನ ಪದಗಳು › Export" ಬಳಸಿ.\n'
-              'Saved on this phone only. To add it for everyone, use '
-              'Saved › My words › Export and send it in.',
+              AppState.canSuggest
+                  ? 'ಈ ಪದ ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲಿ ಉಳಿಯುತ್ತದೆ. "ಕಳುಹಿಸಿ" ಆನ್ ಇದ್ದರೆ '
+                        'ಪರಿಶೀಲನೆಗೆ ಕಳುಹಿಸಲಾಗುತ್ತದೆ.\n'
+                        'Saved on this phone. With "Send" on, it also goes to '
+                        'the dictionary team for checking (needs internet).'
+                  : 'ಈ ಪದ ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲಿ ಮಾತ್ರ ಉಳಿಯುತ್ತದೆ. ಎಲ್ಲರಿಗೂ ಸೇರಿಸಲು '
+                        '"ಉಳಿಸಿದವು › ನನ್ನ ಪದಗಳು › Export" ಬಳಸಿ.\n'
+                        'Saved on this phone only. To add it for everyone, use '
+                        'Saved › My words › Export and send it in.',
               style: Theme.of(context).textTheme.bodySmall
                   ?.copyWith(color: cs.onSurfaceVariant),
             ),
@@ -213,6 +237,35 @@ class _AddWordScreenState extends State<AddWordScreen> {
       _kn.text.trim().isEmpty && _en.text.trim().isEmpty
       ? 'ಕನ್ನಡ ಅಥವಾ English ಅರ್ಥ ಬೇಕು · Add a Kannada or English meaning'
       : null;
+}
+
+/// Sends [words] to the dictionary team and reports the result in
+/// [messenger] (works after the screen that started it has closed).
+Future<void> sendSuggestions(
+  ScaffoldMessengerState messenger,
+  List<Word> words,
+) async {
+  var sent = 0;
+  for (final w in words) {
+    try {
+      await AppState.instance.sendSuggestion(w);
+      sent++;
+    } on AiException catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(e.message)));
+      return;
+    }
+  }
+  if (sent > 0) {
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          sent == 1
+              ? 'ಕಳುಹಿಸಲಾಗಿದೆ · Sent to the dictionary team – thank you!'
+              : '$sent ಪದಗಳು ಕಳುಹಿಸಲಾಗಿದೆ · $sent words sent – thank you!',
+        ),
+      ),
+    );
+  }
 }
 
 /// Opens [AddWordScreen]; returns the saved word, if any.

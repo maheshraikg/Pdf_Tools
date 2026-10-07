@@ -67,6 +67,10 @@ class _MyWords extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mine = state.customWords;
+    final unsent = [
+      for (final w in mine)
+        if (!state.sentSuggestions.contains(w.id)) w,
+    ];
     final cs = Theme.of(context).colorScheme;
     return Column(
       children: [
@@ -81,6 +85,22 @@ class _MyWords extends StatelessWidget {
           )
         else
           for (final w in mine) WordTile(w),
+        if (AppState.canSuggest && unsent.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: FilledButton.icon(
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(44),
+              ),
+              onPressed: () =>
+                  sendSuggestions(ScaffoldMessenger.of(context), unsent),
+              icon: const Icon(Icons.send_rounded),
+              label: Text(
+                'ನಿಘಂಟಿಗೆ ಕಳುಹಿಸಿ · Send ${unsent.length} to dictionary',
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: Row(
