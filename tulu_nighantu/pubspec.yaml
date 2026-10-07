@@ -63,6 +63,7 @@ flutter:
 
   assets:
     - assets/data/words.json
+    - assets/data/culture.json
     - assets/data/strokes.json
     - assets/fonts/OFL.txt
 

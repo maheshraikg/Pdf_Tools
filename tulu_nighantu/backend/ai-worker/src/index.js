@@ -81,10 +81,10 @@ const KANNADA = /[ಀ-೿]/;
 export function cleanSuggestion(b) {
   const f = (k, n = MAX_FIELD) => clip(typeof b?.[k] === 'string' ? b[k].trim() : '', n);
   const s = {
-    tulu: f('tulu', 60),
+    tulu: f('tulu', 200),
     roman: f('roman', 60),
     kn: f('kn'),
-    en: f('en'),
+    en: f('en', 300),
     cat: f('cat', 20) || 'words',
     note: f('note', 300),
   };

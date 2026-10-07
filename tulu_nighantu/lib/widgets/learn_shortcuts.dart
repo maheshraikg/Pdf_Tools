@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../app_state.dart';
 import '../screens/charts_screen.dart';
+import '../screens/culture_screen.dart';
 import '../screens/quiz_screen.dart';
 
 /// A shortcut to one learning section.
@@ -29,6 +30,12 @@ final List<_Shortcut> _shortcuts = [
     },
     Icons.quiz_outlined,
     (_) => const QuizScreen(),
+  ),
+  _Shortcut(
+    'ತುಳುನಾಡ್',
+    () => 'Culture',
+    Icons.festival_outlined,
+    (_) => const CultureScreen(),
   ),
 ];
 

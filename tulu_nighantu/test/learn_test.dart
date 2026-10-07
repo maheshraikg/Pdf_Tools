@@ -7,9 +7,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tulu_nighantu/app_state.dart';
 import 'package:tulu_nighantu/learn/charts.dart';
+import 'package:tulu_nighantu/learn/culture.dart';
 import 'package:tulu_nighantu/learn/quiz.dart';
 import 'package:tulu_nighantu/lipi/tulu_lipi.dart';
 import 'package:tulu_nighantu/screens/charts_screen.dart';
+import 'package:tulu_nighantu/screens/culture_screen.dart';
 import 'package:tulu_nighantu/screens/quiz_screen.dart';
 
 void main() {
@@ -111,6 +113,32 @@ void main() {
     }
     expect(find.textContaining('/ 10'), findsWidgets);
     expect(find.textContaining('Play again'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  CultureData culture() =>
+      CultureData.fromJson(File('assets/data/culture.json').readAsStringSync());
+
+  test('culture data: unique ids, Tulu lipi for every festival', () {
+    final d = culture();
+    expect(d.festivals.length, greaterThanOrEqualTo(8));
+    expect(d.festivals.map((f) => f.id).toSet(), hasLength(d.festivals.length));
+    for (final f in d.festivals) {
+      expect(TuluLipi.hasKannada(f.lipi), isFalse, reason: f.tulu);
+      expect(f.about, isNotEmpty);
+    }
+  });
+
+  testWidgets('culture screen fits a small phone with large text', (
+    tester,
+  ) async {
+    smallPhone(tester);
+    await tester.pumpWidget(MaterialApp(home: CultureScreen(data: culture())));
+    await tester.pumpAndSettle();
+    expect(find.text('Bisu – Tulu New Year'), findsOneWidget);
+    await tester.tap(find.textContaining('Proverbs'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Proverbs coming soon'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

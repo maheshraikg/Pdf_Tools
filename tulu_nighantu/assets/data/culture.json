@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "note": "Sample cultural notes – verify with native speakers before publishing. Proverbs are added after review of user suggestions.",
+  "festivals": [
+    { "id": "bisu", "tulu": "ಬಿಸು", "roman": "bisu", "en": "Bisu – Tulu New Year", "when": "1st of Paggu (around 14 April)",
+      "about": "The Tulu New Year. Early in the morning the family first sees the 'Bisu kani' – rice, fruits, vegetables, gold and a lamp arranged before the deity." },
+    { "id": "pattanaje", "tulu": "ಪತ್ತನಾಜೆ", "roman": "pattanaaje", "en": "Pattanaje", "when": "10th of Besha (around 24 May)",
+      "about": "Marks the end of the season of festivals, jatres and Yakshagana before the monsoon and the start of paddy farming." },
+    { "id": "aati-amase", "tulu": "ಆಟಿ ಅಮಾಸೆ", "roman": "aati amaase", "en": "Aati Amavasya", "when": "New moon of Aati (July–August)",
+      "about": "In the rainy month of Aati people drink 'paale kashaya', a bitter drink from the bark of the paale tree, believed to protect health." },
+    { "id": "aati-kalenja", "tulu": "ಆಟಿ ಕಳೆಂಜ", "roman": "aati kalenja", "en": "Aati Kalenja", "when": "Month of Aati",
+      "about": "A folk performer dressed in leaves and a tall hat visits homes in Aati, singing and dancing to drive away illness and misfortune." },
+    { "id": "kambula", "tulu": "ಕಂಬುಲ", "roman": "kambula", "en": "Kambala – buffalo race", "when": "November to March",
+      "about": "Pairs of buffaloes race through slushy paddy fields guided by a runner – a celebrated rural sport of Tulunadu." },
+    { "id": "daiva", "tulu": "ದೈವಾರಾಧನೆ", "roman": "daivaaraadhane", "en": "Bhuta Kola – daiva worship", "when": "Through the year, mostly in winter",
+      "about": "Ritual worship of local spirit deities (daivas) such as Panjurli and Guliga, with paddanas (oral epics), costumes and dance." },
+    { "id": "yakshagana", "tulu": "ಯಕ್ಷಗಾನ", "roman": "yakshagaana", "en": "Yakshagana", "when": "November to May",
+      "about": "An all-night dance-drama with music, songs, bright costumes and crowns, telling stories from the epics and Tulu legends." },
+    { "id": "nagaradhane", "tulu": "ನಾಗಾರಾಧನೆ", "roman": "naagaaraadhane", "en": "Nagaradhane – snake worship", "when": "Nagara Panchami and other days",
+      "about": "Worship of the snake deity at sacred groves (naagabana), with offerings of milk and flowers." },
+    { "id": "pili-vesha", "tulu": "ಪಿಲಿ ವೇಸ", "roman": "pili vesa", "en": "Pili Vesha – tiger dance", "when": "Navaratri and Krishna Janmashtami",
+      "about": "Dancers painted as tigers perform to the beat of drums in the streets." },
+    { "id": "keddasa", "tulu": "ಕೆಡ್ಡಸ", "roman": "keddasa", "en": "Keddasa", "when": "Around February",
+      "about": "A three-day festival honouring Mother Earth; farm work rests, and special food is prepared." }
+  ],
+  "proverbs": []
+}
