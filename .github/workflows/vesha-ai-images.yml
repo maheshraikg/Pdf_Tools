@@ -1,0 +1,58 @@
+name: Vesha Puzzles – generate AI images
+
+# Manual run: generates puzzle pictures and the Vesha guide portraits with
+# Google's Imagen model (vesha_puzzles/tool/gen_ai_images.dart, prompts in
+# tool/ai_prompts.json) and commits them to the chosen branch.
+# Needs the repository secret GEMINI_API_KEY (a Google AI Studio key);
+# without it the job does nothing. Also runs when the prompts change on a
+# feature branch (workflow_dispatch only works from the default branch).
+on:
+  push:
+    branches-ignore: [ master, main ]
+    paths: [ 'vesha_puzzles/tool/ai_prompts.json' ]
+  workflow_dispatch:
+    inputs:
+      model:
+        description: 'Image model'
+        default: 'imagen-4.0-generate-001'
+      only:
+        description: 'Comma-separated ids to generate (empty = all)'
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: vesha_puzzles
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Generate
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          MODEL: ${{ inputs.model || 'imagen-4.0-generate-001' }}
+          ONLY: ${{ inputs.only }}
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then echo "GEMINI_API_KEY secret not set; skipping."; exit 0; fi
+          args=(--model "$MODEL")
+          if [ -n "$ONLY" ]; then args+=(--only "$ONLY"); fi
+          dart run tool/gen_ai_images.dart "${args[@]}" | tee build-ai.log
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          [ -f build-ai.log ] || exit 0
+          git add assets/packs assets/guide
+          if git diff --cached --quiet; then echo "No changes."; else
+            git commit -m "Vesha Puzzles: AI-generated pictures" -m "$(tail -n 30 build-ai.log)"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push
+          fi

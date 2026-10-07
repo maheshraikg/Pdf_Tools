@@ -1,0 +1,190 @@
+{
+  "id": "yakshagana",
+  "version": 1,
+  "placeholder": false,
+  "title": {
+    "en": "Yakshagana",
+    "kn": "ಯಕ್ಷಗಾನ",
+    "tcy": "ಯಕ್ಷಗಾನ"
+  },
+  "description": {
+    "en": "The all-night dance-drama of coastal Karnataka: its characters, music and backstage.",
+    "kn": "ಕರಾವಳಿ ಕರ್ನಾಟಕದ ಇಡೀ ರಾತ್ರಿಯ ನೃತ್ಯ-ನಾಟಕ: ಪಾತ್ರಗಳು, ಸಂಗೀತ ಮತ್ತು ಚೌಕಿ."
+  },
+  "cover": "images/y01_raja_vesha.jpg",
+  "credits": {
+    "artist": "Photographs from Wikimedia Commons (see each picture)",
+    "licence": "Per picture: CC BY / CC BY-SA / CC0 / public domain",
+    "year": "",
+    "url": "https://commons.wikimedia.org"
+  },
+  "puzzles": [
+    {
+      "id": "y01_raja_vesha",
+      "image": "images/y01_raja_vesha.jpg",
+      "title": {
+        "en": "Raja Vesha – the King",
+        "kn": "ರಾಜ ವೇಷ",
+        "tcy": "ರಾಜ ವೇಷ"
+      },
+      "story": "y01_raja_vesha",
+      "tags": [
+        "costume"
+      ],
+      "credit": {
+        "title": "File:Krishna Arjuna.jpg",
+        "author": "Hegades",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Krishna_Arjuna.jpg",
+        "changes": "Cropped to 2048×1536 and resized"
+      }
+    },
+    {
+      "id": "y02_bannada_vesha",
+      "image": "images/y02_bannada_vesha.jpg",
+      "title": {
+        "en": "Bannada Vesha – the Colourful Demon",
+        "kn": "ಬಣ್ಣದ ವೇಷ",
+        "tcy": "ಬಣ್ಣದ ವೇಷ"
+      },
+      "story": "y02_bannada_vesha",
+      "tags": [
+        "costume"
+      ],
+      "credit": {
+        "title": "File:ತೆಂಕುತಿಟ್ಟು ಯಕ್ಷಗಾನದ ಬಣ್ಣದ ವೇಷ.jpg",
+        "author": "Shivaprasad Haluvalli",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:%E0%B2%A4%E0%B3%86%E0%B2%82%E0%B2%95%E0%B3%81%E0%B2%A4%E0%B2%BF%E0%B2%9F%E0%B3%8D%E0%B2%9F%E0%B3%81_%E0%B2%AF%E0%B2%95%E0%B3%8D%E0%B2%B7%E0%B2%97%E0%B2%BE%E0%B2%A8%E0%B2%A6_%E0%B2%AC%E0%B2%A3%E0%B3%8D%E0%B2%A3%E0%B2%A6_%E0%B2%B5%E0%B3%87%E0%B2%B7.jpg",
+        "changes": "Cropped to 2048×1536 and resized"
+      }
+    },
+    {
+      "id": "y03_stri_vesha",
+      "image": "images/y03_stri_vesha.jpg",
+      "title": {
+        "en": "Stri Vesha – Queens and Heroines",
+        "kn": "ಸ್ತ್ರೀ ವೇಷ",
+        "tcy": "ಸ್ತ್ರೀ ವೇಷ"
+      },
+      "story": "y03_stri_vesha",
+      "tags": [
+        "costume"
+      ],
+      "credit": {
+        "title": "File:2016 Yakshagana dance Karnataka, a Hindu classical dance.jpg",
+        "author": "Hailé F",
+        "licence": "CC BY 2.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:2016_Yakshagana_dance_Karnataka,_a_Hindu_classical_dance.jpg",
+        "changes": "Cropped to 1600×1200 and resized"
+      }
+    },
+    {
+      "id": "y04_hasyagara",
+      "image": "images/y04_hasyagara.jpg",
+      "title": {
+        "en": "Hasyagara – the Jester",
+        "kn": "ಹಾಸ್ಯಗಾರ",
+        "tcy": "ಹಾಸ್ಯಗಾರೆ"
+      },
+      "story": "y04_hasyagara",
+      "tags": [
+        "costume"
+      ],
+      "credit": {
+        "title": "File:DSC 0485yakshagana.jpg",
+        "author": "Vandana bhat kaustubha",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:DSC_0485yakshagana.jpg",
+        "changes": "Cropped to 1536×2048 and resized"
+      }
+    },
+    {
+      "id": "y05_himmela",
+      "image": "images/y05_himmela.jpg",
+      "title": {
+        "en": "Himmela – the Musicians",
+        "kn": "ಹಿಮ್ಮೇಳ",
+        "tcy": "ಹಿಮ್ಮೇಳ"
+      },
+      "story": "y05_himmela",
+      "tags": [
+        "music"
+      ],
+      "credit": {
+        "title": "File:Yakshagana from Karnataka, India.jpg",
+        "author": "Ajscreations",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Yakshagana_from_Karnataka,_India.jpg",
+        "changes": "Cropped to 1536×2048 and resized"
+      }
+    },
+    {
+      "id": "y06_chowki",
+      "image": "images/y06_chowki.jpg",
+      "title": {
+        "en": "Chowki – the Green Room",
+        "kn": "ಚೌಕಿ",
+        "tcy": "ಚೌಕಿ"
+      },
+      "story": "y06_chowki",
+      "tags": [
+        "backstage"
+      ],
+      "credit": {
+        "title": "File:Chowki.jpg",
+        "author": "Ananth BS",
+        "licence": "CC BY 2.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Chowki.jpg",
+        "changes": "Cropped to 1600×1200 and resized"
+      }
+    },
+    {
+      "id": "y07_abhimanyu",
+      "image": "images/y07_abhimanyu.jpg",
+      "title": {
+        "en": "Abhimanyu and the Chakravyuha",
+        "kn": "ಅಭಿಮನ್ಯು ಮತ್ತು ಚಕ್ರವ್ಯೂಹ"
+      },
+      "story": "y07_abhimanyu",
+      "tags": [
+        "story"
+      ],
+      "credit": {
+        "title": "File:A character in Yaksha Gaana performance.jpg",
+        "author": "Krishnamoorthy Sudhakar",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:A_character_in_Yaksha_Gaana_performance.jpg",
+        "changes": "Cropped to 2048×1536 and resized"
+      }
+    },
+    {
+      "id": "y08_tala_maddale",
+      "image": "images/y08_tala_maddale.jpg",
+      "title": {
+        "en": "Tala-Maddale – Theatre of Words",
+        "kn": "ತಾಳಮದ್ದಳೆ",
+        "tcy": "ತಾಳಮದ್ದಳೆ"
+      },
+      "story": "y08_tala_maddale",
+      "tags": [
+        "form"
+      ],
+      "credit": {
+        "title": "File:Yakshagana - 2.jpg",
+        "author": "Aishwarya003",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Yakshagana_-_2.jpg",
+        "changes": "Cropped to 2048×1536 and resized"
+      }
+    }
+  ]
+}

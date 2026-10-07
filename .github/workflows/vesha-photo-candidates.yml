@@ -1,0 +1,41 @@
+name: Vesha Puzzles – find photo candidates
+
+# Searches Wikimedia Commons and Openverse for freely licensed photos for
+# each puzzle and commits numbered contact sheets to
+# vesha_puzzles/docs/photo_candidates/ on the same branch for review.
+on:
+  push:
+    branches-ignore: [ master, main ]
+    paths:
+      - 'vesha_puzzles/tool/photo_search.json'
+      - 'vesha_puzzles/tool/find_candidates.dart'
+      - '.github/workflows/vesha-photo-candidates.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: vesha_puzzles
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: dart run tool/find_candidates.dart
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/photo_candidates
+          if git diff --cached --quiet; then echo "No changes."; else
+            git commit -m "Vesha Puzzles: photo candidates for review (CI)"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push
+          fi

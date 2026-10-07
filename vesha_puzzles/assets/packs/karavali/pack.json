@@ -1,0 +1,106 @@
+{
+  "id": "karavali",
+  "version": 1,
+  "placeholder": false,
+  "title": {
+    "en": "Karavali Utsava",
+    "kn": "ಕರಾವಳಿ ಉತ್ಸವ",
+    "tcy": "ಕರಾವಳಿ ಉತ್ಸವ"
+  },
+  "description": {
+    "en": "Festivals and everyday colour of the Tulunadu coast.",
+    "kn": "ತುಳುನಾಡು ಕರಾವಳಿಯ ಹಬ್ಬಗಳು ಮತ್ತು ದಿನನಿತ್ಯದ ಬಣ್ಣಗಳು."
+  },
+  "cover": "images/c01_pili_vesha.jpg",
+  "credits": {
+    "artist": "Photographs from Wikimedia Commons (see each picture)",
+    "licence": "Per picture: CC BY / CC BY-SA / CC0 / public domain",
+    "year": "",
+    "url": "https://commons.wikimedia.org"
+  },
+  "puzzles": [
+    {
+      "id": "c01_pili_vesha",
+      "image": "images/c01_pili_vesha.jpg",
+      "title": {
+        "en": "Pili Vesha – the Tiger Dance",
+        "kn": "ಹುಲಿ ವೇಷ",
+        "tcy": "ಪಿಲಿ ವೇಷ"
+      },
+      "story": "c01_pili_vesha",
+      "tags": [
+        "festival"
+      ],
+      "credit": {
+        "title": "File:Pili nalike, Mangalore.jpg",
+        "author": "Fana2012",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Pili_nalike,_Mangalore.jpg",
+        "changes": "Cropped to 2048×1536 and resized"
+      }
+    },
+    {
+      "id": "c02_rathotsava",
+      "image": "images/c02_rathotsava.jpg",
+      "title": {
+        "en": "Rathotsava – the Temple Car",
+        "kn": "ರಥೋತ್ಸವ",
+        "tcy": "ರಥೋತ್ಸವ"
+      },
+      "story": "c02_rathotsava",
+      "tags": [
+        "festival"
+      ],
+      "credit": {
+        "title": "File:Decorated chariot, Udupi, India.jpg",
+        "author": "Rayabhari",
+        "licence": "CC BY-SA 3.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Decorated_chariot,_Udupi,_India.jpg",
+        "changes": "Cropped to 2048×1536 and resized"
+      }
+    },
+    {
+      "id": "c03_harbour_boats",
+      "image": "images/c03_harbour_boats.jpg",
+      "title": {
+        "en": "Boats at the Harbour",
+        "kn": "ಬಂದರಿನ ದೋಣಿಗಳು"
+      },
+      "story": "c03_harbour_boats",
+      "tags": [
+        "coast"
+      ],
+      "credit": {
+        "title": "File:Ind18-140 Schiffsgewusel.jpg",
+        "author": "Lusi Lindwurm",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Ind18-140_Schiffsgewusel.jpg",
+        "changes": "Cropped to 2048×1536 and resized"
+      }
+    },
+    {
+      "id": "c04_mallige",
+      "image": "images/c04_mallige.jpg",
+      "title": {
+        "en": "Mallige – Jasmine Strings",
+        "kn": "ಮಲ್ಲಿಗೆ",
+        "tcy": "ಮಲ್ಲಿಗೆ"
+      },
+      "story": "c04_mallige",
+      "tags": [
+        "coast"
+      ],
+      "credit": {
+        "title": "File:Mangaluru Mallige (Mangalore Jasmine Flower) 6.jpg",
+        "author": "Yakshitha",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Mangaluru_Mallige_(Mangalore_Jasmine_Flower)_6.jpg",
+        "changes": "Cropped to 2048×1536 and resized"
+      }
+    }
+  ]
+}

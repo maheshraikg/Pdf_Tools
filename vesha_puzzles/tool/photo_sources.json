@@ -1,0 +1,67 @@
+{
+  "_comment": "Wikimedia Commons candidates per puzzle, best first. 'File:' = a specific file, 'Category:' = search that category (largest suitable file wins). tool/fetch_photos.dart checks the licence of each file through the Commons API and only accepts CC0, public domain, CC BY and CC BY-SA. Candidates were found by web search on 2026-10-05; the licence check happens at fetch time. Re-mapped on 2026-10-05 after visual check: y07's earlier pick (a statue in Andhra Pradesh) and an idol-centred pili vesha photo were rejected. No Commons photos exist yet for a hasyagara or a tala-maddale session; those use the closest Yakshagana photos until AI or commissioned art replaces them. 2026-10-07: first choices re-picked from the contact sheets in docs/photo_candidates (Commons search).",
+  "y01_raja_vesha": [
+    "File:Krishna Arjuna.jpg",
+    "File:Yakshagana prepping.jpg",
+    "File:Yakshagana Veerabhadra Thenkuthittu.JPG",
+    "File:Yakshagana bhima.JPG"
+  ],
+  "y02_bannada_vesha": [
+    "File:ತೆಂಕುತಿಟ್ಟು ಯಕ್ಷಗಾನದ ಬಣ್ಣದ ವೇಷ.jpg",
+    "File:Rakkasa vesha (Demon) in Yakshagana.jpg"
+  ],
+  "y03_stri_vesha": [
+    "File:2016 Yakshagana dance Karnataka, a Hindu classical dance.jpg",
+    "File:Yakshagana.jpg",
+    "File:Yakshagana Performance.jpg"
+  ],
+  "y04_hasyagara": [
+    "File:DSC 0485yakshagana.jpg",
+    "File:Badagu vesha.jpg"
+  ],
+  "y05_himmela": [
+    "File:Yakshagana from Karnataka, India.jpg",
+    "File:\"Chende Pettu\".jpeg",
+    "File:Yakshagana Performance.jpg"
+  ],
+  "y06_chowki": [
+    "File:Chowki.jpg",
+    "File:Yakshagana makeup room- \"Chowki\".jpg"
+  ],
+  "y07_abhimanyu": [
+    "File:A character in Yaksha Gaana performance.jpg",
+    "File:Yakshagana Veerabhadra Thenkuthittu.JPG",
+    "File:Yakshagana bhima.JPG",
+    "File:Yakshagana Performance.jpg"
+  ],
+  "y08_tala_maddale": [
+    "File:Yakshagana - 2.jpg",
+    "File:Yakshagana Performance.jpg",
+    "File:Yakshagana - Makeup.jpg"
+  ],
+  "c01_pili_vesha": [
+    "File:Pili nalike, Mangalore.jpg",
+    "File:Hulivesha Barke (1).jpg",
+    "File:Hulivesha Barke (2).jpg",
+    "File:Hulivesha Barke (3).jpg",
+    "File:Hulivesha Barke (4).jpg",
+    "File:Hulivesha Barke (6).jpg",
+    "File:Hulivesha Barke (7).jpg",
+    "File:Hulivesha Barke (5).jpg"
+  ],
+  "c02_rathotsava": [
+    "File:Decorated chariot, Udupi, India.jpg",
+    "File:Rathas at Udupi Krishna Temple.jpg",
+    "File:The Brahma ratha (chariot), Udupi Krishna temple, Karnataka, India (464069620).jpg"
+  ],
+  "c03_harbour_boats": [
+    "File:Ind18-140 Schiffsgewusel.jpg",
+    "File:Malpe Port.jpg",
+    "File:Malpe(24-1-08).JPG"
+  ],
+  "c04_mallige": [
+    "File:Mangaluru Mallige (Mangalore Jasmine Flower) 6.jpg",
+    "File:Mangaluru Mallige (Mangalore Jasmine Flower) 7.jpg",
+    "File:Mangaluru Mallige (Mangalore Jasmine Flower) 4.jpg"
+  ]
+}
