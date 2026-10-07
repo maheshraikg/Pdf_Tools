@@ -1,0 +1,41 @@
+name: KSPSTADK push notifications
+
+# Free push for new kspstadk.com posts: every 30 minutes, check the public
+# REST API and send FCM topic notifications (HTTP v1). Needs the repository
+# secret FIREBASE_SERVICE_ACCOUNT; without it the job runs in dry-run mode.
+# Scheduled runs only happen on the default branch.
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kspstadk-notify
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --quiet google-auth requests
+      - name: Send notifications for new posts
+        working-directory: kspstadk_app
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: python3 tool/notify.py
+      - name: Save last-seen post
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898315+github-actions[bot]@users.noreply.github.com"
+          git add kspstadk_app/notify/state.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "KSPSTADK notify: update last-seen post [skip ci]"
+          git push origin HEAD:${GITHUB_REF_NAME}
