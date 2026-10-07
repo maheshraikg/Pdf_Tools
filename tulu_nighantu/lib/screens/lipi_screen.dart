@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../app_state.dart';
 import '../lipi/tulu_lipi.dart';
 import '../widgets/common.dart';
+import '../widgets/learn_shortcuts.dart';
 import 'trace_screen.dart';
 
 /// Lipi tab: alphabet grid grouped by [LetterGroup] with progress.
@@ -26,6 +27,7 @@ class LipiScreen extends StatelessWidget {
         builder: (context, _) => CustomScrollView(
           slivers: [
             SliverToBoxAdapter(child: _ProgressHeader(state: state)),
+            const SliverToBoxAdapter(child: LearnShortcuts()),
             for (final g in LetterGroup.values) ..._group(context, g, state),
             const SliverToBoxAdapter(child: SizedBox(height: 88)),
           ],
