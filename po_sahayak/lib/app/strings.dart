@@ -389,10 +389,6 @@ class S {
   String get highestRate => _t('Highest rate now', 'ಈಗಿನ ಅತ್ಯಧಿಕ ದರ');
   String get tapToCalculate =>
       _t('Tap a scheme to calculate', 'ಲೆಕ್ಕ ಮಾಡಲು ಯೋಜನೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ');
-  String get noAdsOffline => _t(
-    'No ads · Works offline · Kannada & English',
-    'ಜಾಹೀರಾತು ಇಲ್ಲ · ಆಫ್‌ಲೈನ್ · ಕನ್ನಡ ಮತ್ತು ಇಂಗ್ಲಿಷ್',
-  );
   String get yourMoney => _t('Your deposit', 'ನಿಮ್ಮ ಠೇವಣಿ');
   String get interestEarned => _t('Interest earned', 'ಗಳಿಸಿದ ಬಡ್ಡಿ');
   String get growth => _t('Growth year by year', 'ವರ್ಷವಾರು ಬೆಳವಣಿಗೆ');

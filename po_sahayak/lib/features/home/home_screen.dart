@@ -193,23 +193,14 @@ class _Header extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 14),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                Pill(
-                  s.validFrom(dmy(rates.validFrom)),
-                  icon: Icons.event_available_rounded,
-                  background: Brand.yellow,
-                  foreground: Brand.ink,
-                ),
-                Pill(
-                  s.noAdsOffline,
-                  icon: Icons.verified_rounded,
-                  background: Colors.white.withValues(alpha: 0.16),
-                  foreground: Colors.white,
-                ),
-              ],
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Pill(
+                s.validFrom(dmy(rates.validFrom)),
+                icon: Icons.event_available_rounded,
+                background: Brand.yellow,
+                foreground: Brand.ink,
+              ),
             ),
           ],
         ),
