@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 /// Pronunciation through the phone's own text-to-speech engine.
@@ -7,8 +11,8 @@ import 'package:flutter_tts/flutter_tts.dart';
 /// a close, approximate pronunciation. Nothing is sent over the network by
 /// the app; the Android TTS engine speaks on the device.
 ///
-/// When native-speaker recordings are added (see README), play those first
-/// and fall back to this.
+/// Native-speaker recordings listed in `assets/audio/index.json` are played
+/// first when they exist (see README); everything else uses TTS.
 class Speaker {
   Speaker._();
 
@@ -20,12 +24,52 @@ class Speaker {
 
   FlutterTts? _tts;
   bool? _available;
+  AudioPlayer? _player;
 
-  /// Speaks [text]. Returns false when no Kannada voice is installed or TTS
-  /// is unavailable, so the caller can show a hint.
+  /// Kannada-script text -> file name in assets/audio/.
+  Map<String, String>? _recordings;
+
+  /// Sets the recordings index (tests).
+  @visibleForTesting
+  void debugSetRecordings(Map<String, String> files) => _recordings = files;
+
+  /// The recording for [text], if one was added.
+  String? recordingFor(String text) =>
+      _recordings?[text.replaceAll('...', '').trim()];
+
+  Future<void> _loadRecordings() async {
+    if (_recordings != null) return;
+    try {
+      final j = jsonDecode(
+        await rootBundle.loadString('assets/audio/index.json'),
+      ) as Map<String, dynamic>;
+      _recordings = (j['files'] as Map<String, dynamic>? ?? const {}).map(
+        (k, v) => MapEntry(k.trim(), v as String),
+      );
+    } catch (e) {
+      _recordings = const {};
+    }
+  }
+
+  /// Speaks [text]: a native-speaker recording when there is one, otherwise
+  /// TTS. Returns false when no Kannada voice is installed or TTS is
+  /// unavailable, so the caller can show a hint.
   Future<bool> speak(String text) async {
     final t = text.replaceAll('...', '').trim();
     if (t.isEmpty) return true;
+    await _loadRecordings();
+    final file = recordingFor(t);
+    if (file != null) {
+      try {
+        await _tts?.stop();
+        final p = _player ??= AudioPlayer();
+        await p.stop();
+        await p.play(AssetSource('audio/$file'));
+        return true;
+      } catch (e) {
+        debugPrint('Recording failed, using TTS: $e');
+      }
+    }
     try {
       final tts = _tts ??= FlutterTts();
       if (_available == null) {
@@ -48,6 +92,7 @@ class Speaker {
   Future<void> stop() async {
     try {
       await _tts?.stop();
+      await _player?.stop();
     } catch (_) {}
   }
 }

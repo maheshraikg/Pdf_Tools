@@ -54,3 +54,18 @@ npx wrangler dev                   # run locally
 npx wrangler secret put GEMINI_API_KEY
 npx wrangler deploy
 ```
+
+## Word suggestions (review page)
+
+App users can send new words ("Send to the dictionary"). They are stored in a
+Workers KV namespace (`SUGGEST_KV`), which the deploy workflow creates and
+binds automatically.
+
+1. Add a repository secret **`TULU_ADMIN_PASSWORD`** (any password you choose).
+2. Run the **Tulu Nighantu AI server (deploy)** workflow.
+3. Open `https://<your-worker>.workers.dev/admin`, enter the password, and
+   **Approve** or **Delete** each suggestion. Approved words appear as JSON in
+   the `words.json` format; copy it and add it to `assets/data/words.json`.
+
+Limits: 30 suggestions per user per day; fields are length-limited and the
+Tulu word must be in Kannada script.

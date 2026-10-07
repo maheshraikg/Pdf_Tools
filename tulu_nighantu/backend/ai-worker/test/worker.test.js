@@ -65,3 +65,65 @@ test('buildPrompt caps glossary size', () => {
   const g = Array.from({ length: 50 }, (_, i) => ({ tulu: `t${i}`, roman: '', en: '', kn: '' }));
   assert.equal(buildPrompt('x', g).split('\n- ').length - 1, 20);
 });
+
+function memKv() {
+  const store = new Map();
+  return {
+    store,
+    get: async (k) => store.get(k) ?? null,
+    put: async (k, v) => store.set(k, v),
+    delete: async (k) => store.delete(k),
+    list: async ({ prefix }) => ({
+      keys: [...store.keys()].filter((k) => k.startsWith(prefix)).map((name) => ({ name })),
+      list_complete: true,
+    }),
+  };
+}
+
+const suggest = (body) =>
+  new Request('https://w.example/suggest', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'cf-connecting-ip': '9.9.9.9' },
+    body: JSON.stringify(body),
+  });
+const admin = (method, token, query = '') =>
+  new Request(`https://w.example/admin/api${query}`, {
+    method,
+    headers: token ? { authorization: `Bearer ${token}` } : {},
+  });
+
+test('suggestions are stored and reviewed with the admin password', async () => {
+  const kv = memKv();
+  const e = { ...env, SUGGEST_KV: kv, ADMIN_TOKEN: 'pw' };
+  const ok = await worker.fetch(suggest({ tulu: 'ರಾಜೆ', roman: 'raaje', en: 'king', note: 'x'.repeat(999) }), e);
+  assert.equal(ok.status, 200);
+  assert.equal((await worker.fetch(suggest({ tulu: 'raaje', en: 'king' }), e)).status, 400);
+  assert.equal((await worker.fetch(suggest({ tulu: 'ರಾಜೆ' }), e)).status, 400);
+
+  assert.equal((await worker.fetch(admin('GET'), e)).status, 401);
+  assert.equal((await worker.fetch(admin('GET', 'wrong'), e)).status, 401);
+  const list = await (await worker.fetch(admin('GET', 'pw'), e)).json();
+  assert.equal(list.length, 1);
+  assert.equal(list[0].tulu, 'ರಾಜೆ');
+  assert.equal(list[0].cat, 'words');
+  assert.equal(list[0].note.length, 300);
+
+  const del = await worker.fetch(admin('DELETE', 'pw', `?key=${encodeURIComponent(list[0].key)}`), e);
+  assert.equal(del.status, 200);
+  assert.equal((await (await worker.fetch(admin('GET', 'pw'), e)).json()).length, 0);
+});
+
+test('suggestions need KV and an admin password to be enabled', async () => {
+  assert.equal((await worker.fetch(suggest({ tulu: 'ರಾಜೆ', en: 'king' }), env)).status, 503);
+  const e = { ...env, SUGGEST_KV: memKv() };
+  assert.equal((await worker.fetch(admin('GET', 'undefined'), e)).status, 401);
+  const page = await worker.fetch(new Request('https://w.example/admin'), e);
+  assert.match(await page.text(), /Word suggestions/);
+});
+
+test('suggestions are rate limited per day', async () => {
+  const e = { ...env, SUGGEST_KV: memKv() };
+  let last;
+  for (let i = 0; i < 31; i++) last = await worker.fetch(suggest({ tulu: 'ರಾಜೆ', en: 'king' }), e);
+  assert.equal(last.status, 429);
+});
