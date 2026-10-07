@@ -273,10 +273,13 @@ class _DressUpScreenState extends State<DressUpScreen> {
                                         ),
                                       ),
                                     ),
-                            child: Image.asset(
-                              o.image!,
-                              fit: BoxFit.contain,
-                              cacheWidth: 240,
+                            child: LayerThumb(
+                              image: o.image!,
+                              canvas: Size(
+                                def.width.toDouble(),
+                                def.height.toDouble(),
+                              ),
+                              focus: slot.thumb,
                             ),
                           );
                         },
@@ -358,6 +361,50 @@ class _OptionCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Shows the part of a full-canvas layer given by [focus], scaled to fill
+/// the available box (layers are mostly transparent full-size canvases).
+class LayerThumb extends StatelessWidget {
+  const LayerThumb({
+    super.key,
+    required this.image,
+    required this.canvas,
+    this.focus,
+  });
+
+  final String image;
+  final Size canvas;
+  final Rect? focus;
+
+  @override
+  Widget build(BuildContext context) {
+    final f = focus ?? Offset.zero & canvas;
+    return LayoutBuilder(
+      builder: (context, box) {
+        final k = math.min(box.maxWidth / f.width, box.maxHeight / f.height);
+        final dx = (box.maxWidth - f.width * k) / 2 - f.left * k;
+        final dy = (box.maxHeight - f.height * k) / 2 - f.top * k;
+        return ClipRect(
+          child: Stack(
+            children: [
+              Positioned(
+                left: dx,
+                top: dy,
+                width: canvas.width * k,
+                height: canvas.height * k,
+                child: Image.asset(
+                  image,
+                  fit: BoxFit.fill,
+                  cacheWidth: (canvas.width * k * 2).round().clamp(64, 1024),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

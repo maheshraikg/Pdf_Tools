@@ -1,7 +1,11 @@
 // Generates the placeholder art pack, dress-up layers, guide images,
 // launcher icons and sounds. Run from vesha_puzzles/:
 //
-//   dart run tool/gen_placeholders.dart
+//   dart run tool/gen_placeholders.dart           # only missing files
+//   dart run tool/gen_placeholders.dart --force   # overwrite everything
+//
+// Existing files (photos, drawn art from tool/art/) are kept unless
+// --force is given.
 //
 // Every file it writes is a stand-in with the exact name and aspect the
 // real asset must have (see docs/ART_GUIDE.md). Real art simply replaces
@@ -120,8 +124,15 @@ class Canvas {
   );
 }
 
+bool force = false;
+
 void save(String path, img.Image image, {bool jpg = false}) {
-  final f = File(path)..parent.createSync(recursive: true);
+  final f = File(path);
+  if (f.existsSync() && !force) {
+    stdout.writeln('kept $path');
+    return;
+  }
+  f.parent.createSync(recursive: true);
   f.writeAsBytesSync(
     jpg ? img.encodeJpg(image, quality: 82) : img.encodePng(image, level: 9),
   );
@@ -824,7 +835,9 @@ List<double> mixAt(List<double> base, List<double> add, double at) {
 
 void sounds(String dir) {
   void w(String name, List<double> s) {
-    final f = File('$dir/$name')..parent.createSync(recursive: true);
+    final f = File('$dir/$name');
+    if (f.existsSync() && !force) return;
+    f.parent.createSync(recursive: true);
     f.writeAsBytesSync(wav(s));
     stdout.writeln('wrote ${f.path} (${f.lengthSync() ~/ 1024} KB)');
   }
@@ -878,7 +891,8 @@ void sounds(String dir) {
   w('music_loop.wav', music.sublist(0, 8 * rate));
 }
 
-void main() {
+void main(List<String> args) {
+  force = args.contains('--force');
   for (final e in puzzles.entries) {
     final c = Canvas(puzzleW, puzzleH);
     e.value.$2(c);

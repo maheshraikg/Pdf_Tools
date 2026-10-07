@@ -128,6 +128,15 @@ class ContentLoader {
             z: (s['z'] as num?)?.toInt() ?? slots.length,
             options: options,
             optional: s['optional'] != false,
+            thumb: switch (s['thumb']) {
+              [num x, num y, num w, num h] => Rect.fromLTWH(
+                x.toDouble(),
+                y.toDouble(),
+                w.toDouble(),
+                h.toDouble(),
+              ),
+              _ => null,
+            },
           ),
         );
       }

@@ -3,6 +3,8 @@
 /// artist or writer can replace it without touching code.
 library;
 
+import 'dart:ui' show Rect;
+
 enum Lang { en, kn, tcy }
 
 extension LangInfo on Lang {
@@ -221,10 +223,14 @@ class DressSlot {
     required this.z,
     required this.options,
     required this.optional,
+    this.thumb,
   });
 
   final String id;
   final LText name;
+
+  /// Part of the canvas shown in option thumbnails (canvas pixels).
+  final Rect? thumb;
 
   /// Draw order (low first).
   final int z;

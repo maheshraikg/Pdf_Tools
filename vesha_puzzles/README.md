@@ -13,7 +13,8 @@ tracking; English, Kannada and Tulu (Kannada script).
 
 > **Puzzle pictures are freely licensed photos from Wikimedia Commons**
 > (credited in the app; fetched with `tool/fetch_photos.dart`). Dress-up
-> layers, the guide and sounds are still generated placeholders; AI
+> layers and the Vesha guide are vector illustrations drawn by
+> `tool/art/draw_art_test.dart`; sounds are generated placeholders. AI
 > versions can be made with `tool/gen_ai_images.dart` (needs a Gemini API
 > key). The art to commission is in [docs/ART_GUIDE.md](docs/ART_GUIDE.md);
 > stories and cultural notes await expert review — see
@@ -94,7 +95,8 @@ its `images/`) under `assets:` in `pubspec.yaml`.
 
 | Command | What it does |
 |---|---|
-| `dart run tool/gen_placeholders.dart` | Regenerates every placeholder picture, layer, guide image, launcher icon and sound. |
+| `dart run tool/gen_placeholders.dart [--force]` | Creates any missing placeholder picture, launcher icon or sound (`--force` overwrites). |
+| `flutter test tool/art/draw_art_test.dart` | Redraws the dress-up layers (1024×1536) and Vesha guide portraits. |
 | `dart run tool/fetch_photos.dart` | Replaces puzzle pictures with CC/PD photos from Wikimedia Commons (licence checked) and writes credits (also run by `.github/workflows/vesha-photos.yml`). |
 | `GEMINI_API_KEY=… dart run tool/gen_ai_images.dart` | Generates puzzle pictures and guide portraits with Imagen (also `.github/workflows/vesha-ai-images.yml`). |
 | `dart run tool/gen_review_doc.dart` | Rebuilds `docs/CONTENT_TO_REVIEW.md` from the content JSON and Tulu strings. |
