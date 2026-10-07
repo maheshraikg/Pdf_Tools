@@ -10,7 +10,7 @@ import 'add_word_screen.dart';
 import 'settings_screen.dart';
 
 /// App version shown in the About card (keep in sync with pubspec.yaml).
-const String kAppVersion = '1.0.0';
+const String kAppVersion = '1.1.0';
 
 /// Saved tab: favourites, progress and about.
 class SavedScreen extends StatelessWidget {
