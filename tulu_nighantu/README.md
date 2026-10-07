@@ -22,6 +22,16 @@ includes a Kannada → Tulu lipi converter.
     are handled). It is dictionary-based: no grammar or word-order changes, and
     unknown words are highlighted.
   - *ಲಿಪಿ · Script*: live Kannada → Tulu-Tigalari with copy and share-as-image.
+- **ಕಲಿಯಿರಿ · Learn more** (top of the Lipi tab):
+  - *Charts*: numbers, days of the week, Tulu months, directions and colours.
+  - *Quiz*: 10 mixed questions (meanings, Tulu words, Tulu letters) and a
+    daily practice streak.
+  - *Culture*: festivals and traditions of Tulunadu; proverbs sent by users
+    appear after review.
+  - *Tulu keyboard*: type with Tulu lipi keys (or the Kannada keyboard) and
+    share as a picture/sticker – visible on every phone.
+- **Send to the dictionary**: new words and proverbs can be sent for review
+  (built-in server, `/admin` page – see backend/ai-worker/README.md).
 - **ಉಳಿಸಿದವು · Saved**: favourites, progress and about.
 
 The app does not use the network. Everything is bundled; pronunciation uses the

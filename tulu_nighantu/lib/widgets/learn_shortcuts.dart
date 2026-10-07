@@ -4,6 +4,7 @@ import '../app_state.dart';
 import '../screens/charts_screen.dart';
 import '../screens/culture_screen.dart';
 import '../screens/quiz_screen.dart';
+import '../screens/tulu_keyboard_screen.dart';
 
 /// A shortcut to one learning section.
 class _Shortcut {
@@ -36,6 +37,12 @@ final List<_Shortcut> _shortcuts = [
     () => 'Culture',
     Icons.festival_outlined,
     (_) => const CultureScreen(),
+  ),
+  _Shortcut(
+    'ಕೀಬೋರ್ಡ್',
+    () => 'Type & share',
+    Icons.keyboard_alt_outlined,
+    (_) => const TuluKeyboardScreen(),
   ),
 ];
 
