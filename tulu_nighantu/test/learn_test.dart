@@ -1,12 +1,16 @@
 import 'dart:io';
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tulu_nighantu/app_state.dart';
 import 'package:tulu_nighantu/learn/charts.dart';
+import 'package:tulu_nighantu/learn/quiz.dart';
 import 'package:tulu_nighantu/lipi/tulu_lipi.dart';
 import 'package:tulu_nighantu/screens/charts_screen.dart';
+import 'package:tulu_nighantu/screens/quiz_screen.dart';
 
 void main() {
   setUpAll(() {
@@ -56,6 +60,57 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('ಐತಾರ'), findsOneWidget);
     expect(find.text('Sunday'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  test('quiz: 10 mixed questions, each with 4 distinct options', () {
+    final q = buildQuiz(AppState.instance.words, random: Random(1));
+    expect(q, hasLength(10));
+    expect(q.map((x) => x.kind).toSet(), QuizKind.values.toSet());
+    for (final x in q) {
+      expect(x.options, hasLength(4));
+      expect(x.options.toSet(), hasLength(4), reason: x.options.join('|'));
+      expect(x.answer, inInclusiveRange(0, 3));
+    }
+  });
+
+  test('streak counts consecutive days and resets after a gap', () {
+    var s = const Streak();
+    s = s.practisedOn(DateTime(2026, 10, 1));
+    s = s.practisedOn(DateTime(2026, 10, 1));
+    s = s.practisedOn(DateTime(2026, 10, 2));
+    expect(s.current, 2);
+    expect(s.activeOn(DateTime(2026, 10, 3)), 2);
+    expect(s.activeOn(DateTime(2026, 10, 4)), 0);
+    s = s.practisedOn(DateTime(2026, 10, 5));
+    expect(s.current, 1);
+    expect(s.best, 2);
+    // Month boundary.
+    s = const Streak(current: 3, best: 3, lastDay: '2026-09-30');
+    expect(s.practisedOn(DateTime(2026, 10, 1)).current, 4);
+    expect(Streak.fromJson(s.toJson()).lastDay, '2026-09-30');
+  });
+
+  testWidgets('quiz can be played to the end on a small phone', (tester) async {
+    smallPhone(tester);
+    await tester.pumpWidget(MaterialApp(home: QuizScreen(random: Random(2))));
+    final list = find.byType(Scrollable).first;
+    for (var i = 0; i < 10; i++) {
+      final option = find.byKey(const ValueKey('quiz-option-0'));
+      await tester.scrollUntilVisible(option, 120, scrollable: list);
+      await tester.ensureVisible(option);
+      await tester.pumpAndSettle();
+      await tester.tap(option);
+      await tester.pump();
+      final next = find.byKey(const ValueKey('quiz-next'));
+      await tester.scrollUntilVisible(next, 120, scrollable: list);
+      await tester.ensureVisible(next);
+      await tester.pumpAndSettle();
+      await tester.tap(next);
+      await tester.pump();
+    }
+    expect(find.textContaining('/ 10'), findsWidgets);
+    expect(find.textContaining('Play again'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

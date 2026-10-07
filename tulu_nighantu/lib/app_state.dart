@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ai/gemini_client.dart';
 import 'ai/suggest_client.dart';
+import 'learn/quiz.dart';
 import 'lipi/stroke_guide.dart';
 import 'lipi/tulu_lipi.dart';
 import 'models/word.dart';
@@ -22,6 +23,8 @@ class AppState extends ChangeNotifier {
   static const _starsKey = 'stars';
   static const _customKey = 'custom_words';
   static const _sentKey = 'sent_suggestions';
+  static const _streakKey = 'streak';
+  static const _quizBestKey = 'quiz_best';
   static const _aiKeyKey = 'gemini_api_key';
   static const _aiModelKey = 'gemini_model';
 
@@ -107,6 +110,11 @@ class AppState extends ChangeNotifier {
           (k, v) => stars[k] = (v as num).toInt().clamp(0, 3),
         );
       }
+      final st = _prefs!.getString(_streakKey);
+      if (st != null) {
+        streak = Streak.fromJson(jsonDecode(st) as Map<String, dynamic>);
+      }
+      quizBest = _prefs!.getInt(_quizBestKey) ?? 0;
       sentSuggestions.addAll(_prefs!.getStringList(_sentKey) ?? const []);
       aiKey = _prefs!.getString(_aiKeyKey) ?? '';
       aiModel = _prefs!.getString(_aiModelKey) ?? kDefaultGeminiModel;
@@ -252,8 +260,38 @@ class AppState extends ChangeNotifier {
 
   int starsFor(String key) => stars[key] ?? 0;
 
+  // ------------------------------------------------------ practice streak
+
+  Streak streak = const Streak();
+
+  /// Best quiz score (out of 10).
+  int quizBest = 0;
+
+  /// Days in a row with practice, as shown today.
+  int get currentStreak => streak.activeOn(DateTime.now());
+
+  /// Marks today as a practice day (quiz or writing).
+  void recordPractice({DateTime? now}) {
+    final next = streak.practisedOn(now ?? DateTime.now());
+    if (identical(next, streak)) return;
+    streak = next;
+    _save(() => _prefs?.setString(_streakKey, jsonEncode(streak.toJson())));
+    notifyListeners();
+  }
+
+  /// Records a finished quiz.
+  void recordQuiz(int score) {
+    if (score > quizBest) {
+      quizBest = score;
+      _save(() => _prefs?.setInt(_quizBestKey, quizBest));
+    }
+    recordPractice();
+    notifyListeners();
+  }
+
   /// Stores [value] stars for [key] if it beats the previous best.
   void recordStars(String key, int value) {
+    if (value > 0) recordPractice();
     final v = value.clamp(0, 3);
     if (v <= starsFor(key)) return;
     stars[key] = v;
