@@ -1,4 +1,8 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
+
+import '../keyboard/keyboard_setup_card.dart';
 
 import '../lipi/composer.dart';
 import '../lipi/tulu_lipi.dart';
@@ -22,7 +26,13 @@ enum _CardStyle {
 /// keyboard) and share the result as a picture or sticker. Pictures work in
 /// every app, even where the Tulu-Tigalari font is not installed.
 class TuluKeyboardScreen extends StatefulWidget {
-  const TuluKeyboardScreen({super.key});
+  const TuluKeyboardScreen({super.key, bool? showSystemKeyboardSetup})
+    : _setup = showSystemKeyboardSetup;
+
+  final bool? _setup;
+
+  /// Whether to show the "use in every app" card (Android only).
+  bool get showSystemKeyboardSetup => _setup ?? Platform.isAndroid;
 
   @override
   State<TuluKeyboardScreen> createState() => _TuluKeyboardScreenState();
@@ -61,6 +71,10 @@ class _TuluKeyboardScreenState extends State<TuluKeyboardScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
         children: [
+          if (widget.showSystemKeyboardSetup) ...[
+            const KeyboardSetupCard(),
+            const SizedBox(height: 8),
+          ],
           RepaintBoundary(
             key: _cardKey,
             child: Container(

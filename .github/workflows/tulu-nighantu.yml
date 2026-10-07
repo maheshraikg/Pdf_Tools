@@ -46,6 +46,12 @@ jobs:
           AI_PROXY_URL: ${{ vars.AI_PROXY_URL }}
         run: flutter build apk --debug --dart-define=AI_PROXY_URL="$AI_PROXY_URL"
 
+      # Kotlin unit tests for the system keyboard (Gradle is set up by the
+      # Flutter build above).
+      - name: Test Android keyboard engine
+        working-directory: tulu_nighantu/android
+        run: ./gradlew :app:testDebugUnitTest --no-daemon -q
+
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
