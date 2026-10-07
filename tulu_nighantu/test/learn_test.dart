@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tulu_nighantu/app_state.dart';
+import 'package:tulu_nighantu/audio/speaker.dart';
 import 'package:tulu_nighantu/learn/charts.dart';
 import 'package:tulu_nighantu/learn/culture.dart';
 import 'package:tulu_nighantu/learn/quiz.dart';
@@ -140,5 +142,21 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('Proverbs coming soon'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  test('recordings are looked up by Kannada-script text', () {
+    Speaker.instance.debugSetRecordings({'ನೀರ್': 'r_abc.m4a'});
+    expect(Speaker.instance.recordingFor(' ನೀರ್ '), 'r_abc.m4a');
+    expect(Speaker.instance.recordingFor('ಕ'), isNull);
+    Speaker.instance.debugSetRecordings(const {});
+  });
+
+  test('bundled recordings index is valid and its files exist', () {
+    final j = jsonDecode(
+      File('assets/audio/index.json').readAsStringSync(),
+    ) as Map<String, dynamic>;
+    for (final f in (j['files'] as Map).values) {
+      expect(File('assets/audio/$f').existsSync(), isTrue, reason: '$f');
+    }
   });
 }

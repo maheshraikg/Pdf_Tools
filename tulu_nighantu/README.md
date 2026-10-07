@@ -135,15 +135,18 @@ gives a close but *approximate* pronunciation. If the phone has no Kannada voice
 the app shows how to install one (Settings › Text-to-speech › Speech Services by
 Google › Install voice data › ಕನ್ನಡ). Voices downloaded that way work offline.
 
-### Adding native-speaker recordings later
+### Native-speaker recordings
 
-1. Put recordings in `assets/audio/<id>.opus` (one per word id) and letters in
-   `assets/audio/letters/<kannada>.opus`.
-2. Add `assets/audio/` to `flutter: assets:` in `pubspec.yaml`.
-3. Add the [`audioplayers`](https://pub.dev/packages/audioplayers) package and,
-   in `Speaker.speak`, play the recording when it exists
-   (`AudioPlayer().play(AssetSource('audio/${word.id}.opus'))`), falling back
-   to text-to-speech.
+Listen buttons play a real recording when one exists and use text-to-speech
+otherwise (`Speaker.speak`, using the `audioplayers` package).
+
+1. Record short clips on any phone. Name each file after what is spoken:
+   a word id (`w025.m4a`) or the Kannada-script text (`ನೀರ್.m4a`, `ಕ.m4a`,
+   `ಐತಾರ.mp3`). Formats: m4a, mp3, ogg, opus, wav.
+2. Run `python3 tool/add_recordings.py <folder>`. It copies them to
+   `assets/audio/` and updates `assets/audio/index.json`.
+3. Build the app. Words, letters, charts and festivals with a recording now
+   play it.
 
 ## Writing tutorial data
 

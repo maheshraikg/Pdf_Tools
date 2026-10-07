@@ -38,6 +38,7 @@ dependencies:
   share_plus: ^13.3.0
   flutter_tts: ^4.2.5
   http: ^1.6.0
+  audioplayers: ^6.8.1
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +65,7 @@ flutter:
   assets:
     - assets/data/words.json
     - assets/data/culture.json
+    - assets/audio/
     - assets/data/strokes.json
     - assets/fonts/OFL.txt
 
