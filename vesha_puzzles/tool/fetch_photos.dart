@@ -129,6 +129,39 @@ Future<List<Candidate>> describe(List<String> titles) async {
   return out;
 }
 
+/// One Openverse image (CC/PD photos from Flickr and other sites).
+Future<Candidate?> openverseImage(String id) async {
+  final req = await http.getUrl(
+    Uri.parse('https://api.openverse.org/v1/images/$id/'),
+  );
+  final res = await req.close();
+  if (res.statusCode != 200) {
+    stdout.writeln('    - Openverse $id: HTTP ${res.statusCode}');
+    return null;
+  }
+  final x = jsonDecode(await res.transform(utf8.decoder).join()) as Map;
+  final lic = '${x['license']}'.toLowerCase();
+  if (!['cc0', 'pdm', 'by', 'by-sa'].contains(lic)) {
+    stdout.writeln('    - Openverse $id: licence $lic not allowed');
+    return null;
+  }
+  final licName = switch (lic) {
+    'cc0' => 'CC0 1.0',
+    'pdm' => 'Public domain',
+    _ => 'CC ${lic.toUpperCase()} ${x['license_version'] ?? ''}'.trim(),
+  };
+  return Candidate(
+    'Openverse:$id',
+    '${x['foreign_landing_url'] ?? 'https://openverse.org/image/$id'}',
+    '${x['url']}',
+    (x['width'] as num?)?.toInt() ?? 0,
+    (x['height'] as num?)?.toInt() ?? 0,
+    licName,
+    '${x['license_url'] ?? ''}',
+    '${x['creator'] ?? 'Unknown'}',
+  );
+}
+
 Future<List<String>> categoryFiles(String cat) async {
   final r = await getJson({
     'action': 'query',
@@ -149,7 +182,11 @@ Future<Candidate?> pick(List<String> sources, Set<String> used) async {
     stdout.writeln('  trying $s');
     List<Candidate> c;
     try {
-      if (s.startsWith('Category:')) {
+      if (s.startsWith('Openverse:')) {
+        c = [await openverseImage(s.substring(10))]
+            .whereType<Candidate>()
+            .toList();
+      } else if (s.startsWith('Category:')) {
         final files = (await categoryFiles(s))
             .where((f) => !used.contains(f))
             .toList();
