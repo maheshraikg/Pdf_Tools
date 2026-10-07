@@ -17,8 +17,10 @@ class S {
 
   // App
   String get appTitle => _t('PO Sahayak', 'ಪಿಒ ಸಹಾಯಕ');
-  String get tagline =>
-      _t('PO Calculator · Post Office interest', 'ಪಿಒ ಕ್ಯಾಲ್ಕುಲೇಟರ್ · ಅಂಚೆ ಕಚೇರಿ ಬಡ್ಡಿ');
+  String get tagline => _t(
+    'PO Calculator · Post Office interest',
+    'ಪಿಒ ಕ್ಯಾಲ್ಕುಲೇಟರ್ · ಅಂಚೆ ಕಚೇರಿ ಬಡ್ಡಿ',
+  );
   String get notAffiliated => _t(
     'Not affiliated with India Post or the Government of India.',
     'ಭಾರತೀಯ ಅಂಚೆ ಅಥವಾ ಭಾರತ ಸರ್ಕಾರದೊಂದಿಗೆ ಸಂಬಂಧವಿಲ್ಲ.',
@@ -32,6 +34,7 @@ class S {
   String get home => _t('Home', 'ಮುಖಪುಟ');
   String get compare => _t('Compare', 'ಹೋಲಿಕೆ');
   String get myAccounts => _t('My accounts', 'ನನ್ನ ಖಾತೆಗಳು');
+  String get navAccounts => _t('Accounts', 'ಖಾತೆಗಳು');
   String get staff => _t('Staff', 'ಸಿಬ್ಬಂದಿ');
   String get settings => _t('Settings', 'ಸೆಟ್ಟಿಂಗ್ಸ್');
 

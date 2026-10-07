@@ -86,6 +86,12 @@ class _PoSahayakAppState extends State<PoSahayakApp> {
           locale: Locale(widget.settings.lang.name),
           supportedLocales: const [Locale('en'), Locale('kn')],
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          // Phones set to very large fonts would break layouts; above 1.3x
+          // the app stops growing text (it is already 10% larger).
+          builder: (context, child) => MediaQuery.withClampedTextScaling(
+            maxScaleFactor: 1.3,
+            child: child!,
+          ),
           home: const HomeShell(),
         ),
       ),
@@ -115,39 +121,37 @@ class _HomeShellState extends State<HomeShell> {
     ];
     return Scaffold(
       body: IndexedStack(index: _tab, children: pages),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _tab,
-        onDestinationSelected: (i) => setState(() => _tab = i),
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home_rounded, color: Brand.red),
-            label: s.home,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.bar_chart_outlined),
-            selectedIcon: const Icon(Icons.bar_chart_rounded, color: Brand.red),
-            label: s.compare,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.account_balance_wallet_outlined),
-            selectedIcon: const Icon(
-              Icons.account_balance_wallet_rounded,
-              color: Brand.red,
-            ),
-            label: s.myAccounts,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.badge_outlined),
-            selectedIcon: const Icon(Icons.badge_rounded, color: Brand.red),
-            label: s.staff,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.settings_outlined),
-            selectedIcon: const Icon(Icons.settings_rounded, color: Brand.red),
-            label: s.settings,
-          ),
-        ],
+      // Tab labels stay at normal size (as in Android's own bars) so they
+      // fit on one line even with a large system font.
+      bottomNavigationBar: MediaQuery.withClampedTextScaling(
+        maxScaleFactor: 1.0,
+        child: NavigationBar(
+          selectedIndex: _tab,
+          onDestinationSelected: (i) => setState(() => _tab = i),
+          destinations: [
+            for (final (icon, selected, label) in [
+              (Icons.home_outlined, Icons.home_rounded, s.home),
+              (
+                Icons.leaderboard_outlined,
+                Icons.leaderboard_rounded,
+                s.compare,
+              ),
+              (Icons.savings_outlined, Icons.savings_rounded, s.navAccounts),
+              (
+                Icons.support_agent_outlined,
+                Icons.support_agent_rounded,
+                s.staff,
+              ),
+              (Icons.settings_outlined, Icons.settings_rounded, s.settings),
+            ])
+              NavigationDestination(
+                icon: Icon(icon),
+                selectedIcon: Icon(selected, color: Brand.red),
+                label: label,
+                tooltip: label,
+              ),
+          ],
+        ),
       ),
     );
   }

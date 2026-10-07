@@ -29,14 +29,24 @@ void main() {
     await pumpApp(tester);
     expect(find.text('Deposits'), findsOneWidget);
     expect(find.text('Highest rate now'), findsOneWidget);
-    expect(find.text('TD5'), findsOneWidget);
     await tester.tap(find.text('ಕನ್ನಡ'));
     await tester.pumpAndSettle();
     expect(find.text('ಠೇವಣಿಗಳು'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('TD5'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('TD5'), findsOneWidget);
   });
 
   testWidgets('TD5 calculation, save and My accounts', (tester) async {
     await pumpApp(tester);
+    await tester.scrollUntilVisible(
+      find.text('TD5'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('TD5'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField).first, '100000');
@@ -59,7 +69,7 @@ void main() {
         .state<NavigatorState>(find.byType(Navigator).first)
         .popUntil((r) => r.isFirst);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('My accounts').last);
+    await tester.tap(find.text('Accounts').last);
     await tester.pumpAndSettle();
     expect(find.text('Amma TD'), findsWidgets);
   });
@@ -69,7 +79,7 @@ void main() {
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
     await pumpApp(tester, lang: 'kn');
-    for (final label in ['ಹೋಲಿಕೆ', 'ನನ್ನ ಖಾತೆಗಳು', 'ಸಿಬ್ಬಂದಿ', 'ಸೆಟ್ಟಿಂಗ್ಸ್']) {
+    for (final label in ['ಹೋಲಿಕೆ', 'ಖಾತೆಗಳು', 'ಸಿಬ್ಬಂದಿ', 'ಸೆಟ್ಟಿಂಗ್ಸ್']) {
       await tester.tap(find.text(label).last);
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull, reason: label);
@@ -103,6 +113,33 @@ void main() {
       expect(err, isNull, reason: scheme.code);
       nav.pop();
       await tester.pumpAndSettle();
+    }
+  });
+
+  testWidgets('large phone font: home and every tab lay out without errors', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(360 * 3, 780 * 3);
+    tester.view.devicePixelRatio = 3;
+    tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    for (final lang in ['en', 'kn']) {
+      await pumpApp(tester, lang: lang);
+      expect(tester.takeException(), isNull, reason: '$lang home');
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -3000));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: '$lang home scrolled');
+      for (final icon in [
+        Icons.leaderboard_outlined,
+        Icons.savings_outlined,
+        Icons.support_agent_outlined,
+        Icons.settings_outlined,
+      ]) {
+        await tester.tap(find.byIcon(icon).last);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull, reason: '$lang $icon');
+      }
     }
   });
 }

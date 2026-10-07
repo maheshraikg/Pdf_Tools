@@ -109,7 +109,7 @@ class Pill extends StatelessWidget {
           Flexible(
             child: Text(
               text,
-              maxLines: 1,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelMedium
                   ?.copyWith(color: fg, fontWeight: FontWeight.w600),

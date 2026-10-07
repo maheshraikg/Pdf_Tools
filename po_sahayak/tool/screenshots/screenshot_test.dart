@@ -68,11 +68,19 @@ void main() {
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
   }
 
-  for (final lang in ['en', 'kn', 'dark']) {
+  for (final lang in ['en', 'kn', 'dark', 'big', 'bigkn']) {
     testWidgets('screens $lang', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(400, 860));
+      final big = lang.startsWith('big');
+      await tester.binding.setSurfaceSize(
+        big ? const Size(360, 780) : const Size(400, 860),
+      );
+      if (big) {
+        // A phone with a large system font, like the one in the bug report.
+        tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      }
       SharedPreferences.setMockInitialValues({
-        'lang': lang == 'dark' ? 'en' : lang,
+        'lang': lang == 'kn' || lang == 'bigkn' ? 'kn' : 'en',
         if (lang == 'dark') 'theme': 'dark',
       });
       final settings = await AppSettings.load();
@@ -80,7 +88,7 @@ void main() {
       final rates = RateRepository.fromJson(
         File('assets/rates.json').readAsStringSync(),
       );
-      if (lang != 'kn') {
+      if (lang == 'en' || lang == 'dark' || lang == 'big') {
         await accounts.add(
           'Amma SCSS',
           CalcInput(
@@ -115,6 +123,11 @@ void main() {
       await settle(tester);
       await shot(tester, key, '${lang}_1_home');
 
+      await tester.scrollUntilVisible(
+        find.text('TD5'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.tap(find.text('TD5'));
       await settle(tester);
       await tester.enterText(find.byType(TextFormField).first, '100000');
@@ -132,9 +145,9 @@ void main() {
       await settle(tester);
 
       for (final (icon, name) in [
-        (Icons.bar_chart_outlined, '5_compare'),
-        (Icons.account_balance_wallet_outlined, '6_accounts'),
-        (Icons.badge_outlined, '7_staff'),
+        (Icons.leaderboard_outlined, '5_compare'),
+        (Icons.savings_outlined, '6_accounts'),
+        (Icons.support_agent_outlined, '7_staff'),
         (Icons.settings_outlined, '8_settings'),
       ]) {
         await tester.tap(find.byIcon(icon).last);

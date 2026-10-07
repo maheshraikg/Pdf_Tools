@@ -54,20 +54,30 @@ class HomeScreen extends StatelessWidget {
             ),
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 220,
-                  mainAxisExtent: 158,
-                  mainAxisSpacing: 4,
-                  crossAxisSpacing: 4,
-                ),
-                delegate: SliverChildListDelegate([
-                  for (final scheme in schemes)
-                    Appear(
-                      delay: Appear.step(index++),
-                      child: SchemeTile(scheme: scheme),
+              // Rows of two tiles that grow with their text (large phone
+              // font sizes), instead of a fixed-height grid.
+              sliver: SliverList.list(
+                children: [
+                  for (var i = 0; i < schemes.length; i += 2)
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          for (var j = i; j < i + 2; j++) ...[
+                            if (j > i) const SizedBox(width: 4),
+                            Expanded(
+                              child: j < schemes.length
+                                  ? Appear(
+                                      delay: Appear.step(index++),
+                                      child: SchemeTile(scheme: schemes[j]),
+                                    )
+                                  : const SizedBox(),
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
-                ]),
+                ],
               ),
             ),
           ],
@@ -101,6 +111,8 @@ class _Header extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Logo and language button on top; the name gets the full
+            // width below, so it never wraps beside the button.
             Row(
               children: [
                 Container(
@@ -116,30 +128,19 @@ class _Header extends StatelessWidget {
                     size: 28,
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        s.appTitle,
-                        style: t.headlineSmall?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      Text(
-                        s.tagline,
-                        style: t.bodyMedium?.copyWith(color: white70),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
+                const Spacer(),
                 const LanguageToggle(onDark: true),
               ],
             ),
+            const SizedBox(height: 12),
+            Text(
+              s.appTitle,
+              style: t.headlineSmall?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            Text(s.tagline, style: t.bodyMedium?.copyWith(color: white70)),
             const SizedBox(height: 20),
             Appear(
               child: Material(
@@ -152,35 +153,37 @@ class _Header extends StatelessWidget {
                   onTap: () => openCalculator(context, top),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        IconBadge(top.icon, top.color, size: 52),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
+                        Row(
+                          children: [
+                            IconBadge(top.icon, top.color, size: 48),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
                                 s.highestRate,
                                 style: t.labelLarge?.copyWith(
                                   color: Brand.redDark,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              Text(
-                                s.schemeName(top),
-                                style: t.titleSmall?.copyWith(color: Brand.ink),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              '${pct(rates.current(top).rate)}%',
+                              style: t.headlineMedium?.copyWith(
+                                color: top.color,
+                                fontWeight: FontWeight.w800,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
+                        const SizedBox(height: 8),
                         Text(
-                          '${pct(rates.current(top).rate)}%',
-                          style: t.headlineMedium?.copyWith(
-                            color: top.color,
-                            fontWeight: FontWeight.w800,
+                          s.schemeName(top),
+                          style: t.titleMedium?.copyWith(
+                            color: Brand.ink,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
@@ -274,48 +277,32 @@ class SchemeTile extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Expanded(
-                    child: Text(
-                      s.schemeName(scheme),
-                      style: t.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        height: 1.2,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                  Text(
+                    s.schemeName(scheme),
+                    style: t.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      height: 1.2,
                     ),
                   ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '${pct(rate)}%',
-                        style: t.headlineSmall?.copyWith(
-                          color: scheme.textColor(context),
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          closed
-                              ? s.closedForNew
-                              : scheme.isTd
-                              ? ''
-                              : s.tenureOf(scheme),
-                          style: t.bodySmall?.copyWith(
-                            color: closed
-                                ? Theme.of(context).colorScheme.error
-                                : Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
+                  const SizedBox(height: 6),
+                  const Spacer(),
+                  Text(
+                    '${pct(rate)}%',
+                    style: t.headlineSmall?.copyWith(
+                      color: scheme.textColor(context),
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
+                  // Tenure under the rate (TD names already say it).
+                  if (closed || !scheme.isTd)
+                    Text(
+                      closed ? s.closedForNew : s.tenureOf(scheme),
+                      style: t.bodySmall?.copyWith(
+                        color: closed
+                            ? Theme.of(context).colorScheme.error
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                 ],
               ),
             ),

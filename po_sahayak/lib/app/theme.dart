@@ -171,9 +171,11 @@ ThemeData buildTheme(Brightness b) {
       elevation: 3,
       shadowColor: Colors.black26,
       surfaceTintColor: Colors.transparent,
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       labelTextStyle: WidgetStateProperty.resolveWith(
         (s) => TextStyle(
           fontSize: 12,
+          overflow: TextOverflow.ellipsis,
           fontWeight: s.contains(WidgetState.selected)
               ? FontWeight.w700
               : FontWeight.w500,

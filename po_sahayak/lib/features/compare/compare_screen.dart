@@ -222,6 +222,19 @@ class _CompareCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // On its own line so it never squeezes the name.
+              if (isBest) ...[
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Pill(
+                    s.highestReturn,
+                    icon: Icons.emoji_events_rounded,
+                    background: Brand.yellow,
+                    foreground: Brand.ink,
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
               Row(
                 children: [
                   IconBadge(r.scheme.icon, c, size: 40),
@@ -245,13 +258,6 @@ class _CompareCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (isBest)
-                    Pill(
-                      s.highestReturn,
-                      icon: Icons.emoji_events_rounded,
-                      background: Brand.yellow,
-                      foreground: Brand.ink,
-                    ),
                 ],
               ),
               const SizedBox(height: 12),
