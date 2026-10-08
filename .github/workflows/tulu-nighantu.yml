@@ -12,6 +12,8 @@ jobs:
   build:
     name: Analyze, test and build debug APK
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # to publish the test APK as a release file
     defaults:
       run:
         working-directory: tulu_nighantu
@@ -46,8 +48,29 @@ jobs:
           AI_PROXY_URL: ${{ vars.AI_PROXY_URL }}
         run: flutter build apk --debug --dart-define=AI_PROXY_URL="$AI_PROXY_URL"
 
+      # Kotlin unit tests for the system keyboard (Gradle is set up by the
+      # Flutter build above).
+      - name: Test Android keyboard engine
+        working-directory: tulu_nighantu/android
+        run: ./gradlew :app:testDebugUnitTest --no-daemon -q
+
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
           name: tulu-nighantu-debug-apk
           path: tulu_nighantu/build/app/outputs/flutter-apk/app-debug.apk
+
+      # Direct .apk download link (no zip) for testing on a phone:
+      # https://github.com/<owner>/<repo>/releases/download/tulu-nighantu-test/tulu-nighantu-test.apk
+      - name: Publish test APK as a release file
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp build/app/outputs/flutter-apk/app-debug.apk tulu-nighantu-test.apk
+          if ! gh release view tulu-nighantu-test >/dev/null 2>&1; then
+            gh release create tulu-nighantu-test --prerelease \
+              --title "Tulu Nighantu – latest test APK" \
+              --notes "Latest test build of Tulu Nighantu (debug-signed, for testing; not the Play Store version). Download tulu-nighantu-test.apk below and install it."
+          fi
+          gh release upload tulu-nighantu-test tulu-nighantu-test.apk --clobber

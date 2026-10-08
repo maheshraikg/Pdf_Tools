@@ -30,6 +30,14 @@ includes a Kannada → Tulu lipi converter.
     appear after review.
   - *Tulu keyboard*: type with Tulu lipi keys (or the Kannada keyboard) and
     share as a picture/sticker – visible on every phone.
+- **System keyboard** (Android): "Tulu Nighantu keyboard" works in WhatsApp
+  and every app. Turn it on from the Keyboard screen (Settings › keyboards),
+  tap 🌐 to switch to it, type with Tulu lipi keys, then **Sticker** (a
+  picture everyone can see; sent straight into apps that accept keyboard
+  stickers, otherwise via the share sheet) or **Text** (Unicode, for phones
+  with a Tulu-Tigalari font). Code: `android/app/src/main/kotlin/.../keyboard/`;
+  its conversion table is checked against the Dart one by
+  `test/keyboard_engine_sync_test.dart`.
 - **Send to the dictionary**: new words and proverbs can be sent for review
   (built-in server, `/admin` page – see backend/ai-worker/README.md).
 - **ಉಳಿಸಿದವು · Saved**: favourites, progress and about.
