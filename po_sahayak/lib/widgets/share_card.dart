@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -32,6 +33,7 @@ String resultText(S s, CalcResult r) {
 Future<void> showShareCard(BuildContext context, CalcResult result) {
   final key = GlobalKey();
   final s = context.s;
+  final messenger = ScaffoldMessenger.maybeOf(context);
   return showDialog<void>(
     context: context,
     builder: (dialogContext) => AlertDialog(
@@ -51,36 +53,61 @@ Future<void> showShareCard(BuildContext context, CalcResult result) {
           icon: const Icon(Icons.share),
           label: Text(s.share),
           onPressed: () async {
-            final boundary =
-                key.currentContext?.findRenderObject()
-                    as RenderRepaintBoundary?;
-            XFile? file;
-            if (boundary != null) {
-              final image = await boundary.toImage(pixelRatio: 3);
-              final bytes = await image.toByteData(
-                format: ui.ImageByteFormat.png,
-              );
-              if (bytes != null) {
-                file = XFile.fromData(
-                  bytes.buffer.asUint8List(),
-                  mimeType: 'image/png',
-                  name: 'po_sahayak_${result.scheme.code.toLowerCase()}.png',
-                );
-              }
-            }
-            await SharePlus.instance.share(
-              ShareParams(
-                text: resultText(s, result),
-                files: file == null ? null : [file],
-                fileNameOverrides: file == null ? null : [file.name],
-              ),
-            );
+            // Picture first (needs the card on screen), then close the
+            // dialog and open the share sheet.
+            final file = await _cardImage(key, result);
             if (dialogContext.mounted) Navigator.pop(dialogContext);
+            final ok = await shareResult(s, result, file);
+            if (!ok) {
+              messenger?.showSnackBar(SnackBar(content: Text(s.shareFailed)));
+            }
           },
         ),
       ],
     ),
   );
+}
+
+/// The card as a PNG file in the app's temporary folder, or null.
+Future<XFile?> _cardImage(GlobalKey key, CalcResult result) async {
+  try {
+    final boundary =
+        key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+    if (boundary == null) return null;
+    final image = await boundary.toImage(pixelRatio: 3);
+    final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+    image.dispose();
+    if (bytes == null) return null;
+    final name = 'po_sahayak_${result.scheme.code.toLowerCase()}.png';
+    final dir = await Directory.systemTemp.createTemp('share');
+    final file = File('${dir.path}/$name');
+    await file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
+    return XFile(file.path, mimeType: 'image/png', name: name);
+  } catch (e) {
+    debugPrint('Share image failed: $e');
+    return null;
+  }
+}
+
+/// Shares the result as image + text; falls back to text alone when the
+/// image cannot be shared. Returns false if nothing could be shared.
+Future<bool> shareResult(S s, CalcResult result, XFile? image) async {
+  final text = resultText(s, result);
+  if (image != null) {
+    try {
+      await SharePlus.instance.share(ShareParams(text: text, files: [image]));
+      return true;
+    } catch (e) {
+      debugPrint('Share with image failed: $e');
+    }
+  }
+  try {
+    await SharePlus.instance.share(ShareParams(text: text));
+    return true;
+  } catch (e) {
+    debugPrint('Share failed: $e');
+    return false;
+  }
 }
 
 /// A clean result card in the selected language. No India Post name or logo.

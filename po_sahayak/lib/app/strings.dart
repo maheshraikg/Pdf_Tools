@@ -182,6 +182,10 @@ class S {
   String get saveAccount => _t('Save account', 'ಖಾತೆ ಉಳಿಸಿ');
   String get saved => _t('Saved to My accounts', 'ನನ್ನ ಖಾತೆಗಳಲ್ಲಿ ಉಳಿಸಲಾಗಿದೆ');
   String get share => _t('Share', 'ಹಂಚಿಕೊಳ್ಳಿ');
+  String get shareFailed => _t(
+    'Could not open sharing. Please try again.',
+    'ಹಂಚಿಕೊಳ್ಳಲು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+  );
   String get cancel => _t('Cancel', 'ರದ್ದು');
   String get accountName => _t('Name for this account', 'ಈ ಖಾತೆಗೆ ಹೆಸರು');
   String get accountNameHint =>

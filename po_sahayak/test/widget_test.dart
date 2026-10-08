@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:po_sahayak/app/settings.dart';
 import 'package:po_sahayak/data/saved_account_repository.dart';
@@ -141,5 +144,39 @@ void main() {
         expect(tester.takeException(), isNull, reason: '$lang $icon');
       }
     }
+  });
+
+  testWidgets('share sends the card image and the text', (tester) async {
+    final calls = <MethodCall>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('dev.fluttercommunity.plus/share'),
+      (call) async {
+        calls.add(call);
+        return 'dev.fluttercommunity.plus/share/unavailable';
+      },
+    );
+    await pumpApp(tester);
+    final nav = tester.state<NavigatorState>(find.byType(Navigator).first);
+    nav.push(
+      MaterialPageRoute<void>(
+        builder: (_) => ResultScreen(result: calc(Scheme.mssc, 1000, '7.5')),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.share_rounded));
+    await tester.pumpAndSettle();
+    await tester.runAsync(() async {
+      await tester.tap(find.widgetWithText(FilledButton, 'Share'));
+      for (var i = 0; i < 50 && calls.isEmpty; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+      }
+    });
+    await tester.pumpAndSettle();
+    expect(calls, hasLength(1));
+    final args = calls.single.arguments as Map;
+    expect(args['text'], contains('₹1,160'));
+    final path = (args['paths'] as List).single as String;
+    expect(File(path).lengthSync(), greaterThan(1000));
+    expect(find.byType(AlertDialog), findsNothing);
   });
 }

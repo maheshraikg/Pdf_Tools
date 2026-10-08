@@ -6,7 +6,7 @@ import '../../app/strings.dart';
 import '../../app/theme.dart';
 import '../../widgets/common.dart';
 
-const String kAppVersion = '1.1.4';
+const String kAppVersion = '1.1.5';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
