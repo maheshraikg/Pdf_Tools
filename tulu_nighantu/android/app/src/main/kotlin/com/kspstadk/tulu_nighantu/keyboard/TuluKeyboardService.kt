@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.media.AudioManager
 import android.inputmethodservice.InputMethodService
 import android.os.Build
 import android.text.TextUtils
@@ -39,6 +40,7 @@ class TuluKeyboardService : InputMethodService() {
 
     private var buffer = ""
     private var page = 1
+    private var prefs = KeyboardPrefs()
     private var tulu: Typeface = Typeface.DEFAULT
     private lateinit var colors: Palette
 
@@ -73,11 +75,21 @@ class TuluKeyboardService : InputMethodService() {
             },
             LinearLayout.LayoutParams(MATCH, WRAP).apply { topMargin = dp(2) },
         )
-        keyArea = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        // Room for 3 rows on every page, so the keyboard does not jump.
+        keyArea = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            minimumHeight = dp(56) * 3
+        }
+        root.addView(buildTabRow())
         root.addView(keyArea)
         root.addView(buildBottomRow())
         refresh()
         return root
+    }
+
+    override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
+        super.onStartInputView(info, restarting)
+        prefs = KeyboardPrefs.load(this)
     }
 
     override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
@@ -116,6 +128,23 @@ class TuluKeyboardService : InputMethodService() {
         return bar
     }
 
+    private fun buildTabRow(): View {
+        val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        tabViews.clear()
+        PAGES.forEachIndexed { i, p ->
+            val tab = key(p.tab, null, colors.special) {
+                page = i
+                refresh()
+            }.apply { setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f) }
+            tabViews += tab
+            row.addView(
+                tab,
+                LinearLayout.LayoutParams(0, dp(36), 1f).apply { setMargins(dp(2), dp(2), dp(2), dp(2)) },
+            )
+        }
+        return row
+    }
+
     private fun buildBottomRow(): View {
         val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         row.addView(
@@ -125,18 +154,9 @@ class TuluKeyboardService : InputMethodService() {
                     true
                 }
             },
-            keyParams(0.9f),
+            keyParams(1f),
         )
-        tabViews.clear()
-        PAGES.forEachIndexed { i, p ->
-            val tab = key(p.tab, null, colors.special) {
-                page = i
-                refresh()
-            }
-            tabViews += tab
-            row.addView(tab, keyParams(0.9f))
-        }
-        row.addView(key("␣", null, colors.key) { typeSpace() }, keyParams(2.2f))
+        row.addView(key("␣", null, colors.key) { typeSpace() }, keyParams(4f))
         row.addView(
             key("⌫", null, colors.special) { deleteOne() }.apply {
                 setOnLongClickListener {
@@ -145,9 +165,9 @@ class TuluKeyboardService : InputMethodService() {
                     true
                 }
             },
-            keyParams(1.1f),
+            keyParams(1.3f),
         )
-        row.addView(key("↵", null, colors.special) { enter() }, keyParams(1.1f))
+        row.addView(key("↵", null, colors.special) { enter() }, keyParams(1.3f))
         return row
     }
 
@@ -178,17 +198,21 @@ class TuluKeyboardService : InputMethodService() {
         }
 
         keyArea.removeAllViews()
-        val letters = PAGES[page].letters
-        letters.chunked(COLUMNS).forEach { chunk ->
+        val current = PAGES[page]
+        val canJoin = TuluEngine.addOttu(buffer, "ಕ") != buffer
+        current.letters.chunked(COLUMNS).forEach { chunk ->
             val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
             chunk.forEach { k ->
-                row.addView(
-                    key(TuluEngine.fromKannada(k), k, colors.key, tuluGlyph = true) {
-                        buffer += k
-                        refresh()
-                    },
-                    keyParams(1f),
-                )
+                val label = if (current.ottu) "್$k" else k
+                val v = key(TuluEngine.fromKannada(label), label, colors.key, tuluGlyph = true) {
+                    buffer = if (current.ottu) TuluEngine.addOttu(buffer, k) else buffer + k
+                    refresh()
+                }
+                if (current.ottu && !canJoin) {
+                    v.alpha = 0.35f
+                    v.isEnabled = false
+                }
+                row.addView(v, keyParams(1f))
             }
             repeat(COLUMNS - chunk.size) { row.addView(View(this), keyParams(1f)) }
             keyArea.addView(row)
@@ -240,10 +264,23 @@ class TuluKeyboardService : InputMethodService() {
             setLineSpacing(0f, 0.85f)
         }
         isClickable = true
-        isHapticFeedbackEnabled = true
         setOnClickListener {
-            it.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+            feedback(it)
             onTap()
+        }
+    }
+
+    /** Key click sound and vibration, as chosen in the app. */
+    private fun feedback(v: View) {
+        if (prefs.vibrate) {
+            v.performHapticFeedback(
+                android.view.HapticFeedbackConstants.KEYBOARD_TAP,
+                android.view.HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING,
+            )
+        }
+        if (prefs.sound) {
+            (getSystemService(Context.AUDIO_SERVICE) as AudioManager)
+                .playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD, 1f)
         }
     }
 
@@ -324,7 +361,7 @@ class TuluKeyboardService : InputMethodService() {
             return
         }
         val file = try {
-            StickerRenderer.render(this, lipi, tulu)
+            StickerRenderer.render(this, lipi, tulu, prefs.stickerLabel)
         } catch (e: Exception) {
             toast("Could not make the sticker")
             return
@@ -445,7 +482,7 @@ class TuluKeyboardService : InputMethodService() {
         }
     }
 
-    private class Page(val tab: String, val letters: List<String>)
+    private class Page(val tab: String, val letters: List<String>, val ottu: Boolean = false)
 
     companion object {
         /** The Flutter app's Tulu font inside the APK. */
@@ -461,6 +498,11 @@ class TuluKeyboardService : InputMethodService() {
             Page("ಕ", "ಕ ಖ ಗ ಘ ಙ ಚ ಛ ಜ ಝ ಞ".split(" ")),
             Page("ಟ", "ಟ ಠ ಡ ಢ ಣ ತ ಥ ದ ಧ ನ".split(" ")),
             Page("ಪ", "ಪ ಫ ಬ ಭ ಮ ಯ ರ ಲ ವ ಶ ಷ ಸ ಹ ಳ".split(" ")),
+            // Ottakshara: joins a consonant to the previous one (ಕ + ್ತ → ಕ್ತ).
+            Page("್ಕ", "ಕ ಖ ಗ ಘ ಙ ಚ ಛ ಜ ಝ ಞ ಟ ಠ ಡ ಢ ಣ ತ ಥ ದ ಧ ನ".split(" "), ottu = true),
+            Page("್ಪ", "ಪ ಫ ಬ ಭ ಮ ಯ ರ ಲ ವ ಶ ಷ ಸ ಹ ಳ".split(" "), ottu = true),
+            // Common combinations, rarer letters and Kannada digits.
+            Page("೧", "ಕ್ಷ ಜ್ಞ ತ್ರ ಶ್ರೀ ಓಂ ಱ ೞ ೠ ೦ ೧ ೨ ೩ ೪ ೫ ೬ ೭ ೮ ೯".split(" ")),
         )
     }
 }

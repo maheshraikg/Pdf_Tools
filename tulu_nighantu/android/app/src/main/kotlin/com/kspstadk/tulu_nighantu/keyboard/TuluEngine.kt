@@ -102,6 +102,21 @@ object TuluEngine {
         return str(r, 0, end) + sign
     }
 
+    /**
+     * Joins [consonant] to the previous letter as an ottakshara
+     * (ಕ + ್ತ → ಕ್ತ). Only after a bare consonant or one ending in a virama;
+     * otherwise the text is unchanged.
+     */
+    fun addOttu(text: String, consonant: String): String {
+        val r = cps(text)
+        if (r.isEmpty()) return text
+        return when {
+            isConsonant(r.last()) -> text + "\u0CCD" + consonant
+            r.last() == 0x0CCD && r.size >= 2 && isConsonant(r[r.size - 2]) -> text + consonant
+            else -> text
+        }
+    }
+
     /** Removes the last code point. */
     fun backspace(text: String): String {
         val r = cps(text)

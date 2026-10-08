@@ -67,10 +67,15 @@ void main() {
     const channel = MethodChannel('tulu_nighantu/keyboard');
     var status = {'enabled': false, 'selected': false};
     final calls = <String>[];
+    Map? saved;
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
       call,
     ) async {
       calls.add(call.method);
+      if (call.method == 'setPrefs') saved = call.arguments as Map;
+      if (call.method == 'getPrefs') {
+        return {'vibrate': true, 'sound': false, 'stickerLabel': true};
+      }
       return call.method == 'status' ? status : null;
     });
     addTearDown(
@@ -97,5 +102,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('ಆನ್ ಮಾಡಿ · Turn on'), findsNothing);
     expect(find.byIcon(Icons.check), findsNWidgets(2));
+
+    // Settings are shown once the keyboard is on and saved when changed.
+    await tester.tap(find.textContaining('Key sound'));
+    await tester.pumpAndSettle();
+    expect(saved, {'vibrate': true, 'sound': true, 'stickerLabel': true});
   });
 }

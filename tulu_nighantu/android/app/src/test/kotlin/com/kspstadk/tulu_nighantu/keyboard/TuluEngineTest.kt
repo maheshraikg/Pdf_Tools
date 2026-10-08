@@ -34,4 +34,13 @@ class TuluEngineTest {
         assertEquals("ಕ", TuluEngine.backspace("ಕಾ"))
         assertEquals("", TuluEngine.backspace(""))
     }
+
+    @Test
+    fun ottaksharaJoinsToThePreviousConsonant() {
+        assertEquals("ಕ್ತ", TuluEngine.addOttu("ಕ", "ತ"))
+        assertEquals("ಕ್ತ", TuluEngine.addOttu("ಕ್", "ತ"))
+        assertEquals("ಕಾ", TuluEngine.addOttu("ಕಾ", "ತ"))
+        assertEquals("", TuluEngine.addOttu("", "ತ"))
+        assertEquals("ಅ", TuluEngine.addOttu("ಅ", "ತ"))
+    }
 }

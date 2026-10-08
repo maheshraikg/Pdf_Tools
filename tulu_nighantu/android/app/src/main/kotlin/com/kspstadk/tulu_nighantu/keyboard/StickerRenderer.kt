@@ -22,9 +22,11 @@ object StickerRenderer {
     private const val MAX_TEXT_WIDTH = 880
     private const val PADDING = 48f
     private const val TEXT_SIZE = 96f
+    private const val LABEL_SIZE = 26f
+    private const val LABEL = "ತುಳು ನಿಘಂಟು · Tulu Nighantu"
 
     /** Renders [text] and returns a PNG file in the cache's stickers folder. */
-    fun render(context: Context, text: String, face: Typeface): File {
+    fun render(context: Context, text: String, face: Typeface, label: Boolean = true): File {
         val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
             typeface = face
             textSize = TEXT_SIZE
@@ -33,8 +35,17 @@ object StickerRenderer {
         val natural = ceil(Layout.getDesiredWidth(text, paint)).toInt()
         val width = max(1, min(natural, MAX_TEXT_WIDTH))
         val layout = staticLayout(text, paint, width)
-        val w = (width + PADDING * 2).toInt().coerceAtLeast(160)
-        val h = (layout.height + PADDING * 2).toInt()
+        val labelPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+            textSize = LABEL_SIZE
+            color = Color.argb(200, 255, 255, 255)
+            textAlign = Paint.Align.CENTER
+        }
+        val labelHeight = if (label) LABEL_SIZE * 1.6f else 0f
+        val w = max(
+            (width + PADDING * 2).toInt(),
+            if (label) (labelPaint.measureText(LABEL) + PADDING).toInt() else 0,
+        ).coerceAtLeast(160)
+        val h = (layout.height + PADDING * 2 + labelHeight).toInt()
 
         val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
@@ -44,6 +55,9 @@ object StickerRenderer {
         canvas.translate((w - width) / 2f, PADDING)
         layout.draw(canvas)
         canvas.restore()
+        if (label) {
+            canvas.drawText(LABEL, w / 2f, h - PADDING * 0.6f, labelPaint)
+        }
 
         val dir = File(context.cacheDir, "stickers").apply { mkdirs() }
         dir.listFiles()?.forEach { if (it.lastModified() < System.currentTimeMillis() - DAY) it.delete() }

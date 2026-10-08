@@ -14,6 +14,7 @@ class KeyboardSetupCard extends StatefulWidget {
 class _KeyboardSetupCardState extends State<KeyboardSetupCard>
     with WidgetsBindingObserver {
   KeyboardStatus _status = const KeyboardStatus();
+  KeyboardSettings _settings = const KeyboardSettings();
 
   @override
   void initState() {
@@ -36,7 +37,18 @@ class _KeyboardSetupCardState extends State<KeyboardSetupCard>
 
   Future<void> _refresh() async {
     final s = await SystemKeyboard.status();
-    if (mounted) setState(() => _status = s);
+    final settings = await SystemKeyboard.settings();
+    if (mounted) {
+      setState(() {
+        _status = s;
+        _settings = settings;
+      });
+    }
+  }
+
+  void _update(KeyboardSettings s) {
+    setState(() => _settings = s);
+    SystemKeyboard.saveSettings(s);
   }
 
   @override
@@ -78,10 +90,30 @@ class _KeyboardSetupCardState extends State<KeyboardSetupCard>
               action: 'ಆರಿಸಿ · Choose',
               onTap: _status.enabled ? SystemKeyboard.showPicker : null,
             ),
+            if (_status.enabled) ...[
+              const Divider(height: 20),
+              _Toggle(
+                title: 'ಕಂಪನ · Vibrate on key press',
+                value: _settings.vibrate,
+                onChanged: (v) => _update(_settings.copyWith(vibrate: v)),
+              ),
+              _Toggle(
+                title: 'ಶಬ್ದ · Key sound',
+                value: _settings.sound,
+                onChanged: (v) => _update(_settings.copyWith(sound: v)),
+              ),
+              _Toggle(
+                title: 'Add “ತುಳು ನಿಘಂಟು” under stickers',
+                value: _settings.stickerLabel,
+                onChanged: (v) => _update(_settings.copyWith(stickerLabel: v)),
+              ),
+            ],
             const SizedBox(height: 6),
             Text(
               'Then in any chat: type with the Tulu keys and tap “Sticker” '
-              '(everyone can see it) or “Text” (needs a Tulu font). '
+              '(everyone can see it) or “Text” (needs a Tulu font). Pages: '
+              'ಅ vowels · ಕ ಟ ಪ consonants · ್ಕ ್ಪ joined letters (ಕ್ತ, ತ್ರ) · '
+              '೧ ಕ್ಷ ಶ್ರೀ and numbers. '
               'The keyboard does not save or send what you type anywhere else.',
               style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
             ),
@@ -90,6 +122,27 @@ class _KeyboardSetupCardState extends State<KeyboardSetupCard>
       ),
     );
   }
+}
+
+class _Toggle extends StatelessWidget {
+  const _Toggle({
+    required this.title,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String title;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) => SwitchListTile(
+    dense: true,
+    contentPadding: EdgeInsets.zero,
+    title: Text(title),
+    value: value,
+    onChanged: onChanged,
+  );
 }
 
 class _Step extends StatelessWidget {
