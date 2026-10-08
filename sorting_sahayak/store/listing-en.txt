@@ -1,0 +1,41 @@
+APP NAME (max 30)
+PO Sorting – PIN Sort Helper
+
+SHORT DESCRIPTION (max 80)
+Offline PIN sorting helper: line, position & air code. Not an official app.
+
+FULL DESCRIPTION (max 4000)
+PO Sorting helps postal sorting assistants find the right line or bag for an article in seconds – fully offline.
+
+Type a PIN code and see:
+• The TD or Non-TD line / bag and the office's position on the line
+• The air code for the destination
+• Every post office with that PIN (head, sub and branch offices)
+
+Scan an address
+• Hold the camera over the cover – the PIN and post office names are read automatically
+• Capture button for handwriting or small print
+• English, Hindi and Kannada addresses
+• Warns when the PIN and the post office on the address do not match, and suggests the best option
+
+Lines
+• See every line with all its offices and PINs, in position order
+• Add, edit or remove offices, PINs and whole lines to match your office
+• Import your own scheme from Excel / CSV, or restore the built-in default
+
+Also
+• Find a PIN by post office, village or district name
+• Air code finder
+• Learn mode with flashcards and quizzes
+• Voice search and read-aloud
+• Kannada, Hindi and English
+• Dark mode
+
+Privacy
+• Works without internet – no login, no ads, no tracking
+• Camera images are read on the phone and never stored or uploaded
+
+Important
+PO Sorting is an independent helper tool. It is not an official app of the Department of Posts / India Post and is not connected to or endorsed by it. Sorting data may be outdated – always follow your office's official instructions.
+
+PIN directory: data.gov.in (Open Government Data Licence – India).

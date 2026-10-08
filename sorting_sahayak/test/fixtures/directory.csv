@@ -1,0 +1,29 @@
+circlename,regionname,divisionname,officename,pincode,officetype,delivery,district,statename,latitude,longitude
+Karnataka Circle,South Karnataka Region,Puttur Division,Puttur S.O,574201,SO,Delivery,DAKSHINA KANNADA,KARNATAKA,12.7597,75.2011
+Karnataka Circle,South Karnataka Region,Puttur Division,Puttur S.O,574201,SO,Delivery,DAKSHINA KANNADA,KARNATAKA,12.7597,75.2011
+Karnataka Circle,South Karnataka Region,Puttur Division,Darbe B.O,574202,BO,Delivery,DAKSHINA KANNADA,KARNATAKA,NA,NA
+Karnataka Circle,South Karnataka Region,Puttur Division,Kabaka B.O,574220,BO,Delivery,DAKSHINA KANNADA,KARNATAKA,12.78,75.15
+Karnataka Circle,South Karnataka Region,Puttur Division,Uppinangady S.O,574241,SO,Delivery,DAKSHINA KANNADA,KARNATAKA,12.84,75.25
+Karnataka Circle,South Karnataka Region,Puttur Division,Sullia S.O,574239,SO,Delivery,DAKSHINA KANNADA,KARNATAKA,12.56,75.39
+Karnataka Circle,South Karnataka Region,Puttur Division,Vitla S.O,574243,SO,Delivery,DAKSHINA KANNADA,KARNATAKA,12.76,75.10
+Karnataka Circle,South Karnataka Region,Puttur Division,Belthangady S.O,574214,SO,Delivery,DAKSHINA KANNADA,KARNATAKA,12.98,75.29
+Karnataka Circle,South Karnataka Region,Mangalore Division,Mangalore H.O,575001,HO,Delivery,DAKSHINA KANNADA,KARNATAKA,12.87,74.84
+Karnataka Circle,South Karnataka Region,Mangalore Division,Kodialbail S.O,575003,SO,Non-Delivery,DAKSHINA KANNADA,KARNATAKA,12.88,74.84
+Karnataka Circle,South Karnataka Region,Mangalore Division,Surathkal S.O,575014,SO,Delivery,DAKSHINA KANNADA,KARNATAKA,13.00,74.79
+Karnataka Circle,South Karnataka Region,Mangalore Division,Bantwal S.O,574211,SO,Delivery,DAKSHINA KANNADA,KARNATAKA,12.89,75.03
+Karnataka Circle,South Karnataka Region,Udupi Division,Udupi H.O,576101,HO,Delivery,UDUPI,KARNATAKA,13.34,74.74
+Karnataka Circle,South Karnataka Region,Udupi Division,Manipal S.O,576104,SO,Delivery,UDUPI,KARNATAKA,13.35,74.78
+Karnataka Circle,South Karnataka Region,Udupi Division,Karkala S.O,574104,SO,Delivery,UDUPI,KARNATAKA,13.21,74.99
+Karnataka Circle,South Karnataka Region,Udupi Division,Kundapura S.O,576201,SO,Delivery,UDUPI,KARNATAKA,13.62,74.69
+Karnataka Circle,South Karnataka Region,Udupi Division,Puttur B.O,576105,BO,Delivery,UDUPI,KARNATAKA,13.30,74.76
+Karnataka Circle,Bangalore HQ Region,Bangalore GPO Division,Bangalore G.P.O.,560001,HO,Delivery,BENGALURU,KARNATAKA,12.97,77.59
+Karnataka Circle,Bangalore HQ Region,Bangalore East Division,Indiranagar S.O,560038,SO,Delivery,BENGALURU,KARNATAKA,12.97,77.64
+Karnataka Circle,South Karnataka Region,Mysore Division,Mysore H.O,570001,HO,Delivery,MYSURU,KARNATAKA,12.31,76.65
+Karnataka Circle,South Karnataka Region,Hassan Division,Hassan H.O,573201,HO,Delivery,HASSAN,KARNATAKA,13.00,76.10
+Karnataka Circle,North Karnataka Region,Dharwad Division,Hubli H.O,580020,HO,Delivery,DHARWAD,KARNATAKA,15.36,75.12
+Kerala Circle,Northern Region,Kasaragod Division,Kasaragod H.O,671121,HO,Delivery,KASARGOD,KERALA,12.50,74.99
+Kerala Circle,Northern Region,Kasaragod Division,Puttur B.O,671543,BO,Delivery,KASARGOD,KERALA,NA,NA
+Tamil Nadu Circle,Chennai City Region,Chennai City Central,Chennai G.P.O.,600001,HO,Delivery,CHENNAI,TAMIL NADU,13.09,80.29
+Delhi Circle,Delhi,New Delhi GPO,New Delhi G.P.O.,110001,HO,Delivery,NEW DELHI,DELHI,28.63,77.21
+Maharashtra Circle,Mumbai,Mumbai GPO,Mumbai G.P.O.,400001,HO,Delivery,MUMBAI,MAHARASHTRA,18.94,72.83
+Andhra Pradesh Circle,Tirupati Region,Chittoor Division,Puttur S.O,517583,SO,Delivery,CHITTOOR,ANDHRA PRADESH,13.44,79.55
