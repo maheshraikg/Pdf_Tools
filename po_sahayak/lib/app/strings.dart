@@ -397,7 +397,7 @@ class S {
   String get interestEarned => _t('Interest earned', 'ಗಳಿಸಿದ ಬಡ್ಡಿ');
   String get growth => _t('Growth year by year', 'ವರ್ಷವಾರು ಬೆಳವಣಿಗೆ');
   String get breakup => _t('Deposit and interest', 'ಠೇವಣಿ ಮತ್ತು ಬಡ್ಡಿ');
-  String growthPct(String p) => _t('+$p%', '+$p%');
+  String get aYear => _t('a year', 'ವಾರ್ಷಿಕ');
   String get quickAmounts => _t('Quick amounts', 'ತ್ವರಿತ ಮೊತ್ತಗಳು');
   String get highestReturn => _t('Highest return', 'ಅತ್ಯಧಿಕ ಆದಾಯ');
   String get tenure => _t('Tenure', 'ಅವಧಿ');

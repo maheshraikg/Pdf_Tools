@@ -497,11 +497,6 @@ class _Breakup extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.s, r = result, c = r.scheme.color;
     final t = Theme.of(context).textTheme;
-    final growth = r.totalDeposit == Decimal.zero
-        ? Decimal.zero
-        : (r.totalInterest * Decimal.fromInt(100) / r.totalDeposit).toDecimal(
-            scaleOnInfinitePrecision: 4,
-          );
     Widget amount(Color dot, String label, Decimal v) => Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Column(
@@ -534,13 +529,13 @@ class _Breakup extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    s.growthPct(growth.round(scale: 1).toString()),
+                    '${pct(r.input.rate)}%',
                     style: t.titleLarge?.copyWith(
                       fontWeight: FontWeight.w800,
                       color: r.scheme.textColor(context),
                     ),
                   ),
-                  Text(s.interest, style: t.labelSmall),
+                  Text(s.aYear, style: t.labelSmall),
                 ],
               ),
             ),
