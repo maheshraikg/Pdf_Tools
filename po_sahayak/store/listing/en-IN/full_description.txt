@@ -1,4 +1,4 @@
-PO Sahayak is a free, offline Post Office calculator in Kannada and English. Work out maturity amount, interest and maturity date for every Post Office small savings scheme in seconds, with no ads and no internet.
+PO Calculator is a free, offline Post Office calculator in Kannada and English. Work out maturity amount, interest and maturity date for every Post Office small savings scheme in seconds, with no ads and no internet.
 
 SCHEMES
 • Recurring Deposit (RD) calculator

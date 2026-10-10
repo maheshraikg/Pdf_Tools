@@ -78,7 +78,7 @@ class _PoSahayakAppState extends State<PoSahayakApp> {
       child: ListenableBuilder(
         listenable: widget.settings,
         builder: (context, _) => MaterialApp(
-          title: 'PO Sahayak: PO Calculator',
+          title: 'PO Calculator',
           debugShowCheckedModeBanner: false,
           theme: buildTheme(Brightness.light),
           darkTheme: buildTheme(Brightness.dark),

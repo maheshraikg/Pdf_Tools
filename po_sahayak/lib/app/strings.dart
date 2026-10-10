@@ -16,10 +16,10 @@ class S {
   String _t(String en, String kn) => this.kn ? kn : en;
 
   // App
-  String get appTitle => _t('PO Sahayak', 'ಪಿಒ ಸಹಾಯಕ');
+  String get appTitle => _t('PO Calculator', 'ಪಿಒ ಕ್ಯಾಲ್ಕುಲೇಟರ್');
   String get tagline => _t(
-    'PO Calculator · Post Office interest',
-    'ಪಿಒ ಕ್ಯಾಲ್ಕುಲೇಟರ್ · ಅಂಚೆ ಕಚೇರಿ ಬಡ್ಡಿ',
+    'Post Office interest calculator',
+    'ಅಂಚೆ ಕಚೇರಿ ಬಡ್ಡಿ ಕ್ಯಾಲ್ಕುಲೇಟರ್',
   );
   String get notAffiliated => _t(
     'Not affiliated with India Post or the Government of India.',
@@ -378,8 +378,8 @@ class S {
   String get rateVersion => _t('Rate table', 'ದರ ಪಟ್ಟಿ');
   String get privacy => _t('Privacy policy', 'ಗೌಪ್ಯತಾ ನೀತಿ');
   String get privacyText => _t(
-    'PO Sahayak works fully offline. It has no internet permission, collects no data and shares nothing. Saved accounts stay only on this phone and are removed when you uninstall the app.',
-    'ಪಿಒ ಸಹಾಯಕ ಸಂಪೂರ್ಣ ಆಫ್‌ಲೈನ್. ಇಂಟರ್ನೆಟ್ ಅನುಮತಿ ಇಲ್ಲ, ಯಾವುದೇ ಮಾಹಿತಿ ಸಂಗ್ರಹಿಸುವುದಿಲ್ಲ ಅಥವಾ ಹಂಚುವುದಿಲ್ಲ. ಉಳಿಸಿದ ಖಾತೆಗಳು ಈ ಫೋನ್‌ನಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತವೆ.',
+    'PO Calculator works fully offline. It has no internet permission, collects no data and shares nothing. Saved accounts stay only on this phone and are removed when you uninstall the app.',
+    'ಪಿಒ ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಸಂಪೂರ್ಣ ಆಫ್‌ಲೈನ್. ಇಂಟರ್ನೆಟ್ ಅನುಮತಿ ಇಲ್ಲ, ಯಾವುದೇ ಮಾಹಿತಿ ಸಂಗ್ರಹಿಸುವುದಿಲ್ಲ ಅಥವಾ ಹಂಚುವುದಿಲ್ಲ. ಉಳಿಸಿದ ಖಾತೆಗಳು ಈ ಫೋನ್‌ನಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತವೆ.',
   );
   String get version => _t('Version', 'ಆವೃತ್ತಿ');
   String get ok => _t('OK', 'ಸರಿ');

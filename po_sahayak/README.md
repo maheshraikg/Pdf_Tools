@@ -1,4 +1,4 @@
-# PO Sahayak
+# PO Calculator (PO Sahayak project)
 
 Offline, bilingual (Kannada / English) calculator and helper for Post Office
 small savings schemes, for customers, agents and counter staff. Built from
@@ -9,7 +9,7 @@ estimate; confirm at the post office.
 
 ## Store listing
 
-Play Store title and launcher label: **PO Sahayak: PO Calculator**. Title, short and full descriptions in English and Kannada are
+Launcher name: **PO Calculator**. Play Store title: **PO Calculator: Post Office**. Title, short and full descriptions in English and Kannada are
 in `store/listing/en-IN` and `store/listing/kn-IN`, within Play's limits (30,
 80 and 4000 characters). They use the search terms people type ("post office
 calculator", "PO calculator", RD, TD, MIS, SCSS, PPF, SSY, NSC, KVP) but never

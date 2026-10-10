@@ -1,4 +1,4 @@
-name: PO Sahayak release (direct APK link)
+name: PO Calculator release (direct APK link)
 
 # Builds the release APK whenever the app changes and publishes it as the
 # pre-release po-sahayak-keep-v<pubspec version> (never marked "latest", so the
@@ -51,14 +51,14 @@ jobs:
         run: |
           VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//; s/+.*//')
           TAG="po-sahayak-keep-v$VERSION"
-          NOTES="PO Sahayak: offline Kannada/English calculator for Post Office savings schemes. Install: download po_sahayak.apk on your phone, open it, and allow installing from this source. Estimate only, confirm at your post office. Not affiliated with India Post."
+          NOTES="PO Calculator: offline Kannada/English calculator for Post Office savings schemes. Install: download po_sahayak.apk on your phone, open it, and allow installing from this source. Estimate only, confirm at your post office. Not affiliated with India Post."
           # Versioned release, plus a fixed "latest" release whose link
           # always serves the newest APK.
           for T in "$TAG" po-sahayak-keep-latest; do
             if [ "$T" = po-sahayak-keep-latest ]; then
-              TITLE="PO Sahayak (latest, v$VERSION)"
+              TITLE="PO Calculator (latest, v$VERSION)"
             else
-              TITLE="PO Sahayak v$VERSION"
+              TITLE="PO Calculator v$VERSION"
             fi
             if gh release view "$T" >/dev/null 2>&1; then
               gh release upload "$T" po_sahayak.apk --clobber
