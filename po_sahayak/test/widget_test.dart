@@ -179,4 +179,29 @@ void main() {
     expect(File(path).lengthSync(), greaterThan(1000));
     expect(find.byType(AlertDialog), findsNothing);
   });
+
+  testWidgets('settings shares the download link', (tester) async {
+    final calls = <MethodCall>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('dev.fluttercommunity.plus/share'),
+      (call) async {
+        calls.add(call);
+        return 'dev.fluttercommunity.plus/share/unavailable';
+      },
+    );
+    // Tall screen so the whole Settings page fits above the tab bar.
+    tester.view.physicalSize = const Size(400 * 3, 1600 * 3);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    await pumpApp(tester);
+    await tester.tap(find.text('Settings').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Share this app'));
+    await tester.pumpAndSettle();
+    expect(calls, hasLength(1));
+    expect(
+      (calls.single.arguments as Map)['text'],
+      contains('po-sahayak-keep-latest/po_sahayak.apk'),
+    );
+  });
 }

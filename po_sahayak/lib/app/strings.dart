@@ -17,10 +17,8 @@ class S {
 
   // App
   String get appTitle => _t('PO Calculator', 'ಪಿಒ ಕ್ಯಾಲ್ಕುಲೇಟರ್');
-  String get tagline => _t(
-    'Post Office interest calculator',
-    'ಅಂಚೆ ಕಚೇರಿ ಬಡ್ಡಿ ಕ್ಯಾಲ್ಕುಲೇಟರ್',
-  );
+  String get tagline =>
+      _t('Post Office interest calculator', 'ಅಂಚೆ ಕಚೇರಿ ಬಡ್ಡಿ ಕ್ಯಾಲ್ಕುಲೇಟರ್');
   String get notAffiliated => _t(
     'Not affiliated with India Post or the Government of India.',
     'ಭಾರತೀಯ ಅಂಚೆ ಅಥವಾ ಭಾರತ ಸರ್ಕಾರದೊಂದಿಗೆ ಸಂಬಂಧವಿಲ್ಲ.',
@@ -377,6 +375,15 @@ class S {
   String get about => _t('About', 'ಕುರಿತು');
   String get rateVersion => _t('Rate table', 'ದರ ಪಟ್ಟಿ');
   String get privacy => _t('Privacy policy', 'ಗೌಪ್ಯತಾ ನೀತಿ');
+  String get shareApp => _t('Share this app', 'ಈ ಆ್ಯಪ್ ಹಂಚಿಕೊಳ್ಳಿ');
+  String get shareAppSub =>
+      _t('Send the download link', 'ಡೌನ್‌ಲೋಡ್ ಲಿಂಕ್ ಕಳುಹಿಸಿ');
+  String get copyLink => _t('Copy link', 'ಲಿಂಕ್ ನಕಲಿಸಿ');
+  String get linkCopied => _t('Link copied', 'ಲಿಂಕ್ ನಕಲಿಸಲಾಗಿದೆ');
+  String shareAppText(String url) => _t(
+    'PO Calculator: offline Post Office interest calculator in Kannada and English. Download: $url',
+    'ಪಿಒ ಕ್ಯಾಲ್ಕುಲೇಟರ್: ಕನ್ನಡ ಮತ್ತು ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಆಫ್‌ಲೈನ್ ಅಂಚೆ ಕಚೇರಿ ಬಡ್ಡಿ ಕ್ಯಾಲ್ಕುಲೇಟರ್. ಡೌನ್‌ಲೋಡ್: $url',
+  );
   String get privacyText => _t(
     'PO Calculator works fully offline. It has no internet permission, collects no data and shares nothing. Saved accounts stay only on this phone and are removed when you uninstall the app.',
     'ಪಿಒ ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಸಂಪೂರ್ಣ ಆಫ್‌ಲೈನ್. ಇಂಟರ್ನೆಟ್ ಅನುಮತಿ ಇಲ್ಲ, ಯಾವುದೇ ಮಾಹಿತಿ ಸಂಗ್ರಹಿಸುವುದಿಲ್ಲ ಅಥವಾ ಹಂಚುವುದಿಲ್ಲ. ಉಳಿಸಿದ ಖಾತೆಗಳು ಈ ಫೋನ್‌ನಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತವೆ.',

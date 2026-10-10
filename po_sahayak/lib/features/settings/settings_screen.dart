@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../app/format.dart';
 import '../../app/scope.dart';
@@ -6,7 +8,11 @@ import '../../app/strings.dart';
 import '../../app/theme.dart';
 import '../../widgets/common.dart';
 
-const String kAppVersion = '1.1.7';
+const String kAppVersion = '1.1.8';
+
+/// Direct link to the newest APK.
+const String kDownloadUrl =
+    'https://github.com/maheshraikg/Pdf_Tools/releases/download/po-sahayak-keep-latest/po_sahayak.apk';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -116,6 +122,44 @@ class SettingsScreen extends StatelessWidget {
                       Note('${s.version} $kAppVersion', icon: Icons.tag),
                       Note(s.estimateOnly),
                     ],
+                  ),
+                ),
+                Card(
+                  child: ListTile(
+                    leading: const IconBadge(
+                      Icons.share_rounded,
+                      Brand.red,
+                      size: 36,
+                    ),
+                    title: Text(s.shareApp),
+                    subtitle: Text(s.shareAppSub),
+                    trailing: IconButton(
+                      tooltip: s.copyLink,
+                      icon: const Icon(Icons.copy_rounded),
+                      onPressed: () async {
+                        await Clipboard.setData(
+                          const ClipboardData(text: kDownloadUrl),
+                        );
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text(s.linkCopied)));
+                        }
+                      },
+                    ),
+                    onTap: () async {
+                      try {
+                        await SharePlus.instance.share(
+                          ShareParams(text: s.shareAppText(kDownloadUrl)),
+                        );
+                      } catch (_) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(s.shareFailed)),
+                          );
+                        }
+                      }
+                    },
                   ),
                 ),
                 Card(
