@@ -8,7 +8,7 @@ import '../../app/strings.dart';
 import '../../app/theme.dart';
 import '../../widgets/common.dart';
 
-const String kAppVersion = '1.1.8';
+const String kAppVersion = '1.1.9';
 
 /// Direct link to the newest APK.
 const String kDownloadUrl =

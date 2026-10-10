@@ -260,6 +260,18 @@ class _StaffScreenState extends State<StaffScreen> {
                 Appear(
                   delay: Appear.step(2, ms: 80),
                   child: SectionCard(
+                    icon: Icons.format_list_numbered_rounded,
+                    title: s.howToOpen,
+                    color: c,
+                    child: _Steps(
+                      steps: s.openingSteps(_scheme, _holding),
+                      color: c,
+                    ),
+                  ),
+                ),
+                Appear(
+                  delay: Appear.step(3, ms: 80),
+                  child: SectionCard(
                     icon: Icons.bolt_rounded,
                     title: s.quickCalc,
                     color: c,
@@ -378,4 +390,43 @@ class _DocChecklistState extends State<_DocChecklist> {
       Note(widget.note),
     ],
   );
+}
+
+/// Numbered steps in coloured circles.
+class _Steps extends StatelessWidget {
+  const _Steps({required this.steps, required this.color});
+  final List<String> steps;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final (i, step) in steps.indexed)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  radius: 13,
+                  backgroundColor: color,
+                  child: Text(
+                    '${i + 1}',
+                    style: t.labelMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(child: Text(step, style: t.bodyMedium)),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
 }

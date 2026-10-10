@@ -204,4 +204,23 @@ void main() {
       contains('po-sahayak-keep-latest/po_sahayak.apk'),
     );
   });
+
+  testWidgets('staff tab shows the account opening steps', (tester) async {
+    tester.view.physicalSize = const Size(400 * 3, 2400 * 3);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    for (final lang in ['en', 'kn']) {
+      await pumpApp(tester, lang: lang);
+      await tester.tap(find.text(lang == 'en' ? 'Staff' : 'ಸಿಬ್ಬಂದಿ').last);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: lang);
+      expect(
+        find.text(
+          lang == 'en' ? 'How to open the account' : 'ಖಾತೆ ತೆರೆಯುವ ವಿಧಾನ',
+        ),
+        findsOneWidget,
+      );
+    }
+    expect(find.textContaining('Only the 5-year TD'), findsNothing);
+  });
 }

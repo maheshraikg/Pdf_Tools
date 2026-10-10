@@ -122,8 +122,8 @@ class S {
       'SCSSಗೆ 60+ ವಯಸ್ಸು ಬೇಕು (ನಿವೃತ್ತ ನಾಗರಿಕ ನೌಕರರಿಗೆ 55+, ರಕ್ಷಣಾ ನಿವೃತ್ತರಿಗೆ 50+).',
     ),
     Issue.scssEarlyRetiree => _t(
-      'Below 60: only retirees, within 1 month of getting retirement benefits, up to that amount.',
-      '60ಕ್ಕಿಂತ ಕಡಿಮೆ: ನಿವೃತ್ತಿ ಸೌಲಭ್ಯ ಪಡೆದ 1 ತಿಂಗಳೊಳಗೆ, ಆ ಮೊತ್ತದವರೆಗೆ ಮಾತ್ರ.',
+      'Below 60: only retirees, within 3 months of getting retirement benefits, up to that amount.',
+      '60ಕ್ಕಿಂತ ಕಡಿಮೆ: ನಿವೃತ್ತಿ ಸೌಲಭ್ಯ ಪಡೆದ 3 ತಿಂಗಳೊಳಗೆ, ಆ ಮೊತ್ತದವರೆಗೆ ಮಾತ್ರ.',
     ),
     Issue.ssyGirlAge => _t(
       'SSY can be opened only for a girl below 10 years.',
@@ -361,6 +361,114 @@ class S {
     Doc.jointKyc => _t('KYC of each joint holder', 'ಪ್ರತಿ ಜಂಟಿ ಖಾತೆದಾರರ KYC'),
     Doc.nomination => _t('Nomination form', 'ನಾಮನಿರ್ದೇಶನ ಅರ್ಜಿ'),
   };
+  String get howToOpen => _t('How to open the account', 'ಖಾತೆ ತೆರೆಯುವ ವಿಧಾನ');
+
+  /// Counter steps to open [s] for a [h] holder, in order.
+  List<String> openingSteps(Scheme s, Holding h) {
+    if (s == Scheme.mssc) {
+      return [
+        _t(
+          'Closed for new accounts since 1 April 2025. Use this app only for existing accounts.',
+          '1 ಏಪ್ರಿಲ್ 2025ರಿಂದ ಹೊಸ ಖಾತೆಗಳಿಗೆ ಮುಚ್ಚಲಾಗಿದೆ. ಈಗಿನ ಖಾತೆಗಳಿಗೆ ಮಾತ್ರ ಈ ಆ್ಯಪ್ ಬಳಸಿ.',
+        ),
+      ];
+    }
+    final certificate = s == Scheme.nsc || s == Scheme.kvp;
+    return [
+      _t(
+        'Check eligibility and the deposit limit above.',
+        'ಮೇಲೆ ಅರ್ಹತೆ ಮತ್ತು ಠೇವಣಿ ಮಿತಿ ಪರಿಶೀಲಿಸಿ.',
+      ),
+      _t(
+        'Fill the Account Opening Form (one common form for all schemes) and tick ${s.code}.',
+        'ಖಾತೆ ತೆರೆಯುವ ಅರ್ಜಿ (ಎಲ್ಲಾ ಯೋಜನೆಗಳಿಗೆ ಒಂದೇ ಸಾಮಾನ್ಯ ಅರ್ಜಿ) ತುಂಬಿ, ${s.code} ಆಯ್ಕೆ ಮಾಡಿ.',
+      ),
+      _t(
+        'New customer: fill the KYC form. Take Aadhaar, PAN (or Form 60) and a photo.',
+        'ಹೊಸ ಗ್ರಾಹಕರು: KYC ಅರ್ಜಿ ತುಂಬಿ. ಆಧಾರ್, PAN (ಅಥವಾ ಫಾರ್ಮ್ 60) ಮತ್ತು ಫೋಟೋ ಪಡೆಯಿರಿ.',
+      ),
+      if (h == Holding.joint)
+        _t(
+          'Joint: up to 3 adults; each one gives KYC and signs. For SCSS the joint holder can only be the spouse.',
+          'ಜಂಟಿ: 3 ವಯಸ್ಕರವರೆಗೆ; ಪ್ರತಿಯೊಬ್ಬರೂ KYC ನೀಡಿ ಸಹಿ ಮಾಡಬೇಕು. SCSSನಲ್ಲಿ ಜಂಟಿ ಖಾತೆದಾರರು ಪತಿ/ಪತ್ನಿ ಮಾತ್ರ.',
+        ),
+      if (h == Holding.minor)
+        _t(
+          'Minor: the guardian signs the form and gives their own KYC, with the child\'s birth certificate.',
+          'ಅಪ್ರಾಪ್ತ: ಪೋಷಕರು ಅರ್ಜಿಗೆ ಸಹಿ ಮಾಡಿ ತಮ್ಮ KYC ಮತ್ತು ಮಗುವಿನ ಜನನ ಪ್ರಮಾಣಪತ್ರ ನೀಡಬೇಕು.',
+        ),
+      ...switch (s) {
+        Scheme.sb => [_t('Minimum ₹500 to open.', 'ತೆರೆಯಲು ಕನಿಷ್ಠ ₹500.')],
+        Scheme.rd => [
+          _t(
+            'Take the first instalment now. Opened on days 1–15: pay each month by the 15th; opened on the 16th or later: by the month end.',
+            'ಮೊದಲ ಕಂತು ಈಗಲೇ ಪಡೆಯಿರಿ. 1–15ರಂದು ತೆರೆದರೆ ಪ್ರತಿ ತಿಂಗಳು 15ರೊಳಗೆ; 16 ಅಥವಾ ನಂತರ ತೆರೆದರೆ ತಿಂಗಳ ಕೊನೆಯೊಳಗೆ ಕಟ್ಟಬೇಕು.',
+          ),
+          _t(
+            'A missed month costs a default fee of ₹1 for every ₹100.',
+            'ತಪ್ಪಿದ ತಿಂಗಳಿಗೆ ಪ್ರತಿ ₹100ಕ್ಕೆ ₹1 ದಂಡ.',
+          ),
+        ],
+        Scheme.td1 || Scheme.td2 || Scheme.td3 || Scheme.td5 => [
+          _t(
+            'Choose the term: 1, 2, 3 or 5 years. Only the 5-year TD counts for section 80C.',
+            'ಅವಧಿ ಆಯ್ಕೆ ಮಾಡಿ: 1, 2, 3 ಅಥವಾ 5 ವರ್ಷ. 5 ವರ್ಷದ TD ಮಾತ್ರ 80C ಸೆಕ್ಷನ್‌ಗೆ ಅರ್ಹ.',
+          ),
+        ],
+        Scheme.mis => [
+          _t(
+            'Link a Post Office savings account; monthly interest is credited there.',
+            'ಅಂಚೆ ಉಳಿತಾಯ ಖಾತೆ ಜೋಡಿಸಿ; ಮಾಸಿಕ ಬಡ್ಡಿ ಅದಕ್ಕೆ ಜಮೆಯಾಗುತ್ತದೆ.',
+          ),
+        ],
+        Scheme.scss => [
+          _t(
+            'Link a Post Office savings account for the quarterly interest.',
+            'ತ್ರೈಮಾಸಿಕ ಬಡ್ಡಿಗಾಗಿ ಅಂಚೆ ಉಳಿತಾಯ ಖಾತೆ ಜೋಡಿಸಿ.',
+          ),
+          _t(
+            'Below 60: take the retirement benefit papers; open within 3 months of getting the benefits.',
+            '60ಕ್ಕಿಂತ ಕಡಿಮೆ: ನಿವೃತ್ತಿ ಸೌಲಭ್ಯದ ದಾಖಲೆ ಪಡೆಯಿರಿ; ಸೌಲಭ್ಯ ಪಡೆದ 3 ತಿಂಗಳೊಳಗೆ ತೆರೆಯಬೇಕು.',
+          ),
+        ],
+        Scheme.ppf => [
+          _t(
+            'Only one PPF account per person. Deposit ₹500 to ₹1.5 lakh in each financial year.',
+            'ಒಬ್ಬರಿಗೆ ಒಂದೇ PPF ಖಾತೆ. ಪ್ರತಿ ಹಣಕಾಸು ವರ್ಷ ₹500ರಿಂದ ₹1.5 ಲಕ್ಷ ಠೇವಣಿ.',
+          ),
+        ],
+        Scheme.ssy => [
+          _t(
+            'Opened by the parent or guardian for a girl below 10, with her birth certificate. At most two girls per family (more only for twins or triplets).',
+            'ಪೋಷಕರು 10 ವರ್ಷದೊಳಗಿನ ಹೆಣ್ಣು ಮಗುವಿಗೆ ಜನನ ಪ್ರಮಾಣಪತ್ರದೊಂದಿಗೆ ತೆರೆಯುತ್ತಾರೆ. ಕುಟುಂಬಕ್ಕೆ ಗರಿಷ್ಠ ಇಬ್ಬರು ಹೆಣ್ಣು ಮಕ್ಕಳು (ಅವಳಿ/ತ್ರಿವಳಿಗೆ ಮಾತ್ರ ಹೆಚ್ಚು).',
+          ),
+          _t(
+            'Deposit ₹250 to ₹1.5 lakh in each financial year.',
+            'ಪ್ರತಿ ಹಣಕಾಸು ವರ್ಷ ₹250ರಿಂದ ₹1.5 ಲಕ್ಷ ಠೇವಣಿ.',
+          ),
+        ],
+        _ => const <String>[],
+      },
+      _t(
+        'Fill the nomination (it can also be added later).',
+        'ನಾಮನಿರ್ದೇಶನ ತುಂಬಿ (ನಂತರವೂ ಸೇರಿಸಬಹುದು).',
+      ),
+      _t(
+        'Take the deposit in cash or by cheque with a pay-in slip. With a cheque, the account opens on the date the cheque is credited.',
+        'ನಗದು ಅಥವಾ ಚೆಕ್ ಮೂಲಕ ಪೇ-ಇನ್ ಸ್ಲಿಪ್‌ನೊಂದಿಗೆ ಠೇವಣಿ ಪಡೆಯಿರಿ. ಚೆಕ್ ಆದರೆ, ಹಣ ಜಮೆಯಾದ ದಿನಾಂಕದಿಂದ ಖಾತೆ ತೆರೆಯುತ್ತದೆ.',
+      ),
+      certificate
+          ? _t(
+              'Verify the originals and return them, open the account in CBS and issue the certificate.',
+              'ಮೂಲ ದಾಖಲೆ ಪರಿಶೀಲಿಸಿ ಹಿಂತಿರುಗಿಸಿ, CBSನಲ್ಲಿ ಖಾತೆ ತೆರೆದು ಪ್ರಮಾಣಪತ್ರ ನೀಡಿ.',
+            )
+          : _t(
+              'Verify the originals and return them, open the account in CBS and give the passbook.',
+              'ಮೂಲ ದಾಖಲೆ ಪರಿಶೀಲಿಸಿ ಹಿಂತಿರುಗಿಸಿ, CBSನಲ್ಲಿ ಖಾತೆ ತೆರೆದು ಪಾಸ್‌ಬುಕ್ ನೀಡಿ.',
+            ),
+    ];
+  }
+
   String get documentsNote => _t(
     'General list; check the latest SB order at your office.',
     'ಸಾಮಾನ್ಯ ಪಟ್ಟಿ; ನಿಮ್ಮ ಕಚೇರಿಯಲ್ಲಿ ಇತ್ತೀಚಿನ SB ಆದೇಶ ನೋಡಿ.',
