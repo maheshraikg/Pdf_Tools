@@ -50,13 +50,46 @@ jobs:
           flutter build apk --release --obfuscate --split-debug-info=build/symbols
           cp build/app/outputs/flutter-apk/app-release.apk po_sahayak.apk
 
+      # Play Store bundle, signed with your private upload key. Runs only
+      # when the four PO_UPLOAD_* repository secrets exist (see
+      # po_sahayak/README.md). The bundle is a private workflow artifact,
+      # never a public release; the direct APK link keeps the test key so
+      # phones that installed it can still update.
+      - name: Build Play Store bundle (upload key)
+        env:
+          KEYSTORE_B64: ${{ secrets.PO_UPLOAD_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.PO_UPLOAD_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.PO_UPLOAD_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.PO_UPLOAD_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_B64" ]; then
+            echo "No upload key secrets: skipping the Play Store bundle."
+            exit 0
+          fi
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          printf 'storeFile=%s\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
+            "$RUNNER_TEMP/upload.jks" "$STORE_PASSWORD" "$KEY_ALIAS" "$KEY_PASSWORD" \
+            > android/key.properties
+          flutter build appbundle --release --obfuscate --split-debug-info=build/symbols-aab
+          rm android/key.properties "$RUNNER_TEMP/upload.jks"
+          mkdir -p play && cp build/app/outputs/bundle/release/app-release.aab play/po_calculator.aab
+          cp -r build/symbols-aab play/symbols
+
+      - name: Keep the Play Store bundle (private)
+        if: hashFiles('po_sahayak/play/po_calculator.aab') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: po-calculator-play-bundle
+          path: po_sahayak/play/
+          retention-days: 30
+
       - name: Publish pre-release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//; s/+.*//')
           TAG="po-sahayak-keep-v$VERSION"
-          NOTES="PO Calculator: offline Kannada/English calculator for Post Office savings schemes. Install: download po_sahayak.apk on your phone, open it, and allow installing from this source. Estimate only, confirm at your post office. Not affiliated with India Post."
+          NOTES="PO Calculator: offline calculator in 11 Indian languages for Post Office savings schemes. Install: download po_sahayak.apk on your phone, open it, and allow installing from this source. Estimate only, confirm at your post office. Not affiliated with India Post."
           # Versioned release, plus a fixed "latest" release whose link
           # always serves the newest APK.
           for T in "$TAG" po-sahayak-keep-latest; do

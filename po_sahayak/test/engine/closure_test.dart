@@ -107,12 +107,23 @@ void main() {
     );
   });
 
-  test('KVP: after 2½ years, estimated', () {
-    final r = calc(Scheme.kvp, 100000, '7.5', opening: jan26);
-    expect(close(r, DateTime(2028, 1, 1)).rule, ClosureRule.notYet);
-    final c = close(r, DateTime(2029, 1, 1)); // 36 months = 6 half-years
+  test('KVP: matches the official 7.2% and 6.9% encashment tables', () {
+    // Per ₹1,000 after 2½, 3, 3½ and 4 years (G.S.R. 52(E), 2023).
+    final r72 = calc(Scheme.kvp, 1000, '7.2', opening: jan26);
+    expect(close(r72, DateTime(2028, 1, 1)).rule, ClosureRule.notYet);
+    expect(close(r72, DateTime(2028, 7, 1)).payable, d(1162)); // 2½ years
+    expect(close(r72, DateTime(2029, 1, 1)).payable, d(1198)); // 3 years
+    expect(close(r72, DateTime(2029, 7, 1)).payable, d(1234)); // 3½ years
+    expect(close(r72, DateTime(2030, 1, 1)).payable, d(1272)); // 4 years
+    // 6.9% certificates (2020–2022): 1154 and 1188.
+    final r69 = calc(Scheme.kvp, 1000, '6.9', opening: jan26);
+    expect(close(r69, DateTime(2028, 7, 1)).payable, d(1154));
+    expect(close(r69, DateTime(2029, 1, 1)).payable, d(1188));
+    // Larger amounts scale the per-₹1,000 value.
+    final big = calc(Scheme.kvp, 100000, '7.2', opening: jan26);
+    final c = close(big, DateTime(2029, 1, 1));
     expect(c.rule, ClosureRule.kvpTable);
-    expect(c.payable, d(124230)); // 1,00,000 × 1.075^3
+    expect(c.payable, d(119800));
   });
 
   test('on or after maturity: full value', () {

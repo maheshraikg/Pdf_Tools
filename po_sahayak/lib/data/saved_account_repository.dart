@@ -115,6 +115,43 @@ class SavedAccountRepository extends ChangeNotifier {
     return _persist();
   }
 
+  /// Accounts as a backup file's contents.
+  String exportJson() => const JsonEncoder.withIndent('  ').convert({
+    'app': 'po_calculator',
+    'format': 1,
+    'accounts': [for (final a in _accounts) a.toJson()],
+  });
+
+  /// Adds the accounts from a backup made by [exportJson]; accounts already
+  /// on the phone (same id) are kept as they are. Returns how many were
+  /// added. Throws [FormatException] if [source] is not a backup.
+  Future<int> importJson(String source) async {
+    final Object? j;
+    try {
+      j = jsonDecode(source);
+    } on FormatException {
+      throw const FormatException('not json');
+    }
+    if (j is! Map || j['app'] != 'po_calculator' || j['accounts'] is! List) {
+      throw const FormatException('not a backup');
+    }
+    final have = {for (final a in _accounts) a.id};
+    var added = 0;
+    for (final e in j['accounts'] as List) {
+      try {
+        final a = SavedAccount.fromJson(e as Map<String, dynamic>);
+        if (have.add(a.id)) {
+          _accounts.add(a);
+          added++;
+        }
+      } catch (e) {
+        debugPrint('Skipping bad account in backup: $e');
+      }
+    }
+    if (added > 0) await _persist();
+    return added;
+  }
+
   Future<void> remove(String id) {
     _accounts.removeWhere((a) => a.id == id);
     return _persist();

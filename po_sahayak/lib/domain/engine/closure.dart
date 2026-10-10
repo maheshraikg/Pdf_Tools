@@ -176,14 +176,19 @@ ClosureResult prematureClosure(
       );
     case Scheme.kvp:
       if (m < 30) return notYet(30);
-      // Estimate: compounded yearly, counted in completed half-years.
-      final half = nthRoot(Decimal.one + div(i.rate, kHundred), 2);
-      final value = rupees(p * pw(half, m ~/ 6));
+      // The official tables pay, per ₹1,000, round(1000 × (1 + r)^t) with
+      // r one point below the certificate's rate, compounded yearly and t
+      // in completed half-years (reproduces the published 6.9%, 7.0%,
+      // 7.2% and 7.6% tables exactly).
+      final rate = i.rate - Decimal.one;
+      final half = nthRoot(Decimal.one + div(rate, kHundred), 2);
+      final per1000 = rupees(Decimal.fromInt(1000) * pw(half, m ~/ 6));
+      final value = rupees(div(p * per1000, Decimal.fromInt(1000)));
       return ClosureResult(
         rule: ClosureRule.kvpTable,
         payable: value,
         interest: value - p,
-        rateUsed: i.rate,
+        rateUsed: rate,
       );
     case Scheme.mssc:
       if (m < 6) return notYet(6);

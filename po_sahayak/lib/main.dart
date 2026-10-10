@@ -6,6 +6,7 @@ import 'app/scope.dart';
 import 'app/settings.dart';
 import 'app/strings.dart';
 import 'app/theme.dart';
+import 'data/local_rates.dart';
 import 'data/saved_account_repository.dart';
 import 'domain/rates/rate_repository.dart';
 import 'features/accounts/accounts_screen.dart';
@@ -22,7 +23,15 @@ Future<void> main() async {
   );
   final settings = await AppSettings.load();
   final accounts = await SavedAccountRepository.load();
-  runApp(PoSahayakApp(settings: settings, rates: rates, accounts: accounts));
+  final localRates = await LocalRates.load(rates);
+  runApp(
+    PoSahayakApp(
+      settings: settings,
+      rates: rates,
+      accounts: accounts,
+      localRates: localRates,
+    ),
+  );
 }
 
 class PoSahayakApp extends StatefulWidget {
@@ -31,12 +40,16 @@ class PoSahayakApp extends StatefulWidget {
     required this.settings,
     required this.rates,
     required this.accounts,
+    this.localRates,
     this.background = true,
   });
 
   final AppSettings settings;
   final RateRepository rates;
   final SavedAccountRepository accounts;
+
+  /// Rates typed in on the phone (null in tests: built-in table only).
+  final LocalRates? localRates;
 
   /// Schedule reminders (off in tests).
   final bool background;
@@ -71,28 +84,33 @@ class _PoSahayakAppState extends State<PoSahayakApp> {
 
   @override
   Widget build(BuildContext context) {
-    return AppScope(
-      settings: widget.settings,
-      rates: widget.rates,
-      accounts: widget.accounts,
-      child: ListenableBuilder(
-        listenable: widget.settings,
-        builder: (context, _) => MaterialApp(
-          title: 'PO Calculator',
-          debugShowCheckedModeBanner: false,
-          theme: buildTheme(Brightness.light),
-          darkTheme: buildTheme(Brightness.dark),
-          themeMode: widget.settings.themeMode,
-          locale: Locale(widget.settings.lang.name),
-          supportedLocales: [for (final l in Lang.values) Locale(l.name)],
-          localizationsDelegates: GlobalMaterialLocalizations.delegates,
-          // Phones set to very large fonts would break layouts; above 1.3x
-          // the app stops growing text (it is already 10% larger).
-          builder: (context, child) => MediaQuery.withClampedTextScaling(
-            maxScaleFactor: 1.3,
-            child: child!,
+    final local = widget.localRates;
+    return ListenableBuilder(
+      listenable: Listenable.merge([widget.settings, ?local]),
+      builder: (context, _) => AppScope(
+        settings: widget.settings,
+        rates: local?.repo ?? widget.rates,
+        accounts: widget.accounts,
+        localRates: local,
+        child: ListenableBuilder(
+          listenable: widget.settings,
+          builder: (context, _) => MaterialApp(
+            title: 'PO Calculator',
+            debugShowCheckedModeBanner: false,
+            theme: buildTheme(Brightness.light),
+            darkTheme: buildTheme(Brightness.dark),
+            themeMode: widget.settings.themeMode,
+            locale: Locale(widget.settings.lang.name),
+            supportedLocales: [for (final l in Lang.values) Locale(l.name)],
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            // Phones set to very large fonts would break layouts; above 1.3x
+            // the app stops growing text (it is already 10% larger).
+            builder: (context, child) => MediaQuery.withClampedTextScaling(
+              maxScaleFactor: 1.3,
+              child: child!,
+            ),
+            home: const HomeShell(),
           ),
-          home: const HomeShell(),
         ),
       ),
     );

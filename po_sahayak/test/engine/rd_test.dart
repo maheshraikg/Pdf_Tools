@@ -7,14 +7,11 @@ import 'helpers.dart';
 
 void main() {
   group('Recurring Deposit', () {
-    test('₹10,000/month at 6.7% → about ₹7,13,659 (PLAN.md)', () {
+    test('matches India Post: ₹100/month at 6.7% → ₹7,136.58', () {
+      // Official RD table: ₹100 a month for 5 years at 6.7% = ₹7,136.58.
+      expect(calc(Scheme.rd, 100, '6.7').maturityValue, d(7137));
       final r = calc(Scheme.rd, 10000, '6.7');
-      // Formula value is ₹7,13,658.29; PLAN.md says "about ₹7,13,659".
-      expect(
-        (r.maturityValue - d(713659)).abs() <= d(2),
-        isTrue,
-        reason: 'got ${r.maturityValue}',
-      );
+      expect(r.maturityValue, d(713658)); // ₹7,13,658.29
       expect(r.totalDeposit, d(600000));
       expect(r.maturityDate, DateTime(2031, 10, 10));
     });

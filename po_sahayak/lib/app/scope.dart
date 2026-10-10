@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../data/local_rates.dart';
 import '../data/saved_account_repository.dart';
 import '../domain/rates/rate_repository.dart';
 import 'settings.dart';
@@ -12,12 +13,14 @@ class AppScope extends InheritedWidget {
     required this.settings,
     required this.rates,
     required this.accounts,
+    this.localRates,
     required super.child,
   });
 
   final AppSettings settings;
   final RateRepository rates;
   final SavedAccountRepository accounts;
+  final LocalRates? localRates;
 
   static AppScope of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<AppScope>()!;
@@ -26,7 +29,8 @@ class AppScope extends InheritedWidget {
   bool updateShouldNotify(AppScope old) =>
       settings != old.settings ||
       rates != old.rates ||
-      accounts != old.accounts;
+      accounts != old.accounts ||
+      localRates != old.localRates;
 }
 
 extension ScopeX on BuildContext {

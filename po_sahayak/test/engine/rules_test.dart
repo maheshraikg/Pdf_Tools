@@ -31,11 +31,21 @@ void main() {
       }
     });
 
-    test('no rate before the first entry (history is entered by hand)', () {
-      expect(rates.entryOn(Scheme.td5, DateTime(2019, 1, 1)), isNull);
-      expect(rates.rateFor(Scheme.td5, DateTime(2019, 1, 1)), isNull);
+    test('historical rates: the rate on the opening date', () {
+      // Known notified rates.
+      expect(rates.entryOn(Scheme.td5, DateTime(2019, 1, 1))!.rate, d('7.8'));
+      expect(rates.entryOn(Scheme.td5, DateTime(2021, 6, 30))!.rate, d('6.7'));
+      expect(rates.entryOn(Scheme.kvp, DateTime(2022, 11, 1))!.rate, d('7.0'));
+      expect(rates.entryOn(Scheme.scss, DateTime(2016, 4, 1))!.rate, d('8.6'));
+      expect(rates.entryOn(Scheme.rd, DateTime(2023, 5, 1))!.rate, d('6.2'));
+      expect(rates.entryOn(Scheme.mssc, DateTime(2023, 4, 1))!.rate, d('7.5'));
+    });
+
+    test('no rate before the first entry', () {
+      expect(rates.entryOn(Scheme.td5, DateTime(2015, 1, 1)), isNull);
+      expect(rates.rateFor(Scheme.td5, DateTime(2015, 1, 1)), isNull);
       // Floating-rate schemes always project at today's rate.
-      expect(rates.rateFor(Scheme.ppf, DateTime(2019, 1, 1)), isNotNull);
+      expect(rates.rateFor(Scheme.ppf, DateTime(2015, 1, 1)), isNotNull);
     });
   });
 

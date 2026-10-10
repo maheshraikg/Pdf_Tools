@@ -7,8 +7,10 @@ import '../../app/scope.dart';
 import '../../app/strings.dart';
 import '../../app/theme.dart';
 import '../../widgets/common.dart';
+import '../accounts/backup_sheet.dart';
+import '../rates/rates_screen.dart';
 
-const String kAppVersion = '1.3.0';
+const String kAppVersion = '1.4.0';
 
 /// Direct link to the newest APK.
 const String kDownloadUrl =
@@ -126,6 +128,36 @@ class SettingsScreen extends StatelessWidget {
                       Note('${s.version} $kAppVersion', icon: Icons.tag),
                       Note(s.estimateOnly),
                     ],
+                  ),
+                ),
+                Card(
+                  child: ListTile(
+                    leading: const IconBadge(
+                      Icons.percent_rounded,
+                      Brand.red,
+                      size: 36,
+                    ),
+                    title: Text(s.ratesTitle),
+                    subtitle: Text(s.ratesSub),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const RatesScreen(),
+                      ),
+                    ),
+                  ),
+                ),
+                Card(
+                  child: ListTile(
+                    leading: const IconBadge(
+                      Icons.cloud_sync_rounded,
+                      Brand.red,
+                      size: 36,
+                    ),
+                    title: Text(s.backup),
+                    subtitle: Text(s.backupSub),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => showBackupSheet(context),
                   ),
                 ),
                 Card(

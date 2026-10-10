@@ -121,6 +121,7 @@ ThemeData buildTheme(Brightness b) {
       surfaceTintColor: Colors.transparent,
       centerTitle: false,
       titleTextStyle: TextStyle(
+        fontFamily: 'Roboto',
         fontSize: 21,
         fontWeight: FontWeight.w700,
         color: scheme.onSurface,

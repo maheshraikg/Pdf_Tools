@@ -61,8 +61,12 @@ accounts only; it closed to new deposits on 31-03-2025).
 - 5-year TD opened on or after 09-11-2023: no premature closure before 4 years,
   then SB rate. Opened earlier: 3-year TD rate minus 2%.
 - Premature-closure rules marked "verify" in the plan are estimates until they
-  are checked against the current POSB rules and SB orders. KVP early-closure
-  values are estimated (the official table isn't bundled).
+  are checked against the current POSB rules and SB orders.
+- KVP early encashment pays, per ₹1,000, round(1000 × (1 + rate − 1%)^years)
+  in completed half-years. This reproduces the published 6.9%, 7.0%, 7.2% and
+  7.6% tables exactly; the 7.5% table (G.S.R. 324(E), 2023) is assumed to
+  follow the same rule.
+- RD matches India Post's table: ₹100 a month at 6.7% → ₹7,136.58.
 
 ## Rate updates (every quarter)
 
@@ -73,9 +77,16 @@ accounts only; it closed to new deposits on 31-03-2025).
 3. Run `flutter test` (the rate table test lists the expected current rates;
    update it too), bump `version:` in `pubspec.yaml`, and release.
 
-`rates.json` only has rates from 01-01-2024. For older accounts the calculator
-asks for the rate from the passbook. Historical rates must be typed in from
-the notifications by hand, not generated.
+`rates.json` holds every rate change since the quarterly resets began on
+01-04-2016 (annual rates from 01-04-2015 where verified; TD from 2016), so the
+calculator picks the rate on an old account's opening date. Values were
+cross-checked against news reports of each Ministry of Finance notification;
+check new entries against the notification itself. For dates before the table
+the calculator asks for the rate from the passbook.
+
+Staff can also type in a new quarter's rates under **Settings → Interest
+rates** before an app update ships; the next update with official rates
+replaces them automatically.
 
 ## Build
 
@@ -107,6 +118,30 @@ and installs over the previous one. That key is public: it is only for the
 GitHub download links, never for the Play Store. For Play, build an app bundle with
 `flutter build appbundle --release --obfuscate --split-debug-info=build/symbols`
 and keep the symbols to read crash traces.
+
+### Play Store bundle from CI (your private upload key)
+
+1. On your own computer, create an upload key once and keep it safe (if you
+   lose it you need Google support to reset it):
+
+   ```sh
+   keytool -genkeypair -v -keystore upload.jks -alias upload \
+     -keyalg RSA -keysize 2048 -validity 10000
+   base64 -w0 upload.jks > upload.jks.b64   # macOS: base64 -i upload.jks
+   ```
+
+2. In GitHub: repository **Settings → Secrets and variables → Actions → New
+   repository secret**, add four secrets:
+   `PO_UPLOAD_KEYSTORE_BASE64` (contents of `upload.jks.b64`),
+   `PO_UPLOAD_STORE_PASSWORD`, `PO_UPLOAD_KEY_ALIAS` (`upload`),
+   `PO_UPLOAD_KEY_PASSWORD`.
+3. Every release run then also builds `po_calculator.aab` signed with that key
+   and keeps it as the private workflow artifact `po-calculator-play-bundle`
+   (with the symbols for crash traces) for 30 days. Download it from the run
+   page and upload it in Play Console with Play App Signing turned on.
+
+The public APK link keeps the test key, so phones that installed it can keep
+updating; Play users get Google's signature.
 
 ## Differences from the build plan
 

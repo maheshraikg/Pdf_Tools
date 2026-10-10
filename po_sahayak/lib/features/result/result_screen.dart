@@ -5,6 +5,7 @@ import '../../app/format.dart';
 import '../../app/scope.dart';
 import '../../app/theme.dart';
 import '../../domain/engine/closure.dart';
+import '../../domain/engine/money.dart';
 import '../../domain/models/result.dart';
 import '../../domain/models/scheme.dart';
 import '../../widgets/charts.dart';
@@ -125,15 +126,9 @@ class ResultScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          PairTable(
-                            head1: s.fy,
-                            head2: s.interest,
-                            rows: [
-                              for (final e in fyRows.entries)
-                                (e.key, rupee(e.value)),
-                            ],
-                          ),
+                          _TaxByYear(rows: fyRows, color: c),
                           if (scheme == Scheme.nsc) Note(s.nscTaxNote),
+                          Note(s.taxNote, icon: Icons.receipt_long_outlined),
                         ],
                       ),
                     ),
@@ -552,6 +547,90 @@ class _Breakup extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Interest per financial year with the tax on it at a chosen slab rate
+/// (plus 4% health and education cess).
+class _TaxByYear extends StatefulWidget {
+  const _TaxByYear({required this.rows, required this.color});
+  final Map<String, Decimal> rows;
+  final Color color;
+
+  @override
+  State<_TaxByYear> createState() => _TaxByYearState();
+}
+
+class _TaxByYearState extends State<_TaxByYear> {
+  static const _slabs = [0, 5, 10, 15, 20, 25, 30];
+  int _slab = 10;
+
+  Decimal _tax(Decimal interest) => rupees(
+    (interest * Decimal.fromInt(_slab * 104) / Decimal.fromInt(10000))
+        .toDecimal(scaleOnInfinitePrecision: 4),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final s = context.s, t = Theme.of(context).textTheme;
+    final total = widget.rows.values.fold(Decimal.zero, (a, v) => a + _tax(v));
+    final head = t.labelLarge?.copyWith(fontWeight: FontWeight.w700);
+    Widget cell(String text, {TextStyle? style, bool right = true}) => Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+      child: Text(
+        text,
+        style: style,
+        textAlign: right ? TextAlign.right : TextAlign.left,
+      ),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(s.yourSlab, style: t.labelLarge),
+        const SizedBox(height: 6),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            for (final p in _slabs)
+              ChoiceChip(
+                label: Text('$p%'),
+                selected: _slab == p,
+                selectedColor: widget.color.withValues(alpha: 0.18),
+                onSelected: (_) => setState(() => _slab = p),
+              ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Table(
+          columnWidths: const {0: FlexColumnWidth(1.1)},
+          border: TableBorder(
+            horizontalInside: BorderSide(
+              color: Theme.of(context).dividerColor.withValues(alpha: 0.4),
+            ),
+          ),
+          children: [
+            TableRow(
+              children: [
+                cell(s.fy, style: head, right: false),
+                cell(s.interest, style: head),
+                cell(s.taxCol, style: head),
+              ],
+            ),
+            for (final e in widget.rows.entries)
+              TableRow(
+                children: [
+                  cell(e.key, right: false),
+                  cell(rupee(e.value)),
+                  cell(rupee(_tax(e.value))),
+                ],
+              ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ValueTile(s.totalTax, rupee(total), emphasis: true),
+      ],
     );
   }
 }

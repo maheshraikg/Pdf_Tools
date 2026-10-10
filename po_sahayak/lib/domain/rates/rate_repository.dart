@@ -14,7 +14,12 @@ class RateEntry {
 }
 
 class RateRepository {
-  RateRepository._(this.version, this.validFrom, this._entries);
+  RateRepository._(
+    this.version,
+    this.validFrom,
+    this._entries, {
+    this.local = false,
+  });
 
   /// Parses the rates.json format (see PLAN.md).
   factory RateRepository.fromJson(String source) {
@@ -39,6 +44,24 @@ class RateRepository {
       entries,
     );
   }
+
+  /// This table plus rates typed in by the user, valid from [from]. The
+  /// typed rates are ignored once the built-in table reaches [from] (an app
+  /// update brought the official rates).
+  RateRepository withLocal(DateTime from, Map<Scheme, Decimal> rates) {
+    if (!from.isAfter(validFrom) || rates.isEmpty) return this;
+    final entries = {
+      for (final e in _entries.entries)
+        e.key: [
+          if (rates[e.key] != null) RateEntry(from, rates[e.key]!),
+          ...e.value,
+        ],
+    };
+    return RateRepository._(version, from, entries, local: true);
+  }
+
+  /// True when the newest rates were typed in on this phone.
+  final bool local;
 
   /// e.g. "2026-Q3".
   final String version;

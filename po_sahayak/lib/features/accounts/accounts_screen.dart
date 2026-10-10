@@ -9,6 +9,7 @@ import '../../reminders/notification_service.dart';
 import '../../widgets/common.dart';
 import '../../widgets/motion.dart';
 import '../result/result_screen.dart';
+import 'backup_sheet.dart';
 
 class AccountsScreen extends StatelessWidget {
   const AccountsScreen({super.key});
@@ -54,6 +55,14 @@ class AccountsScreen extends StatelessWidget {
                                 color: Colors.white,
                                 fontWeight: FontWeight.w800,
                               ),
+                            ),
+                          ),
+                          IconButton(
+                            tooltip: s.backup,
+                            onPressed: () => showBackupSheet(context),
+                            icon: const Icon(
+                              Icons.cloud_sync_rounded,
+                              color: Colors.white,
                             ),
                           ),
                           const LanguageToggle(onDark: true),
