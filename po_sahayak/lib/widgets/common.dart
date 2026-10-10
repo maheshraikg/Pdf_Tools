@@ -4,8 +4,8 @@ import '../app/scope.dart';
 import '../app/strings.dart';
 import '../app/theme.dart';
 
-/// Pill button that switches between Kannada and English. [onDark] for use
-/// on the red header.
+/// Pill button showing the current language; opens the language picker.
+/// [onDark] for use on the red header.
 class LanguageToggle extends StatelessWidget {
   const LanguageToggle({super.key, this.onDark = false});
   final bool onDark;
@@ -13,7 +13,6 @@ class LanguageToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settings = context.settings;
-    final toKn = settings.lang == Lang.en;
     final fg = onDark ? Colors.white : Theme.of(context).colorScheme.primary;
     return Padding(
       padding: const EdgeInsets.only(right: 8),
@@ -25,12 +24,52 @@ class LanguageToggle extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           shape: const StadiumBorder(),
         ),
-        onPressed: () => settings.lang = toKn ? Lang.kn : Lang.en,
+        onPressed: () => showLanguagePicker(context),
         icon: const Icon(Icons.translate_rounded, size: 18),
-        label: Text(toKn ? 'ಕನ್ನಡ' : 'English'),
+        label: Text(settings.lang.nativeName),
       ),
     );
   }
+}
+
+/// Bottom sheet listing every app language in its own script.
+Future<void> showLanguagePicker(BuildContext context) {
+  final settings = context.settings;
+  return showModalBottomSheet<void>(
+    context: context,
+    showDragHandle: true,
+    isScrollControlled: true,
+    builder: (sheet) => SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+              child: Text(
+                context.s.language,
+                style: Theme.of(context).textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.w800),
+              ),
+            ),
+            for (final l in Lang.values)
+              ListTile(
+                title: Text(l.nativeName),
+                trailing: l == settings.lang
+                    ? const Icon(Icons.check_circle_rounded, color: Brand.red)
+                    : null,
+                selected: l == settings.lang,
+                onTap: () {
+                  settings.lang = l;
+                  Navigator.pop(sheet);
+                },
+              ),
+          ],
+        ),
+      ),
+    ),
+  );
 }
 
 /// Red gradient header with soft decorative circles (no logo or emblem).

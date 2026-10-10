@@ -33,6 +33,8 @@ void main() {
     await pumpApp(tester);
     expect(find.text('Deposits'), findsOneWidget);
     expect(find.text('Highest rate now'), findsOneWidget);
+    await tester.tap(find.text('English').first);
+    await tester.pumpAndSettle();
     await tester.tap(find.text('ಕನ್ನಡ'));
     await tester.pumpAndSettle();
     expect(find.text('ಠೇವಣಿಗಳು'), findsOneWidget);

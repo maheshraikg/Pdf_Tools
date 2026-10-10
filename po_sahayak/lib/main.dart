@@ -84,7 +84,7 @@ class _PoSahayakAppState extends State<PoSahayakApp> {
           darkTheme: buildTheme(Brightness.dark),
           themeMode: widget.settings.themeMode,
           locale: Locale(widget.settings.lang.name),
-          supportedLocales: const [Locale('en'), Locale('kn')],
+          supportedLocales: [for (final l in Lang.values) Locale(l.name)],
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
           // Phones set to very large fonts would break layouts; above 1.3x
           // the app stops growing text (it is already 10% larger).

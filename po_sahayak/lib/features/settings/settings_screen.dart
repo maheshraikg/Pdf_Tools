@@ -65,13 +65,17 @@ class SettingsScreen extends StatelessWidget {
                 SectionCard(
                   icon: Icons.translate_rounded,
                   title: s.language,
-                  child: SegmentedButton<Lang>(
-                    segments: const [
-                      ButtonSegment(value: Lang.kn, label: Text('ಕನ್ನಡ')),
-                      ButtonSegment(value: Lang.en, label: Text('English')),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final l in Lang.values)
+                        ChoiceChip(
+                          label: Text(l.nativeName),
+                          selected: settings.lang == l,
+                          onSelected: (_) => settings.lang = l,
+                        ),
                     ],
-                    selected: {settings.lang},
-                    onSelectionChanged: (v) => settings.lang = v.first,
                   ),
                 ),
                 SectionCard(

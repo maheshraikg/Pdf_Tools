@@ -1,4 +1,4 @@
-/// All user-facing text, in English and Kannada. Nothing is hard-coded in
+/// All user-facing text: English, Kannada and nine more Indian languages. Nothing is hard-coded in
 /// the screens.
 library;
 
@@ -9,14 +9,56 @@ import '../domain/models/scheme.dart';
 /// Headings of the scheme details page.
 enum SchemeFact { interest, tenure, deposit, who, tax, closure, loan, maturity }
 
-enum Lang { en, kn }
+/// App languages, with their names in their own script.
+enum Lang {
+  en('English'),
+  kn('ಕನ್ನಡ'),
+  hi('हिन्दी'),
+  bn('বাংলা'),
+  mr('मराठी'),
+  te('తెలుగు'),
+  ta('தமிழ்'),
+  gu('ગુજરાતી'),
+  ml('മലയാളം'),
+  or('ଓଡ଼ିଆ'),
+  pa('ਪੰਜਾਬੀ');
+
+  const Lang(this.nativeName);
+  final String nativeName;
+}
 
 class S {
   const S(this.lang);
   final Lang lang;
 
   bool get kn => lang == Lang.kn;
-  String _t(String en, String kn) => this.kn ? kn : en;
+
+  /// Text in the current language; English when a translation is missing.
+  String _t(
+    String en,
+    String kn, {
+    String? hi,
+    String? bn,
+    String? mr,
+    String? te,
+    String? ta,
+    String? gu,
+    String? ml,
+    String? or,
+    String? pa,
+  }) => switch (lang) {
+    Lang.en => en,
+    Lang.kn => kn,
+    Lang.hi => hi ?? en,
+    Lang.bn => bn ?? en,
+    Lang.mr => mr ?? en,
+    Lang.te => te ?? en,
+    Lang.ta => ta ?? en,
+    Lang.gu => gu ?? en,
+    Lang.ml => ml ?? en,
+    Lang.or => or ?? en,
+    Lang.pa => pa ?? en,
+  };
 
   // App
   String get appTitle => _t('PO Calculator', 'ಪಿಒ ಕ್ಯಾಲ್ಕುಲೇಟರ್');
@@ -926,7 +968,8 @@ class S {
   String get quickAmounts => _t('Quick amounts', 'ತ್ವರಿತ ಮೊತ್ತಗಳು');
   String get highestReturn => _t('Highest return', 'ಅತ್ಯಧಿಕ ಆದಾಯ');
   String get tenure => _t('Tenure', 'ಅವಧಿ');
-  String years(int y) => _t(y == 1 ? '1 year' : '$y years', '$y ವರ್ಷ');
+  String years(int y) =>
+      lang == Lang.en && y == 1 ? '1 year' : _t('$y years', '$y ವರ್ಷ');
   String tenureOf(Scheme s) => switch (s) {
     Scheme.sb => _t('No fixed term', 'ನಿಗದಿತ ಅವಧಿ ಇಲ್ಲ'),
     Scheme.kvp => months(115),
