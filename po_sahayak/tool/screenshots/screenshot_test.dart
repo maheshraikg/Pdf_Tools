@@ -146,7 +146,7 @@ void main() {
 
       for (final (icon, name) in [
         (Icons.leaderboard_outlined, '5_compare'),
-        (Icons.savings_outlined, '6_accounts'),
+        (Icons.account_balance_wallet_outlined, '6_accounts'),
         (Icons.support_agent_outlined, '7_staff'),
         (Icons.settings_outlined, '8_settings'),
       ]) {

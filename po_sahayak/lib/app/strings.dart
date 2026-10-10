@@ -6,6 +6,9 @@ import '../domain/engine/closure.dart';
 import '../domain/engine/eligibility.dart';
 import '../domain/models/scheme.dart';
 
+/// Headings of the scheme details page.
+enum SchemeFact { interest, tenure, deposit, who, tax, closure, loan, maturity }
+
 enum Lang { en, kn }
 
 class S {
@@ -468,6 +471,413 @@ class S {
             ),
     ];
   }
+
+  // Scheme details
+  String get schemeDetails => _t('Scheme details', 'ಯೋಜನೆಯ ವಿವರಗಳು');
+  String get fullDetails => _t('Full scheme details', 'ಯೋಜನೆಯ ಪೂರ್ಣ ವಿವರ');
+  String get shareDetails =>
+      _t('Share details with customer', 'ಗ್ರಾಹಕರಿಗೆ ವಿವರ ಕಳುಹಿಸಿ');
+
+  /// Main facts of [s] as (label, text) pairs. [rate] is today's rate,
+  /// [kvpMonths] the KVP doubling period at that rate.
+  List<(SchemeFact, String)> schemeFacts(
+    Scheme s,
+    String rate, {
+    int kvpMonths = 115,
+  }) {
+    final td = s.isTd;
+    final common = _t(
+      'One adult, up to 3 adults jointly, a guardian for a minor, or a minor of 10 or more in their own name.',
+      'ಒಬ್ಬ ವಯಸ್ಕ, 3 ವಯಸ್ಕರವರೆಗೆ ಜಂಟಿಯಾಗಿ, ಅಪ್ರಾಪ್ತರ ಪರವಾಗಿ ಪೋಷಕರು, ಅಥವಾ 10 ವರ್ಷ ಮೇಲ್ಪಟ್ಟ ಅಪ್ರಾಪ್ತರು ತಮ್ಮ ಹೆಸರಲ್ಲಿ.',
+    );
+    final taxable = _t(
+      'Interest is taxable; no 80C benefit.',
+      'ಬಡ್ಡಿಗೆ ತೆರಿಗೆ ಇದೆ; 80C ಲಾಭ ಇಲ್ಲ.',
+    );
+    final eee = _t(
+      'Fully tax-free (EEE): the deposit counts for 80C; interest and maturity are not taxed.',
+      'ಸಂಪೂರ್ಣ ತೆರಿಗೆ ಮುಕ್ತ (EEE): ಠೇವಣಿ 80Cಗೆ ಅರ್ಹ; ಬಡ್ಡಿ ಮತ್ತು ಮುಕ್ತಾಯ ಮೊತ್ತಕ್ಕೆ ತೆರಿಗೆ ಇಲ್ಲ.',
+    );
+    final pledge = _t(
+      'Can be pledged as security for a loan.',
+      'ಸಾಲಕ್ಕೆ ಭದ್ರತೆಯಾಗಿ ಅಡವಿಡಬಹುದು.',
+    );
+    final lump1000 = _t(
+      'Minimum ₹1,000, in multiples of ₹100; no upper limit.',
+      'ಕನಿಷ್ಠ ₹1,000, ₹100ರ ಗುಣಕಗಳಲ್ಲಿ; ಗರಿಷ್ಠ ಮಿತಿ ಇಲ್ಲ.',
+    );
+    return switch (s) {
+      Scheme.sb => [
+        (
+          SchemeFact.interest,
+          _t(
+            '$rate% a year, on the lowest balance between the 10th and the month end; credited every 31 March.',
+            'ವಾರ್ಷಿಕ $rate%, ಪ್ರತಿ ತಿಂಗಳ 10ರಿಂದ ತಿಂಗಳ ಕೊನೆಯವರೆಗಿನ ಕನಿಷ್ಠ ಶಿಲ್ಕಿನ ಮೇಲೆ; ಪ್ರತಿ ಮಾರ್ಚ್ 31ರಂದು ಜಮೆ.',
+          ),
+        ),
+        (
+          SchemeFact.deposit,
+          _t(
+            'Minimum balance ₹500; no upper limit.',
+            'ಕನಿಷ್ಠ ಶಿಲ್ಕು ₹500; ಗರಿಷ್ಠ ಮಿತಿ ಇಲ್ಲ.',
+          ),
+        ),
+        (SchemeFact.who, common),
+        (
+          SchemeFact.tax,
+          _t(
+            'Interest up to ₹10,000 a year is tax-free under 80TTA (senior citizens: up to ₹50,000 under 80TTB).',
+            'ವರ್ಷಕ್ಕೆ ₹10,000ವರೆಗಿನ ಬಡ್ಡಿ 80TTA ಅಡಿ ತೆರಿಗೆ ಮುಕ್ತ (ಹಿರಿಯ ನಾಗರಿಕರು: 80TTB ಅಡಿ ₹50,000ವರೆಗೆ).',
+          ),
+        ),
+        (
+          SchemeFact.closure,
+          _t('Can be closed at any time.', 'ಯಾವಾಗ ಬೇಕಾದರೂ ಮುಚ್ಚಬಹುದು.'),
+        ),
+      ],
+      Scheme.rd => [
+        (
+          SchemeFact.interest,
+          _t(
+            '$rate% a year, compounded every quarter; paid with the deposits at maturity.',
+            'ವಾರ್ಷಿಕ $rate%, ಪ್ರತಿ ತ್ರೈಮಾಸಿಕ ಚಕ್ರಬಡ್ಡಿ; ಮುಕ್ತಾಯದಲ್ಲಿ ಠೇವಣಿಯೊಂದಿಗೆ ಪಾವತಿ.',
+          ),
+        ),
+        (SchemeFact.tenure, tenureOf(s)),
+        (
+          SchemeFact.deposit,
+          _t(
+            'Minimum ₹100 a month, in multiples of ₹10; no upper limit. A missed month costs ₹1 for every ₹100.',
+            'ತಿಂಗಳಿಗೆ ಕನಿಷ್ಠ ₹100, ₹10ರ ಗುಣಕಗಳಲ್ಲಿ; ಗರಿಷ್ಠ ಮಿತಿ ಇಲ್ಲ. ತಪ್ಪಿದ ತಿಂಗಳಿಗೆ ಪ್ರತಿ ₹100ಕ್ಕೆ ₹1 ದಂಡ.',
+          ),
+        ),
+        (SchemeFact.who, common),
+        (SchemeFact.tax, taxable),
+        (
+          SchemeFact.closure,
+          _t(
+            'Allowed after 3 years; interest at the savings account rate.',
+            '3 ವರ್ಷದ ನಂತರ ಅನುಮತಿ; ಉಳಿತಾಯ ಖಾತೆ ದರದಲ್ಲಿ ಬಡ್ಡಿ.',
+          ),
+        ),
+        (
+          SchemeFact.loan,
+          _t(
+            'After 12 instalments: a loan of up to 50% of the balance, at the RD rate plus 2%.',
+            '12 ಕಂತುಗಳ ನಂತರ: ಶಿಲ್ಕಿನ 50%ವರೆಗೆ ಸಾಲ, RD ದರಕ್ಕಿಂತ 2% ಹೆಚ್ಚು ಬಡ್ಡಿಯಲ್ಲಿ.',
+          ),
+        ),
+        (
+          SchemeFact.maturity,
+          _t(
+            'Can be continued for 5 more years.',
+            'ಇನ್ನೂ 5 ವರ್ಷ ಮುಂದುವರಿಸಬಹುದು.',
+          ),
+        ),
+      ],
+      _ when td => [
+        (
+          SchemeFact.interest,
+          _t(
+            '$rate% a year, compounded every quarter and paid out every year.',
+            'ವಾರ್ಷಿಕ $rate%, ತ್ರೈಮಾಸಿಕ ಚಕ್ರಬಡ್ಡಿ, ಪ್ರತಿ ವರ್ಷ ಪಾವತಿ.',
+          ),
+        ),
+        (SchemeFact.tenure, tenureOf(s)),
+        (SchemeFact.deposit, lump1000),
+        (SchemeFact.who, common),
+        (
+          SchemeFact.tax,
+          s == Scheme.td5
+              ? _t(
+                  'The deposit counts for 80C (5-year TD only); interest is taxable.',
+                  'ಠೇವಣಿ 80Cಗೆ ಅರ್ಹ (5 ವರ್ಷದ TD ಮಾತ್ರ); ಬಡ್ಡಿಗೆ ತೆರಿಗೆ ಇದೆ.',
+                )
+              : taxable,
+        ),
+        (
+          SchemeFact.closure,
+          _t(
+                'Not before 6 months. 6–12 months: savings account rate. After 1 year: TD rate minus 2%.',
+                '6 ತಿಂಗಳ ಮೊದಲು ಇಲ್ಲ. 6–12 ತಿಂಗಳು: ಉಳಿತಾಯ ಖಾತೆ ದರ. 1 ವರ್ಷದ ನಂತರ: TD ದರದಲ್ಲಿ 2% ಕಡಿತ.',
+              ) +
+              (s == Scheme.td5
+                  ? _t(
+                      ' Opened on/after 09-11-2023: closure only after 4 years, at the savings rate.',
+                      ' 09-11-2023ರ ನಂತರ ತೆರೆದದ್ದು: 4 ವರ್ಷದ ನಂತರ ಮಾತ್ರ, ಉಳಿತಾಯ ದರದಲ್ಲಿ.',
+                    )
+                  : ''),
+        ),
+        (
+          SchemeFact.maturity,
+          _t(
+            'Paid out, or extended for the same term on request.',
+            'ಪಾವತಿ, ಅಥವಾ ಕೋರಿಕೆಯ ಮೇರೆಗೆ ಅದೇ ಅವಧಿಗೆ ವಿಸ್ತರಣೆ.',
+          ),
+        ),
+      ],
+      Scheme.mis => [
+        (
+          SchemeFact.interest,
+          _t(
+            '$rate% a year, paid every month to the linked Post Office savings account.',
+            'ವಾರ್ಷಿಕ $rate%, ಪ್ರತಿ ತಿಂಗಳು ಜೋಡಿಸಿದ ಅಂಚೆ ಉಳಿತಾಯ ಖಾತೆಗೆ ಪಾವತಿ.',
+          ),
+        ),
+        (SchemeFact.tenure, tenureOf(s)),
+        (
+          SchemeFact.deposit,
+          _t(
+            'Minimum ₹1,000, in multiples of ₹1,000; up to ₹9 lakh single, ₹15 lakh joint.',
+            'ಕನಿಷ್ಠ ₹1,000, ₹1,000ರ ಗುಣಕಗಳಲ್ಲಿ; ಏಕ ಖಾತೆ ₹9 ಲಕ್ಷ, ಜಂಟಿ ₹15 ಲಕ್ಷವರೆಗೆ.',
+          ),
+        ),
+        (SchemeFact.who, common),
+        (SchemeFact.tax, taxable),
+        (
+          SchemeFact.closure,
+          _t(
+            'Not before 1 year. 1–3 years: 2% of the deposit deducted; after 3 years: 1%.',
+            '1 ವರ್ಷದ ಮೊದಲು ಇಲ್ಲ. 1–3 ವರ್ಷ: ಠೇವಣಿಯ 2% ಕಡಿತ; 3 ವರ್ಷದ ನಂತರ: 1%.',
+          ),
+        ),
+        (
+          SchemeFact.maturity,
+          _t('The deposit is returned.', 'ಠೇವಣಿ ಹಿಂತಿರುಗಿಸಲಾಗುತ್ತದೆ.'),
+        ),
+      ],
+      Scheme.scss => [
+        (
+          SchemeFact.interest,
+          _t(
+            '$rate% a year, paid every quarter (1 April, 1 July, 1 October, 1 January) to the linked savings account.',
+            'ವಾರ್ಷಿಕ $rate%, ಪ್ರತಿ ತ್ರೈಮಾಸಿಕ (ಏಪ್ರಿಲ್ 1, ಜುಲೈ 1, ಅಕ್ಟೋಬರ್ 1, ಜನವರಿ 1) ಜೋಡಿಸಿದ ಉಳಿತಾಯ ಖಾತೆಗೆ ಪಾವತಿ.',
+          ),
+        ),
+        (SchemeFact.tenure, tenureOf(s)),
+        (
+          SchemeFact.deposit,
+          _t(
+            'Minimum ₹1,000, in multiples of ₹1,000; up to ₹30 lakh across all SCSS accounts.',
+            'ಕನಿಷ್ಠ ₹1,000, ₹1,000ರ ಗುಣಕಗಳಲ್ಲಿ; ಎಲ್ಲಾ SCSS ಖಾತೆಗಳು ಸೇರಿ ₹30 ಲಕ್ಷವರೆಗೆ.',
+          ),
+        ),
+        (
+          SchemeFact.who,
+          _t(
+            'Age 60 or more. Retired civilians aged 55–60 and retired defence staff aged 50–60, within 3 months of getting retirement benefits. Joint account only with the spouse.',
+            '60 ಅಥವಾ ಹೆಚ್ಚು ವಯಸ್ಸು. 55–60ರ ನಿವೃತ್ತ ನಾಗರಿಕ ನೌಕರರು ಮತ್ತು 50–60ರ ರಕ್ಷಣಾ ನಿವೃತ್ತರು, ನಿವೃತ್ತಿ ಸೌಲಭ್ಯ ಪಡೆದ 3 ತಿಂಗಳೊಳಗೆ. ಜಂಟಿ ಖಾತೆ ಪತಿ/ಪತ್ನಿಯೊಂದಿಗೆ ಮಾತ್ರ.',
+          ),
+        ),
+        (
+          SchemeFact.tax,
+          _t(
+            'The deposit counts for 80C; interest is taxable.',
+            'ಠೇವಣಿ 80Cಗೆ ಅರ್ಹ; ಬಡ್ಡಿಗೆ ತೆರಿಗೆ ಇದೆ.',
+          ),
+        ),
+        (
+          SchemeFact.closure,
+          _t(
+            'Any time. Before 1 year: interest paid is recovered. 1–2 years: 1.5% deducted; after 2 years: 1%.',
+            'ಯಾವಾಗ ಬೇಕಾದರೂ. 1 ವರ್ಷದ ಮೊದಲು: ಪಾವತಿಸಿದ ಬಡ್ಡಿ ವಸೂಲಿ. 1–2 ವರ್ಷ: 1.5% ಕಡಿತ; 2 ವರ್ಷದ ನಂತರ: 1%.',
+          ),
+        ),
+        (
+          SchemeFact.maturity,
+          _t(
+            'Can be extended in blocks of 3 years.',
+            '3 ವರ್ಷಗಳ ಅವಧಿಗೆ ಪದೇ ಪದೇ ವಿಸ್ತರಿಸಬಹುದು.',
+          ),
+        ),
+      ],
+      Scheme.nsc => [
+        (
+          SchemeFact.interest,
+          _t(
+            '$rate% a year, compounded yearly; paid at maturity.',
+            'ವಾರ್ಷಿಕ $rate%, ವಾರ್ಷಿಕ ಚಕ್ರಬಡ್ಡಿ; ಮುಕ್ತಾಯದಲ್ಲಿ ಪಾವತಿ.',
+          ),
+        ),
+        (SchemeFact.tenure, tenureOf(s)),
+        (SchemeFact.deposit, lump1000),
+        (SchemeFact.who, common),
+        (
+          SchemeFact.tax,
+          _t(
+            'The deposit counts for 80C; interest of years 1–4 counts as reinvested for 80C. Interest is taxable.',
+            'ಠೇವಣಿ 80Cಗೆ ಅರ್ಹ; 1–4ನೇ ವರ್ಷದ ಬಡ್ಡಿ 80C ಅಡಿ ಮರುಹೂಡಿಕೆ ಎಂದು ಪರಿಗಣಿತ. ಬಡ್ಡಿಗೆ ತೆರಿಗೆ ಇದೆ.',
+          ),
+        ),
+        (SchemeFact.closure, closureRule(ClosureRule.notAllowed)),
+        (SchemeFact.loan, pledge),
+      ],
+      Scheme.kvp => [
+        (
+          SchemeFact.interest,
+          _t(
+            '$rate% a year, compounded yearly; the money doubles in $kvpMonths months.',
+            'ವಾರ್ಷಿಕ $rate%, ವಾರ್ಷಿಕ ಚಕ್ರಬಡ್ಡಿ; $kvpMonths ತಿಂಗಳಲ್ಲಿ ಹಣ ದ್ವಿಗುಣ.',
+          ),
+        ),
+        (SchemeFact.tenure, months(kvpMonths)),
+        (SchemeFact.deposit, lump1000),
+        (SchemeFact.who, common),
+        (SchemeFact.tax, taxable),
+        (
+          SchemeFact.closure,
+          _t(
+            'After 2½ years, as per the official table.',
+            '2½ ವರ್ಷದ ನಂತರ, ಅಧಿಕೃತ ಪಟ್ಟಿಯಂತೆ.',
+          ),
+        ),
+        (SchemeFact.loan, pledge),
+      ],
+      Scheme.ppf => [
+        (
+          SchemeFact.interest,
+          _t(
+            '$rate% a year, compounded yearly and credited every 31 March. The rate can change every quarter.',
+            'ವಾರ್ಷಿಕ $rate%, ವಾರ್ಷಿಕ ಚಕ್ರಬಡ್ಡಿ, ಪ್ರತಿ ಮಾರ್ಚ್ 31ರಂದು ಜಮೆ. ದರ ಪ್ರತಿ ತ್ರೈಮಾಸಿಕ ಬದಲಾಗಬಹುದು.',
+          ),
+        ),
+        (
+          SchemeFact.tenure,
+          _t(
+            '15 full financial years after the year of opening.',
+            'ತೆರೆದ ವರ್ಷದ ನಂತರ 15 ಪೂರ್ಣ ಹಣಕಾಸು ವರ್ಷ.',
+          ),
+        ),
+        (
+          SchemeFact.deposit,
+          _t(
+            '₹500 to ₹1.5 lakh in each financial year, in multiples of ₹50.',
+            'ಪ್ರತಿ ಹಣಕಾಸು ವರ್ಷ ₹500ರಿಂದ ₹1.5 ಲಕ್ಷ, ₹50ರ ಗುಣಕಗಳಲ್ಲಿ.',
+          ),
+        ),
+        (
+          SchemeFact.who,
+          _t(
+            'Any adult, or a guardian for a minor. Only one account per person; no joint accounts.',
+            'ಯಾವುದೇ ವಯಸ್ಕರು, ಅಥವಾ ಅಪ್ರಾಪ್ತರ ಪರವಾಗಿ ಪೋಷಕರು. ಒಬ್ಬರಿಗೆ ಒಂದೇ ಖಾತೆ; ಜಂಟಿ ಖಾತೆ ಇಲ್ಲ.',
+          ),
+        ),
+        (SchemeFact.tax, eee),
+        (
+          SchemeFact.closure,
+          _t(
+            'After 5 years, only for serious illness, higher education or change of residency; 1% less interest.',
+            '5 ವರ್ಷದ ನಂತರ, ಗಂಭೀರ ಅನಾರೋಗ್ಯ, ಉನ್ನತ ಶಿಕ್ಷಣ ಅಥವಾ ನಿವಾಸ ಬದಲಾವಣೆಗೆ ಮಾತ್ರ; 1% ಕಡಿಮೆ ಬಡ್ಡಿ.',
+          ),
+        ),
+        (
+          SchemeFact.loan,
+          _t(
+                'Loan from the 3rd to the 6th year. ',
+                '3ರಿಂದ 6ನೇ ವರ್ಷದವರೆಗೆ ಸಾಲ. ',
+              ) +
+              ppfWithdrawalNote,
+        ),
+        (
+          SchemeFact.maturity,
+          _t(
+            'Can be extended in blocks of 5 years, with or without deposits.',
+            'ಠೇವಣಿಯೊಂದಿಗೆ ಅಥವಾ ಇಲ್ಲದೆ 5 ವರ್ಷಗಳ ಅವಧಿಗೆ ವಿಸ್ತರಿಸಬಹುದು.',
+          ),
+        ),
+      ],
+      Scheme.ssy => [
+        (
+          SchemeFact.interest,
+          _t(
+            '$rate% a year, compounded yearly. The rate can change every quarter.',
+            'ವಾರ್ಷಿಕ $rate%, ವಾರ್ಷಿಕ ಚಕ್ರಬಡ್ಡಿ. ದರ ಪ್ರತಿ ತ್ರೈಮಾಸಿಕ ಬದಲಾಗಬಹುದು.',
+          ),
+        ),
+        (
+          SchemeFact.tenure,
+          _t(
+            '21 years from opening; deposits for the first 15 years.',
+            'ತೆರೆದಂದಿನಿಂದ 21 ವರ್ಷ; ಮೊದಲ 15 ವರ್ಷ ಠೇವಣಿ.',
+          ),
+        ),
+        (
+          SchemeFact.deposit,
+          _t(
+            '₹250 to ₹1.5 lakh in each financial year, in multiples of ₹50.',
+            'ಪ್ರತಿ ಹಣಕಾಸು ವರ್ಷ ₹250ರಿಂದ ₹1.5 ಲಕ್ಷ, ₹50ರ ಗುಣಕಗಳಲ್ಲಿ.',
+          ),
+        ),
+        (
+          SchemeFact.who,
+          _t(
+            'A parent or guardian, for a girl below 10. One account per girl; at most two girls per family (more only for twins or triplets).',
+            'ಪೋಷಕರು, 10 ವರ್ಷದೊಳಗಿನ ಹೆಣ್ಣು ಮಗುವಿಗೆ. ಒಂದು ಮಗುವಿಗೆ ಒಂದು ಖಾತೆ; ಕುಟುಂಬಕ್ಕೆ ಗರಿಷ್ಠ ಇಬ್ಬರು (ಅವಳಿ/ತ್ರಿವಳಿಗೆ ಮಾತ್ರ ಹೆಚ್ಚು).',
+          ),
+        ),
+        (SchemeFact.tax, eee),
+        (
+          SchemeFact.closure,
+          _t(
+            'After 5 years for serious illness or death of the guardian; from age 18 for the girl\'s marriage.',
+            '5 ವರ್ಷದ ನಂತರ ಗಂಭೀರ ಅನಾರೋಗ್ಯ ಅಥವಾ ಪೋಷಕರ ಮರಣದಲ್ಲಿ; 18 ವರ್ಷದ ನಂತರ ಮಗುವಿನ ಮದುವೆಗೆ.',
+          ),
+        ),
+        (SchemeFact.loan, ssyWithdrawalNote),
+      ],
+      Scheme.mssc => [
+        (
+          SchemeFact.interest,
+          _t(
+            '$rate% a year, compounded every quarter; paid at maturity.',
+            'ವಾರ್ಷಿಕ $rate%, ತ್ರೈಮಾಸಿಕ ಚಕ್ರಬಡ್ಡಿ; ಮುಕ್ತಾಯದಲ್ಲಿ ಪಾವತಿ.',
+          ),
+        ),
+        (SchemeFact.tenure, tenureOf(s)),
+        (
+          SchemeFact.deposit,
+          _t(
+            '₹1,000 to ₹2 lakh, in multiples of ₹100.',
+            '₹1,000ರಿಂದ ₹2 ಲಕ್ಷ, ₹100ರ ಗುಣಕಗಳಲ್ಲಿ.',
+          ),
+        ),
+        (
+          SchemeFact.who,
+          _t(
+            'Women, and guardians for girls. Closed for new accounts since 1 April 2025.',
+            'ಮಹಿಳೆಯರು, ಮತ್ತು ಹೆಣ್ಣು ಮಕ್ಕಳ ಪರವಾಗಿ ಪೋಷಕರು. 1 ಏಪ್ರಿಲ್ 2025ರಿಂದ ಹೊಸ ಖಾತೆಗಳಿಗೆ ಮುಚ್ಚಲಾಗಿದೆ.',
+          ),
+        ),
+        (SchemeFact.tax, taxable),
+        (
+          SchemeFact.closure,
+          _t(
+            'After 6 months: rate minus 2%.',
+            '6 ತಿಂಗಳ ನಂತರ: ದರದಲ್ಲಿ 2% ಕಡಿತ.',
+          ),
+        ),
+        (
+          SchemeFact.loan,
+          _t(
+            'One withdrawal of up to 40% of the balance after 1 year.',
+            '1 ವರ್ಷದ ನಂತರ ಶಿಲ್ಕಿನ 40%ವರೆಗೆ ಒಮ್ಮೆ ಹಿಂಪಡೆಯಬಹುದು.',
+          ),
+        ),
+      ],
+      _ => const [],
+    };
+  }
+
+  String factLabel(SchemeFact f) => switch (f) {
+    SchemeFact.interest => _t('Interest', 'ಬಡ್ಡಿ'),
+    SchemeFact.tenure => tenure,
+    SchemeFact.deposit => _t('Deposit', 'ಠೇವಣಿ'),
+    SchemeFact.who => _t('Who can open', 'ಯಾರು ತೆರೆಯಬಹುದು'),
+    SchemeFact.tax => _t('Tax', 'ತೆರಿಗೆ'),
+    SchemeFact.closure => _t('Early closure', 'ಅವಧಿಪೂರ್ವ ಮುಕ್ತಾಯ'),
+    SchemeFact.loan => _t('Loan / withdrawal', 'ಸಾಲ / ಹಿಂಪಡೆಯುವಿಕೆ'),
+    SchemeFact.maturity => _t('At maturity', 'ಮುಕ್ತಾಯದಲ್ಲಿ'),
+  };
 
   String get documentsNote => _t(
     'General list; check the latest SB order at your office.',

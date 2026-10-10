@@ -7,6 +7,7 @@ import 'package:po_sahayak/app/settings.dart';
 import 'package:po_sahayak/data/saved_account_repository.dart';
 import 'package:po_sahayak/domain/models/scheme.dart';
 import 'package:po_sahayak/features/result/result_screen.dart';
+import 'package:po_sahayak/features/schemes/scheme_details_screen.dart';
 import 'package:po_sahayak/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -135,7 +136,7 @@ void main() {
       expect(tester.takeException(), isNull, reason: '$lang home scrolled');
       for (final icon in [
         Icons.leaderboard_outlined,
-        Icons.savings_outlined,
+        Icons.account_balance_wallet_outlined,
         Icons.support_agent_outlined,
         Icons.settings_outlined,
       ]) {
@@ -222,5 +223,57 @@ void main() {
       );
     }
     expect(find.textContaining('Only the 5-year TD'), findsNothing);
+  });
+
+  testWidgets('scheme details open from Staff and share the text', (
+    tester,
+  ) async {
+    final calls = <MethodCall>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('dev.fluttercommunity.plus/share'),
+      (call) async {
+        calls.add(call);
+        return 'dev.fluttercommunity.plus/share/unavailable';
+      },
+    );
+    tester.view.physicalSize = const Size(400 * 3, 2400 * 3);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    await pumpApp(tester);
+    await tester.tap(find.text('Staff').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Full scheme details'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Who can open'), findsOneWidget);
+    await tester.tap(find.text('Share details with customer'));
+    await tester.pumpAndSettle();
+    final text = (calls.single.arguments as Map)['text'] as String;
+    expect(text, contains('Time Deposit 5 years (TD5)'));
+    expect(text, contains('Early closure:'));
+    expect(text, contains('Documents needed:'));
+  });
+
+  testWidgets('details page of every scheme lays out in Kannada', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320 * 3, 640 * 3);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    await pumpApp(tester, lang: 'kn');
+    final nav = tester.state<NavigatorState>(find.byType(Navigator).first);
+    for (final scheme in Scheme.values) {
+      nav.push(
+        MaterialPageRoute<void>(
+          builder: (_) => SchemeDetailsScreen(scheme: scheme),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.drag(find.byType(ListView).last, const Offset(0, -4000));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: scheme.code);
+      nav.pop();
+      await tester.pumpAndSettle();
+    }
   });
 }

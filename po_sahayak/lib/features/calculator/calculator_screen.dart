@@ -9,6 +9,7 @@ import '../../domain/engine/calculators.dart';
 import '../../domain/engine/eligibility.dart';
 import '../../domain/models/result.dart';
 import '../../domain/models/scheme.dart';
+import '../schemes/scheme_details_screen.dart';
 import '../../widgets/common.dart';
 import '../../widgets/motion.dart';
 import '../result/result_screen.dart';
@@ -143,6 +144,14 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                       children: [
                         const BackButton(color: Colors.white),
                         const Spacer(),
+                        IconButton(
+                          tooltip: s.fullDetails,
+                          onPressed: () => openSchemeDetails(context, scheme),
+                          icon: const Icon(
+                            Icons.info_outline_rounded,
+                            color: Colors.white,
+                          ),
+                        ),
                         const LanguageToggle(onDark: true),
                       ],
                     ),

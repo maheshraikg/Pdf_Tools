@@ -9,6 +9,7 @@ import '../../domain/engine/calculators.dart';
 import '../../domain/engine/eligibility.dart';
 import '../../domain/models/result.dart';
 import '../../domain/models/scheme.dart';
+import '../schemes/scheme_details_screen.dart';
 import '../../widgets/common.dart';
 import '../../widgets/motion.dart';
 import '../../widgets/share_card.dart';
@@ -148,6 +149,18 @@ class _StaffScreenState extends State<StaffScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Card(
+                  child: ListTile(
+                    leading: IconBadge(Icons.menu_book_rounded, c, size: 36),
+                    title: Text(
+                      s.fullDetails,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    subtitle: Text(s.shareDetails),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => openSchemeDetails(context, _scheme),
+                  ),
+                ),
                 Appear(
                   child: SectionCard(
                     icon: Icons.fact_check_rounded,

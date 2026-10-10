@@ -82,7 +82,7 @@ class AccountsScreen extends StatelessWidget {
                         children: [
                           Pill(
                             '${s.portfolio}: ${rupee(deposited)}',
-                            icon: Icons.savings_rounded,
+                            icon: Icons.account_balance_wallet_rounded,
                             background: Brand.yellow,
                             foreground: Brand.ink,
                           ),

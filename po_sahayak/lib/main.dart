@@ -136,7 +136,11 @@ class _HomeShellState extends State<HomeShell> {
                 Icons.leaderboard_rounded,
                 s.compare,
               ),
-              (Icons.savings_outlined, Icons.savings_rounded, s.navAccounts),
+              (
+                Icons.account_balance_wallet_outlined,
+                Icons.account_balance_wallet_rounded,
+                s.navAccounts,
+              ),
               (
                 Icons.support_agent_outlined,
                 Icons.support_agent_rounded,
