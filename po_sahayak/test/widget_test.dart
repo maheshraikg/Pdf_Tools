@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:po_sahayak/app/settings.dart';
+import 'package:po_sahayak/app/strings.dart';
 import 'package:po_sahayak/data/saved_account_repository.dart';
 import 'package:po_sahayak/domain/models/scheme.dart';
 import 'package:po_sahayak/features/result/result_screen.dart';
@@ -274,6 +275,51 @@ void main() {
       await tester.drag(find.byType(ListView).last, const Offset(0, -4000));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull, reason: scheme.code);
+      nav.pop();
+      await tester.pumpAndSettle();
+    }
+  });
+
+  testWidgets('every language: all tabs, a result and scheme details', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(360 * 3, 720 * 3);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    for (final lang in Lang.values) {
+      await pumpApp(tester, lang: lang.name);
+      final s = S(lang);
+      expect(find.text(s.appTitle), findsWidgets, reason: lang.name);
+      for (final icon in [
+        Icons.leaderboard_outlined,
+        Icons.account_balance_wallet_outlined,
+        Icons.support_agent_outlined,
+        Icons.settings_outlined,
+        Icons.home_outlined,
+      ]) {
+        await tester.tap(find.byIcon(icon).last);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull, reason: '${lang.name} $icon');
+      }
+      final nav = tester.state<NavigatorState>(find.byType(Navigator).first);
+      nav.push(
+        MaterialPageRoute<void>(
+          builder: (_) =>
+              ResultScreen(result: calc(Scheme.scss, 500000, '8.2')),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.drag(find.byType(ListView).last, const Offset(0, -4000));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: '${lang.name} result');
+      nav.pop();
+      nav.push(
+        MaterialPageRoute<void>(
+          builder: (_) => const SchemeDetailsScreen(scheme: Scheme.ppf),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: '${lang.name} details');
       nav.pop();
       await tester.pumpAndSettle();
     }
