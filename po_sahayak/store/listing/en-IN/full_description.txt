@@ -1,4 +1,4 @@
-PO Calculator is a free, offline Post Office calculator in Kannada and English. Work out maturity amount, interest and maturity date for every Post Office small savings scheme in seconds, with no ads and no internet.
+PO Calculator is a free, offline Post Office calculator in Kannada and English. Work out maturity amount, interest and maturity date for every Post Office small savings scheme in seconds, without internet.
 
 SCHEMES
 • Recurring Deposit (RD) calculator
@@ -26,7 +26,7 @@ LATEST RATES
 Rates for October–December 2026 are included, with the "valid from" date shown on every result. You can also type the rate from your passbook for older accounts.
 
 PRIVATE AND OFFLINE
-No login, no ads, no internet permission. Your saved accounts stay on your phone.
+No login, works offline. Your saved accounts stay on your phone.
 
 Results are estimates; confirm at your post office.
 Not affiliated with India Post or the Government of India.
