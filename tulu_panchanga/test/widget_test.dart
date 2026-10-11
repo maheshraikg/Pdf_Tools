@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tulu_panchanga/app/settings.dart';
+import 'package:tulu_panchanga/art/festival_art.dart';
 import 'package:tulu_panchanga/lipi/tulu_lipi.dart';
 import 'package:tulu_panchanga/main.dart';
 import 'package:tulu_panchanga/panchanga/names.dart';
@@ -9,7 +10,7 @@ Future<AppSettings> pumpApp(WidgetTester tester, {Lang lang = Lang.en}) async {
   final settings = AppSettings.memory()..lang = lang;
   await tester.binding.setSurfaceSize(const Size(420, 900));
   await tester.pumpWidget(
-    TuluPanchangaApp(settings: settings, background: false),
+    TuluPanchangaApp(settings: settings, background: false, splash: false),
   );
   await tester.pump();
   return settings;
@@ -36,9 +37,9 @@ void main() {
     expect(find.text('Mangaluru'), findsOneWidget);
 
     // Next day.
-    await tester.tap(find.byIcon(Icons.chevron_right).first);
+    await tester.tap(find.byIcon(Icons.chevron_right_rounded).first);
     await tester.pump();
-    expect(find.byIcon(Icons.today), findsOneWidget);
+    expect(find.byIcon(Icons.today_rounded), findsOneWidget);
   });
 
   testWidgets('tabs: calendar, festivals, muhurta, settings', (tester) async {
@@ -58,7 +59,7 @@ void main() {
     await tester.pump();
     await settle(tester);
     expect(find.text('Festivals'), findsWidgets);
-    expect(find.byType(ListTile), findsWidgets);
+    expect(find.byType(FestivalArt), findsWidgets);
 
     await tester.tap(find.byIcon(Icons.access_time).last);
     await tester.pump();

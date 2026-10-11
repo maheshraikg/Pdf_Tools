@@ -20,8 +20,12 @@ class AppSettings extends ChangeNotifier {
     return AppSettings._(prefs).._read();
   }
 
-  Lang lang = Lang.en;
+  /// Kannada by default; English and Tulu are a tap away in Settings.
+  Lang lang = Lang.kn;
   bool tuluLipi = false;
+
+  /// Set once the first-launch language sheet has been answered.
+  bool languageChosen = false;
   Place place = presetPlaces.first;
   PanchangaConfig config = const PanchangaConfig();
   ThemeMode themeMode = ThemeMode.system;
@@ -37,8 +41,10 @@ class AppSettings extends ChangeNotifier {
 
   void _read() {
     final p = _prefs!;
-    lang = Lang.fromCode(p.getString('lang'));
+    final code = p.getString('lang');
+    lang = code == null ? Lang.kn : Lang.fromCode(code);
     tuluLipi = p.getBool('tuluLipi') ?? false;
+    languageChosen = p.getBool('languageChosen') ?? false;
     final placeJson = p.getString('place');
     if (placeJson != null) {
       try {
@@ -73,6 +79,7 @@ class AppSettings extends ChangeNotifier {
     if (p == null) return;
     await p.setString('lang', lang.name);
     await p.setBool('tuluLipi', tuluLipi);
+    await p.setBool('languageChosen', languageChosen);
     await p.setString('place', jsonEncode(place.toJson()));
     await p.setString('sunrise', config.sunrise.name);
     await p.setString('monthRule', config.solarMonthRule.name);
