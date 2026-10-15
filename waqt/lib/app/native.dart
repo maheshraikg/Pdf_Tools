@@ -1,0 +1,96 @@
+/// Android-only features implemented in MainActivity.kt / SilentScheduler.kt.
+library;
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+
+import '../core/alerts.dart';
+
+enum LocationError { denied, disabled, unavailable }
+
+class LocationResult {
+  const LocationResult({
+    this.latitude,
+    this.longitude,
+    this.altitude,
+    this.error,
+  });
+  final double? latitude, longitude, altitude;
+  final LocationError? error;
+  bool get ok => error == null;
+}
+
+class Native {
+  static const _ch = MethodChannel('com.maheshrai.waqt/native');
+
+  static bool get supported =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
+  /// Calls [method]; null when the platform side is missing (tests, other
+  /// platforms) or fails.
+  static Future<T?> _call<T>(String method, [Object? args]) async {
+    if (!supported) return null;
+    try {
+      return await _ch.invokeMethod<T>(method, args);
+    } on MissingPluginException {
+      return null;
+    } on PlatformException catch (e) {
+      debugPrint('Native.$method failed: $e');
+      return null;
+    }
+  }
+
+  /// One location fix from the phone's GPS / network provider (asks for
+  /// permission when needed). No Google Play services are used.
+  static Future<LocationResult> getLocation() async {
+    if (!supported) {
+      return const LocationResult(error: LocationError.unavailable);
+    }
+    try {
+      final r = await _ch.invokeMapMethod<String, dynamic>('getLocation');
+      if (r == null) {
+        return const LocationResult(error: LocationError.unavailable);
+      }
+      return LocationResult(
+        latitude: (r['latitude'] as num).toDouble(),
+        longitude: (r['longitude'] as num).toDouble(),
+        altitude: (r['altitude'] as num?)?.toDouble(),
+      );
+    } on MissingPluginException {
+      return const LocationResult(error: LocationError.unavailable);
+    } on PlatformException catch (e) {
+      return LocationResult(
+        error: switch (e.code) {
+          'denied' => LocationError.denied,
+          'disabled' => LocationError.disabled,
+          _ => LocationError.unavailable,
+        },
+      );
+    }
+  }
+
+  static Future<bool> hasDndAccess() async =>
+      await _call<bool>('hasDndAccess') ?? false;
+
+  static Future<void> openDndSettings() => _call<void>('openDndSettings');
+
+  static Future<bool> isIgnoringBatteryOptimizations() async =>
+      await _call<bool>('isIgnoringBatteryOptimizations') ?? true;
+
+  static Future<void> openBatterySettings() =>
+      _call<void>('openBatterySettings');
+
+  /// Replaces the auto-silent schedule.
+  static Future<void> setSilentWindows(
+    List<SilentWindow> windows,
+    SilentMode mode,
+  ) async {
+    await _call<void>('setSilentWindows', {
+      'mode': mode.name,
+      'windows': [
+        for (final w in windows)
+          [w.start.millisecondsSinceEpoch, w.end.millisecondsSinceEpoch],
+      ],
+    });
+  }
+}

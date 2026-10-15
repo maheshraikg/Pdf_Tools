@@ -1,0 +1,207 @@
+package com.maheshrai.waqt
+
+import android.Manifest
+import android.app.NotificationManager
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
+import android.net.Uri
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.PowerManager
+import android.provider.Settings
+import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.MethodChannel
+
+/**
+ * Platform side of `lib/app/native.dart`: one-shot location (framework
+ * LocationManager, no Google Play services), Do Not Disturb access, battery
+ * optimisation settings and the auto-silent schedule.
+ */
+class MainActivity : FlutterActivity() {
+    private var pendingLocation: MethodChannel.Result? = null
+
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "getLocation" -> getLocation(result)
+                    "hasDndAccess" -> result.success(notificationManager().isNotificationPolicyAccessGranted)
+                    "openDndSettings" -> {
+                        open(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
+                        result.success(null)
+                    }
+                    "isIgnoringBatteryOptimizations" -> {
+                        val pm = getSystemService(POWER_SERVICE) as PowerManager
+                        result.success(pm.isIgnoringBatteryOptimizations(packageName))
+                    }
+                    "openBatterySettings" -> {
+                        if (!open(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))) {
+                            open(appDetails())
+                        }
+                        result.success(null)
+                    }
+                    "setSilentWindows" -> {
+                        val mode = call.argument<String>("mode") ?: "vibrate"
+                        val raw = call.argument<List<List<Number>>>("windows") ?: emptyList()
+                        val windows = raw.mapNotNull { w ->
+                            if (w.size == 2) w[0].toLong() to w[1].toLong() else null
+                        }
+                        SilentScheduler.save(this, mode, windows)
+                        result.success(null)
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Re-arm the silent schedule in case the process was killed.
+        SilentScheduler.reschedule(this)
+    }
+
+    private fun notificationManager() =
+        getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+    private fun appDetails() =
+        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))
+
+    private fun open(intent: Intent): Boolean = try {
+        startActivity(intent)
+        true
+    } catch (e: ActivityNotFoundException) {
+        false
+    }
+
+    // ---- Location ----
+
+    private fun hasLocationPermission() =
+        checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+    private fun getLocation(result: MethodChannel.Result) {
+        if (hasLocationPermission()) {
+            fetchLocation(result)
+            return
+        }
+        if (pendingLocation != null) {
+            result.error("unavailable", "A location request is already running", null)
+            return
+        }
+        pendingLocation = result
+        requestPermissions(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+            ),
+            REQUEST_LOCATION,
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode != REQUEST_LOCATION) return
+        val result = pendingLocation ?: return
+        pendingLocation = null
+        if (grantResults.any { it == PackageManager.PERMISSION_GRANTED }) {
+            fetchLocation(result)
+        } else {
+            result.error("denied", "Location permission denied", null)
+        }
+    }
+
+    private fun fetchLocation(result: MethodChannel.Result) {
+        val lm = getSystemService(LOCATION_SERVICE) as LocationManager
+        val enabled = if (Build.VERSION.SDK_INT >= 28) {
+            lm.isLocationEnabled
+        } else {
+            lm.getProviders(true).any { it != LocationManager.PASSIVE_PROVIDER }
+        }
+        val providers = lm.getProviders(true).filter { it != LocationManager.PASSIVE_PROVIDER }
+        if (!enabled || providers.isEmpty()) {
+            result.error("disabled", "Location is turned off", null)
+            return
+        }
+        val last = providers.mapNotNull {
+            try {
+                lm.getLastKnownLocation(it)
+            } catch (e: SecurityException) {
+                null
+            }
+        }.maxByOrNull { it.time }
+        if (last != null && System.currentTimeMillis() - last.time < FRESH_MS) {
+            result.success(toMap(last))
+            return
+        }
+
+        // Network is quick indoors and a few hundred metres is plenty for
+        // prayer times; fall back to GPS.
+        val provider = when {
+            LocationManager.NETWORK_PROVIDER in providers -> LocationManager.NETWORK_PROVIDER
+            LocationManager.GPS_PROVIDER in providers -> LocationManager.GPS_PROVIDER
+            else -> providers.first()
+        }
+        val handler = Handler(Looper.getMainLooper())
+        var done = false
+        var listener: LocationListener? = null
+        fun finish(loc: Location?) {
+            if (done) return
+            done = true
+            listener?.let { lm.removeUpdates(it) }
+            val best = loc ?: last
+            if (best != null) {
+                result.success(toMap(best))
+            } else {
+                result.error("unavailable", "No location fix", null)
+            }
+        }
+        try {
+            if (Build.VERSION.SDK_INT >= 30) {
+                lm.getCurrentLocation(provider, null, mainExecutor) { finish(it) }
+            } else {
+                val l = object : LocationListener {
+                    override fun onLocationChanged(location: Location) = finish(location)
+                    @Deprecated("Deprecated in Java")
+                    override fun onStatusChanged(p: String?, status: Int, extras: Bundle?) {}
+                    override fun onProviderEnabled(p: String) {}
+                    override fun onProviderDisabled(p: String) {}
+                }
+                listener = l
+                @Suppress("DEPRECATION")
+                lm.requestSingleUpdate(provider, l, Looper.getMainLooper())
+            }
+        } catch (e: SecurityException) {
+            finish(null)
+            return
+        } catch (e: IllegalArgumentException) {
+            finish(null)
+            return
+        }
+        handler.postDelayed({ finish(null) }, TIMEOUT_MS)
+    }
+
+    private fun toMap(l: Location): Map<String, Any?> = mapOf(
+        "latitude" to l.latitude,
+        "longitude" to l.longitude,
+        "altitude" to if (l.hasAltitude()) l.altitude else null,
+    )
+
+    companion object {
+        private const val CHANNEL = "com.maheshrai.waqt/native"
+        private const val REQUEST_LOCATION = 4101
+        private const val FRESH_MS = 10 * 60 * 1000L
+        private const val TIMEOUT_MS = 30 * 1000L
+    }
+}
