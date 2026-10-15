@@ -1,5 +1,6 @@
 package com.kspstadk.tulu_nighantu.keyboard
 
+import android.annotation.SuppressLint
 import android.content.ClipDescription
 import android.content.Context
 import android.content.Intent
@@ -7,13 +8,16 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
-import android.media.AudioManager
 import android.inputmethodservice.InputMethodService
+import android.media.AudioManager
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -25,30 +29,39 @@ import androidx.core.content.FileProvider
 import androidx.core.view.inputmethod.EditorInfoCompat
 import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
-import java.io.File
 
 /**
- * "Tulu Nighantu keyboard": a system keyboard for typing Tulu lipi in any app.
+ * "Tulu Nighantu keyboard": a system keyboard for any app, this one included.
  *
- * Keys are Tulu-Tigalari letters (with their Kannada letter underneath).
- * What you type is kept in the strip at the top, drawn with the app's Tulu
- * font, and sent either as a sticker picture (visible on every phone) or as
- * Unicode text (for phones that have a Tulu-Tigalari font). Nothing typed is
- * stored or sent anywhere except into the app you are typing in.
+ * It types straight into the text box like a normal keyboard. Tulu pages
+ * show each letter in Tulu lipi with its Kannada letter underneath and type
+ * the Kannada letter, which every phone can show and this app can search.
+ * The strip at the top shows the message in Tulu lipi as you type; "Sticker"
+ * sends it as a picture that everyone can see, and "Unicode" changes it to
+ * Tulu-Tigalari Unicode for phones that have a Tulu font. There are also
+ * ottakshara, English, number and emoji pages. Nothing typed is stored or
+ * sent anywhere except into the app you are typing in.
  */
 class TuluKeyboardService : InputMethodService() {
 
-    private var buffer = ""
-    private var page = 1
+    private enum class Mode { TULU1, TULU2, OTTU, ENGLISH, SYMBOLS, EMOJI }
+
+    private enum class Shift { OFF, ONCE, CAPS }
+
+    private var mode = Mode.TULU1
+    private var shift = Shift.OFF
     private var prefs = KeyboardPrefs()
     private var tulu: Typeface = Typeface.DEFAULT
     private lateinit var colors: Palette
 
     private lateinit var root: LinearLayout
     private lateinit var preview: TextView
+    private lateinit var signScroll: HorizontalScrollView
     private lateinit var signRow: LinearLayout
     private lateinit var keyArea: LinearLayout
-    private val tabViews = mutableListOf<TextView>()
+    private val tabViews = mutableListOf<Pair<Mode, TextView>>()
+    private val ottuKeys = mutableListOf<TextView>()
+    private val repeater = Handler(Looper.getMainLooper())
 
     override fun onCreate() {
         super.onCreate()
@@ -68,34 +81,55 @@ class TuluKeyboardService : InputMethodService() {
         }
         root.addView(buildTopBar())
         signRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-        root.addView(
-            HorizontalScrollView(this).apply {
-                isHorizontalScrollBarEnabled = false
-                addView(signRow)
-            },
-            LinearLayout.LayoutParams(MATCH, WRAP).apply { topMargin = dp(2) },
-        )
-        // Room for 3 rows on every page, so the keyboard does not jump.
-        keyArea = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            minimumHeight = dp(56) * 3
+        signScroll = HorizontalScrollView(this).apply {
+            isHorizontalScrollBarEnabled = false
+            addView(signRow)
         }
+        root.addView(
+            signScroll,
+            LinearLayout.LayoutParams(MATCH, dp(SIGN_H + 4)).apply { topMargin = dp(2) },
+        )
         root.addView(buildTabRow())
-        root.addView(keyArea)
+        // Same height on every page, so the keyboard does not jump.
+        keyArea = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        root.addView(keyArea, LinearLayout.LayoutParams(MATCH, dp(KEY_H + 4) * KEY_ROWS))
         root.addView(buildBottomRow())
-        refresh()
+        buildKeys()
         return root
     }
 
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         prefs = KeyboardPrefs.load(this)
+        if (::root.isInitialized) {
+            // Number and phone boxes open on the number page.
+            val cls = (info?.inputType ?: 0) and EditorInfo.TYPE_MASK_CLASS
+            if (cls == EditorInfo.TYPE_CLASS_NUMBER || cls == EditorInfo.TYPE_CLASS_PHONE) {
+                mode = Mode.SYMBOLS
+            } else if (mode == Mode.SYMBOLS) {
+                mode = Mode.TULU1
+            }
+            buildKeys()
+        }
     }
 
-    override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
-        super.onStartInput(attribute, restarting)
-        if (!restarting) buffer = ""
-        if (::root.isInitialized) refresh()
+    override fun onUpdateSelection(
+        oldSelStart: Int,
+        oldSelEnd: Int,
+        newSelStart: Int,
+        newSelEnd: Int,
+        candidatesStart: Int,
+        candidatesEnd: Int,
+    ) {
+        super.onUpdateSelection(
+            oldSelStart, oldSelEnd, newSelStart, newSelEnd, candidatesStart, candidatesEnd,
+        )
+        if (::root.isInitialized) refreshContext()
+    }
+
+    override fun onFinishInputView(finishingInput: Boolean) {
+        super.onFinishInputView(finishingInput)
+        repeater.removeCallbacksAndMessages(null)
     }
 
     // ------------------------------------------------------------------ UI
@@ -107,23 +141,22 @@ class TuluKeyboardService : InputMethodService() {
         }
         preview = TextView(this).apply {
             typeface = tulu
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 26f)
             setTextColor(colors.accentText)
             setSingleLine()
             ellipsize = TextUtils.TruncateAt.START
             setPadding(dp(12), dp(2), dp(8), dp(2))
             background = rounded(colors.accent, 14)
             gravity = Gravity.CENTER_VERTICAL
-            minHeight = dp(46)
+            minHeight = dp(44)
         }
         bar.addView(preview, LinearLayout.LayoutParams(0, WRAP, 1f))
         bar.addView(
             actionButton("ಸ್ಟಿಕ್ಕರ್\nSticker") { sendSticker() },
-            LinearLayout.LayoutParams(WRAP, dp(46)).apply { leftMargin = dp(4) },
+            LinearLayout.LayoutParams(WRAP, dp(44)).apply { leftMargin = dp(4) },
         )
         bar.addView(
-            actionButton("ಪಠ್ಯ\nText") { commitBufferAsText() },
-            LinearLayout.LayoutParams(WRAP, dp(46)).apply { leftMargin = dp(4) },
+            actionButton("ಯೂನಿಕೋಡ್\nUnicode") { convertToTuluUnicode() },
+            LinearLayout.LayoutParams(WRAP, dp(44)).apply { leftMargin = dp(4) },
         )
         return bar
     }
@@ -131,12 +164,13 @@ class TuluKeyboardService : InputMethodService() {
     private fun buildTabRow(): View {
         val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         tabViews.clear()
-        PAGES.forEachIndexed { i, p ->
-            val tab = key(p.tab, null, colors.special) {
-                page = i
-                refresh()
-            }.apply { setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f) }
-            tabViews += tab
+        TABS.forEach { (m, label) ->
+            val tab = plainKey(label, colors.special, 15f) {
+                mode = m
+                shift = Shift.OFF
+                buildKeys()
+            }
+            tabViews += m to tab
             row.addView(
                 tab,
                 LinearLayout.LayoutParams(0, dp(36), 1f).apply { setMargins(dp(2), dp(2), dp(2), dp(2)) },
@@ -148,125 +182,193 @@ class TuluKeyboardService : InputMethodService() {
     private fun buildBottomRow(): View {
         val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         row.addView(
-            key("🌐", null, colors.special) { switchKeyboard() }.apply {
+            plainKey("🌐", colors.special) { switchKeyboard() }.apply {
                 setOnLongClickListener {
                     imm().showInputMethodPicker()
                     true
                 }
             },
-            keyParams(1f),
+            keyParams(1f, dp(KEY_H)),
         )
-        row.addView(key("␣", null, colors.key) { typeSpace() }, keyParams(4f))
+        row.addView(plainKey(",", colors.special) { commit(",") }, keyParams(0.8f, dp(KEY_H)))
         row.addView(
-            key("⌫", null, colors.special) { deleteOne() }.apply {
-                setOnLongClickListener {
-                    buffer = ""
-                    refresh()
-                    true
-                }
-            },
-            keyParams(1.3f),
+            plainKey("ತುಳು ನಿಘಂಟು", colors.key, 13f) { commit(" ") },
+            keyParams(3.6f, dp(KEY_H)),
         )
-        row.addView(key("↵", null, colors.special) { enter() }, keyParams(1.3f))
+        row.addView(plainKey(".", colors.special) { commit(".") }, keyParams(0.8f, dp(KEY_H)))
+        row.addView(backspaceKey(), keyParams(1.3f, dp(KEY_H)))
+        row.addView(plainKey("↵", colors.special) { enter() }, keyParams(1.3f, dp(KEY_H)))
         return row
     }
 
-    private fun refresh() {
-        val lipi = TuluEngine.fromKannada(buffer)
-        preview.text = if (lipi.isEmpty()) PLACEHOLDER else lipi
-        preview.typeface = if (lipi.isEmpty()) Typeface.DEFAULT else tulu
-        preview.setTextSize(TypedValue.COMPLEX_UNIT_SP, if (lipi.isEmpty()) 14f else 26f)
-
-        signRow.removeAllViews()
-        val consonant = TuluEngine.lastConsonant(buffer)
-        for (sign in TuluEngine.VOWEL_SIGNS) {
-            val enabled = consonant != null ||
-                ((sign == "ಂ" || sign == "ಃ") && buffer.isNotEmpty())
-            val shown = (consonant ?: "") + sign
-            val v = key(
-                if (consonant == null) "◌" + TuluEngine.fromKannada(sign) else TuluEngine.fromKannada(shown),
-                shown,
-                colors.signKey,
-                tuluGlyph = true,
-            ) {
-                buffer = TuluEngine.applySign(buffer, sign)
-                refresh()
-            }
-            v.alpha = if (enabled) 1f else 0.35f
-            v.isEnabled = enabled
-            signRow.addView(v, LinearLayout.LayoutParams(dp(46), dp(52)).apply { setMargins(dp(2), dp(2), dp(2), dp(2)) })
-        }
-
+    /** Builds the keys of the current page. */
+    private fun buildKeys() {
         keyArea.removeAllViews()
-        val current = PAGES[page]
-        val canJoin = TuluEngine.addOttu(buffer, "ಕ") != buffer
-        current.letters.chunked(COLUMNS).forEach { chunk ->
-            val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-            chunk.forEach { k ->
-                val label = if (current.ottu) "್$k" else k
-                val v = key(TuluEngine.fromKannada(label), label, colors.key, tuluGlyph = true) {
-                    buffer = if (current.ottu) TuluEngine.addOttu(buffer, k) else buffer + k
-                    refresh()
-                }
-                if (current.ottu && !canJoin) {
-                    v.alpha = 0.35f
-                    v.isEnabled = false
-                }
-                row.addView(v, keyParams(1f))
-            }
-            repeat(COLUMNS - chunk.size) { row.addView(View(this), keyParams(1f)) }
-            keyArea.addView(row)
+        ottuKeys.clear()
+        val rows: List<List<String>> = when (mode) {
+            Mode.TULU1 -> TULU1.chunked(7)
+            Mode.TULU2 -> TULU2.chunked(7)
+            Mode.OTTU -> CONSONANTS.chunked(9)
+            Mode.ENGLISH -> ENGLISH
+            Mode.SYMBOLS -> SYMBOLS
+            Mode.EMOJI -> EMOJI.chunked(8)
         }
-        tabViews.forEachIndexed { i, t ->
-            t.background = rounded(if (i == page) colors.accent else colors.special, 10)
-            t.setTextColor(if (i == page) colors.accentText else colors.text)
+        val columns = rows.maxOf { it.size }
+        rows.forEach { chunk ->
+            val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+            chunk.forEach { k -> row.addView(letterKey(k), keyParams(1f, MATCH)) }
+            for (i in chunk.size until columns) row.addView(View(this), keyParams(1f, MATCH))
+            keyArea.addView(row, LinearLayout.LayoutParams(MATCH, 0, 1f))
+        }
+        tabViews.forEach { (m, t) ->
+            t.background = rounded(if (m == mode) colors.accent else colors.special, 10)
+            t.setTextColor(if (m == mode) colors.accentText else colors.text)
+        }
+        refreshContext()
+    }
+
+    private fun letterKey(k: String): TextView = when (mode) {
+        Mode.TULU1, Mode.TULU2 ->
+            key(TuluEngine.fromKannada(k), k, colors.key) { commit(k) }
+        Mode.OTTU -> key(TuluEngine.fromKannada("್$k"), "್$k", colors.key) {
+            edit { TuluEngine.addOttu(it, k) }
+        }.also { ottuKeys += it }
+        Mode.ENGLISH -> if (k == SHIFT) shiftKey() else englishKey(k)
+        Mode.SYMBOLS, Mode.EMOJI ->
+            plainKey(k, colors.key, if (mode == Mode.EMOJI) 22f else 18f) { commit(k) }
+    }
+
+    private fun shiftKey(): TextView = plainKey(
+        when (shift) {
+            Shift.OFF -> "⇧"
+            Shift.ONCE -> "⬆"
+            Shift.CAPS -> "⇪"
+        },
+        if (shift == Shift.OFF) colors.special else colors.signKey,
+        20f,
+    ) {
+        shift = when (shift) {
+            Shift.OFF -> Shift.ONCE
+            Shift.ONCE -> Shift.CAPS
+            Shift.CAPS -> Shift.OFF
+        }
+        buildKeys()
+    }
+
+    private fun englishKey(k: String): TextView {
+        val letter = if (shift != Shift.OFF) k.uppercase() else k
+        return plainKey(letter, colors.key, 20f) {
+            commit(letter)
+            if (shift == Shift.ONCE) {
+                shift = Shift.OFF
+                buildKeys()
+            }
         }
     }
 
-    private fun key(
-        main: String,
-        label: String?,
-        bg: Int,
-        tuluGlyph: Boolean = false,
-        onTap: () -> Unit,
-    ): TextView = TextView(this).apply {
-        gravity = Gravity.CENTER
-        setTextColor(colors.text)
-        background = rounded(bg, 10)
-        if (label == null) {
-            text = main
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-        } else {
-            // Glyph on top, Kannada letter underneath.
+    /** Updates the preview, the vowel-sign row and the ottakshara keys. */
+    private fun refreshContext() {
+        val before = textBefore(PREVIEW_CHARS)
+        val lipi = if (TuluEngine.hasKannada(before)) TuluEngine.fromKannada(before).trim() else ""
+        preview.text = if (lipi.isEmpty()) PLACEHOLDER else lipi
+        preview.typeface = if (lipi.isEmpty()) Typeface.DEFAULT else tulu
+        preview.setTextSize(TypedValue.COMPLEX_UNIT_SP, if (lipi.isEmpty()) 13f else 24f)
+
+        // Gunitakshara: the last consonant with every vowel sign.
+        signRow.removeAllViews()
+        val tail = textBefore(EDIT_CHARS)
+        val consonant = TuluEngine.lastConsonant(tail)
+        for (sign in TuluEngine.VOWEL_SIGNS) {
+            val enabled = consonant != null ||
+                ((sign == "ಂ" || sign == "ಃ") && TuluEngine.applySign(tail, sign) != tail)
+            val shown = (consonant ?: "") + sign
+            val glyph = if (consonant == null) {
+                "◌" + TuluEngine.fromKannada(sign)
+            } else {
+                TuluEngine.fromKannada(shown)
+            }
+            val v = key(glyph, shown, colors.signKey) {
+                edit { TuluEngine.applySign(it, sign) }
+            }
+            v.alpha = if (enabled) 1f else 0.35f
+            v.isEnabled = enabled
+            signRow.addView(
+                v,
+                LinearLayout.LayoutParams(dp(46), dp(SIGN_H)).apply { setMargins(dp(2), dp(2), dp(2), dp(2)) },
+            )
+        }
+        signScroll.visibility = if (mode in TULU_MODES) View.VISIBLE else View.INVISIBLE
+
+        val canJoin = TuluEngine.addOttu(tail, "ಕ") != tail
+        ottuKeys.forEach {
+            it.alpha = if (canJoin) 1f else 0.35f
+            it.isEnabled = canJoin
+        }
+    }
+
+    /** A Tulu key: the Tulu glyph on top, the Kannada letter underneath. */
+    private fun key(main: String, label: String, bg: Int, onTap: () -> Unit): TextView =
+        TextView(this).apply {
+            gravity = Gravity.CENTER
+            setTextColor(colors.text)
+            background = rounded(bg, 10)
             text = android.text.SpannableStringBuilder().apply {
                 append(main)
-                setSpan(
-                    android.text.style.RelativeSizeSpan(1f),
-                    0,
-                    length,
-                    0,
-                )
-                if (tuluGlyph) {
-                    setSpan(TypefaceSpanCompat(tulu), 0, length, 0)
-                }
+                setSpan(TypefaceSpanCompat(tulu), 0, length, 0)
                 append("\n")
                 val start = length
                 append(label)
                 setSpan(android.text.style.RelativeSizeSpan(0.5f), start, length, 0)
-                setSpan(
-                    android.text.style.ForegroundColorSpan(colors.subText),
-                    start,
-                    length,
-                    0,
-                )
+                setSpan(android.text.style.ForegroundColorSpan(colors.subText), start, length, 0)
             }
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
             setLineSpacing(0f, 0.85f)
+            isClickable = true
+            setOnClickListener {
+                feedback(it)
+                onTap()
+            }
         }
-        isClickable = true
-        setOnClickListener {
-            feedback(it)
-            onTap()
+
+    private fun plainKey(text: String, bg: Int, size: Float = 18f, onTap: () -> Unit) =
+        TextView(this).apply {
+            this.text = text
+            gravity = Gravity.CENTER
+            setTextColor(colors.text)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, size)
+            setSingleLine()
+            background = rounded(bg, 10)
+            isClickable = true
+            setOnClickListener {
+                feedback(it)
+                onTap()
+            }
+        }
+
+    /** ⌫ deletes one sign at a time and repeats while held. */
+    @SuppressLint("ClickableViewAccessibility")
+    private fun backspaceKey(): TextView = plainKey("⌫", colors.special) {}.apply {
+        setOnClickListener(null)
+        val again = object : Runnable {
+            override fun run() {
+                deleteOne()
+                repeater.postDelayed(this, REPEAT_MS)
+            }
+        }
+        setOnTouchListener { v, e ->
+            when (e.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    v.isPressed = true
+                    feedback(v)
+                    deleteOne()
+                    repeater.postDelayed(again, REPEAT_START_MS)
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    v.isPressed = false
+                    repeater.removeCallbacks(again)
+                }
+            }
+            true
         }
     }
 
@@ -291,54 +393,76 @@ class TuluKeyboardService : InputMethodService() {
         setTextColor(colors.accentText)
         background = rounded(colors.action, 14)
         setPadding(dp(10), 0, dp(10), 0)
-        setOnClickListener { onTap() }
-    }
-
-    private fun keyParams(weight: Float) =
-        LinearLayout.LayoutParams(0, dp(52), weight).apply { setMargins(dp(2), dp(2), dp(2), dp(2)) }
-
-    // -------------------------------------------------------------- actions
-
-    private fun typeSpace() {
-        if (buffer.isNotEmpty()) {
-            buffer += " "
-            refresh()
-        } else {
-            currentInputConnection?.commitText(" ", 1)
+        setOnClickListener {
+            feedback(it)
+            onTap()
         }
     }
 
+    private fun keyParams(weight: Float, height: Int) =
+        LinearLayout.LayoutParams(0, height, weight).apply { setMargins(dp(2), dp(2), dp(2), dp(2)) }
+
+    // -------------------------------------------------------------- typing
+
+    private fun textBefore(n: Int): String =
+        currentInputConnection?.getTextBeforeCursor(n, 0)?.toString() ?: ""
+
+    private fun commit(text: String) {
+        currentInputConnection?.commitText(text, 1)
+    }
+
+    /** Rewrites the end of the text before the cursor (vowel signs, ottu). */
+    private fun edit(transform: (String) -> String) {
+        val ic = currentInputConnection ?: return
+        val before = ic.getTextBeforeCursor(EDIT_CHARS, 0)?.toString() ?: return
+        val (delete, insert) = TuluEngine.diff(before, transform(before))
+        if (delete == 0 && insert.isEmpty()) return
+        ic.beginBatchEdit()
+        if (delete > 0) ic.deleteSurroundingText(delete, 0)
+        if (insert.isNotEmpty()) ic.commitText(insert, 1)
+        ic.endBatchEdit()
+    }
+
     private fun deleteOne() {
-        if (buffer.isNotEmpty()) {
-            buffer = TuluEngine.backspace(buffer)
-            refresh()
+        val ic = currentInputConnection ?: return
+        val selected = ic.getSelectedText(0)
+        val last = ic.getTextBeforeCursor(1, 0)
+        if (selected.isNullOrEmpty() && !last.isNullOrEmpty() && TuluEngine.isKannada(last[0])) {
+            // One sign at a time (ಕಾ → ಕ), like Kannada keyboards.
+            ic.deleteSurroundingText(1, 0)
         } else {
-            // Lets the app delete a whole character (Tulu letters use two
-            // UTF-16 units).
             sendDownUpKeyEvents(KeyEvent.KEYCODE_DEL)
         }
     }
 
     private fun enter() {
-        if (buffer.isNotEmpty()) {
-            commitBufferAsText()
-            return
-        }
         val info = currentInputEditorInfo
         val action = info?.imeOptions?.and(EditorInfo.IME_MASK_ACTION) ?: EditorInfo.IME_ACTION_NONE
         val noEnterAction = info != null && (info.imeOptions and EditorInfo.IME_FLAG_NO_ENTER_ACTION) != 0
-        if (action != EditorInfo.IME_ACTION_NONE && action != EditorInfo.IME_ACTION_UNSPECIFIED && !noEnterAction) {
+        val multiLine = info != null && (info.inputType and EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE) != 0
+        if (!multiLine && action != EditorInfo.IME_ACTION_NONE &&
+            action != EditorInfo.IME_ACTION_UNSPECIFIED && !noEnterAction
+        ) {
             currentInputConnection?.performEditorAction(action)
         } else {
             sendDownUpKeyEvents(KeyEvent.KEYCODE_ENTER)
         }
     }
 
-    private fun commitBufferAsText() {
-        if (buffer.isEmpty()) return
-        currentInputConnection?.commitText(TuluEngine.fromKannada(buffer), 1)
-        buffer = ""
-        refresh()
+    /** Replaces the Kannada message with Tulu-Tigalari Unicode letters. */
+    private fun convertToTuluUnicode() {
+        if (!TuluEngine.hasKannada(textBefore(STICKER_CHARS))) {
+            toast("ಮೊದಲು ಬರೆಯಿರಿ · Type something first")
+            return
+        }
+        val ic = currentInputConnection ?: return
+        val before = ic.getTextBeforeCursor(STICKER_CHARS, 0)?.toString() ?: return
+        val (delete, insert) = TuluEngine.diff(before, TuluEngine.fromKannada(before))
+        ic.beginBatchEdit()
+        if (delete > 0) ic.deleteSurroundingText(delete, 0)
+        if (insert.isNotEmpty()) ic.commitText(insert, 1)
+        ic.endBatchEdit()
+        toast("Tulu Unicode – shows only on phones with a Tulu font")
     }
 
     private fun switchKeyboard() {
@@ -354,12 +478,14 @@ class TuluKeyboardService : InputMethodService() {
 
     // ------------------------------------------------------------- stickers
 
+    /** Sends the message as a Tulu lipi picture and clears it from the box. */
     private fun sendSticker() {
-        val lipi = TuluEngine.fromKannada(buffer).trim()
-        if (lipi.isEmpty()) {
+        val message = textBefore(STICKER_CHARS)
+        if (!TuluEngine.hasKannada(message)) {
             toast("ಮೊದಲು ಬರೆಯಿರಿ · Type something first")
             return
         }
+        val lipi = TuluEngine.fromKannada(message).trim()
         val file = try {
             StickerRenderer.render(this, lipi, tulu, prefs.stickerLabel)
         } catch (e: Exception) {
@@ -387,9 +513,12 @@ class TuluKeyboardService : InputMethodService() {
             )
             sent = InputConnectionCompat.commitContent(ic, info!!, content, flags, null)
         }
-        if (!sent) shareSticker(uri, info?.packageName)
-        buffer = ""
-        refresh()
+        if (sent) {
+            // The message went as a picture: remove the typed text.
+            if (textBefore(message.length) == message) ic?.deleteSurroundingText(message.length, 0)
+        } else {
+            shareSticker(uri, info?.packageName)
+        }
     }
 
     /** For apps that do not accept stickers from keyboards: open the share sheet. */
@@ -410,7 +539,7 @@ class TuluKeyboardService : InputMethodService() {
                 )
             }
         } catch (e: Exception) {
-            toast("This app cannot receive pictures. Use “Text” instead.")
+            toast("This app cannot receive pictures")
         }
     }
 
@@ -482,27 +611,69 @@ class TuluKeyboardService : InputMethodService() {
         }
     }
 
-    private class Page(val tab: String, val letters: List<String>, val ottu: Boolean = false)
-
     companion object {
         /** The Flutter app's Tulu font inside the APK. */
         const val FONT_ASSET = "flutter_assets/assets/fonts/mallige_v1.4.ttf"
         private const val PNG = "image/png"
-        private const val COLUMNS = 7
+        private const val KEY_H = 50
+        private const val SIGN_H = 50
+        private const val KEY_ROWS = 4
+        private const val PREVIEW_CHARS = 200
+        private const val EDIT_CHARS = 16
+        private const val STICKER_CHARS = 1000
+        private const val REPEAT_START_MS = 400L
+        private const val REPEAT_MS = 60L
+        private const val SHIFT = "⇧"
         private const val MATCH = LinearLayout.LayoutParams.MATCH_PARENT
         private const val WRAP = LinearLayout.LayoutParams.WRAP_CONTENT
-        private const val PLACEHOLDER = "ತುಳು ಲಿಪಿಯಲ್ಲಿ ಬರೆಯಿರಿ · Type Tulu lipi"
+        private const val PLACEHOLDER = "ತುಳು ಲಿಪಿ ಇಲ್ಲಿ ಕಾಣುತ್ತದೆ · Tulu lipi shows here"
 
-        private val PAGES = listOf(
-            Page("ಅ", "ಅ ಆ ಇ ಈ ಉ ಊ ಋ ಎ ಏ ಐ ಒ ಓ ಔ".split(" ")),
-            Page("ಕ", "ಕ ಖ ಗ ಘ ಙ ಚ ಛ ಜ ಝ ಞ".split(" ")),
-            Page("ಟ", "ಟ ಠ ಡ ಢ ಣ ತ ಥ ದ ಧ ನ".split(" ")),
-            Page("ಪ", "ಪ ಫ ಬ ಭ ಮ ಯ ರ ಲ ವ ಶ ಷ ಸ ಹ ಳ".split(" ")),
-            // Ottakshara: joins a consonant to the previous one (ಕ + ್ತ → ಕ್ತ).
-            Page("್ಕ", "ಕ ಖ ಗ ಘ ಙ ಚ ಛ ಜ ಝ ಞ ಟ ಠ ಡ ಢ ಣ ತ ಥ ದ ಧ ನ".split(" "), ottu = true),
-            Page("್ಪ", "ಪ ಫ ಬ ಭ ಮ ಯ ರ ಲ ವ ಶ ಷ ಸ ಹ ಳ".split(" "), ottu = true),
-            // Common combinations, rarer letters and Kannada digits.
-            Page("೧", "ಕ್ಷ ಜ್ಞ ತ್ರ ಶ್ರೀ ಓಂ ಱ ೞ ೠ ೦ ೧ ೨ ೩ ೪ ೫ ೬ ೭ ೮ ೯".split(" ")),
+        private val TULU_MODES = setOf(Mode.TULU1, Mode.TULU2, Mode.OTTU)
+
+        private val TABS = listOf(
+            Mode.TULU1 to "ಅ ಕ",
+            Mode.TULU2 to "ತ ಯ",
+            Mode.OTTU to "್ಕ",
+            Mode.ENGLISH to "ABC",
+            Mode.SYMBOLS to "?123",
+            Mode.EMOJI to "😊",
         )
+
+        /** Vowels and the first consonants (4 rows of 7). */
+        val TULU1 = (
+            "ಅ ಆ ಇ ಈ ಉ ಊ ಋ ಎ ಏ ಐ ಒ ಓ ಔ ಅಂ " +
+                "ಕ ಖ ಗ ಘ ಙ ಚ ಛ ಜ ಝ ಞ ಟ ಠ ಡ ಢ"
+            ).split(" ")
+
+        /** The other consonants, rarer letters and common joined letters. */
+        val TULU2 = (
+            "ಣ ತ ಥ ದ ಧ ನ ಪ ಫ ಬ ಭ ಮ ಯ ರ ಲ ವ ಶ ಷ ಸ ಹ ಳ ಱ " +
+                "ೞ ಕ್ಷ ಜ್ಞ ತ್ರ ಶ್ರೀ ಓಂ ೠ"
+            ).split(" ")
+
+        /** Ottakshara page: joins a consonant to the one before (ಕ + ್ತ → ಕ್ತ). */
+        val CONSONANTS = (
+            "ಕ ಖ ಗ ಘ ಙ ಚ ಛ ಜ ಝ ಞ ಟ ಠ ಡ ಢ ಣ ತ ಥ ದ ಧ ನ " +
+                "ಪ ಫ ಬ ಭ ಮ ಯ ರ ಲ ವ ಶ ಷ ಸ ಹ ಳ"
+            ).split(" ")
+
+        private val ENGLISH = listOf(
+            "q w e r t y u i o p".split(" "),
+            "a s d f g h j k l".split(" "),
+            "$SHIFT z x c v b n m".split(" "),
+            "' - ? ! @ : ; /".split(" "),
+        )
+
+        private val SYMBOLS = listOf(
+            "1 2 3 4 5 6 7 8 9 0".split(" "),
+            "೧ ೨ ೩ ೪ ೫ ೬ ೭ ೮ ೯ ೦".split(" "),
+            "@ # ₹ & - + ( ) / _".split(" "),
+            "* \" ' : ; ! ? % = ।".split(" "),
+        )
+
+        private val EMOJI = (
+            "😀 😂 🥰 😍 😊 😉 😎 🤔 😢 😭 😡 🙏 👍 👌 👏 🙌 " +
+                "❤️ 💛 🧡 🔥 ✨ 🎉 🌺 🌸 🌴 🥥 🐯 🐄 🌾 🍚 ☕ 🏠"
+            ).split(" ")
     }
 }

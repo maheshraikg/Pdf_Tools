@@ -110,10 +110,10 @@ class _KeyboardSetupCardState extends State<KeyboardSetupCard>
             ],
             const SizedBox(height: 6),
             Text(
-              'Then in any chat: type with the Tulu keys and tap “Sticker” '
-              '(everyone can see it) or “Text” (needs a Tulu font). Pages: '
-              'ಅ vowels · ಕ ಟ ಪ consonants · ್ಕ ್ಪ joined letters (ಕ್ತ, ತ್ರ) · '
-              '೧ ಕ್ಷ ಶ್ರೀ and numbers. '
+              'It types like a normal keyboard in any app, this one too. The '
+              'top strip shows your message in Tulu lipi; tap “Sticker” to '
+              'send it as a picture everyone can see. Pages: ಅ ಕ · ತ ಯ '
+              'letters · ್ಕ joined letters (ಕ್ತ, ತ್ರ) · ABC · ?123 · 😊. '
               'The keyboard does not save or send what you type anywhere else.',
               style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
             ),

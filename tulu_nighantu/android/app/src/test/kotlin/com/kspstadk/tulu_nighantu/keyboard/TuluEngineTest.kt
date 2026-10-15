@@ -1,7 +1,9 @@
 package com.kspstadk.tulu_nighantu.keyboard
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** Same cases as test/keyboard_test.dart, for the Kotlin copy. */
@@ -42,5 +44,16 @@ class TuluEngineTest {
         assertEquals("ಕಾ", TuluEngine.addOttu("ಕಾ", "ತ"))
         assertEquals("", TuluEngine.addOttu("", "ತ"))
         assertEquals("ಅ", TuluEngine.addOttu("ಅ", "ತ"))
+    }
+
+    @Test
+    fun diffEditsOnlyTheEnd() {
+        assertEquals(0 to "ಾ", TuluEngine.diff("ಕ", "ಕಾ"))
+        assertEquals(1 to "ಿ", TuluEngine.diff("ನಮಕಾ", "ನಮಕಿ"))
+        assertEquals(0 to "್ತ", TuluEngine.diff("ಕ", "ಕ್ತ"))
+        assertEquals(0 to "", TuluEngine.diff("ಕ", "ಕ"))
+        assertEquals(2 to "", TuluEngine.diff("ab😀", "ab"))
+        assertTrue(TuluEngine.hasKannada("hi ಕ"))
+        assertFalse(TuluEngine.hasKannada("hello"))
     }
 }

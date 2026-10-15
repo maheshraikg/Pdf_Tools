@@ -26,38 +26,56 @@ void main() {
     expect(backspace(''), '');
   });
 
-  testWidgets('keys build a word and the screen fits a small phone', (
-    tester,
-  ) async {
+  test('ottakshara joins to the previous consonant', () {
+    expect(addOttu('ಕ', 'ತ'), 'ಕ್ತ');
+    expect(addOttu('ಕ್', 'ತ'), 'ಕ್ತ');
+    expect(addOttu('ಕಾ', 'ತ'), 'ಕಾ');
+    expect(addOttu('', 'ತ'), '');
+    expect(kKeyboardPage1.length, 28);
+    expect(kKeyboardPage2.length, 28);
+    expect(kKeyboardConsonants.length, 34);
+  });
+
+  testWidgets('docked keys type a word and fit a small phone', (tester) async {
     tester.view.physicalSize = const Size(360, 640);
     tester.view.devicePixelRatio = 1;
     tester.platformDispatcher.textScaleFactorTestValue = 1.4;
     addTearDown(tester.view.reset);
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await tester.pumpWidget(const MaterialApp(home: TuluKeyboardScreen()));
-    final list = find.byType(Scrollable).first;
-    Future<void> tapKey(String label) async {
-      final key = find.text(label);
-      // Start from the top: the sign row sits above the letter keys.
-      tester.state<ScrollableState>(list).position.jumpTo(0);
-      await tester.pump();
-      await tester.scrollUntilVisible(key, 120, scrollable: list);
-      await tester.ensureVisible(key);
-      await tester.pumpAndSettle();
-      await tester.tap(key);
+    Future<void> tap(String label) async {
+      await tester.tap(find.text(label).last);
       await tester.pump();
     }
 
-    await tapKey('ತ');
-    await tapKey('ತು');
-    await tapKey('ಳ');
-    await tapKey('ಳು');
-    tester.state<ScrollableState>(list).position.jumpTo(0);
+    String text() => tester
+        .widget<TextField>(
+          find.byKey(const ValueKey('keyboard-text'), skipOffstage: false),
+        )
+        .controller!
+        .text;
+
+    await tap('ತ ಯ');
+    await tap('ತ');
+    await tap('ತು');
+    await tap('ಳ');
+    await tap('ಳು');
+    expect(text(), 'ತುಳು');
+
+    // Ottakshara page: ಕ + ್ತ → ಕ್ತ.
+    await tap('ಅ ಕ');
+    await tap('ಕ');
+    await tap('್ಕ');
+    await tap('್ತ');
+    expect(text(), 'ತುಳುಕ್ತ');
+    await tester.tap(find.byKey(const ValueKey('keyboard-backspace')));
     await tester.pump();
-    expect(
-      tester.widget<TextField>(find.byType(TextField)).controller!.text,
-      'ತುಳು',
-    );
+    expect(text(), 'ತುಳುಕ್');
+
+    // The phone keyboard can be chosen instead; the keys then hide.
+    await tester.tap(find.byIcon(Icons.keyboard_alt_outlined));
+    await tester.pump();
+    expect(find.text('ತ ಯ'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -104,6 +122,8 @@ void main() {
     expect(find.byIcon(Icons.check), findsNWidgets(2));
 
     // Settings are shown once the keyboard is on and saved when changed.
+    await tester.ensureVisible(find.textContaining('Key sound'));
+    await tester.pumpAndSettle();
     await tester.tap(find.textContaining('Key sound'));
     await tester.pumpAndSettle();
     expect(saved, {'vibrate': true, 'sound': true, 'stickerLabel': true});

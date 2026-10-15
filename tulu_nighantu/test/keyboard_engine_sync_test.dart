@@ -57,4 +57,24 @@ void main() {
         .toList();
     expect(signs, kVowelSigns);
   });
+
+  test('Kotlin keyboard pages equal the Dart ones', () {
+    final service = File(
+      'android/app/src/main/kotlin/com/kspstadk/tulu_nighantu/keyboard/'
+      'TuluKeyboardService.kt',
+    ).readAsStringSync();
+    List<String> page(String name) {
+      final start = service.indexOf('val $name = (');
+      final block = service.substring(start, service.indexOf(').split', start));
+      return RegExp(r'"([^"]*)"')
+          .allMatches(block)
+          .map((m) => m[1]!)
+          .join()
+          .split(' ');
+    }
+
+    expect(page('TULU1'), kKeyboardPage1);
+    expect(page('TULU2'), kKeyboardPage2);
+    expect(page('CONSONANTS'), kKeyboardConsonants);
+  });
 }

@@ -122,4 +122,22 @@ object TuluEngine {
         val r = cps(text)
         return if (r.isEmpty()) text else str(r, 0, r.size - 1)
     }
+
+    /** True for characters in the Kannada block. */
+    fun isKannada(c: Char) = c in 'ಀ'..'೿'
+
+    /** True when [text] has at least one Kannada letter. */
+    fun hasKannada(text: String) = text.any { isKannada(it) }
+
+    /**
+     * How to turn the text before the cursor from [before] into [after]:
+     * the number of chars to delete, then the text to insert.
+     */
+    fun diff(before: String, after: String): Pair<Int, String> {
+        var p = 0
+        val n = minOf(before.length, after.length)
+        while (p < n && before[p] == after[p]) p++
+        if (p > 0 && Character.isHighSurrogate(before[p - 1])) p--
+        return (before.length - p) to after.substring(p)
+    }
 }

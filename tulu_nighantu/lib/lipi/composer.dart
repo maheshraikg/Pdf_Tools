@@ -67,3 +67,36 @@ String backspace(String text) {
   if (r.isEmpty) return text;
   return String.fromCharCodes(r.sublist(0, r.length - 1));
 }
+
+/// Joins [consonant] to the previous letter as an ottakshara
+/// (ಕ + ್ತ → ಕ್ತ). Only after a bare consonant or one ending in a virama;
+/// otherwise the text is unchanged.
+String addOttu(String text, String consonant) {
+  final r = text.runes.toList();
+  if (r.isEmpty) return text;
+  if (_isConsonant(r.last)) return '$text್$consonant';
+  if (r.last == 0x0CCD && r.length >= 2 && _isConsonant(r[r.length - 2])) {
+    return text + consonant;
+  }
+  return text;
+}
+
+/// Keyboard pages, the same as the Android system keyboard's.
+///
+/// Vowels and the first consonants.
+final List<String> kKeyboardPage1 =
+    ('ಅ ಆ ಇ ಈ ಉ ಊ ಋ ಎ ಏ ಐ ಒ ಓ ಔ ಅಂ '
+            'ಕ ಖ ಗ ಘ ಙ ಚ ಛ ಜ ಝ ಞ ಟ ಠ ಡ ಢ')
+        .split(' ');
+
+/// The other consonants, rarer letters and common joined letters.
+final List<String> kKeyboardPage2 =
+    ('ಣ ತ ಥ ದ ಧ ನ ಪ ಫ ಬ ಭ ಮ ಯ ರ ಲ ವ ಶ ಷ ಸ ಹ ಳ ಱ '
+            'ೞ ಕ್ಷ ಜ್ಞ ತ್ರ ಶ್ರೀ ಓಂ ೠ')
+        .split(' ');
+
+/// Consonants for the ottakshara page.
+final List<String> kKeyboardConsonants =
+    ('ಕ ಖ ಗ ಘ ಙ ಚ ಛ ಜ ಝ ಞ ಟ ಠ ಡ ಢ ಣ ತ ಥ ದ ಧ ನ '
+            'ಪ ಫ ಬ ಭ ಮ ಯ ರ ಲ ವ ಶ ಷ ಸ ಹ ಳ')
+        .split(' ');
