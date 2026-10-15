@@ -1,6 +1,6 @@
 # Privacy Policy – Tulu Nighantu (ತುಳು ನಿಘಂಟು)
 
-_Last updated: 4 October 2026_
+_Last updated: 7 October 2026_
 
 Tulu Nighantu is an offline Tulu ⇄ Kannada ⇄ English dictionary and Tulu lipi
 learning app. This policy explains what happens to your data.
@@ -41,6 +41,13 @@ Gemini key in Settings, the request goes directly to Google instead.
     https://policies.google.com/privacy
 - AI answers are labelled "AI – not verified" and are never added to the
   dictionary unless you choose "Add to my words".
+
+## Tulu keyboard
+
+The optional system keyboard ("Tulu Nighantu keyboard") only puts what you
+type, or a sticker picture of it, into the app you are typing in. It does not
+store, log or send your typing anywhere, and it does not use the internet.
+Sticker pictures are made on the phone and deleted after a day.
 
 ## Pronunciation
 

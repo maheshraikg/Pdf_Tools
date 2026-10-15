@@ -33,7 +33,7 @@ void main() {
     expect(find.textContaining('Translate to Tulu'), findsOneWidget);
     await tester.tap(find.text('ಲಿಪಿ · Script'));
     await tester.pumpAndSettle();
-    expect(find.text('ಕನ್ನಡ · Kannada'), findsOneWidget);
+    expect(find.text('ಕನ್ನಡ / English · Kannada or English'), findsOneWidget);
 
     await tester.tap(find.text('ಉಳಿಸಿದವು'));
     await tester.pumpAndSettle();

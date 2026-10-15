@@ -67,3 +67,9 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // System keyboard: stickers (commitContent) and FileProvider.
+    implementation("androidx.core:core:1.13.1")
+    testImplementation("junit:junit:4.13.2")
+}

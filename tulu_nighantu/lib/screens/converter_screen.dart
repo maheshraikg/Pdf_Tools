@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../lipi/roman.dart';
 import '../lipi/tulu_lipi.dart';
 import '../widgets/common.dart';
 import 'translate_screen.dart';
@@ -77,7 +78,11 @@ class _ScriptViewState extends State<_ScriptView> {
 
   @override
   Widget build(BuildContext context) {
-    final input = _controller.text;
+    final typed = _controller.text;
+    // English letters ("mahesh") are read as Kannada (ಮಹೇಶ್) first; the
+    // Tulu font must never draw raw English letters as if they were Tulu.
+    final latin = hasLatin(typed);
+    final input = latin ? romanToKannada(typed) : typed;
     final output = TuluLipi.fromKannada(input);
     final hasKannada = TuluLipi.hasKannada(input);
 
@@ -87,7 +92,7 @@ class _ScriptViewState extends State<_ScriptView> {
       children: [
         const _StepLabel(
           icon: Icons.keyboard_outlined,
-          text: 'ಕನ್ನಡ · Kannada',
+          text: 'ಕನ್ನಡ / English · Kannada or English',
         ),
         TextField(
           controller: _controller,
@@ -96,7 +101,7 @@ class _ScriptViewState extends State<_ScriptView> {
           style: const TextStyle(fontSize: 18),
           onChanged: (_) => setState(() {}),
           decoration: InputDecoration(
-            hintText: 'ಕನ್ನಡ ಲಿಪಿಯಲ್ಲಿ ಬರೆಯಿರಿ · Type in Kannada script',
+            hintText: 'ಉದಾ. ಮಹೇಶ್ ಅಥವಾ mahesh',
             suffixIcon: input.isEmpty
                 ? null
                 : IconButton(
@@ -124,7 +129,30 @@ class _ScriptViewState extends State<_ScriptView> {
             ],
           ),
         ),
-        if (input.trim().isNotEmpty && !hasKannada)
+        if (latin && hasKannada)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Row(
+              children: [
+                Icon(Icons.spellcheck, size: 18, color: cs.primary),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      text: 'English letters read as · ',
+                      children: [
+                        TextSpan(
+                          text: input,
+                          style: const TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        if (typed.trim().isNotEmpty && !hasKannada)
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Row(
@@ -133,8 +161,8 @@ class _ScriptViewState extends State<_ScriptView> {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    'ಕನ್ನಡ ಅಕ್ಷರಗಳು ಕಾಣುತ್ತಿಲ್ಲ · No Kannada letters found – '
-                    'type using a Kannada keyboard',
+                    'ಅಕ್ಷರಗಳು ಕಾಣುತ್ತಿಲ್ಲ · No letters to convert – type in '
+                    'Kannada or English letters',
                     style: TextStyle(color: cs.error),
                   ),
                 ),
@@ -256,10 +284,12 @@ class _StepLabel extends StatelessWidget {
         children: [
           Icon(icon, size: 18, color: cs.primary),
           const SizedBox(width: 8),
-          Text(
-            text,
-            style: Theme.of(context).textTheme.labelLarge
-                ?.copyWith(fontWeight: FontWeight.w700),
+          Flexible(
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.labelLarge
+                  ?.copyWith(fontWeight: FontWeight.w700),
+            ),
           ),
         ],
       ),
