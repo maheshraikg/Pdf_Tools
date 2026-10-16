@@ -1,17 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../app/background.dart';
 import '../app/native.dart';
 import '../app/scope.dart';
 import '../core/alerts.dart';
 import '../core/day.dart';
+import '../core/events.dart';
 import '../core/prayer_calc.dart';
 import '../ui/theme.dart';
 import '../ui/widgets.dart';
 import 'display_screen.dart';
 import 'place_screen.dart';
+import 'tracker_screen.dart';
 
 /// Prayers shown as cards, in order (extras go in the small row below).
 const _cardPrayers = [
@@ -120,7 +123,12 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
                     prayer: p,
                     isNext: isNext(p),
                     isPast: day[p].isBefore(now) && !isNext(p),
+                    started: !day[p].isAfter(now),
                   ),
+                  const SizedBox(height: 10),
+                ],
+                if (!day.date.isAfter(today)) ...[
+                  _trackerCard(context, day),
                   const SizedBox(height: 10),
                 ],
                 if (settings.showExtras) ...[
@@ -196,6 +204,79 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
           icon: const Icon(Icons.chevron_right),
         ),
       ],
+    );
+  }
+
+  /// "3 of 5 prayed · 4-day streak", opening the tracker.
+  Widget _trackerCard(BuildContext context, PrayerDay day) {
+    final settings = context.settings, s = context.s;
+    final scheme = Theme.of(context).colorScheme;
+    final t = Theme.of(context).textTheme;
+    final n = settings.log.count(day.date);
+    final streak = settings.log.streak(settings.today);
+    return Card(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const TrackerScreen())),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 12, 8, 12),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      value: n / Prayer.fard.length,
+                      strokeWidth: 4,
+                      backgroundColor: scheme.primary.withValues(alpha: 0.12),
+                    ),
+                    Text(
+                      '$n',
+                      style: t.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      s.prayedOf(n, Prayer.fard.length),
+                      style: t.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      streak > 0 ? s.streakDays(streak) : s.tapToMarkPrayed,
+                      style: t.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (streak > 0)
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(end: 4),
+                  child: Icon(
+                    Icons.local_fire_department,
+                    color: scheme.tertiary,
+                  ),
+                ),
+              const Icon(Icons.chevron_right),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -378,6 +459,7 @@ class _Hero extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
+                  ..._occasionChips(context, dim),
                   if (n != null) ...[
                     const SizedBox(height: 22),
                     Text(
@@ -476,6 +558,68 @@ class _Hero extends StatelessWidget {
     );
   }
 
+  /// Ramadan Suhoor/Iftar times and an occasion within 3 days.
+  List<Widget> _occasionChips(BuildContext context, Color dim) {
+    final settings = context.settings, s = context.s;
+    final t = Theme.of(context).textTheme;
+    final ev = upcomingEvents(
+      settings.today,
+      adjustDays: settings.hijriAdjust,
+      count: 1,
+    );
+    final event = ev.isNotEmpty && ev.first.daysLeft <= 3 ? ev.first : null;
+    final ramadan = today.hijri.isRamadan;
+    if (event == null && !ramadan) return const [];
+    Widget pill(IconData icon, String text) => Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: kGold),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              text,
+              overflow: TextOverflow.ellipsis,
+              style: t.labelMedium?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    return [
+      const SizedBox(height: 10),
+      Wrap(
+        spacing: 8,
+        runSpacing: 6,
+        children: [
+          if (ramadan) ...[
+            pill(
+              Icons.restaurant_outlined,
+              '${s.suhoorEnds} ${hm(settings, today[Prayer.imsak])}',
+            ),
+            pill(
+              Icons.wb_twilight_outlined,
+              '${s.iftar} ${hm(settings, today[Prayer.maghrib])}',
+            ),
+          ],
+          if (event != null)
+            pill(
+              Icons.star_rounded,
+              '${s.eventName(event.event)} · ${s.daysLeft(event.daysLeft)}',
+            ),
+        ],
+      ),
+    ];
+  }
+
   Widget _placeChip(BuildContext context) {
     final settings = context.settings, s = context.s;
     final t = Theme.of(context).textTheme;
@@ -519,12 +663,16 @@ class _PrayerCard extends StatelessWidget {
     required this.prayer,
     required this.isNext,
     required this.isPast,
+    required this.started,
   });
 
   final PrayerDay day;
   final Prayer prayer;
   final bool isNext;
   final bool isPast;
+
+  /// Its time has come: it can be marked as prayed.
+  final bool started;
 
   @override
   Widget build(BuildContext context) {
@@ -560,12 +708,22 @@ class _PrayerCard extends StatelessWidget {
       padding: const EdgeInsetsDirectional.fromSTEB(14, 12, 4, 12),
       child: Row(
         children: [
-          IconBadge(
-            prayerIcon(p),
-            color: isNext
-                ? kGold
-                : (p.isFard ? scheme.primary : scheme.tertiary),
-          ),
+          if (p.isFard && started)
+            _PrayedToggle(
+              prayed: settings.log.prayed(day.date, p),
+              icon: prayerIcon(p),
+              onDark: isNext,
+              tooltip: s.markPrayed,
+              onTap: () =>
+                  settings.updateQuietly((x) => x.log.toggle(day.date, p)),
+            )
+          else
+            IconBadge(
+              prayerIcon(p),
+              color: isNext
+                  ? kGold
+                  : (p.isFard ? scheme.primary : scheme.tertiary),
+            ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
@@ -633,7 +791,55 @@ class _PrayerCard extends StatelessWidget {
         ],
       ),
     );
-    return Opacity(opacity: isPast ? 0.55 : 1, child: card);
+    final prayed = p.isFard && settings.log.prayed(day.date, p);
+    return Opacity(opacity: isPast && !prayed ? 0.6 : 1, child: card);
+  }
+}
+
+/// Prayer icon that turns into a tick once marked as prayed.
+class _PrayedToggle extends StatelessWidget {
+  const _PrayedToggle({
+    required this.prayed,
+    required this.icon,
+    required this.onDark,
+    required this.tooltip,
+    required this.onTap,
+  });
+
+  final bool prayed, onDark;
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final c = onDark ? kGold : scheme.primary;
+    return Tooltip(
+      message: tooltip,
+      child: InkResponse(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          onTap();
+        },
+        radius: 26,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 220),
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: prayed ? c : c.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(11),
+            border: Border.all(color: c.withValues(alpha: prayed ? 1 : 0.6)),
+          ),
+          child: Icon(
+            prayed ? Icons.check_rounded : icon,
+            size: 20,
+            color: prayed ? (onDark ? kEmeraldDeep : scheme.onPrimary) : c,
+          ),
+        ),
+      ),
+    );
   }
 }
 

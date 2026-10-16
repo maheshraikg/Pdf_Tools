@@ -216,6 +216,7 @@ class Background {
         playWhenSilent: config.playWhenSilent,
         stopLabel: s.stop,
         channelName: s.channelAzan,
+        fullScreen: config.fullScreen,
       );
       await Native.updateWidget(widgetJson(settings, days));
 

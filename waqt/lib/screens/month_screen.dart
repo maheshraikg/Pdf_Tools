@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app/scope.dart';
+import '../core/events.dart';
 import '../core/prayer_calc.dart';
 import '../ui/theme.dart';
 import '../ui/widgets.dart';
@@ -122,6 +123,13 @@ class _MonthScreenState extends State<MonthScreen> {
                 ],
               ),
             ),
+            _EventStrip(
+              events: upcomingEvents(
+                today,
+                adjustDays: settings.hijriAdjust,
+                count: 6,
+              ),
+            ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
@@ -236,7 +244,8 @@ class _MonthScreenState extends State<MonthScreen> {
                                           ),
                                         ),
                                         Text(
-                                          '${d.hijri.day}',
+                                          '${d.hijri.day}'
+                                          '${IslamicEvent.values.any((e) => e.month == d.hijri.month && e.day == d.hijri.day) ? ' ★' : ''}',
                                           style: small.copyWith(
                                             color: isToday
                                                 ? kGold
@@ -274,6 +283,84 @@ class _MonthScreenState extends State<MonthScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Upcoming Islamic occasions as a row of cards.
+class _EventStrip extends StatelessWidget {
+  const _EventStrip({required this.events});
+  final List<UpcomingEvent> events;
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = context.settings, s = context.s;
+    final t = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+    if (events.isEmpty) return const SizedBox.shrink();
+    return SizedBox(
+      height: 84,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+        itemCount: events.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        itemBuilder: (context, i) {
+          final e = events[i];
+          final soon = e.daysLeft <= 7;
+          return Tooltip(
+            message: s.hijriEstimateNote,
+            child: Container(
+              width: 170,
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+              decoration: BoxDecoration(
+                gradient: soon
+                    ? heroGradient(Theme.of(context).brightness)
+                    : null,
+                color: soon ? null : Theme.of(context).cardTheme.color,
+                borderRadius: BorderRadius.circular(16),
+                border: soon
+                    ? null
+                    : Border.all(
+                        color: scheme.outlineVariant.withValues(alpha: 0.5),
+                      ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    s.eventName(e.event),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: t.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: soon ? Colors.white : null,
+                    ),
+                  ),
+                  Text(
+                    '${e.date.day} ${monthName(settings.lang, e.date.month)}',
+                    maxLines: 1,
+                    style: t.bodySmall?.copyWith(
+                      color: soon
+                          ? Colors.white.withValues(alpha: 0.8)
+                          : scheme.onSurfaceVariant,
+                    ),
+                  ),
+                  Text(
+                    s.daysLeft(e.daysLeft),
+                    maxLines: 1,
+                    style: t.labelMedium?.copyWith(
+                      color: soon ? kGold : scheme.tertiary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

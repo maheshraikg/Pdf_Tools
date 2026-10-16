@@ -4,6 +4,7 @@
 library;
 
 import '../core/alerts.dart';
+import '../core/events.dart';
 import '../core/prayer_calc.dart';
 import '../l10n/tables.dart';
 import 'settings.dart';
@@ -438,5 +439,149 @@ class S {
         'announcements. Tap and hold the display to exit.',
     'ഡിസ്‌പ്ലേയിൽ 7 പേജുകൾ വരെ: നിസ്കാര സമയങ്ങൾ, അടുത്ത നിസ്കാരം, 5 '
         'അറിയിപ്പുകൾ. പുറത്തുകടക്കാൻ ഡിസ്‌പ്ലേ അമർത്തിപ്പിടിക്കുക.',
+  );
+
+  // Full-screen Azan.
+  String get fullScreenAzan => _t('Full-screen Azan', 'ഫുൾ സ്ക്രീൻ ബാങ്ക്');
+  String get fullScreenAzanHelp => _t(
+    'Shows the Azan over the lock screen with a big Stop button',
+    'ലോക്ക് സ്ക്രീനിന് മുകളിൽ വലിയ നിർത്തൽ ബട്ടണോടെ ബാങ്ക് കാണിക്കും',
+  );
+  String get fullScreenPermission => _t(
+    'Allow full-screen alerts for Waqt',
+    'വഖ്തിന് ഫുൾ സ്ക്രീൻ അറിയിപ്പുകൾ അനുവദിക്കുക',
+  );
+
+  // Prayer tracker.
+  String get tracker => _t('Prayer tracker', 'നിസ്കാര ട്രാക്കർ');
+  String prayedOf(int n, int of) =>
+      _f('{0} of {1} prayed today', 'ഇന്ന് {1}-ൽ {0} നിസ്കരിച്ചു', [n, of]);
+  String streakDays(int n) =>
+      _f('{0}-day streak', 'തുടർച്ചയായി {0} ദിവസം', [n]);
+  String get tapToMarkPrayed => _t(
+    "Tap a prayer's icon to mark it as prayed",
+    'നിസ്കരിച്ചതായി അടയാളപ്പെടുത്താൻ ഐക്കണിൽ തൊടുക',
+  );
+  String get markPrayed =>
+      _t('Mark as prayed', 'നിസ്കരിച്ചതായി അടയാളപ്പെടുത്തുക');
+  String get streak => _t('Day streak', 'തുടർച്ച (ദിവസം)');
+  String get last7Days => _t('Last 7 days', 'കഴിഞ്ഞ 7 ദിവസം');
+  String get last30Days => _t('Last 30 days', 'കഴിഞ്ഞ 30 ദിവസം');
+  String get week => _t('Week', 'ആഴ്ച');
+  String get previousWeek => _t('Previous week', 'മുൻ ആഴ്ച');
+  String get nextWeek => _t('Next week', 'അടുത്ത ആഴ്ച');
+  String get excusedToday => _t('Excused today', 'ഇന്ന് ഒഴിവ്');
+  String get excusedHelp => _t(
+    'Pause the tracker for the day (e.g. illness or menstruation); your '
+        'streak is kept.',
+    'ഈ ദിവസം ട്രാക്കർ നിർത്തിവെക്കുക (ഉദാ. അസുഖം, ആർത്തവം); തുടർച്ച നഷ്ടപ്പെടില്ല.',
+  );
+  String get trackerPrivacy => _t(
+    'Your tracker stays on this phone only.',
+    'നിങ്ങളുടെ ട്രാക്കർ ഈ ഫോണിൽ മാത്രം സൂക്ഷിക്കുന്നു.',
+  );
+
+  // Tasbih.
+  String get tasbih => _t('Tasbih', 'തസ്ബീഹ്');
+  String get afterPrayerSet =>
+      _t('After-prayer tasbih', 'നിസ്കാര ശേഷമുള്ള തസ്ബീഹ്');
+  String get freeCount => _t('Free count', 'സ്വതന്ത്ര എണ്ണൽ');
+  String dhikrMeaning(String id) => switch (id) {
+    'subhanallah' => _t('Glory be to Allah', 'അല്ലാഹു പരിശുദ്ധനാണ്'),
+    'alhamdulillah' => _t(
+      'All praise is for Allah',
+      'എല്ലാ സ്തുതിയും അല്ലാഹുവിനാണ്',
+    ),
+    'allahuakbar' => _t('Allah is the Greatest', 'അല്ലാഹു ഏറ്റവും വലിയവനാണ്'),
+    'tahlil' => _t('There is no god but Allah', 'അല്ലാഹു അല്ലാതെ ആരാധ്യനില്ല'),
+    'istighfar' => _t(
+      "I seek Allah's forgiveness",
+      'ഞാൻ അല്ലാഹുവിനോട് പാപമോചനം തേടുന്നു',
+    ),
+    'salawat' => _t(
+      'O Allah, send blessings upon Muhammad',
+      'അല്ലാഹുവേ, മുഹമ്മദ് നബിയുടെ മേൽ അനുഗ്രഹം ചൊരിയേണമേ',
+    ),
+    'subhanallahi_wabihamdihi' => _t(
+      'Glory and praise be to Allah',
+      'അല്ലാഹുവിന് പരിശുദ്ധിയും സ്തുതിയും',
+    ),
+    _ => '',
+  };
+  String get resetCounter =>
+      _t('Reset the counter?', 'കൗണ്ടർ പുനഃസജ്ജമാക്കണോ?');
+  String get tasbihTap =>
+      _t('Tap the circle to count', 'എണ്ണാൻ വൃത്തത്തിൽ തൊടുക');
+  String get rounds => _t('Rounds', 'റൗണ്ടുകൾ');
+  String get todayTotal => _t('Today in total', 'ഇന്ന് ആകെ');
+
+  // Islamic occasions.
+  String eventName(IslamicEvent e) => switch (e) {
+    IslamicEvent.newYear => _t('Islamic New Year', 'ഹിജ്റ പുതുവർഷം'),
+    IslamicEvent.ashura => _t('Ashura', 'ആശൂറാഅ്'),
+    IslamicEvent.mawlid => _t('Mawlid an-Nabi', 'നബിദിനം'),
+    IslamicEvent.israMiraj => _t("Isra and Mi'raj", 'ഇസ്‌റാഉം മിഅ്റാജും'),
+    IslamicEvent.midShaban => _t("Mid-Sha'ban", 'ബറാഅത്ത് രാവ്'),
+    IslamicEvent.ramadanStart => _t('Ramadan begins', 'റമളാൻ ആരംഭം'),
+    IslamicEvent.laylatAlQadr => _t(
+      'Laylat al-Qadr (27th)',
+      'ലൈലത്തുൽ ഖദ്ർ (27-ാം രാവ്)',
+    ),
+    IslamicEvent.eidAlFitr => _t('Eid al-Fitr', 'ചെറിയ പെരുന്നാൾ'),
+    IslamicEvent.arafah => _t('Day of Arafah', 'അറഫാ ദിനം'),
+    IslamicEvent.eidAlAdha => _t('Eid al-Adha', 'ബലി പെരുന്നാൾ'),
+  };
+  String get upcoming => _t('Upcoming', 'വരാനിരിക്കുന്നവ');
+  String daysLeft(int n) => switch (n) {
+    0 => _t('Today', 'ഇന്ന്'),
+    1 => _t('Tomorrow', 'നാളെ'),
+    _ => _f('in {0} days', '{0} ദിവസം കഴിഞ്ഞ്', [n]),
+  };
+  String get hijriEstimateNote => _t(
+    'Dates follow the calculated Hijri calendar; the moon sighting may '
+        'move them by a day (correct it in Settings).',
+    'തീയതികൾ കണക്കാക്കിയ ഹിജ്റ കലണ്ടർ പ്രകാരം; ചന്ദ്രദർശനം അനുസരിച്ച് ഒരു '
+        'ദിവസം മാറാം (സെറ്റിംഗ്സിൽ തിരുത്താം).',
+  );
+
+  // Ramadan.
+  String get suhoorEnds => _t('Suhoor ends', 'അത്താഴം അവസാനം');
+  String get iftar => _t('Iftar', 'നോമ്പ് തുറ');
+
+  // First-run setup.
+  String get back => _t('Back', 'തിരികെ');
+  String get continueLabel => _t('Continue', 'തുടരുക');
+  String get start => _t('Start', 'തുടങ്ങാം');
+  String get welcomeTitle => _t('Assalamu alaikum!', 'അസ്സലാമു അലൈക്കും!');
+  String get welcomeBody => _t(
+    'Accurate prayer times, Azan and Iqama alerts, Qibla and more. No ads, '
+        'no tracking, works offline. Choose your language:',
+    'കൃത്യമായ നിസ്കാര സമയങ്ങൾ, ബാങ്ക്-ഇഖാമത്ത് അറിയിപ്പുകൾ, ഖിബ്‌ല എന്നിവയും '
+        'മറ്റും. പരസ്യമില്ല, ട്രാക്കിംഗില്ല, ഇന്റർനെറ്റ് വേണ്ട. ഭാഷ തിരഞ്ഞെടുക്കുക:',
+  );
+  String get whereAreYou =>
+      _t('Where do you pray?', 'നിങ്ങൾ എവിടെ നിസ്കരിക്കുന്നു?');
+  String get whereAreYouHelp => _t(
+    'Times depend on your place. Use GPS or search your town; the usual '
+        'calculation method is set for you.',
+    'സമയം സ്ഥലം അനുസരിച്ചാണ്. GPS ഉപയോഗിക്കുക അല്ലെങ്കിൽ പട്ടണം തിരയുക; '
+        'സാധാരണ കണക്കുകൂട്ടൽ രീതി സ്വയം സജ്ജമാകും.',
+  );
+  String get choosePlace => _t('Choose your place', 'സ്ഥലം തിരഞ്ഞെടുക്കുക');
+  String get changePlace => _t('Change place', 'സ്ഥലം മാറ്റുക');
+  String get neverMissTitle =>
+      _t('Never miss a prayer', 'ഒരു നിസ്കാരവും നഷ്ടപ്പെടരുത്');
+  String get neverMissBody => _t(
+    'Allow notifications and exact alarms so the Azan comes on time, even '
+        'when the phone is asleep.',
+    'ഫോൺ ഉറങ്ങുമ്പോഴും ബാങ്ക് കൃത്യസമയത്ത് വരാൻ അറിയിപ്പുകളും കൃത്യ '
+        'അലാറങ്ങളും അനുവദിക്കുക.',
+  );
+  String get allowAlerts => _t('Allow alerts', 'അറിയിപ്പുകൾ അനുവദിക്കുക');
+  String get moreInAlerts => _t(
+    'You can pick an Azan recording, Iqama times and more later in '
+        'Settings › Azan & Iqama alerts.',
+    'ബാങ്ക് റെക്കോർഡിംഗ്, ഇഖാമത്ത് സമയങ്ങൾ തുടങ്ങിയവ പിന്നീട് സെറ്റിംഗ്സിൽ '
+        'തിരഞ്ഞെടുക്കാം.',
   );
 }

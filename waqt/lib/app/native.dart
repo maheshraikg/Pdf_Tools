@@ -108,7 +108,9 @@ class Native {
     required bool playWhenSilent,
     required String stopLabel,
     required String channelName,
+    required bool fullScreen,
   }) => _call<void>('setAzanAlarms', {
+    'fullScreen': fullScreen,
     'events': jsonEncode(events),
     'vibrate': vibrate,
     'whenSilent': playWhenSilent,
@@ -125,4 +127,11 @@ class Native {
       _call<void>('playSound', {'sound': sound, 'title': title, 'body': body});
 
   static Future<void> stopSound() => _call<void>('stopSound');
+
+  /// Android 14+ asks the user to allow full-screen alerts.
+  static Future<bool> canFullScreen() async =>
+      await _call<bool>('canFullScreen') ?? true;
+
+  static Future<void> openFullScreenSettings() =>
+      _call<void>('openFullScreenSettings');
 }

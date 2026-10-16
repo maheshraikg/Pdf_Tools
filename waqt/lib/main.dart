@@ -7,8 +7,10 @@ import 'app/background.dart';
 import 'app/scope.dart';
 import 'app/settings.dart';
 import 'screens/month_screen.dart';
+import 'screens/onboarding_screen.dart';
 import 'screens/qibla_screen.dart';
 import 'screens/settings_screen.dart';
+import 'screens/tasbih_screen.dart';
 import 'screens/today_screen.dart';
 import 'ui/theme.dart';
 
@@ -56,6 +58,7 @@ class _WaqtAppState extends State<WaqtApp> with WidgetsBindingObserver {
   }
 
   void _onSettings() {
+    if (widget.settings.takeQuietChange()) return;
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 600), _refreshBackground);
   }
@@ -80,7 +83,9 @@ class _WaqtAppState extends State<WaqtApp> with WidgetsBindingObserver {
         locale: Locale(widget.settings.lang.code),
         supportedLocales: [for (final l in Lang.values) Locale(l.code)],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        home: const HomeShell(),
+        home: widget.settings.onboarded
+            ? const HomeShell()
+            : const OnboardingScreen(),
       ),
     ),
   );
@@ -106,6 +111,7 @@ class _HomeShellState extends State<HomeShell> {
           const TodayScreen(),
           const MonthScreen(),
           QiblaScreen(active: _tab == 2),
+          const TasbihScreen(),
           const SettingsScreen(),
         ],
       ),
@@ -127,6 +133,11 @@ class _HomeShellState extends State<HomeShell> {
             icon: const Icon(Icons.explore_outlined),
             selectedIcon: const Icon(Icons.explore),
             label: s.qibla,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.radio_button_checked_outlined),
+            selectedIcon: const Icon(Icons.radio_button_checked),
+            label: s.tasbih,
           ),
           NavigationDestination(
             icon: const Icon(Icons.settings_outlined),

@@ -70,6 +70,7 @@ class MainActivity : FlutterActivity() {
                             call.argument<Boolean>("whenSilent") ?: false,
                             call.argument<String>("stopLabel") ?: "Stop",
                             call.argument<String>("channelName") ?: "Azan",
+                            call.argument<Boolean>("fullScreen") ?: true,
                         )
                         result.success(null)
                     }
@@ -95,6 +96,22 @@ class MainActivity : FlutterActivity() {
                             call.argument<String>("body") ?: "",
                             call.argument<String>("sound") ?: "chime",
                         )
+                        result.success(null)
+                    }
+                    "canFullScreen" -> {
+                        result.success(
+                            Build.VERSION.SDK_INT < 34 || notificationManager().canUseFullScreenIntent(),
+                        )
+                    }
+                    "openFullScreenSettings" -> {
+                        if (Build.VERSION.SDK_INT >= 34) {
+                            open(
+                                Intent(
+                                    Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT,
+                                    Uri.parse("package:$packageName"),
+                                ),
+                            ) || open(appDetails())
+                        }
                         result.success(null)
                     }
                     "stopSound" -> {

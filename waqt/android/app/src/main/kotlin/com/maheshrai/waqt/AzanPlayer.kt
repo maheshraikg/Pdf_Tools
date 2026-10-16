@@ -42,6 +42,7 @@ object AzanScheduler {
     private const val KEY_WHEN_SILENT = "when_silent"
     private const val KEY_STOP_LABEL = "stop_label"
     private const val KEY_CHANNEL_NAME = "channel_name"
+    private const val KEY_FULL_SCREEN = "full_screen"
     const val ACTION_FIRE = "com.maheshrai.waqt.AZAN_FIRE"
 
     /** An Azan is still played this late (e.g. after the phone was off). */
@@ -54,6 +55,7 @@ object AzanScheduler {
         whenSilent: Boolean,
         stopLabel: String,
         channelName: String,
+        fullScreen: Boolean,
     ) {
         prefs(context).edit()
             .putString(KEY_EVENTS, events.toString())
@@ -61,6 +63,7 @@ object AzanScheduler {
             .putBoolean(KEY_WHEN_SILENT, whenSilent)
             .putString(KEY_STOP_LABEL, stopLabel)
             .putString(KEY_CHANNEL_NAME, channelName)
+            .putBoolean(KEY_FULL_SCREEN, fullScreen)
             .apply()
         reschedule(context)
     }
@@ -73,6 +76,8 @@ object AzanScheduler {
     fun stopLabel(context: Context) = prefs(context).getString(KEY_STOP_LABEL, null) ?: "Stop"
 
     fun channelName(context: Context) = prefs(context).getString(KEY_CHANNEL_NAME, null) ?: "Azan"
+
+    fun fullScreen(context: Context) = prefs(context).getBoolean(KEY_FULL_SCREEN, true)
 
     fun reschedule(context: Context) {
         val now = System.currentTimeMillis()
@@ -174,7 +179,7 @@ class AzanService : Service() {
         val title = intent?.getStringExtra(EXTRA_TITLE) ?: ""
         val body = intent?.getStringExtra(EXTRA_BODY) ?: ""
         val sound = intent?.getStringExtra(EXTRA_SOUND) ?: "chime"
-        val notification = buildNotification(this, title, body)
+        val notification = buildNotification(this, title, body, intent?.getBooleanExtra(EXTRA_FULL, false) == true)
         if (Build.VERSION.SDK_INT >= 29) {
             startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
         } else {
@@ -214,6 +219,14 @@ class AzanService : Service() {
             mp.setWakeMode(this, android.os.PowerManager.PARTIAL_WAKE_LOCK)
             when {
                 sound.startsWith("file:") -> mp.setDataSource(sound.removePrefix("file:"))
+                sound == "system" -> {
+                    // The phone's notification sound, repeated until stopped.
+                    val uri = android.media.RingtoneManager.getDefaultUri(
+                        android.media.RingtoneManager.TYPE_NOTIFICATION,
+                    ) ?: rawUri(this, "chime")
+                    mp.setDataSource(this, uri)
+                    mp.isLooping = true
+                }
                 else -> mp.setDataSource(this, rawUri(this, sound))
             }
             mp.setOnPreparedListener {
@@ -284,6 +297,7 @@ class AzanService : Service() {
     }
 
     private fun stopAll() {
+        sendBroadcast(Intent(AzanActivity.ACTION_FINISHED).setPackage(packageName))
         releasePlayer()
         (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(NOTIFICATION_ID)
         (getSystemService(VIBRATOR_SERVICE) as? Vibrator)?.cancel()
@@ -309,6 +323,7 @@ class AzanService : Service() {
         private const val EXTRA_TITLE = "title"
         private const val EXTRA_BODY = "body"
         private const val EXTRA_SOUND = "sound"
+        private const val EXTRA_FULL = "full"
         private const val CHANNEL = "azan_player"
         private const val FALLBACK_CHANNEL = "azan_player_fallback"
         private const val NOTIFICATION_ID = 7001
@@ -326,6 +341,7 @@ class AzanService : Service() {
                 .putExtra(EXTRA_TITLE, title)
                 .putExtra(EXTRA_BODY, body)
                 .putExtra(EXTRA_SOUND, sound)
+                .putExtra(EXTRA_FULL, fromAlarm && AzanScheduler.fullScreen(context))
             try {
                 if (Build.VERSION.SDK_INT >= 26) context.startForegroundService(i) else context.startService(i)
             } catch (e: Exception) {
@@ -369,7 +385,7 @@ class AzanService : Service() {
                 Notification.Builder(context).setPriority(Notification.PRIORITY_MAX)
             }
 
-        fun buildNotification(context: Context, title: String, body: String): Notification {
+        fun buildNotification(context: Context, title: String, body: String, full: Boolean): Notification {
             channel(context, CHANNEL, null)
             val stop = PendingIntent.getService(
                 context,
@@ -391,6 +407,18 @@ class AzanService : Service() {
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setContentIntent(open)
                 .setDeleteIntent(stop)
+                .apply {
+                    if (full) {
+                        // Over the lock screen, like an alarm clock.
+                        val screen = PendingIntent.getActivity(
+                            context,
+                            4,
+                            AzanActivity.intent(context, title, body),
+                            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                        )
+                        setFullScreenIntent(screen, true)
+                    }
+                }
                 .setAutoCancel(true)
                 .addAction(
                     Notification.Action.Builder(null, AzanScheduler.stopLabel(context), stop).build(),
@@ -399,7 +427,12 @@ class AzanService : Service() {
         }
 
         private fun fallback(context: Context, title: String, body: String, sound: String) {
-            val uri = if (sound.startsWith("file:")) rawUri(context, "chime") else rawUri(context, sound)
+            val uri = if (sound.startsWith("file:") || sound == "system") {
+                android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_NOTIFICATION)
+                    ?: rawUri(context, "chime")
+            } else {
+                rawUri(context, sound)
+            }
             channel(context, FALLBACK_CHANNEL, uri)
             val nm = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             val n = builder(context, FALLBACK_CHANNEL)

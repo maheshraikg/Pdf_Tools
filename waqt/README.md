@@ -12,6 +12,9 @@
 <img src="docs/screenshots/lang_ta_today.png" width="200">
 </p>
 <p>
+<img src="docs/screenshots/en_13_setup.png" width="200">
+<img src="docs/screenshots/en_12_tracker.png" width="200">
+<img src="docs/screenshots/en_11_tasbih.png" width="200">
 <img src="docs/screenshots/en_9_azan_sound.png" width="200">
 <img src="docs/screenshots/en_10_places.png" width="200">
 </p>
@@ -28,6 +31,22 @@ An offline prayer-time app for Android, built with Flutter, made first for
 Kerala and working anywhere. No ads, no tracking and no internet permission.
 
 ## Features
+
+- **First-run setup**: three short steps (language, place, alerts with a
+  sound preview) so the app is right from the first minute.
+- **Full-screen Azan**: over the lock screen like an alarm clock, with a
+  big Stop button; the volume keys stop it too.
+- **Prayer tracker**: tap a prayer's icon on Today to mark it as prayed.
+  Day streak, last 7 and 30 days, a weekly grid to fix past days, and an
+  "excused today" pause (illness, menstruation) that keeps the streak. It
+  stays on the phone.
+- **Tasbih**: a big tap counter with a progress ring and haptics, the
+  after-prayer 33 · 33 · 34 set, other common dhikr (Arabic,
+  transliteration and meaning) and a free count.
+- **Islamic occasions**: the next New Year, Ashura, Mawlid, Isra and
+  Mi'raj, Mid-Sha'ban, Ramadan, Laylat al-Qadr, Arafah and both Eids with
+  days left (Month tab, and on Today when 3 days away or less). During
+  Ramadan, Today shows when Suhoor ends and the Iftar time.
 
 - **Today**: the five prayers plus Sunrise, with Iqama times, a live
   countdown to the next prayer, and an Iqama countdown between Azan and

@@ -19,6 +19,10 @@ import 'package:waqt/main.dart';
 import 'package:waqt/screens/alerts_screen.dart';
 import 'package:waqt/screens/display_screen.dart';
 import 'package:waqt/screens/place_screen.dart';
+import 'package:waqt/screens/tracker_screen.dart';
+import 'package:waqt/screens/onboarding_screen.dart';
+import 'package:waqt/core/tracker.dart';
+import 'package:waqt/core/prayer_calc.dart';
 import 'package:waqt/core/alerts.dart';
 
 Future<void> loadFont(String family, List<String> paths) async {
@@ -72,9 +76,25 @@ void main() {
     });
   }
 
-  AppSettings settingsFor(Lang lang) => AppSettings.memory()
-    ..lang = lang
-    ..placeChosen = true;
+  AppSettings settingsFor(Lang lang) {
+    final st = AppSettings.memory()
+      ..lang = lang
+      ..placeChosen = true;
+    // A few days of ticked prayers for the tracker.
+    final today = st.today;
+    for (var i = 1; i <= 6; i++) {
+      for (final p in Prayer.fard) {
+        if (i == 4 && p == Prayer.fajr) continue;
+        st.log.toggle(today.subtract(Duration(days: i)), p);
+      }
+    }
+    st.log.toggle(today, Prayer.fajr);
+    st.log.toggle(today, Prayer.dhuhr);
+    for (var i = 0; i < 21; i++) {
+      st.tasbih.tap(dateKey(today));
+    }
+    return st;
+  }
 
   for (final lang in [Lang.en, Lang.ml]) {
     testWidgets('screens ${lang.name}', (tester) async {
@@ -91,6 +111,7 @@ void main() {
       for (final (icon, name) in [
         (Icons.calendar_month_outlined, '2_month'),
         (Icons.explore_outlined, '3_qibla'),
+        (Icons.radio_button_checked_outlined, '11_tasbih'),
         (Icons.settings_outlined, '4_settings'),
       ]) {
         await tester.tap(find.byIcon(icon).last);
@@ -227,6 +248,26 @@ void main() {
     await tester.enterText(find.byType(TextField), 'tir');
     await tester.pump();
     await shot(tester, key, 'en_10_places');
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 1));
+  });
+
+  testWidgets('tracker and setup', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 860));
+    final key = GlobalKey();
+    final settings = settingsFor(Lang.en);
+    Widget wrap(Widget home) => RepaintBoundary(
+      key: key,
+      child: AppScope(
+        settings: settings,
+        child: MaterialApp(theme: buildTheme(Brightness.light), home: home),
+      ),
+    );
+    await tester.pumpWidget(wrap(const TrackerScreen()));
+    await shot(tester, key, 'en_12_tracker');
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpWidget(wrap(const OnboardingScreen()));
+    await shot(tester, key, 'en_13_setup');
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 1));
   });

@@ -17,8 +17,9 @@ T={}
 for f in ['tr_ar_ur','tr_hi_ta_kn','tr_bn_id_ms','tr_tr_fr']:
     spec=importlib.util.spec_from_file_location(f,os.path.join(D,f+'.py')); m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m); T.update(m.T)
 # Later additions, appended in key order.
-spec=importlib.util.spec_from_file_location('tr_more',os.path.join(D,'tr_more.py')); m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
-for code,vals in m.T.items(): T[code]=T[code]+vals
+for f in ['tr_more','tr_more2']:
+    spec=importlib.util.spec_from_file_location(f,os.path.join(D,f+'.py')); m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    for code,vals in m.T.items(): T[code]=T[code]+vals
 HIJRI={
 'ar':['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'],
 'ur':['محرم','صفر','ربیع الاول','ربیع الثانی','جمادی الاول','جمادی الثانی','رجب','شعبان','رمضان','شوال','ذوالقعدہ','ذوالحجہ'],

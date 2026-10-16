@@ -93,7 +93,7 @@ void main() {
     );
     expect(c.soundFor(Prayer.dhuhr).playerSound, 'file:/x/azan.mp3');
     expect(c.soundFor(Prayer.fajr).playerSound, 'bell');
-    expect(const AlertConfig().soundFor(Prayer.fajr).playerSound, isNull);
+    expect(const AlertConfig().soundFor(Prayer.fajr).playerSound, 'system');
     final back = AlertConfig.fromJson(
       (jsonDecode(jsonEncode(c.toJson())) as Map).cast<String, dynamic>(),
     );

@@ -10,6 +10,7 @@ import 'package:waqt/screens/alerts_screen.dart';
 import 'package:waqt/screens/display_screen.dart';
 import 'package:waqt/screens/display_settings_screen.dart';
 import 'package:waqt/screens/place_screen.dart';
+import 'package:waqt/screens/tasbih_screen.dart';
 import 'package:waqt/screens/timetable_screen.dart';
 import 'package:waqt/screens/today_screen.dart';
 
@@ -64,6 +65,7 @@ void main() {
       for (final icon in [
         Icons.calendar_month_outlined,
         Icons.explore_outlined,
+        Icons.radio_button_checked_outlined,
         Icons.settings_outlined,
         Icons.access_time,
       ]) {
@@ -250,6 +252,87 @@ void main() {
     await tester.pumpAndSettle();
     expect(settings.place.timeZone, 'Europe/London');
     expect(settings.method.id, 'mwl');
+    await _dispose(tester);
+  });
+
+  testWidgets('tick prayers on Today and see them in the tracker', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(400 * 3, 1800 * 3);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    final settings = AppSettings.memory();
+    await _pumpApp(tester, settings);
+    // Yesterday: every prayer has started.
+    final prev = find.descendant(
+      of: find.byType(TodayScreen),
+      matching: find.byIcon(Icons.chevron_left),
+    );
+    Scrollable.ensureVisible(tester.element(prev), alignment: 0.5);
+    await tester.pump();
+    await tester.tap(prev);
+    await tester.pump();
+    final marks = find.byTooltip('Mark as prayed');
+    expect(marks, findsNWidgets(5));
+    for (var i = 0; i < 5; i++) {
+      await tester.tap(marks.at(i));
+      await tester.pump();
+    }
+    final yesterday = settings.today.subtract(const Duration(days: 1));
+    expect(settings.log.count(yesterday), 5);
+    expect(settings.log.streak(settings.today), 1);
+    await tester.scrollUntilVisible(find.text('5 of 5 prayed today'), 200);
+    await tester.tap(find.text('5 of 5 prayed today'));
+    await tester.pumpAndSettle();
+    expect(find.text('Prayer tracker'), findsOneWidget);
+    expect(find.text('Day streak'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await _dispose(tester);
+  });
+
+  testWidgets('tasbih counts the after-prayer set', (tester) async {
+    final settings = AppSettings.memory();
+    await _pumpScreen(tester, settings, const TasbihScreen());
+    expect(find.text('SubhanAllah'), findsOneWidget);
+    for (var i = 0; i < 33; i++) {
+      await tester.tap(find.byKey(const Key('tasbih-tap')));
+      await tester.pump();
+    }
+    expect(find.text('Alhamdulillah'), findsOneWidget);
+    expect(settings.tasbih.total, 33);
+    await _dispose(tester);
+  });
+
+  testWidgets('first-run setup: language, place, alerts', (tester) async {
+    tester.view.physicalSize = const Size(360 * 3, 720 * 3);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    final settings = AppSettings.memory()..onboarded = false;
+    await _pumpApp(tester, settings);
+    expect(find.text('Assalamu alaikum!'), findsOneWidget);
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+    expect(find.text('Where do you pray?'), findsOneWidget);
+    // Continue needs a place.
+    final cont = find.widgetWithText(FilledButton, 'Continue');
+    expect(tester.widget<FilledButton>(cont).onPressed, isNull);
+    await tester.tap(find.text('Choose your place'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'tirur');
+    await tester.pump();
+    await tester.tap(find.text('Tirur').first);
+    await tester.pumpAndSettle();
+    expect(settings.placeChosen, isTrue);
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+    expect(find.text('Never miss a prayer'), findsOneWidget);
+    await tester.tap(find.text('Soft chime'));
+    await tester.pump();
+    expect(settings.alerts.azanSound.sound.name, 'chime');
+    await tester.tap(find.text('Start'));
+    await tester.pumpAndSettle();
+    expect(settings.onboarded, isTrue);
+    expect(find.byType(TodayScreen), findsOneWidget);
     await _dispose(tester);
   });
 }

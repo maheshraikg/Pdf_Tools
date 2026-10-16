@@ -8,6 +8,7 @@ import 'alerts_screen.dart';
 import 'display_settings_screen.dart';
 import 'place_screen.dart';
 import 'timetable_screen.dart';
+import 'tracker_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -52,6 +53,18 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => push(const TimetableScreen()),
+              ),
+              ListTile(
+                leading: const IconBadge(Icons.task_alt),
+                title: Text(s.tracker),
+                subtitle: Text(
+                  s.prayedOf(
+                    settings.log.count(settings.today),
+                    Prayer.fard.length,
+                  ),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => push(const TrackerScreen()),
               ),
               ListTile(
                 leading: const IconBadge(Icons.tv),

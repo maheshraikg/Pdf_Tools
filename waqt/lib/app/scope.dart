@@ -76,6 +76,10 @@ String monthName(Lang lang, int month) => _symbols(lang).MONTHS[month - 1];
 String weekdayName(Lang lang, int weekday) =>
     _symbols(lang).WEEKDAYS[weekday % 7]; // intl lists Sunday first
 
+/// Short weekday name ("Wed") in [lang].
+String shortWeekdayName(Lang lang, int weekday) =>
+    _symbols(lang).SHORTWEEKDAYS[weekday % 7];
+
 /// Hijri month name in [lang].
 String hijriMonthName(Lang lang, int month) => switch (lang) {
   Lang.en => HijriDate.monthsEn[month - 1],

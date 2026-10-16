@@ -19,6 +19,7 @@ class AlertsScreen extends StatefulWidget {
 class _AlertsScreenState extends State<AlertsScreen>
     with WidgetsBindingObserver {
   bool _dnd = true;
+  bool _fullScreenOk = true;
 
   @override
   void initState() {
@@ -40,7 +41,13 @@ class _AlertsScreenState extends State<AlertsScreen>
 
   Future<void> _checkDnd() async {
     final v = await Native.hasDndAccess();
-    if (mounted) setState(() => _dnd = v || !Native.supported);
+    final fs = await Native.canFullScreen();
+    if (mounted) {
+      setState(() {
+        _dnd = v || !Native.supported;
+        _fullScreenOk = fs;
+      });
+    }
   }
 
   @override
@@ -270,8 +277,6 @@ extension on _AlertsScreenState {
     void Function(AlertConfig) set,
   ) {
     final s = context.s, settings = context.settings;
-    final usesPlayer =
-        c.azanSound.playerSound != null || (c.fajrSound?.playerSound != null);
 
     Widget preview(SoundChoice choice, Prayer p) {
       final sound = choice.playerSound;
@@ -318,7 +323,23 @@ extension on _AlertsScreenState {
             if (v != null) set(c.copyWith(fajrSound: v.$1));
           },
         ),
-        if (usesPlayer) ...[
+        ...[
+          SwitchListTile(
+            secondary: const IconBadge(Icons.fullscreen),
+            title: Text(s.fullScreenAzan),
+            subtitle: Text(s.fullScreenAzanHelp),
+            value: c.fullScreen,
+            onChanged: (v) => set(c.copyWith(fullScreen: v)),
+          ),
+          if (c.fullScreen && !_fullScreenOk)
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: Text(s.fullScreenPermission),
+              trailing: TextButton(
+                onPressed: Native.openFullScreenSettings,
+                child: Text(s.grant),
+              ),
+            ),
           SwitchListTile(
             secondary: const IconBadge(Icons.vibration),
             title: Text(s.vibrate),

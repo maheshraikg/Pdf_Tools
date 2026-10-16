@@ -33,9 +33,9 @@ class SoundChoice {
   /// Native "file:" sound of the copied file, and its original name.
   final String? path, fileName;
 
-  /// The native player's sound id, or null for the notification sound.
+  /// The native player's sound id.
   String? get playerSound => switch (sound) {
-    AzanSound.system => null,
+    AzanSound.system => 'system',
     AzanSound.chime => 'chime',
     AzanSound.bell => 'bell',
     AzanSound.custom => path,
@@ -138,6 +138,7 @@ class AlertConfig {
     this.fajrSound,
     this.vibrate = true,
     this.playWhenSilent = false,
+    this.fullScreen = true,
     this.taraweehAlert = false,
     this.taraweehMinutesAfterIsha = 10,
     this.eidAlert = false,
@@ -170,6 +171,9 @@ class AlertConfig {
   /// Player options (not for the notification sound).
   final bool vibrate;
   final bool playWhenSilent;
+
+  /// Azan over the lock screen, like an alarm clock.
+  final bool fullScreen;
 
   /// Ramadan nights: alert this long after the Isha Iqama.
   final bool taraweehAlert;
@@ -218,6 +222,7 @@ class AlertConfig {
     Object? fajrSound = _keep,
     bool? vibrate,
     bool? playWhenSilent,
+    bool? fullScreen,
     bool? taraweehAlert,
     int? taraweehMinutesAfterIsha,
     bool? eidAlert,
@@ -242,6 +247,7 @@ class AlertConfig {
         : fajrSound as SoundChoice?,
     vibrate: vibrate ?? this.vibrate,
     playWhenSilent: playWhenSilent ?? this.playWhenSilent,
+    fullScreen: fullScreen ?? this.fullScreen,
     taraweehAlert: taraweehAlert ?? this.taraweehAlert,
     taraweehMinutesAfterIsha:
         taraweehMinutesAfterIsha ?? this.taraweehMinutesAfterIsha,
@@ -267,6 +273,7 @@ class AlertConfig {
     if (fajrSound != null) 'fajrSound': fajrSound!.toJson(),
     'vibrate': vibrate,
     'whenSilent': playWhenSilent,
+    'fullScreen': fullScreen,
     'taraweeh': taraweehAlert,
     'taraweehAfter': taraweehMinutesAfterIsha,
     'eid': eidAlert,
@@ -301,6 +308,7 @@ class AlertConfig {
       fajrSound: SoundChoice.fromJson(j['fajrSound']),
       vibrate: j['vibrate'] as bool? ?? d.vibrate,
       playWhenSilent: j['whenSilent'] as bool? ?? d.playWhenSilent,
+      fullScreen: j['fullScreen'] as bool? ?? d.fullScreen,
       taraweehAlert: j['taraweeh'] as bool? ?? d.taraweehAlert,
       taraweehMinutesAfterIsha:
           j['taraweehAfter'] as int? ?? d.taraweehMinutesAfterIsha,

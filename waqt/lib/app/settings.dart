@@ -8,7 +8,9 @@ import '../core/alerts.dart';
 import '../core/day.dart';
 import '../core/place.dart';
 import '../core/prayer_calc.dart';
+import '../core/tasbih.dart';
 import '../core/timetable.dart';
+import '../core/tracker.dart';
 
 enum Lang {
   en('English'),
@@ -64,6 +66,9 @@ class AppSettings extends ChangeNotifier {
   /// True once the user has picked a place (first-run prompt).
   bool placeChosen = false;
 
+  /// First-run setup done (existing users who picked a place skip it).
+  bool onboarded = true;
+
   CalcMethod method = CalcMethod.kerala;
   AsrMethod asr = AsrMethod.shafii;
   HighLatitudeRule highLatitude = HighLatitudeRule.angleBased;
@@ -73,6 +78,11 @@ class AppSettings extends ChangeNotifier {
   int hijriAdjust = 0;
 
   AlertConfig alerts = const AlertConfig();
+
+  /// Prayer tracker (saved with the other settings).
+  PrayerLog log = PrayerLog();
+
+  TasbihState tasbih = TasbihState();
 
   /// Mosque display: optional name, the big next-prayer page, seconds per
   /// page and up to [maxAnnouncements] announcement pages.
@@ -177,6 +187,7 @@ class AppSettings extends ChangeNotifier {
       } catch (_) {}
     }
     placeChosen = p.getBool('placeChosen') ?? false;
+    onboarded = p.getBool('onboarded') ?? placeChosen;
     method = CalcMethod.byId(p.getString('method'));
     asr = AsrMethod.values.asNameMap()[p.getString('asr')] ?? AsrMethod.shafii;
     highLatitude =
@@ -201,6 +212,22 @@ class AppSettings extends ChangeNotifier {
       try {
         alerts = AlertConfig.fromJson(
           (jsonDecode(al) as Map).cast<String, dynamic>(),
+        );
+      } catch (_) {}
+    }
+    final tr = p.getString('tracker');
+    if (tr != null) {
+      try {
+        log = PrayerLog.fromJson(
+          (jsonDecode(tr) as Map).cast<String, dynamic>(),
+        );
+      } catch (_) {}
+    }
+    final tb = p.getString('tasbih');
+    if (tb != null) {
+      try {
+        tasbih = TasbihState.fromJson(
+          (jsonDecode(tb) as Map).cast<String, dynamic>(),
         );
       } catch (_) {}
     }
@@ -231,6 +258,7 @@ class AppSettings extends ChangeNotifier {
     await p.setBool('showExtras', showExtras);
     await p.setString('place', jsonEncode(place.toJson()));
     await p.setBool('placeChosen', placeChosen);
+    await p.setBool('onboarded', onboarded);
     await p.setString('method', method.id);
     await p.setString('asr', asr.name);
     await p.setString('highLat', highLatitude.name);
@@ -242,6 +270,8 @@ class AppSettings extends ChangeNotifier {
     await p.setInt('ishraq', ishraqMinutes);
     await p.setInt('hijriAdjust', hijriAdjust);
     await p.setString('alerts', jsonEncode(alerts.toJson()));
+    await p.setString('tracker', jsonEncode(log.toJson(today)));
+    await p.setString('tasbih', jsonEncode(tasbih.toJson()));
     await p.setString(
       'display',
       jsonEncode({
@@ -257,6 +287,22 @@ class AppSettings extends ChangeNotifier {
       await p.setString('timetable', timetableCsv!);
     }
     await p.setBool('timetableEnabled', timetableEnabled);
+  }
+
+  bool _quiet = false;
+
+  /// True (once) when the last change does not affect alarms, so they need
+  /// not be rescheduled (e.g. ticking a prayer in the tracker).
+  bool takeQuietChange() {
+    final q = _quiet;
+    _quiet = false;
+    return q;
+  }
+
+  /// Like [update], for changes that do not affect alerts.
+  Future<void> updateQuietly(void Function(AppSettings s) change) {
+    _quiet = true;
+    return update(change);
   }
 
   /// Applies [change] and persists.
