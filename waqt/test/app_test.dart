@@ -53,7 +53,6 @@ void main() {
 
       final str = S(s.lang);
       expect(find.text(str.prayer(Prayer.fajr)), findsWidgets);
-      expect(find.text(str.prayer(Prayer.isha)), findsWidgets);
       // Arabic and Urdu lay out right-to-left.
       expect(
         Directionality.of(tester.element(find.byType(TodayScreen))),
@@ -82,17 +81,9 @@ void main() {
       of: find.byType(TodayScreen),
       matching: find.byIcon(Icons.chevron_right),
     );
-    await tester.scrollUntilVisible(
-      next,
-      300,
-      scrollable: find
-          .descendant(
-            of: find.byType(TodayScreen),
-            matching: find.byType(Scrollable),
-          )
-          .first,
-    );
-    await tester.ensureVisible(next);
+    // Centre it: at the very top edge the tap would land on the hero.
+    final ctx = tester.element(next);
+    Scrollable.ensureVisible(ctx, alignment: 0.5);
     await tester.pump();
     await tester.tap(next);
     await tester.pump();

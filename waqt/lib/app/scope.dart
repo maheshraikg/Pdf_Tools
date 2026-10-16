@@ -48,11 +48,12 @@ String countdown(S s, Duration d) {
   return u('$sec', s.secondsShort);
 }
 
-/// mm:ss countdown (display mode).
-String clockCountdown(Duration d) {
+/// mm:ss countdown, h:mm:ss over an hour; [withHours] always HH:MM:SS.
+String clockCountdown(Duration d, {bool withHours = false}) {
   if (d.isNegative) d = Duration.zero;
   final h = d.inHours;
   final m = d.inMinutes % 60, s = d.inSeconds % 60;
+  if (withHours) return '${_two(h)}:${_two(m)}:${_two(s)}';
   return h > 0 ? '$h:${_two(m)}:${_two(s)}' : '${_two(m)}:${_two(s)}';
 }
 

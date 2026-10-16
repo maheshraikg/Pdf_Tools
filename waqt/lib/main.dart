@@ -10,26 +10,15 @@ import 'screens/month_screen.dart';
 import 'screens/qibla_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/today_screen.dart';
+import 'ui/theme.dart';
+
+export 'ui/theme.dart' show buildTheme, debugFontFallback;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final settings = await AppSettings.load();
   runApp(WaqtApp(settings: settings));
 }
-
-/// Seed colour: deep green.
-const Color kSeed = Color(0xFF0B6E4F);
-
-/// Extra fallback font families (used by the screenshot tool, where no
-/// system Malayalam font exists).
-List<String>? debugFontFallback;
-
-ThemeData buildTheme(Brightness b) => ThemeData(
-  useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(seedColor: kSeed, brightness: b),
-  fontFamilyFallback: debugFontFallback,
-  cardTheme: const CardThemeData(elevation: 0.5),
-);
 
 class WaqtApp extends StatefulWidget {
   const WaqtApp({super.key, required this.settings, this.background = true});

@@ -4,6 +4,7 @@ import '../app/native.dart';
 import '../app/scope.dart';
 import '../core/place.dart';
 import '../core/timetable.dart';
+import '../ui/widgets.dart';
 
 class PlaceScreen extends StatefulWidget {
   const PlaceScreen({super.key});
@@ -153,62 +154,69 @@ class _PlaceScreenState extends State<PlaceScreen> {
         )
         .toList();
 
+    // Group the (filtered) places by region, keeping their order.
+    final regions = <String, List<Place>>{};
+    for (final p in places) {
+      regions.putIfAbsent(p.region, () => []).add(p);
+    }
+    final scheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(title: Text(s.location)),
       body: ListView(
+        padding: const EdgeInsets.only(bottom: 24),
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
             child: TextField(
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.search),
                 hintText: s.searchPlaces,
-                border: const OutlineInputBorder(),
               ),
               onChanged: (v) => setState(() => _query = v),
             ),
           ),
-          ListTile(
-            leading: _locating
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.my_location),
-            title: Text(_locating ? s.locating : s.useMyLocation),
-            onTap: _locating ? null : _useGps,
-          ),
-          ListTile(
-            leading: const Icon(Icons.edit_location_alt_outlined),
-            title: Text(s.enterCoordinates),
-            onTap: _manual,
-          ),
-          const Divider(),
-          for (var i = 0; i < places.length; i++) ...[
-            if (i == 0 || places[i - 1].region != places[i].region)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-                child: Text(
-                  places[i].region,
-                  style: Theme.of(context).textTheme.titleSmall
-                      ?.copyWith(color: Theme.of(context).colorScheme.primary),
-                ),
+          Section(
+            children: [
+              ListTile(
+                leading: _locating
+                    ? const SizedBox(
+                        width: 36,
+                        height: 36,
+                        child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      )
+                    : const IconBadge(Icons.my_location),
+                title: Text(_locating ? s.locating : s.useMyLocation),
+                onTap: _locating ? null : _useGps,
               ),
-            ListTile(
-              title: Text(places[i].label(s.ml)),
-              subtitle: s.ml && places[i].nameMl != null
-                  ? Text(places[i].name)
-                  : null,
-              trailing: settings.place.id == places[i].id
-                  ? const Icon(Icons.check)
-                  : null,
-              onTap: () async {
-                await settings.choosePlace(places[i]);
-                if (context.mounted) Navigator.pop(context);
-              },
+              ListTile(
+                leading: const IconBadge(Icons.edit_location_alt_outlined),
+                title: Text(s.enterCoordinates),
+                onTap: _manual,
+              ),
+            ],
+          ),
+          for (final e in regions.entries)
+            Section(
+              title: e.key,
+              children: [
+                for (final p in e.value)
+                  ListTile(
+                    title: Text(p.label(s.ml)),
+                    subtitle: s.ml && p.nameMl != null ? Text(p.name) : null,
+                    trailing: settings.place.id == p.id
+                        ? Icon(Icons.check_circle, color: scheme.primary)
+                        : null,
+                    onTap: () async {
+                      await settings.choosePlace(p);
+                      if (context.mounted) Navigator.pop(context);
+                    },
+                  ),
+              ],
             ),
-          ],
         ],
       ),
     );

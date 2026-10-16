@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../app/scope.dart';
 import '../core/prayer_calc.dart';
+import '../ui/theme.dart';
+import '../ui/widgets.dart';
 
 const _cols = [
   Prayer.fajr,
@@ -77,105 +79,201 @@ class _MonthScreenState extends State<MonthScreen> {
       return '$h:${w.minute.toString().padLeft(2, '0')}';
     }
 
+    final t = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
           children: [
-            Text('${monthName(settings.lang, first.month)} ${first.year}'),
-            Text(hijriRange, style: small),
-          ],
-        ),
-        actions: [
-          IconButton(
-            onPressed: () => _changeMonth(-1),
-            icon: const Icon(Icons.chevron_left),
-          ),
-          IconButton(
-            onPressed: () => _changeMonth(1),
-            icon: const Icon(Icons.chevron_right),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Container(
-            color: scheme.surfaceContainerHigh,
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-            child: Row(
-              children: [
-                SizedBox(width: 44, child: Text(s.date, style: small)),
-                for (final p in _cols)
+            // Month header: title, Hijri range and month arrows.
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 12, 8),
+              child: Row(
+                children: [
                   Expanded(
-                    child: Text(
-                      s.prayer(p),
-                      style: small.copyWith(fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${monthName(settings.lang, first.month)} ${first.year}',
+                          style: t.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        Text(
+                          hijriRange,
+                          style: t.bodyMedium?.copyWith(
+                            color: scheme.tertiary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              controller: _scroll,
-              itemExtent: _rowHeight,
-              itemCount: days.length,
-              itemBuilder: (context, i) {
-                final d = days[i];
-                final isToday =
-                    d.year == today.year &&
-                    d.month == today.month &&
-                    d.day == today.day;
-                return Container(
-                  color: isToday
-                      ? scheme.secondaryContainer
-                      : d.isFriday
-                      ? scheme.surfaceContainerLow
-                      : null,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 6,
-                    horizontal: 8,
+                  IconButton.filledTonal(
+                    onPressed: () => _changeMonth(-1),
+                    icon: const Icon(Icons.chevron_left),
                   ),
-                  child: Row(
+                  const SizedBox(width: 6),
+                  IconButton.filledTonal(
+                    onPressed: () => _changeMonth(1),
+                    icon: const Icon(Icons.chevron_right),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
+                child: Card(
+                  clipBehavior: Clip.antiAlias,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(24),
+                    ),
+                  ),
+                  child: Column(
                     children: [
-                      SizedBox(
-                        width: 44,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      Container(
+                        color: scheme.primary.withValues(alpha: 0.08),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 8,
+                        ),
+                        child: Row(
                           children: [
-                            Text(
-                              '${d.day}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: d.isFriday ? scheme.primary : null,
+                            SizedBox(
+                              width: 48,
+                              child: Text(
+                                s.date,
+                                style: small.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: scheme.primary,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
                             ),
-                            Text('${d.hijri.day}', style: small),
+                            for (final p in _cols)
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      prayerIcon(p),
+                                      size: 16,
+                                      color: scheme.primary,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        s.prayer(p),
+                                        style: small.copyWith(
+                                          fontWeight: FontWeight.w700,
+                                          color: scheme.primary,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                           ],
                         ),
                       ),
-                      for (final p in _cols)
-                        Expanded(
-                          child: Text(
-                            clock(d[p]),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: p == Prayer.sunrise
-                                  ? scheme.onSurfaceVariant
-                                  : null,
-                            ),
-                          ),
+                      Expanded(
+                        child: ListView.builder(
+                          controller: _scroll,
+                          itemExtent: _rowHeight,
+                          itemCount: days.length,
+                          itemBuilder: (context, i) {
+                            final d = days[i];
+                            final isToday =
+                                d.year == today.year &&
+                                d.month == today.month &&
+                                d.day == today.day;
+                            final timeStyle = t.bodyMedium?.copyWith(
+                              fontFeatures: const [
+                                FontFeature.tabularFigures(),
+                              ],
+                              fontWeight: isToday
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                              color: isToday ? Colors.white : null,
+                            );
+                            return Container(
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: isToday
+                                    ? heroGradient(Theme.of(context).brightness)
+                                    : null,
+                                color: !isToday && d.isFriday
+                                    ? scheme.tertiary.withValues(alpha: 0.08)
+                                    : null,
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 2,
+                              ),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 46,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '${d.day}',
+                                          style: t.titleMedium?.copyWith(
+                                            fontWeight: FontWeight.w800,
+                                            color: isToday
+                                                ? Colors.white
+                                                : d.isFriday
+                                                ? scheme.tertiary
+                                                : null,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${d.hijri.day}',
+                                          style: small.copyWith(
+                                            color: isToday
+                                                ? kGold
+                                                : scheme.onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  for (final p in _cols)
+                                    Expanded(
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          clock(d[p]),
+                                          style: p == Prayer.sunrise && !isToday
+                                              ? timeStyle?.copyWith(
+                                                  color:
+                                                      scheme.onSurfaceVariant,
+                                                )
+                                              : timeStyle,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
+                      ),
                     ],
                   ),
-                );
-              },
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
