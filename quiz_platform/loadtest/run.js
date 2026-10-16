@@ -46,7 +46,7 @@ async function pool(items, concurrency, fn) {
 async function workerMain() {
   setGlobalDispatcher(new Agent({ connections: 256, pipelining: 1, keepAliveTimeout: 60_000 }));
   const { targets, from, to, secret, competitionId } = workerData;
-  const stats = { setupErrors: 0, submitLatency: [], pushDelay: [], submitOk: 0, submitErr: {}, wsDrops: 0, lbLatency: [], lbErr: 0, stateLatency: [] };
+  const stats = { duplicatePushes: 0, questionsSeen: [], setupErrors: 0, submitLatency: [], pushDelay: [], submitOk: 0, submitErr: {}, wsDrops: 0, lbLatency: [], lbErr: 0, stateLatency: [] };
   const post = async (base, path, body, token, extra = {}) => {
     const r = await fetch(base + path, {
       method: 'POST',
@@ -94,6 +94,9 @@ async function workerMain() {
 
   // A small share of clients "refresh" by polling state each question.
   async function onQuestion(c, q) {
+    c.seen ??= new Set();
+    if (c.seen.has(q.position)) { stats.duplicatePushes++; return; }
+    c.seen.add(q.position);
     stats.pushDelay.push(Date.now() - q.opensAt);
     if (c.n % 50 === 0) {
       const t0 = performance.now();
@@ -125,7 +128,7 @@ async function workerMain() {
 
   parentPort.on('message', (m) => {
     if (m === 'report') {
-      for (const c of active) { c.done = true; c.ws?.close(); }
+      for (const c of active) { c.done = true; c.ws?.close(); stats.questionsSeen.push(c.seen?.size ?? 0); }
       parentPort.postMessage({ type: 'report', stats });
     }
   });
@@ -203,9 +206,9 @@ async function main() {
   })));
   for (const w of ws) await w.terminate();
 
-  const agg = { setupErrors: 0, submitOk: 0, submitErr: {}, wsDrops: 0, lbErr: 0, submitLatency: [], pushDelay: [], lbLatency: [], stateLatency: [] };
+  const agg = { duplicatePushes: 0, questionsSeen: [], setupErrors: 0, submitOk: 0, submitErr: {}, wsDrops: 0, lbErr: 0, submitLatency: [], pushDelay: [], lbLatency: [], stateLatency: [] };
   for (const r of reports) {
-    agg.setupErrors += r.setupErrors; agg.submitOk += r.submitOk; agg.wsDrops += r.wsDrops; agg.lbErr += r.lbErr;
+    agg.setupErrors += r.setupErrors; agg.duplicatePushes += r.duplicatePushes; agg.questionsSeen.push(...r.questionsSeen); agg.submitOk += r.submitOk; agg.wsDrops += r.wsDrops; agg.lbErr += r.lbErr;
     for (const [k, v] of Object.entries(r.submitErr)) agg.submitErr[k] = (agg.submitErr[k] ?? 0) + v;
     for (const k of ['submitLatency', 'pushDelay', 'lbLatency', 'stateLatency']) for (const v of r[k]) agg[k].push(v);
   }
@@ -217,6 +220,7 @@ async function main() {
   const result = {
     participants, workers, serverNodes: targets.length, connectedSockets: connected,
     setupErrors: agg.setupErrors, wsDrops: agg.wsDrops,
+    questionPushes: { duplicates: agg.duplicatePushes, clientsThatSawAll15: agg.questionsSeen.filter((n) => n === 15).length, minSeen: Math.min(...agg.questionsSeen) },
     answers: { attempted: attempts, accepted: agg.submitOk, errors: agg.submitErr, errorRate: attempts ? +(totalErr / attempts * 100).toFixed(3) : 0 },
     peakWindowAnswersPerSecond: +(attempts / 15 / 9.2).toFixed(0),
     latencyMs: { submit: summary(agg.submitLatency), questionPushDelay: summary(agg.pushDelay), leaderboard: summary(agg.lbLatency), state: summary(agg.stateLatency) },

@@ -43,6 +43,7 @@ export class Hub {
     this.rooms = new Map(); // competitionId -> Set<socket>
     this.timers = new Map(); // competitionId -> timeout
     this.provTimers = new Map();
+    this.sent = new Map(); // competitionId -> Set of boundary events already broadcast
     this.sockets = new Set();
     ctx.bus.on('event', (e) => this.onBusEvent(e).catch((err) => ctx.log.error({ err: err.message }, 'bus event failed')));
     this.presenceTimer = setInterval(() => this.publishPresence(), 5000);
@@ -136,6 +137,7 @@ export class Hub {
     room.delete(socket);
     if (!room.size) {
       this.rooms.delete(competitionId);
+      this.sent.delete(competitionId);
       clearTimeout(this.timers.get(competitionId));
       this.timers.delete(competitionId);
       clearInterval(this.provTimers.get(competitionId));
@@ -151,17 +153,14 @@ export class Hub {
     const t = timeline(comp);
     const now = clock.now();
     const at = t.at(now);
-    let next;
-    if (at.phase === 'before' || at.phase === 'transition') next = at.nextOpensAt;
-    else if (at.phase === 'question') next = at.closesAt + 1; // just after the inclusive deadline
+    // The next boundary is decided now; when the timer fires we emit exactly
+    // that event. (Re-sampling the phase on wake-up is wrong: Node timers can
+    // fire up to ~1 ms before their high-resolution target.)
+    let target;
+    if (at.phase === 'before' || at.phase === 'transition') target = { kind: 'open', position: at.nextPosition, at: at.nextOpensAt };
+    else if (at.phase === 'question') target = { kind: 'close', position: at.position, at: at.closesAt + 1 }; // just after the inclusive deadline
     else return;
-    const delay = next - now;
-    if (delay > 2 ** 31 - 1) return; // >24 days away; re-armed on a later subscribe
-    const timer = setTimeout(() => {
-      this.timers.delete(comp.id);
-      this.onBoundary(comp.id).catch((err) => this.ctx.log.error({ err: err.message }, 'boundary failed'));
-    }, Math.max(0, delay));
-    this.timers.set(comp.id, timer);
+    this.armTimer(comp.id, target);
 
     if (comp.show_provisional && !this.provTimers.has(comp.id) && status === 'live') {
       const iv = setInterval(() => this.pushProvisional(comp.id).catch(() => {}), this.ctx.cfg.jobs.provisionalIntervalMs);
@@ -170,37 +169,52 @@ export class Hub {
     }
   }
 
-  async onBoundary(competitionId) {
+  armTimer(competitionId, target) {
+    const delay = target.at - clock.now();
+    if (delay > 2 ** 31 - 1) return; // >24 days away; re-armed on a later subscribe
+    const timer = setTimeout(() => {
+      if (clock.now() < target.at) { this.armTimer(competitionId, target); return; } // woke early: wait out the remainder
+      this.timers.delete(competitionId);
+      this.onBoundary(competitionId, target).catch((err) => this.ctx.log.error({ err: err.message }, 'boundary failed'));
+    }, Math.max(0, Math.ceil(delay)));
+    this.timers.set(competitionId, timer);
+  }
+
+  /** Emits the event for `target` exactly once per competition and node, then arms the next boundary. */
+  async onBoundary(competitionId, target) {
     if (!this.rooms.get(competitionId)?.size) return;
     const comp = await this.ctx.engine.competition(competitionId);
-    const status = effectiveStatus(comp);
-    const now = clock.now();
-    const t = timeline(comp);
-    const at = t.at(now);
-    if (status === 'cancelled') {
+    if (effectiveStatus(comp) === 'cancelled') {
       this.broadcast(competitionId, { type: 'competition_cancelled', competitionId, reason: comp.cancelled_reason });
       return;
     }
-    if (at.phase === 'question') {
-      const qs = await this.ctx.engine.questions(comp);
-      const q = qs[at.position - 1];
-      this.broadcast(competitionId, { type: 'question', serverNow: clock.now(), question: Engine.publicQuestion(q, comp, t) });
-    } else if (at.phase === 'transition' || at.phase === 'ended') {
-      const position = at.phase === 'ended' ? comp.question_count : at.lastPosition;
-      const msg = { type: 'question_closed', serverNow: clock.now(), position, nextOpensAt: at.nextOpensAt ?? null };
-      if (comp.reveal_answers) {
-        const qs = await this.ctx.engine.questions(comp);
-        msg.correctOption = qs[position - 1].correct_option;
+    const key = `${target.kind}:${target.position}`;
+    const sent = this.sent.get(competitionId) ?? new Set();
+    this.sent.set(competitionId, sent);
+    if (!sent.has(key)) {
+      sent.add(key);
+      const t = timeline(comp);
+      if (target.kind === 'open') {
+        // Never deliver a question whose window has already closed (e.g. after a long stall).
+        if (clock.now() <= t.closesAt(target.position)) {
+          const qs = await this.ctx.engine.questions(comp);
+          this.broadcast(competitionId, { type: 'question', serverNow: clock.now(), question: Engine.publicQuestion(qs[target.position - 1], comp, t) });
+        }
+      } else {
+        const last = target.position >= comp.question_count;
+        const msg = { type: 'question_closed', serverNow: clock.now(), position: target.position, nextOpensAt: last ? null : t.opensAt(target.position + 1) };
+        if (comp.reveal_answers) {
+          const qs = await this.ctx.engine.questions(comp);
+          msg.correctOption = qs[target.position - 1].correct_option;
+        }
+        this.broadcast(competitionId, msg);
+        if (last) {
+          this.broadcast(competitionId, { type: 'competition_ended', competitionId, serverNow: clock.now() });
+          clearInterval(this.provTimers.get(competitionId));
+          this.provTimers.delete(competitionId);
+          return;
+        }
       }
-      this.broadcast(competitionId, msg);
-      if (at.phase === 'ended') {
-        this.broadcast(competitionId, { type: 'competition_ended', competitionId, serverNow: clock.now() });
-        clearInterval(this.provTimers.get(competitionId));
-        this.provTimers.delete(competitionId);
-        return;
-      }
-    } else if (at.phase === 'before') {
-      // woke slightly early (timer jitter) — fall through to re-arm
     }
     this.ensureTimer(comp);
   }

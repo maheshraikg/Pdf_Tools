@@ -38,7 +38,7 @@ test('unauthenticated sockets are closed', async () => {
   assert.equal(code, 4001);
 });
 
-test('question is pushed at the server-scheduled instant, without the answer key; clock sync works', async () => {
+test('questions are pushed at the server-scheduled instant, without the answer key; clock sync works', async () => {
   const admin = await adminToken(env);
   const c = await createCompetition(env, admin);
   const u = await loginUser(env);
@@ -46,7 +46,7 @@ test('question is pushed at the server-scheduled instant, without the answer key
   // Shift the server clock so the competition starts ~1.2 s from now (real time).
   clockCtl.advance(c.startAt - clockCtl.now() - 1200);
 
-  const { ws, next } = connect(u.token);
+  const { ws, next, messages } = connect(u.token);
   await next((m) => m.type === 'hello');
   const t0 = Date.now();
   ws.send(JSON.stringify({ type: 'time', t0 }));
@@ -62,5 +62,49 @@ test('question is pushed at the server-scheduled instant, without the answer key
   assert.equal(q.question.closesAt, c.startAt + 10_000);
   assert.ok(q.serverNow >= c.startAt && q.serverNow - c.startAt < 200, `pushed ${q.serverNow - c.startAt} ms after opening`);
   assert.ok(!JSON.stringify(q).toLowerCase().includes('correct'));
+
+  // Through a full boundary sequence every event is delivered exactly once,
+  // even though Node timers may wake slightly before their target.
+  const closed = await next((m) => m.type === 'question_closed', 13_000);
+  assert.equal(closed.position, 1);
+  assert.ok(closed.serverNow > c.startAt + 10_000, 'closed only after the inclusive deadline');
+  assert.equal(closed.nextOpensAt, c.startAt + 13_000);
+  const q2 = await next((m) => m.type === 'question' && m.question.position === 2, 6000);
+  assert.ok(q2.serverNow >= c.startAt + 13_000);
+  await new Promise((r) => setTimeout(r, 300));
+  const count = (pred) => messages.filter(pred).length;
+  assert.equal(count((m) => m.type === 'question' && m.question.position === 1), 1);
+  assert.equal(count((m) => m.type === 'question_closed' && m.position === 1), 1);
+  assert.equal(count((m) => m.type === 'question' && m.question.position === 2), 1);
   ws.close();
+});
+
+test('a boundary timer that wakes early (busy event loop) emits the intended event exactly once', async () => {
+  const admin = await adminToken(env);
+  const c = await createCompetition(env, admin);
+  const hub = env.ctx.hub;
+  const sock = { readyState: 1, bufferedAmount: 0, sent: [], send(d) { this.sent.push(JSON.parse(d)); }, terminate() {} };
+  hub.rooms.set(c.id, new Set([sock]));
+  try {
+    // Wake-ups 4 ms before question 1's deadline: it must not re-send question 1,
+    // and it must send "closed" only for the intended boundary.
+    clockCtl.freezeAt(c.startAt + 10_000 - 4);
+    const closeTarget = { kind: 'close', position: 1, at: c.startAt + 10_001 };
+    await hub.onBoundary(c.id, closeTarget);
+    await hub.onBoundary(c.id, closeTarget); // duplicate wake-up
+    // Wake-up 3 ms before question 2 opens.
+    clockCtl.freezeAt(c.startAt + 13_000 - 3);
+    await hub.onBoundary(c.id, { kind: 'open', position: 2, at: c.startAt + 13_000 });
+    assert.deepEqual(sock.sent.map((m) => [m.type, m.position ?? m.question?.position]), [['question_closed', 1], ['question', 2]]);
+    // A question whose window has already passed is never delivered.
+    sock.sent.length = 0;
+    clockCtl.freezeAt(c.startAt + 26_000 + 10_500);
+    await hub.onBoundary(c.id, { kind: 'open', position: 3, at: c.startAt + 26_000 });
+    assert.equal(sock.sent.filter((m) => m.type === 'question').length, 0);
+  } finally {
+    clearTimeout(hub.timers.get(c.id));
+    hub.timers.delete(c.id);
+    hub.rooms.delete(c.id);
+    clockCtl.reset();
+  }
 });
