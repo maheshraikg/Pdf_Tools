@@ -1,3 +1,5 @@
+<img src="docs/icon/icon-512.png" width="96" align="right">
+
 # Azan Time (ബാങ്ക് സമയം) – Prayer times, Azan & Iqama alerts
 
 Play Store title: **Azan Time: Prayer Times Qibla**. (Formerly "Waqt"; the
