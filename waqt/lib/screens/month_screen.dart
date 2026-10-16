@@ -21,6 +21,38 @@ class MonthScreen extends StatefulWidget {
 
 class _MonthScreenState extends State<MonthScreen> {
   int _offset = 0;
+  final _scroll = ScrollController();
+
+  /// Fixed row height, so "today" can be scrolled to without measuring.
+  static const double _rowHeight = 56;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToToday());
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  /// Shows today (with two days above it) in the current month.
+  void _scrollToToday() {
+    if (!mounted || !_scroll.hasClients) return;
+    final target = _offset == 0
+        ? (context.settings.today.day - 3) * _rowHeight
+        : 0.0;
+    _scroll.jumpTo(
+      target.clamp(0.0, _scroll.position.maxScrollExtent).toDouble(),
+    );
+  }
+
+  void _changeMonth(int delta) {
+    setState(() => _offset += delta);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToToday());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,11 +88,11 @@ class _MonthScreenState extends State<MonthScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () => setState(() => _offset--),
+            onPressed: () => _changeMonth(-1),
             icon: const Icon(Icons.chevron_left),
           ),
           IconButton(
-            onPressed: () => setState(() => _offset++),
+            onPressed: () => _changeMonth(1),
             icon: const Icon(Icons.chevron_right),
           ),
         ],
@@ -87,6 +119,8 @@ class _MonthScreenState extends State<MonthScreen> {
           ),
           Expanded(
             child: ListView.builder(
+              controller: _scroll,
+              itemExtent: _rowHeight,
               itemCount: days.length,
               itemBuilder: (context, i) {
                 final d = days[i];

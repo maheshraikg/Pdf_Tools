@@ -17,7 +17,7 @@ class S {
   String get today => _t('Today', 'ഇന്ന്');
   String get month => _t('Month', 'മാസം');
   String get qibla => _t('Qibla', 'ഖിബ്‌ല');
-  String get settings => _t('Settings', 'ക്രമീകരണങ്ങൾ');
+  String get settings => _t('Settings', 'സെറ്റിംഗ്സ്');
 
   String prayer(Prayer p, {bool friday = false}) => switch (p) {
     Prayer.imsak => _t('Imsak', 'ഇംസാക്'),

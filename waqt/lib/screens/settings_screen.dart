@@ -131,7 +131,13 @@ class SettingsScreen extends StatelessWidget {
             min: -2,
             max: 2,
             signed: true,
-            unit: s.days(settings.hijriAdjust.abs()),
+            unit:
+                '${settings.hijriAdjust > 0
+                    ? '+'
+                    : settings.hijriAdjust < 0
+                    ? '−'
+                    : ''}'
+                '${s.days(settings.hijriAdjust.abs())}',
             onChanged: (v) => settings.update((x) => x.hijriAdjust = v),
           ),
           const Divider(),
@@ -251,6 +257,8 @@ class _Stepper extends StatelessWidget {
 
   final String label;
   final String? help;
+
+  /// Replaces the plain number as the shown value (e.g. "+1 day").
   final String? unit;
   final int value, min, max;
   final bool signed;
@@ -258,29 +266,40 @@ class _Stepper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = signed && value > 0 ? '+$value' : '$value';
+    final text = unit ?? (signed && value > 0 ? '+$value' : '$value');
+    final controls = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.remove_circle_outline),
+          onPressed: value > min ? () => onChanged(value - 1) : null,
+        ),
+        ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 36),
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.add_circle_outline),
+          onPressed: value < max ? () => onChanged(value + 1) : null,
+        ),
+      ],
+    );
+    // With help text, the controls go on their own line so the text keeps
+    // the full width (long Malayalam explanations).
+    if (help == null) {
+      return ListTile(title: Text(label), trailing: controls);
+    }
     return ListTile(
       title: Text(label),
-      subtitle: help != null ? Text(help!) : null,
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          IconButton(
-            icon: const Icon(Icons.remove_circle_outline),
-            onPressed: value > min ? () => onChanged(value - 1) : null,
-          ),
-          SizedBox(
-            width: unit != null ? 64 : 36,
-            child: Text(
-              unit != null ? '$text\n$unit' : text,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.add_circle_outline),
-            onPressed: value < max ? () => onChanged(value + 1) : null,
-          ),
+          Text(help!),
+          Align(alignment: AlignmentDirectional.centerEnd, child: controls),
         ],
       ),
     );

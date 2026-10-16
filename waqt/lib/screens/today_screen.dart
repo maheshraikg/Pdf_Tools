@@ -91,6 +91,7 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
           Card(
             child: Column(
               children: [
+                _tableHeader(context),
                 for (final p in Prayer.values)
                   if (p.isFard || p == Prayer.sunrise || settings.showExtras)
                     _row(context, day, p, next, now),
@@ -326,48 +327,89 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
       color: p.isFard ? null : scheme.onSurfaceVariant,
     );
     final alert = p.isFard ? settings.alerts.of(p) : null;
+    // Fixed column widths with scale-down text: long names (Malayalam) and
+    // 12-hour times never wrap or collide on narrow phones.
     return Container(
       color: isNext ? scheme.secondaryContainer : null,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         children: [
           Expanded(
-            child: Text(s.prayer(p, friday: day.isFriday), style: style),
-          ),
-          if (alert != null)
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Icon(
-                alert.azan
-                    ? Icons.notifications_active_outlined
-                    : Icons.notifications_off_outlined,
-                size: 16,
-                color: scheme.onSurfaceVariant,
-              ),
-            ),
-          SizedBox(
-            width: 82,
-            child: Text(
-              hm(settings, day[p]),
-              style: style,
-              textAlign: TextAlign.end,
+            child: _Fit(
+              Text(s.prayer(p, friday: day.isFriday), style: style),
+              alignment: AlignmentDirectional.centerStart,
             ),
           ),
           SizedBox(
-            width: 92,
-            child: alert != null
-                ? Text(
-                    '${s.iqama} ${hm(settings, iqamaTime(day, p, settings.alerts))}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: scheme.onSurfaceVariant,
+            width: 24,
+            child: alert == null
+                ? null
+                : Icon(
+                    alert.azan
+                        ? Icons.notifications_active_outlined
+                        : Icons.notifications_off_outlined,
+                    size: 16,
+                    color: scheme.onSurfaceVariant,
+                  ),
+          ),
+          SizedBox(
+            width: _azanWidth,
+            child: _Fit(Text(hm(settings, day[p]), style: style)),
+          ),
+          SizedBox(
+            width: _iqamaWidth,
+            child: alert == null
+                ? null
+                : _Fit(
+                    Text(
+                      hm(settings, iqamaTime(day, p, settings.alerts)),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: scheme.onSurfaceVariant,
+                        fontWeight: isNext ? FontWeight.w600 : null,
+                      ),
                     ),
-                    textAlign: TextAlign.end,
-                  )
-                : const SizedBox.shrink(),
+                  ),
           ),
         ],
       ),
     );
   }
+
+  /// Column titles above the times.
+  Widget _tableHeader(BuildContext context) {
+    final s = context.s;
+    final st = Theme.of(context).textTheme.labelSmall
+        ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+      child: Row(
+        children: [
+          const Spacer(),
+          SizedBox(
+            width: _azanWidth,
+            child: Text(s.azan, style: st, textAlign: TextAlign.end),
+          ),
+          SizedBox(
+            width: _iqamaWidth,
+            child: Text(s.iqama, style: st, textAlign: TextAlign.end),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+const double _azanWidth = 92;
+const double _iqamaWidth = 84;
+
+/// Right-aligned (by default) text that shrinks instead of wrapping.
+class _Fit extends StatelessWidget {
+  const _Fit(this.child, {this.alignment = AlignmentDirectional.centerEnd});
+  final Widget child;
+  final AlignmentGeometry alignment;
+
+  @override
+  Widget build(BuildContext context) =>
+      FittedBox(fit: BoxFit.scaleDown, alignment: alignment, child: child);
 }

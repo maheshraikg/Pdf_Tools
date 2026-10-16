@@ -86,6 +86,8 @@ void main() {
           )
           .first,
     );
+    await tester.ensureVisible(next);
+    await tester.pump();
     await tester.tap(next);
     await tester.pump();
     expect(find.text('Back to today'), findsOneWidget);

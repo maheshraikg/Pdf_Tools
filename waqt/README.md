@@ -1,5 +1,13 @@
 # Waqt (വഖ്ത്) – Salah times, Azan & Iqama alerts
 
+<p>
+<img src="docs/screenshots/en_1_today.png" width="200">
+<img src="docs/screenshots/ml_1_today.png" width="200">
+<img src="docs/screenshots/en_2_month.png" width="200">
+<img src="docs/screenshots/en_3_qibla.png" width="200">
+</p>
+<p><img src="docs/screenshots/en_6_display.png" width="600"></p>
+
 An offline prayer-time app for Android, built with Flutter, made first for
 Kerala and working anywhere. No ads, no tracking and no internet permission.
 
@@ -113,6 +121,7 @@ timetable or a published calendar whose publisher permits it.
 cd waqt
 flutter pub get
 flutter test                 # unit + widget tests
+flutter test tool/screenshots/screenshot_test.dart  # docs/screenshots/*.png
 flutter build apk --release  # or: flutter build appbundle
 ```
 

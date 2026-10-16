@@ -19,9 +19,14 @@ Future<void> main() async {
 /// Seed colour: deep green.
 const Color kSeed = Color(0xFF0B6E4F);
 
+/// Extra fallback font families (used by the screenshot tool, where no
+/// system Malayalam font exists).
+List<String>? debugFontFallback;
+
 ThemeData buildTheme(Brightness b) => ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(seedColor: kSeed, brightness: b),
+  fontFamilyFallback: debugFontFallback,
   cardTheme: const CardThemeData(elevation: 0.5),
 );
 

@@ -113,6 +113,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
                     bearing: bearing,
                     scheme: scheme,
                     aligned: aligned,
+                    labelStyle: t.titleMedium ?? const TextStyle(),
                   ),
                 ),
               ),
@@ -144,7 +145,9 @@ class _CompassPainter extends CustomPainter {
     required this.bearing,
     required this.scheme,
     required this.aligned,
+    required this.labelStyle,
   });
+  final TextStyle labelStyle;
   final double? heading;
   final double bearing;
   final ColorScheme scheme;
@@ -187,7 +190,7 @@ class _CompassPainter extends CustomPainter {
       final tp = TextPainter(
         text: TextSpan(
           text: labels[i],
-          style: TextStyle(
+          style: labelStyle.copyWith(
             color: i == 0 ? scheme.error : scheme.onSurface,
             fontWeight: FontWeight.bold,
             fontSize: 16,
@@ -231,5 +234,6 @@ class _CompassPainter extends CustomPainter {
       old.heading != heading ||
       old.bearing != bearing ||
       old.aligned != aligned ||
+      old.labelStyle != labelStyle ||
       old.scheme != scheme;
 }
