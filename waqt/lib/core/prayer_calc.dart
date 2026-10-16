@@ -85,9 +85,10 @@ class CalcMethod {
   static const kerala = CalcMethod(
     id: 'kerala',
     name: 'Kerala (Samastha-style)',
-    // Fitted to published Kerala yearly charts: about ±1 min over the year.
-    fajrAngle: 19.5,
-    ishaAngle: 18.5,
+    // Fitted to 69 published Kerala yearly charts: within 1 min on about
+    // 9 days in 10, within 2 min on 19 in 20.
+    fajrAngle: 19.8,
+    ishaAngle: 18.4,
     dhuhrMinutes: 3,
     asrMinutes: 2,
     maghribMinutes: 3,

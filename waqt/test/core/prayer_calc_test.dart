@@ -90,8 +90,8 @@ void main() {
         method: CalcMethod(
           id: 'x',
           name: 'x',
-          fajrAngle: 19.5,
-          ishaAngle: 18.5,
+          fajrAngle: 19.8,
+          ishaAngle: 18.4,
         ),
       ),
     );

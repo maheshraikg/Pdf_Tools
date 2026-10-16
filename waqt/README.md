@@ -79,7 +79,7 @@ Kerala and working anywhere. No ads, no tracking and no internet permission.
 
 | Method | Fajr | Isha | Built-in margins |
 |---|---|---|---|
-| **Kerala (Samastha-style)** (default) | 19.5° | 18.5° | Dhuhr +3, Asr +2, Maghrib +3 min |
+| **Kerala (Samastha-style)** (default) | 19.8° | 18.4° | Dhuhr +3, Asr +2, Maghrib +3 min |
 | Karachi | 18° | 18° | – |
 | Muslim World League | 18° | 17° | – |
 | Umm al-Qura | 18.5° | 90 min after Maghrib (120 in Ramadan) | – |
