@@ -41,7 +41,7 @@ createdb quiz_test
 DATABASE_URL_TEST=postgres://postgres@localhost:5432/quiz_test npm test
 ```
 
-There are 51 automated tests against a real PostgreSQL database and the real
+There are 52 automated tests against a real PostgreSQL database and the real
 HTTP and WebSocket stack. They cover:
 
 * OTP flow: expiry, attempt limits, single use, cooldown and rate limits, no plaintext storage
