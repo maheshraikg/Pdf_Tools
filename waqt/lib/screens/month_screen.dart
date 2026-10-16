@@ -65,8 +65,8 @@ class _MonthScreenState extends State<MonthScreen> {
     final small = Theme.of(context).textTheme.bodySmall!;
     final h1 = days.first.hijri, h2 = days.last.hijri;
     final hijriRange = h1.month == h2.month
-        ? '${h1.monthName(s.ml)} ${h1.year}'
-        : '${h1.monthName(s.ml)} – ${h2.monthName(s.ml)} ${h2.year}';
+        ? '${hijriMonthName(settings.lang, h1.month)} ${h1.year}'
+        : '${hijriMonthName(settings.lang, h1.month)} – ${hijriMonthName(settings.lang, h2.month)} ${h2.year}';
 
     String clock(DateTime utc) {
       // Compact: no AM/PM in the table.

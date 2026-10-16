@@ -6,7 +6,15 @@
 <img src="docs/screenshots/en_2_month.png" width="200">
 <img src="docs/screenshots/en_3_qibla.png" width="200">
 </p>
+<p>
+<img src="docs/screenshots/lang_ar_today.png" width="200">
+<img src="docs/screenshots/lang_hi_today.png" width="200">
+<img src="docs/screenshots/lang_ta_today.png" width="200">
+</p>
 <p><img src="docs/screenshots/en_6_display.png" width="600"></p>
+
+**Download the latest test build (APK):**
+https://github.com/maheshraikg/Pdf_Tools/releases/download/waqt-apk-keep/waqt.apk
 
 An offline prayer-time app for Android, built with Flutter, made first for
 Kerala and working anywhere. No ads, no tracking and no internet permission.
@@ -53,7 +61,13 @@ Kerala and working anywhere. No ads, no tracking and no internet permission.
   Maldives and the Gulf follow. You can also use GPS (Android's own
   `LocationManager`, no Google Play services) or enter coordinates by hand.
   Picking a place applies its usual method and Asr school.
-- **Languages**: English and Malayalam.
+- **Languages**: 12, chosen in Settings (the phone's language is used on
+  first start): English, Malayalam (മലയാളം), Arabic (العربية), Urdu (اردو),
+  Hindi (हिन्दी), Tamil (தமிழ்), Kannada (ಕನ್ನಡ), Bengali (বাংলা), Indonesian,
+  Malay, Turkish and French. Arabic and Urdu use a right-to-left layout.
+  Month, weekday and Hijri month names and AM/PM are localised too.
+  Translations other than English and Malayalam live in `tool/l10n/` and
+  should be checked by native speakers.
 - **Health check**: warns when notifications, exact alarms or battery
   optimisation would make alerts late, and links to the setting that fixes
   it.
@@ -148,7 +162,8 @@ There is no `INTERNET` permission in release builds.
 ```
 lib/core/      pure Dart, unit tested: astronomy, methods, timetables,
                Hijri, Qibla, places, alert/silent planning
-lib/app/       settings, strings (en/ml), notifications, native bridge
+lib/app/       settings, strings (en/ml inline), notifications, native bridge
+lib/l10n/      generated translation tables (from tool/l10n/*.py)
 lib/screens/   Today, Month, Qibla, Settings, Place, Alerts, Timetable,
                mosque display
 android/.../MainActivity.kt    GPS, DND/battery settings, method channel

@@ -1,8 +1,11 @@
-/// UI strings in English and Malayalam.
+/// UI strings. English and Malayalam are written side by side here; the
+/// other languages translate the English text through the tables in
+/// `lib/l10n/` (missing entries fall back to English).
 library;
 
 import '../core/alerts.dart';
 import '../core/prayer_calc.dart';
+import '../l10n/tables.dart';
 import 'settings.dart';
 
 class S {
@@ -10,7 +13,21 @@ class S {
   final Lang lang;
 
   bool get ml => lang == Lang.ml;
-  String _t(String en, String mal) => ml ? mal : en;
+
+  String _t(String en, String mal) => switch (lang) {
+    Lang.en => en,
+    Lang.ml => mal,
+    _ => translations[lang]?[en] ?? en,
+  };
+
+  /// Template with {0}, {1}… placeholders.
+  String _f(String en, String mal, List<Object> args) {
+    var out = _t(en, mal);
+    for (var i = 0; i < args.length; i++) {
+      out = out.replaceAll('{$i}', '${args[i]}');
+    }
+    return out;
+  }
 
   String get appTitle => _t('Waqt', 'വഖ്ത്');
   String get appSubtitle => _t('Salah times', 'നിസ്കാര സമയം');
@@ -34,8 +51,8 @@ class S {
   String get azan => _t('Azan', 'ബാങ്ക്');
   String get iqama => _t('Iqama', 'ഇഖാമത്ത്');
   String get next => _t('Next', 'അടുത്തത്');
-  String inTime(String d) => _t('in $d', '$d കഴിഞ്ഞ്');
-  String iqamaIn(String d) => _t('Iqama in $d', 'ഇഖാമത്തിന് $d');
+  String inTime(String d) => _f('in {0}', '{0} കഴിഞ്ഞ്', [d]);
+  String iqamaIn(String d) => _f('Iqama in {0}', 'ഇഖാമത്തിന് {0}', [d]);
   String get hoursShort => _t('h', 'മ');
   String get minutesShort => _t('m', 'മി');
   String get minutes => _t('minutes', 'മിനിറ്റ്');
@@ -77,9 +94,9 @@ class S {
 
   // Qibla.
   String qiblaBearing(String deg) =>
-      _t('Qibla is $deg° from North', 'ഖിബ്‌ല വടക്ക് നിന്ന് $deg°');
+      _f('Qibla is {0}° from North', 'ഖിബ്‌ല വടക്ക് നിന്ന് {0}°', [deg]);
   String distanceToKaaba(String km) =>
-      _t('$km km to the Kaaba', 'കഅ്ബയിലേക്ക് $km കി.മീ');
+      _f('{0} km to the Kaaba', 'കഅ്ബയിലേക്ക് {0} കി.മീ', [km]);
   String get qiblaHelp => _t(
     'Hold the phone flat, away from metal and magnets. If the needle '
         'drifts, move the phone in a figure-8 to calibrate.',
@@ -146,7 +163,9 @@ class S {
     'കേരളം ചന്ദ്രദർശനം പിന്തുടരുന്നു. ഹിജ്റ തീയതിയിൽ ഒരു ദിവസത്തെ '
         'വ്യത്യാസമുണ്ടെങ്കിൽ ഇവിടെ തിരുത്തുക.',
   );
-  String days(int n) => _t('$n day${n.abs() == 1 ? '' : 's'}', '$n ദിവസം');
+  String days(int n) => n.abs() == 1
+      ? _f('{0} day', '{0} ദിവസം', [n])
+      : _f('{0} days', '{0} ദിവസം', [n]);
   String get timetable => _t('Timetable', 'ടൈംടേബിൾ');
   String get alerts => _t('Azan & Iqama alerts', 'ബാങ്ക്, ഇഖാമത്ത് അലേർട്ടുകൾ');
   String get about => _t('About', 'വിവരങ്ങൾ');
@@ -247,24 +266,21 @@ class S {
   );
 
   // Notifications.
-  String azanTitle(Prayer p, bool friday) => _t(
-    '${prayer(p, friday: friday)} – Azan time',
-    '${prayer(p, friday: friday)} ബാങ്കിന്റെ സമയം',
-  );
-  String iqamaTitle(Prayer p, bool friday) => _t(
-    '${prayer(p, friday: friday)} – Iqama',
-    '${prayer(p, friday: friday)} ഇഖാമത്ത്',
-  );
-  String reminderTitle(Prayer p, bool friday, int minutes) => _t(
-    '${prayer(p, friday: friday)} in $minutes min',
-    '$minutes മിനിറ്റിന് ശേഷം ${prayer(p, friday: friday)}',
+  String azanTitle(Prayer p, bool friday) =>
+      _f('{0} – Azan time', '{0} ബാങ്കിന്റെ സമയം', [prayer(p, friday: friday)]);
+  String iqamaTitle(Prayer p, bool friday) =>
+      _f('{0} – Iqama', '{0} ഇഖാമത്ത്', [prayer(p, friday: friday)]);
+  String reminderTitle(Prayer p, bool friday, int minutes) => _f(
+    '{0} in {1} min',
+    '{1} മിനിറ്റിന് ശേഷം {0}',
+    [prayer(p, friday: friday), minutes],
   );
   String extraTitle(Prayer p) => switch (p) {
     Prayer.imsak => _t(
       'Imsak – Suhoor ends',
       'ഇംസാക് – അത്താഴ സമയം അവസാനിച്ചു',
     ),
-    _ => _t('${prayer(p)} time', '${prayer(p)} സമയം'),
+    _ => _f('{0} time', '{0} സമയം', [prayer(p)]),
   };
   String get keepAlertsTitle =>
       _t('Open Waqt to keep alerts on', 'അലേർട്ടുകൾ തുടരാൻ വഖ്ത് തുറക്കുക');
@@ -291,13 +307,14 @@ class S {
   String get removeTimetable => _t('Remove timetable', 'ടൈംടേബിൾ നീക്കുക');
   String get useTimetable => _t('Use timetable', 'ടൈംടേബിൾ ഉപയോഗിക്കുക');
   String get noTimetable => _t('No timetable imported.', 'ടൈംടേബിൾ ഇല്ല.');
-  String timetableInfo(int days, String offset) => _t(
-    '$days days of the year · UTC $offset',
-    'വർഷത്തിലെ $days ദിവസം · UTC $offset',
+  String timetableInfo(int days, String offset) => _f(
+    '{0} days of the year · UTC {1}',
+    'വർഷത്തിലെ {0} ദിവസം · UTC {1}',
+    [days, offset],
   );
   String get csvFormat => _t('CSV format', 'CSV ഫോർമാറ്റ്');
   String importError(String e) =>
-      _t('Could not import: $e', 'ഇറക്കുമതി പരാജയപ്പെട്ടു: $e');
+      _f('Could not import: {0}', 'ഇറക്കുമതി പരാജയപ്പെട്ടു: {0}', [e]);
   String get imported => _t('Timetable imported', 'ടൈംടേബിൾ ഇറക്കുമതി ചെയ്തു');
   String get exportCalculated =>
       _t('Copy calculated year as CSV', 'കണക്കാക്കിയ വർഷം CSV ആയി പകർത്തുക');
@@ -311,4 +328,7 @@ class S {
   // Display mode.
   String get exitDisplay =>
       _t('Tap and hold to exit', 'പുറത്തുകടക്കാൻ അമർത്തിപ്പിടിക്കുക');
+
+  /// Seconds unit in countdowns.
+  String get secondsShort => _t('s', 'സെ');
 }

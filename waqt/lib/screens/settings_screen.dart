@@ -144,14 +144,14 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.translate),
             title: Text(s.language),
-            trailing: SegmentedButton<Lang>(
-              segments: const [
-                ButtonSegment(value: Lang.en, label: Text('English')),
-                ButtonSegment(value: Lang.ml, label: Text('മലയാളം')),
-              ],
-              selected: {settings.lang},
-              onSelectionChanged: (v) =>
-                  settings.update((x) => x.lang = v.first),
+            subtitle: Text(settings.lang.nativeName),
+            onTap: () => _pick<Lang>(
+              context,
+              s.language,
+              Lang.values,
+              settings.lang,
+              (l) => l.nativeName,
+              (l) => settings.update((x) => x.lang = l),
             ),
           ),
           ListTile(

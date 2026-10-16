@@ -86,7 +86,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                 children: [
                   FittedBox(
                     child: Text(
-                      '$clock${settings.use24h ? '' : (w.hour < 12 ? ' AM' : ' PM')}',
+                      '$clock${settings.use24h ? '' : ' ${amPm(settings.lang, w.hour)}'}',
                       style: TextStyle(
                         color: fg,
                         fontSize: unit * 2.2,
@@ -96,7 +96,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                     ),
                   ),
                   Text(
-                    '${longDate(settings.lang, day.date)} · ${day.hijri.day} ${day.hijri.monthName(s.ml)} ${day.hijri.year}',
+                    '${longDate(settings.lang, day.date)} · ${hijriLabel(settings.lang, day.hijri)}',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: gold, fontSize: unit * 0.4),
                   ),

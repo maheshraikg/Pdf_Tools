@@ -247,7 +247,7 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
           ),
           Text(longDate(lang, day.date), style: t.bodyLarge),
           Text(
-            '${day.hijri.day} ${day.hijri.monthName(s.ml)} ${day.hijri.year}',
+            hijriLabel(settings.lang, day.hijri),
             style: t.bodyMedium?.copyWith(
               color: Theme.of(context).colorScheme.primary,
             ),

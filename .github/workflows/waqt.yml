@@ -8,6 +8,9 @@ on:
     paths: [ 'waqt/**', '.github/workflows/waqt.yml' ]
   workflow_dispatch:
 
+permissions:
+  contents: write  # publish the APK to the "waqt-apk-keep" pre-release
+
 jobs:
   build:
     name: Analyze, test and build release APK
@@ -47,3 +50,24 @@ jobs:
         with:
           name: waqt-release-apk
           path: waqt/build/app/outputs/flutter-apk/app-release.apk
+
+      # A direct, sign-in-free download link that always serves the newest
+      # build: https://github.com/<repo>/releases/download/waqt-apk-keep/waqt.apk
+      # Pre-release, so the PDF app stays the repo's "Latest" release; "keep"
+      # in the tag protects it from the prune-releases job.
+      - name: Publish APK to the waqt-apk-keep pre-release
+        if: >-
+          github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          cp build/app/outputs/flutter-apk/app-release.apk waqt.apk
+          gh release delete waqt-apk-keep --cleanup-tag --yes || true
+          gh release create waqt-apk-keep waqt.apk \
+            --prerelease \
+            --target "$SHA" \
+            --title "Waqt – latest test build" \
+            --notes "Latest Waqt APK built from ${SHA:0:7}. For testing; signed with the debug key."
+          echo "Direct download: https://github.com/${{ github.repository }}/releases/download/waqt-apk-keep/waqt.apk" >> "$GITHUB_STEP_SUMMARY"

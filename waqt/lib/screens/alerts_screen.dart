@@ -216,7 +216,7 @@ class _FixedIqamaTile extends StatelessWidget {
     String clock(int m) {
       final h = m ~/ 60, min = (m % 60).toString().padLeft(2, '0');
       if (settings.use24h) return '${h.toString().padLeft(2, '0')}:$min';
-      return '${h % 12 == 0 ? 12 : h % 12}:$min ${h < 12 ? 'AM' : 'PM'}';
+      return '${h % 12 == 0 ? 12 : h % 12}:$min ${amPm(settings.lang, h)}';
     }
 
     return ListTile(

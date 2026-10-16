@@ -22,7 +22,7 @@ String widgetJson(AppSettings settings, List<PrayerDay> days) {
         {
           'title':
               '${weekdayName(settings.lang, d.date.weekday)} ${d.day} ${monthName(settings.lang, d.month)} · '
-              '${d.hijri.day} ${d.hijri.monthName(s.ml)}',
+              '${d.hijri.day} ${hijriMonthName(settings.lang, d.hijri.month)}',
           'p': [
             for (final p in Prayer.fard)
               {

@@ -39,9 +39,6 @@ class HijriDate {
     'ദുൽ ഹിജ്ജ',
   ];
 
-  String monthName(bool malayalam) =>
-      (malayalam ? monthsMl : monthsEn)[month - 1];
-
   bool get isRamadan => month == 9;
 
   /// Hijri date of a Gregorian civil date, shifted by [adjustDays].

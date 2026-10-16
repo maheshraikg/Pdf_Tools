@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app/background.dart';
 import 'app/scope.dart';
@@ -85,6 +86,11 @@ class _WaqtAppState extends State<WaqtApp> with WidgetsBindingObserver {
         theme: buildTheme(Brightness.light),
         darkTheme: buildTheme(Brightness.dark),
         themeMode: widget.settings.themeMode,
+        // The app's language drives Material texts and the layout direction
+        // (Arabic and Urdu are right-to-left).
+        locale: Locale(widget.settings.lang.code),
+        supportedLocales: [for (final l in Lang.values) Locale(l.code)],
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
         home: const HomeShell(),
       ),
     ),

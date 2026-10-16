@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,10 +11,33 @@ import '../core/prayer_calc.dart';
 import '../core/timetable.dart';
 
 enum Lang {
-  en,
-  ml;
+  en('English'),
+  ml('മലയാളം'),
+  ar('العربية', rtl: true),
+  ur('اردو', rtl: true),
+  hi('हिन्दी'),
+  ta('தமிழ்'),
+  kn('ಕನ್ನಡ'),
+  bn('বাংলা'),
+  id('Bahasa Indonesia'),
+  ms('Bahasa Melayu'),
+  tr('Türkçe'),
+  fr('Français');
 
-  static Lang fromCode(String? c) => c == 'ml' ? ml : en;
+  const Lang(this.nativeName, {this.rtl = false});
+
+  /// Name of the language in itself (for the picker).
+  final String nativeName;
+
+  /// Right-to-left script.
+  final bool rtl;
+
+  /// ISO 639-1 code (also the Flutter locale).
+  String get code => name;
+
+  static Lang? tryCode(String? c) => values.asNameMap()[c];
+
+  static Lang fromCode(String? c) => tryCode(c) ?? en;
 }
 
 /// User preferences, persisted with shared_preferences.
@@ -127,7 +151,10 @@ class AppSettings extends ChangeNotifier {
 
   void _read() {
     final p = _prefs!;
-    lang = Lang.fromCode(p.getString('lang'));
+    // First run: the phone's language when we have it, else English.
+    lang =
+        Lang.tryCode(p.getString('lang')) ??
+        Lang.fromCode(ui.PlatformDispatcher.instance.locale.languageCode);
     themeMode =
         ThemeMode.values.asNameMap()[p.getString('theme')] ?? ThemeMode.system;
     use24h = p.getBool('use24h') ?? false;

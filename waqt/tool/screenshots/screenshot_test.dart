@@ -2,7 +2,8 @@
 //
 //   flutter test tool/screenshots/screenshot_test.dart
 //
-// Needs Roboto (from the Flutter SDK cache) and Noto Sans Malayalam
+// Needs Roboto (from the Flutter SDK cache) and Noto Sans for Malayalam,
+// Arabic, Devanagari, Tamil, Kannada and Bengali
 // (apt install fonts-noto-core). Output: docs/screenshots/*.png
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -39,11 +40,21 @@ void main() {
       '$mf/Roboto-Light.ttf',
     ]);
     await loadFont('MaterialIcons', ['$mf/MaterialIcons-Regular.otf']);
-    await loadFont('NotoMalayalam', [
-      '$noto/NotoSansMalayalam-Regular.ttf',
-      '$noto/NotoSansMalayalam-Bold.ttf',
-    ]);
-    debugFontFallback = ['NotoMalayalam'];
+    const scripts = [
+      'Malayalam',
+      'Arabic',
+      'Devanagari',
+      'Tamil',
+      'Kannada',
+      'Bengali',
+    ];
+    for (final sc in scripts) {
+      await loadFont('Noto$sc', [
+        '$noto/NotoSans$sc-Regular.ttf',
+        '$noto/NotoSans$sc-Bold.ttf',
+      ]);
+    }
+    debugFontFallback = [for (final sc in scripts) 'Noto$sc'];
     Directory('docs/screenshots').createSync(recursive: true);
   });
 
@@ -62,7 +73,7 @@ void main() {
     ..lang = lang
     ..placeChosen = true;
 
-  for (final lang in Lang.values) {
+  for (final lang in [Lang.en, Lang.ml]) {
     testWidgets('screens ${lang.name}', (tester) async {
       await tester.binding.setSurfaceSize(const Size(400, 860));
       final key = GlobalKey();
@@ -104,6 +115,22 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
     });
   }
+
+  testWidgets('today in every language', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 860));
+    final key = GlobalKey();
+    for (final lang in Lang.values.where((l) => l != Lang.en && l != Lang.ml)) {
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: WaqtApp(settings: settingsFor(lang), background: false),
+        ),
+      );
+      await shot(tester, key, 'lang_${lang.code}_today');
+      await tester.pumpWidget(const SizedBox());
+    }
+    await tester.pump(const Duration(seconds: 1));
+  });
 
   testWidgets('display mode', (tester) async {
     await tester.binding.setSurfaceSize(const Size(960, 540));

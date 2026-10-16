@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:waqt/app/scope.dart';
 import 'package:waqt/app/settings.dart';
+import 'package:waqt/app/strings.dart';
 import 'package:waqt/core/prayer_calc.dart';
 import 'package:waqt/main.dart';
 import 'package:waqt/screens/alerts_screen.dart';
@@ -50,9 +51,14 @@ void main() {
       final s = settings;
       await _pumpApp(tester, settings);
 
-      final str = S0(s.lang);
-      expect(find.text(str.fajr), findsWidgets);
-      expect(find.text(str.isha), findsWidgets);
+      final str = S(s.lang);
+      expect(find.text(str.prayer(Prayer.fajr)), findsWidgets);
+      expect(find.text(str.prayer(Prayer.isha)), findsWidgets);
+      // Arabic and Urdu lay out right-to-left.
+      expect(
+        Directionality.of(tester.element(find.byType(TodayScreen))),
+        lang.rtl ? TextDirection.rtl : TextDirection.ltr,
+      );
 
       for (final icon in [
         Icons.calendar_month_outlined,
@@ -156,12 +162,4 @@ void main() {
     tester.view.reset();
     await _dispose(tester);
   });
-}
-
-/// Prayer names used to find widgets.
-class S0 {
-  S0(this.lang);
-  final Lang lang;
-  String get fajr => lang == Lang.ml ? 'സുബ്ഹ്' : 'Fajr';
-  String get isha => lang == Lang.ml ? 'ഇശാ' : 'Isha';
 }
