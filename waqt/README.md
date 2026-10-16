@@ -11,7 +11,15 @@
 <img src="docs/screenshots/lang_hi_today.png" width="200">
 <img src="docs/screenshots/lang_ta_today.png" width="200">
 </p>
+<p>
+<img src="docs/screenshots/en_9_azan_sound.png" width="200">
+<img src="docs/screenshots/en_10_places.png" width="200">
+</p>
 <p><img src="docs/screenshots/en_6_display.png" width="600"></p>
+<p>
+<img src="docs/screenshots/en_7_display_next.png" width="295">
+<img src="docs/screenshots/en_8_display_announcement.png" width="295">
+</p>
 
 **Download the latest test build (APK):**
 https://github.com/maheshraikg/Pdf_Tools/releases/download/waqt-apk-keep/waqt.apk
@@ -42,8 +50,16 @@ Kerala and working anywhere. No ads, no tracking and no internet permission.
   stays right without the app running.
   - Alerts are scheduled as exact alarms (`alarmClock` mode), so they still
     fire when the phone is in Doze.
-  - The Azan uses the alarm audio stream and repeats until dismissed, for at
-    most 3 minutes.
+  - With the phone's notification sound, the Azan uses the alarm audio
+    stream and repeats until dismissed, for at most 3 minutes.
+- **Azan sound**: the phone's notification sound, a built-in soft chime or
+  deep bell, or any audio file on the phone (for example a recorded Azan
+  MP3), with a separate choice for Fajr. A small player plays it as an
+  alarm with a Stop button. It vibrates if you like, and on silent or
+  vibrate it stays quiet unless you allow it. It never plays during a call.
+- **Ramadan and Eid**: a Taraweeh alert on Ramadan nights after the Isha
+  Iqama, and Eid al-Fitr / Eid al-Adha prayer reminders 30 minutes before
+  the time you set (by the Hijri date, with your day correction).
 - **Auto silent**: switches the phone to vibrate, or to silent through Do
   Not Disturb, from Azan until N minutes after Iqama (a longer window for
   Jumu'ah), then restores the ringer. If you changed the ringer yourself
@@ -52,15 +68,22 @@ Kerala and working anywhere. No ads, no tracking and no internet permission.
   paste it). Days the chart covers use it exactly; other days are
   calculated. You can also copy the calculated year as CSV, as a starting
   point.
-- **Mosque display mode**: a full-screen clock for a prayer-room TV or
-  tablet. It shows the date, Hijri date, the next prayer or Iqama countdown,
-  and the Azan/Iqama table, keeps the screen on, and adapts to portrait or
-  landscape.
-- **Places**: 45 presets. All 14 Kerala districts and major towns come
-  first; Lakshadweep, Karnataka, Tamil Nadu, other Indian cities, the
-  Maldives and the Gulf follow. You can also use GPS (Android's own
-  `LocationManager`, no Google Play services) or enter coordinates by hand.
-  Picking a place applies its usual method and Asr school.
+- **Mosque display mode**: a full-screen display for a prayer-room TV or
+  tablet, with up to 7 rotating pages: the clock with the Azan/Iqama table,
+  a big next-prayer countdown, and up to 5 announcements. It shows the
+  mosque's name, keeps the countdown page on from 5 minutes before Azan
+  until Iqama, keeps the screen on and adapts to portrait or landscape.
+- **Places**: 45 presets (all 14 Kerala districts and major towns first),
+  plus a search over about 35,000 places worldwide: every town of 15,000+
+  people, every town of 1,000+ in Kerala, Lakshadweep, Karnataka, Tamil
+  Nadu and the Gulf (over 500 in Kerala). Places near your current one are
+  listed first, and other names work too (e.g. "Calicut"). World places
+  follow their own time zone, including daylight saving. You can also use
+  GPS (Android's own `LocationManager`, no Google Play services), which
+  names the nearest town, or enter coordinates by hand. Picking a place
+  applies its country's usual method and Asr school. Place data:
+  [GeoNames](https://www.geonames.org) (CC BY 4.0), built by
+  `tool/places/gen_cities.py`.
 - **Languages**: 12, chosen in Settings (the phone's language is used on
   first start): English, Malayalam (മലയാളം), Arabic (العربية), Urdu (اردو),
   Hindi (हिन्दी), Tamil (தமிழ்), Kannada (ಕನ್ನಡ), Bengali (বাংলা), Indonesian,
@@ -79,7 +102,7 @@ Kerala and working anywhere. No ads, no tracking and no internet permission.
 
 | Method | Fajr | Isha | Built-in margins |
 |---|---|---|---|
-| **Kerala (Samastha-style)** (default) | 19.8° | 18.4° | Dhuhr +3, Asr +2, Maghrib +3 min |
+| **Kerala (Samastha-style)** (default) | 19.8° | 18.4° | Dhuhr +3, Asr +2, Maghrib +3 min; checked against 69 Kerala charts: within 1 min on about 9 days in 10 |
 | Karachi | 18° | 18° | – |
 | Muslim World League | 18° | 17° | – |
 | Umm al-Qura | 18.5° | 90 min after Maghrib (120 in Ramadan) | – |
@@ -88,6 +111,7 @@ Kerala and working anywhere. No ads, no tracking and no internet permission.
 | Kuwait | 18° | 17.5° | – |
 | Egypt | 19.5° | 17.5° | – |
 | ISNA | 15° | 15° | – |
+| Southeast Asia (JAKIM, Kemenag, MUIS) | 20° | 18° | – |
 
 - **Asr**: Shafi'i (shadow factor 1) or Hanafi (2).
 - **High latitudes**: angle-based (the default), middle of the night, or one

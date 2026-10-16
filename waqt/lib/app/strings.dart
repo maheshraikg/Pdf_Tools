@@ -331,4 +331,112 @@ class S {
 
   /// Seconds unit in countdowns.
   String get secondsShort => _t('s', 'സെ');
+
+  // World places.
+  String nearPlace(String p) => _f('near {0}', '{0} സമീപം', [p]);
+  String get worldPlaces => _t('World places', 'ലോകത്തിലെ സ്ഥലങ്ങൾ');
+  String get searchWorldHint => _t(
+    'Type a town or city name to search 35,000 places worldwide.',
+    'ലോകമെമ്പാടുമുള്ള 35,000 സ്ഥലങ്ങളിൽ തിരയാൻ പട്ടണത്തിന്റെ പേര് ടൈപ്പ് ചെയ്യുക.',
+  );
+  String get geonamesCredit => _t(
+    'Place data: GeoNames (CC BY 4.0)',
+    'സ്ഥല വിവരങ്ങൾ: GeoNames (CC BY 4.0)',
+  );
+
+  // Azan sound.
+  String get azanSoundTitle => _t('Azan sound', 'ബാങ്ക് ശബ്ദം');
+  String get fajrSoundTitle => _t('Fajr Azan sound', 'സുബ്ഹ് ബാങ്ക് ശബ്ദം');
+  String get sameAsOthers =>
+      _t('Same as other prayers', 'മറ്റു നിസ്കാരങ്ങളുടേത് തന്നെ');
+  String soundKindName(AzanSound k) => switch (k) {
+    AzanSound.system => _t(
+      'Phone notification sound',
+      'ഫോണിലെ അറിയിപ്പ് ശബ്ദം',
+    ),
+    AzanSound.chime => _t('Soft chime', 'മൃദുവായ മണിനാദം'),
+    AzanSound.bell => _t('Deep bell', 'ഗംഭീര മണി'),
+    AzanSound.custom => _t(
+      'Audio file (e.g. Azan MP3)',
+      'ഓഡിയോ ഫയൽ (ഉദാ. ബാങ്ക് MP3)',
+    ),
+  };
+  String soundName(SoundChoice c) =>
+      c.sound == AzanSound.custom && c.fileName != null
+      ? c.fileName!
+      : soundKindName(c.sound);
+  String get systemSoundHelp =>
+      _t('Repeats until you dismiss it', 'നിർത്തുന്നത് വരെ ആവർത്തിക്കും');
+  String get customSoundHelp => _t(
+    'Pick a recorded Azan saved on your phone',
+    'ഫോണിൽ സേവ് ചെയ്ത ബാങ്ക് റെക്കോർഡിംഗ് തിരഞ്ഞെടുക്കുക',
+  );
+  String get soundError =>
+      _t('Could not use this audio file', 'ഈ ഓഡിയോ ഫയൽ ഉപയോഗിക്കാനായില്ല');
+  String get playSound => _t('Play', 'പ്ലേ ചെയ്യുക');
+  String get stop => _t('Stop', 'നിർത്തുക');
+  String get vibrate => _t('Vibrate', 'വൈബ്രേറ്റ്');
+  String get playWhenSilent => _t(
+    'Play even when the phone is silent',
+    'ഫോൺ സൈലന്റിലാണെങ്കിലും പ്ലേ ചെയ്യുക',
+  );
+  String get playWhenSilentHelp => _t(
+    'Off: on silent or vibrate the Azan only shows and vibrates.',
+    'ഓഫ്: സൈലന്റ്/വൈബ്രേറ്റിൽ ബാങ്ക് കാണിക്കുകയും വൈബ്രേറ്റ് ചെയ്യുകയും മാത്രം.',
+  );
+
+  // Taraweeh and Eid.
+  String get specialOccasions => _t('Ramadan and Eid', 'റമളാനും പെരുന്നാളും');
+  String specialTitle(SpecialEvent e) => switch (e) {
+    SpecialEvent.taraweeh => _t('Taraweeh', 'തറാവീഹ്'),
+    SpecialEvent.eidAlFitr => _t(
+      'Eid al-Fitr prayer',
+      'ചെറിയ പെരുന്നാൾ നിസ്കാരം',
+    ),
+    SpecialEvent.eidAlAdha => _t(
+      'Eid al-Adha prayer',
+      'ബലി പെരുന്നാൾ നിസ്കാരം',
+    ),
+  };
+  String get taraweehHelp => _t(
+    'Alert on Ramadan nights after the Isha Iqama',
+    'റമളാൻ രാത്രികളിൽ ഇശാ ഇഖാമത്തിന് ശേഷം അറിയിപ്പ്',
+  );
+  String get taraweehAfterIsha =>
+      _t('Minutes after Isha Iqama', 'ഇശാ ഇഖാമത്തിന് ശേഷം മിനിറ്റ്');
+  String get eidAlert => _t('Eid prayer alert', 'പെരുന്നാൾ നിസ്കാര അറിയിപ്പ്');
+  String get eidHelp => _t(
+    'Reminds you 30 minutes before the Eid prayer (by the Hijri date)',
+    'പെരുന്നാൾ നിസ്കാരത്തിന് 30 മിനിറ്റ് മുമ്പ് ഓർമിപ്പിക്കും (ഹിജ്റ തീയതി പ്രകാരം)',
+  );
+  String eidPrayerAt(String t) =>
+      _f('Eid prayer at {0}', 'പെരുന്നാൾ നിസ്കാരം {0}-ന്', [t]);
+
+  // Mosque display pages.
+  String displayPagesSummary(int n) => n == 1
+      ? _t('1 page', '1 പേജ്')
+      : _f('{0} pages, rotating', '{0} പേജുകൾ, മാറിമാറി', [n]);
+  String get openDisplay => _t('Open the display', 'ഡിസ്‌പ്ലേ തുറക്കുക');
+  String get mosqueName => _t('Mosque name', 'പള്ളിയുടെ പേര്');
+  String get mosqueNameHint =>
+      _t('Shown at the top of the display', 'ഡിസ്‌പ്ലേയുടെ മുകളിൽ കാണിക്കും');
+  String get nextPrayerPage => _t('Next prayer page', 'അടുത്ത നിസ്കാരം പേജ്');
+  String get nextPrayerPageHelp => _t(
+    'Big countdown; stays on from 5 minutes before Azan until Iqama',
+    'വലിയ കൗണ്ട്ഡൗൺ; ബാങ്കിന് 5 മിനിറ്റ് മുമ്പ് മുതൽ ഇഖാമത്ത് വരെ ഇത് തന്നെ',
+  );
+  String get secondsPerPage => _t('Seconds per page', 'ഓരോ പേജിനും സെക്കൻഡ്');
+  String get announcements => _t('Announcements', 'അറിയിപ്പുകൾ');
+  String get addAnnouncement => _t('Add announcement', 'അറിയിപ്പ് ചേർക്കുക');
+  String get announcementHint => _t(
+    'e.g. "Please switch off your phones"',
+    'ഉദാ. "ദയവായി ഫോൺ ഓഫ് ചെയ്യുക"',
+  );
+  String get delete => _t('Delete', 'നീക്കം ചെയ്യുക');
+  String get displayPagesHelp => _t(
+    'The display shows up to 7 pages: prayer times, the next prayer and 5 '
+        'announcements. Tap and hold the display to exit.',
+    'ഡിസ്‌പ്ലേയിൽ 7 പേജുകൾ വരെ: നിസ്കാര സമയങ്ങൾ, അടുത്ത നിസ്കാരം, 5 '
+        'അറിയിപ്പുകൾ. പുറത്തുകടക്കാൻ ഡിസ്‌പ്ലേ അമർത്തിപ്പിടിക്കുക.',
+  );
 }

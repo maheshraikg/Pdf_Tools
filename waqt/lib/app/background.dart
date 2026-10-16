@@ -4,7 +4,7 @@ library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest.dart' as tzdata;
+import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
 import '../core/alerts.dart';
@@ -146,8 +146,10 @@ class Background {
       final exact = await _android?.canScheduleExactNotifications() ?? false;
 
       await _plugin.cancelAll();
+      final playerEvents = <Map<String, Object>>[];
       for (final a in plan) {
         final title = switch (a.kind) {
+          _ when a.special != null => s.specialTitle(a.special!),
           _ when !a.prayer.isFard => s.extraTitle(a.prayer),
           AlertKind.azan => s.azanTitle(a.prayer, a.friday),
           AlertKind.iqama => s.iqamaTitle(a.prayer, a.friday),
@@ -158,10 +160,28 @@ class Background {
           ),
         };
         final body = switch (a.kind) {
+          _ when a.special == SpecialEvent.taraweeh =>
+            '${hm(settings, a.at)} · ${settings.place.label(s.ml)}',
+          _ when a.special != null => s.eidPrayerAt(
+            hm(settings, a.at.add(Duration(minutes: a.minutesBefore))),
+          ),
           AlertKind.reminder when a.prayer.isFard =>
             '${s.azan} ${hm(settings, a.at.add(Duration(minutes: a.minutesBefore)))}',
           _ => '${hm(settings, a.at)} · ${settings.place.label(s.ml)}',
         };
+        final sound = a.kind == AlertKind.azan
+            ? config.soundFor(a.prayer).playerSound
+            : null;
+        if (sound != null) {
+          // The native player shows its own notification with Stop.
+          playerEvents.add({
+            'at': a.at.millisecondsSinceEpoch,
+            'title': title,
+            'body': body,
+            'sound': sound,
+          });
+          continue;
+        }
         await _plugin.zonedSchedule(
           id: a.id,
           scheduledDate: tz.TZDateTime.from(a.at, tz.UTC),
@@ -190,6 +210,13 @@ class Background {
         );
       }
 
+      await Native.setAzanAlarms(
+        playerEvents,
+        vibrate: config.vibrate,
+        playWhenSilent: config.playWhenSilent,
+        stopLabel: s.stop,
+        channelName: s.channelAzan,
+      );
       await Native.updateWidget(widgetJson(settings, days));
 
       final silent = planSilent(days, config, now);
@@ -207,6 +234,15 @@ class Background {
     if (!_supported) return;
     await init();
     final s = S(settings.lang);
+    final sound = settings.alerts.soundFor(Prayer.fajr).playerSound;
+    if (sound != null) {
+      await Native.playSound(
+        sound,
+        s.azanTitle(Prayer.fajr, false),
+        '${hm(settings, DateTime.now())} · ${settings.place.label(s.ml)}',
+      );
+      return;
+    }
     await _plugin.show(
       id: kTestId,
       title: s.azanTitle(Prayer.fajr, false),

@@ -118,9 +118,9 @@ class DayCalculator {
       month: month,
       day: day,
       source: source,
-      utcOffsetMinutes:
-          place.utcOffsetMinutes ??
-          DateTime(year, month, day, 12).timeZoneOffset.inMinutes,
+      utcOffsetMinutes: place.offsetMinutesAt(
+        DateTime.utc(year, month, day, 12),
+      ),
       hijri: HijriDate.fromGregorian(
         year,
         month,

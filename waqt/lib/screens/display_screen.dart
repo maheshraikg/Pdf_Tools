@@ -10,13 +10,17 @@ import '../core/prayer_calc.dart';
 import '../ui/theme.dart';
 import '../ui/widgets.dart';
 
-/// Full-screen clock for a mosque / prayer-room screen: current time,
-/// date, next prayer countdown, Azan and Iqama times. Keeps the screen on.
+/// Full-screen display for a mosque / prayer-room screen. Pages rotate:
+/// the clock with Azan and Iqama times, a big next-prayer countdown and up
+/// to five announcements. Keeps the screen on.
 class DisplayScreen extends StatefulWidget {
-  const DisplayScreen({super.key, this.keepAwake = true});
+  const DisplayScreen({super.key, this.keepAwake = true, this.clock});
 
   /// Off in tests (no platform channels there).
   final bool keepAwake;
+
+  /// Current time (tests); null = the real clock.
+  final DateTime Function()? clock;
 
   @override
   State<DisplayScreen> createState() => _DisplayScreenState();
@@ -29,7 +33,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
   void initState() {
     super.initState();
     _tick = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) setState(() {});
+      if (mounted) setState(() => _seconds++);
     });
     if (widget.keepAwake) {
       WakelockPlus.enable();
@@ -47,19 +51,23 @@ class _DisplayScreenState extends State<DisplayScreen> {
     super.dispose();
   }
 
+  int _seconds = 0;
+
   @override
   Widget build(BuildContext context) {
     final settings = context.settings, s = context.s;
-    final now = DateTime.now().toUtc();
-    final today = settings.today;
+    final now = (widget.clock?.call() ?? DateTime.now()).toUtc();
+    final w = settings.wall(now);
+    final today = DateTime.utc(w.year, w.month, w.day);
     final days = settings.calculator.days(today, 2);
     final day = days.first;
     final next = nextPrayer(days, now);
-    final w = settings.wall(now);
     String two(int v) => v.toString().padLeft(2, '0');
     final clock = settings.use24h
         ? '${two(w.hour)}:${two(w.minute)}'
         : '${w.hour % 12 == 0 ? 12 : w.hour % 12}:${two(w.minute)}';
+    final clockFull =
+        '$clock${settings.use24h ? '' : ' ${amPm(settings.lang, w.hour)}'}';
 
     // Between Azan and Iqama: big Iqama countdown.
     Prayer? waitingIqama;
@@ -70,6 +78,24 @@ class _DisplayScreenState extends State<DisplayScreen> {
         waitingIqama = p;
         iqamaAt = iq;
       }
+    }
+
+    // Pages: times, next prayer, announcements. They rotate, but from Azan
+    // to Iqama (and in the last 5 minutes before Azan) the countdown stays.
+    final pages = <String>[
+      'times',
+      if (settings.displayNextPage) 'next',
+      for (var i = 0; i < settings.announcements.length; i++) 'a$i',
+    ];
+    final soon =
+        next != null && next.at.difference(now) <= const Duration(minutes: 5);
+    final String page;
+    if (waitingIqama != null || soon) {
+      page = settings.displayNextPage ? 'next' : 'times';
+    } else {
+      page =
+          pages[(_seconds ~/ settings.displaySeconds.clamp(5, 120)) %
+              pages.length];
     }
 
     const gold = kGold;
@@ -90,69 +116,85 @@ class _DisplayScreenState extends State<DisplayScreen> {
                 builder: (context, box) {
                   final wide = box.maxWidth > box.maxHeight;
                   final unit = (wide ? box.maxHeight : box.maxWidth) / 10;
-                  final header = Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      FittedBox(
-                        child: Text(
-                          '$clock${settings.use24h ? '' : ' ${amPm(settings.lang, w.hour)}'}',
+                  final dateLine =
+                      '${longDate(settings.lang, day.date)} · ${hijriLabel(settings.lang, day.hijri)}';
+                  final nameLine = settings.mosqueName.trim().isEmpty
+                      ? null
+                      : Text(
+                          settings.mosqueName.trim(),
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: fg,
-                            fontSize: unit * 2.2,
-                            fontWeight: FontWeight.w300,
-                            fontFeatures: const [FontFeature.tabularFigures()],
+                            color: gold,
+                            fontSize: unit * 0.55,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        );
+
+                  Widget timesPage() {
+                    final header = Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ?nameLine,
+                        FittedBox(
+                          child: Text(
+                            clockFull,
+                            style: TextStyle(
+                              color: fg,
+                              fontSize: unit * 2.2,
+                              fontWeight: FontWeight.w300,
+                              fontFeatures: const [
+                                FontFeature.tabularFigures(),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Text(
-                        '${longDate(settings.lang, day.date)} · ${hijriLabel(settings.lang, day.hijri)}',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: gold, fontSize: unit * 0.4),
-                      ),
-                      SizedBox(height: unit * 0.3),
-                      if (waitingIqama != null)
                         Text(
-                          '${s.prayer(waitingIqama, friday: day.isFriday)} · ${s.iqama} ${clockCountdown(iqamaAt!.difference(now))}',
-                          style: TextStyle(
-                            color: fg,
-                            fontSize: unit * 0.7,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      else if (next != null)
-                        Text(
-                          '${s.next}: ${s.prayer(next.prayer, friday: next.day.isFriday)} · ${clockCountdown(next.at.difference(now))}',
-                          style: TextStyle(color: fg, fontSize: unit * 0.6),
+                          dateLine,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: gold, fontSize: unit * 0.4),
                         ),
-                    ],
-                  );
-                  final table = _Table(
-                    unit: unit,
-                    rows: [
-                      for (final p in Prayer.fard)
-                        (
-                          name: s.prayer(p, friday: day.isFriday),
-                          azan: hm(settings, day[p]),
-                          iqama: hm(
-                            settings,
-                            iqamaTime(day, p, settings.alerts),
+                        SizedBox(height: unit * 0.3),
+                        if (waitingIqama != null)
+                          Text(
+                            '${s.prayer(waitingIqama, friday: day.isFriday)} · ${s.iqama} ${clockCountdown(iqamaAt!.difference(now))}',
+                            style: TextStyle(
+                              color: fg,
+                              fontSize: unit * 0.7,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        else if (next != null)
+                          Text(
+                            '${s.next}: ${s.prayer(next.prayer, friday: next.day.isFriday)} · ${clockCountdown(next.at.difference(now))}',
+                            style: TextStyle(color: fg, fontSize: unit * 0.6),
                           ),
-                          highlight:
-                              p == waitingIqama ||
-                              (waitingIqama == null &&
-                                  next?.prayer == p &&
-                                  next?.day == day),
-                        ),
-                    ],
-                    azanLabel: s.azan,
-                    iqamaLabel: s.iqama,
-                    sunrise:
-                        '${s.prayer(Prayer.sunrise)} ${hm(settings, day[Prayer.sunrise])}',
-                  );
-                  return Padding(
-                    padding: EdgeInsets.all(unit * 0.3),
+                      ],
+                    );
+                    final table = _Table(
+                      unit: unit,
+                      rows: [
+                        for (final p in Prayer.fard)
+                          (
+                            name: s.prayer(p, friday: day.isFriday),
+                            azan: hm(settings, day[p]),
+                            iqama: hm(
+                              settings,
+                              iqamaTime(day, p, settings.alerts),
+                            ),
+                            highlight:
+                                p == waitingIqama ||
+                                (waitingIqama == null &&
+                                    next?.prayer == p &&
+                                    next?.day == day),
+                          ),
+                      ],
+                      azanLabel: s.azan,
+                      iqamaLabel: s.iqama,
+                      sunrise:
+                          '${s.prayer(Prayer.sunrise)} ${hm(settings, day[Prayer.sunrise])}',
+                    );
                     // scaleDown: any screen shape fits without overflow.
-                    child: wide
+                    return wide
                         ? Row(
                             children: [
                               Expanded(child: _Fit(header)),
@@ -173,7 +215,149 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                 ),
                               ),
                             ],
+                          );
+                  }
+
+                  Widget footer() => Text(
+                    '$clockFull · $dateLine',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: fg.withValues(alpha: 0.75),
+                      fontSize: unit * 0.38,
+                    ),
+                  );
+
+                  Widget nextPage() {
+                    final iq = waitingIqama != null;
+                    final p = iq ? waitingIqama : next?.prayer;
+                    if (p == null) return timesPage();
+                    final friday = iq ? day.isFriday : next!.day.isFriday;
+                    final at = iq ? iqamaAt! : next!.at;
+                    return Column(
+                      children: [
+                        ?nameLine,
+                        Expanded(
+                          child: _Fit(
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  (iq ? s.iqama : s.next).toUpperCase(),
+                                  style: TextStyle(
+                                    color: gold,
+                                    fontSize: unit * 0.55,
+                                    letterSpacing: unit * 0.08,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  '${s.prayer(p, friday: friday)}  ${hm(settings, at)}',
+                                  style: TextStyle(
+                                    color: fg,
+                                    fontSize: unit * 1.1,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                                Directionality(
+                                  textDirection: TextDirection.ltr,
+                                  child: Text(
+                                    clockCountdown(
+                                      at.difference(now),
+                                      withHours: true,
+                                    ),
+                                    style: TextStyle(
+                                      color: fg,
+                                      fontSize: unit * 2.6,
+                                      fontWeight: FontWeight.w200,
+                                      fontFeatures: const [
+                                        FontFeature.tabularFigures(),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
+                        ),
+                        footer(),
+                      ],
+                    );
+                  }
+
+                  Widget announcementPage(String text) => Column(
+                    children: [
+                      ?nameLine,
+                      Expanded(
+                        child: _Fit(
+                          SizedBox(
+                            width: unit * (wide ? 14 : 9),
+                            child: Text(
+                              text,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: fg,
+                                fontSize: unit * 0.9,
+                                height: 1.3,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (next != null)
+                        Text(
+                          '${s.next}: ${s.prayer(next.prayer, friday: next.day.isFriday)} ${hm(settings, next.at)} · ${clockCountdown(next.at.difference(now))}',
+                          style: TextStyle(color: gold, fontSize: unit * 0.45),
+                        ),
+                      footer(),
+                    ],
+                  );
+
+                  final Widget body = switch (page) {
+                    'times' => timesPage(),
+                    'next' => nextPage(),
+                    _ => announcementPage(
+                      settings.announcements[int.parse(page.substring(1))],
+                    ),
+                  };
+                  return Padding(
+                    padding: EdgeInsets.all(unit * 0.3),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 600),
+                            child: KeyedSubtree(
+                              key: ValueKey(page),
+                              child: body,
+                            ),
+                          ),
+                        ),
+                        if (pages.length > 1)
+                          Padding(
+                            padding: EdgeInsets.only(top: unit * 0.15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                for (final p in pages)
+                                  Container(
+                                    width: unit * 0.12,
+                                    height: unit * 0.12,
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: unit * 0.06,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: p == page
+                                          ? gold
+                                          : fg.withValues(alpha: 0.25),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
                   );
                 },
               ),

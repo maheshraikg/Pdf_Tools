@@ -1,6 +1,9 @@
 /// Places: a preset list (Kerala first) plus GPS / manual entries.
 library;
 
+import 'package:timezone/data/latest_all.dart' as tzdata;
+import 'package:timezone/timezone.dart' as tz;
+
 import 'prayer_calc.dart';
 
 class Place {
@@ -12,6 +15,7 @@ class Place {
     required this.longitude,
     this.elevation = 0,
     this.utcOffsetMinutes,
+    this.timeZone,
     this.region = '',
     this.methodId = 'kerala',
     this.asr = AsrMethod.shafii,
@@ -27,6 +31,10 @@ class Place {
   /// Fixed UTC offset of the place, or null to use the phone's time zone
   /// (GPS and manual places).
   final int? utcOffsetMinutes;
+
+  /// IANA time zone (world cities), used when [utcOffsetMinutes] is null so
+  /// daylight saving is followed.
+  final String? timeZone;
   final String region;
 
   /// Suggested method and Asr school, applied when the place is picked.
@@ -34,6 +42,16 @@ class Place {
   final AsrMethod asr;
 
   String label(bool malayalam) => malayalam && nameMl != null ? nameMl! : name;
+
+  /// Minutes east of UTC on the place's clocks at the instant [utc].
+  int offsetMinutesAt(DateTime utc) {
+    if (utcOffsetMinutes != null) return utcOffsetMinutes!;
+    final loc = timeZone == null ? null : _location(timeZone!);
+    if (loc != null) {
+      return loc.timeZone(utc.millisecondsSinceEpoch).offset.inMinutes;
+    }
+    return utc.toLocal().timeZoneOffset.inMinutes;
+  }
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -43,6 +61,7 @@ class Place {
     'lng': longitude,
     'elev': elevation,
     if (utcOffsetMinutes != null) 'utc': utcOffsetMinutes,
+    if (timeZone != null) 'tz': timeZone,
     'region': region,
     'method': methodId,
     'asr': asr.name,
@@ -56,6 +75,7 @@ class Place {
     longitude: (j['lng'] as num).toDouble(),
     elevation: (j['elev'] as num?)?.toDouble() ?? 0,
     utcOffsetMinutes: j['utc'] as int?,
+    timeZone: j['tz'] as String?,
     region: j['region'] as String? ?? '',
     methodId: j['method'] as String? ?? 'kerala',
     asr: AsrMethod.values.asNameMap()[j['asr']] ?? AsrMethod.shafii,
@@ -68,11 +88,33 @@ class Place {
       other.latitude == latitude &&
       other.longitude == longitude &&
       other.elevation == elevation &&
-      other.utcOffsetMinutes == utcOffsetMinutes;
+      other.utcOffsetMinutes == utcOffsetMinutes &&
+      other.timeZone == timeZone;
 
   @override
-  int get hashCode =>
-      Object.hash(id, latitude, longitude, elevation, utcOffsetMinutes);
+  int get hashCode => Object.hash(
+    id,
+    latitude,
+    longitude,
+    elevation,
+    utcOffsetMinutes,
+    timeZone,
+  );
+}
+
+bool _tzLoaded = false;
+
+/// The IANA zone [name], or null when unknown.
+tz.Location? _location(String name) {
+  if (!_tzLoaded) {
+    tzdata.initializeTimeZones();
+    _tzLoaded = true;
+  }
+  try {
+    return tz.getLocation(name);
+  } on tz.LocationNotFoundException {
+    return null;
+  }
 }
 
 const _ist = 330;

@@ -5,6 +5,7 @@ import '../app/settings.dart';
 import '../core/prayer_calc.dart';
 import '../ui/widgets.dart';
 import 'alerts_screen.dart';
+import 'display_settings_screen.dart';
 import 'place_screen.dart';
 import 'timetable_screen.dart';
 
@@ -51,6 +52,15 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => push(const TimetableScreen()),
+              ),
+              ListTile(
+                leading: const IconBadge(Icons.tv),
+                title: Text(s.displayMode),
+                subtitle: Text(
+                  s.displayPagesSummary(settings.displayPageCount),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => push(const DisplaySettingsScreen()),
               ),
             ],
           ),
@@ -335,11 +345,16 @@ class MinutesStepper extends StatelessWidget {
     required this.max,
     required this.onChanged,
     this.zeroLabel,
+    this.unit,
+    this.step = 1,
   });
 
   final String label;
-  final int value, min, max;
+  final int value, min, max, step;
   final String? zeroLabel;
+
+  /// Unit after the number (default: minutes).
+  final String? unit;
   final ValueChanged<int> onChanged;
 
   @override
@@ -353,21 +368,25 @@ class MinutesStepper extends StatelessWidget {
         children: [
           IconButton(
             icon: const Icon(Icons.remove_circle_outline),
-            onPressed: value > min ? () => onChanged(value - 1) : null,
+            onPressed: value > min
+                ? () => onChanged((value - step).clamp(min, max))
+                : null,
           ),
           SizedBox(
             width: 64,
             child: Text(
               value == 0 && zeroLabel != null
                   ? zeroLabel!
-                  : '$value ${s.minutesShort}',
+                  : '$value ${unit ?? s.minutesShort}',
               textAlign: TextAlign.center,
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
           IconButton(
             icon: const Icon(Icons.add_circle_outline),
-            onPressed: value < max ? () => onChanged(value + 1) : null,
+            onPressed: value < max
+                ? () => onChanged((value + step).clamp(min, max))
+                : null,
           ),
         ],
       ),

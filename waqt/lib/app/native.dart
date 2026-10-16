@@ -1,6 +1,8 @@
 /// Android-only features implemented in MainActivity.kt / SilentScheduler.kt.
 library;
 
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -97,4 +99,30 @@ class Native {
       ],
     });
   }
+
+  /// Replaces the Azan player schedule: events are maps with at (epoch ms),
+  /// title, body and sound.
+  static Future<void> setAzanAlarms(
+    List<Map<String, Object>> events, {
+    required bool vibrate,
+    required bool playWhenSilent,
+    required String stopLabel,
+    required String channelName,
+  }) => _call<void>('setAzanAlarms', {
+    'events': jsonEncode(events),
+    'vibrate': vibrate,
+    'whenSilent': playWhenSilent,
+    'stopLabel': stopLabel,
+    'channelName': channelName,
+  });
+
+  /// Copies a picked audio file into app storage; returns its sound id.
+  static Future<String?> saveSound(String slot, String ext, Uint8List bytes) =>
+      _call<String>('saveSound', {'slot': slot, 'ext': ext, 'bytes': bytes});
+
+  /// Plays [sound] now (preview / test) with a Stop notification.
+  static Future<void> playSound(String sound, String title, String body) =>
+      _call<void>('playSound', {'sound': sound, 'title': title, 'body': body});
+
+  static Future<void> stopSound() => _call<void>('stopSound');
 }

@@ -151,6 +151,52 @@ const Map<String, String> arStrings = {
   'Open Waqt to refresh': 'افتح وقت للتحديث',
   'Tap and hold to exit': 'اضغط مطولًا للخروج',
   's': 'ث',
+  'near {0}': 'قرب {0}',
+  'World places': 'أماكن حول العالم',
+  'Type a town or city name to search 35,000 places worldwide.':
+      'اكتب اسم مدينة أو بلدة للبحث في 35,000 مكان حول العالم.',
+  'Place data: GeoNames (CC BY 4.0)': 'بيانات الأماكن: GeoNames (CC BY 4.0)',
+  'Azan sound': 'صوت الأذان',
+  'Fajr Azan sound': 'صوت أذان الفجر',
+  'Same as other prayers': 'مثل باقي الصلوات',
+  'Phone notification sound': 'صوت إشعارات الهاتف',
+  'Soft chime': 'رنين ناعم',
+  'Deep bell': 'جرس عميق',
+  'Audio file (e.g. Azan MP3)': 'ملف صوتي (مثل أذان MP3)',
+  'Repeats until you dismiss it': 'يتكرر حتى توقفه',
+  'Pick a recorded Azan saved on your phone':
+      'اختر تسجيل أذان محفوظاً في هاتفك',
+  'Could not use this audio file': 'تعذّر استخدام هذا الملف الصوتي',
+  'Play': 'تشغيل',
+  'Stop': 'إيقاف',
+  'Play even when the phone is silent': 'التشغيل حتى لو كان الهاتف صامتاً',
+  'Off: on silent or vibrate the Azan only shows and vibrates.':
+      'عند الإيقاف: في الوضع الصامت أو الاهتزاز يظهر الأذان ويهتز فقط.',
+  'Ramadan and Eid': 'رمضان والعيد',
+  'Taraweeh': 'التراويح',
+  'Eid al-Fitr prayer': 'صلاة عيد الفطر',
+  'Eid al-Adha prayer': 'صلاة عيد الأضحى',
+  'Alert on Ramadan nights after the Isha Iqama':
+      'تنبيه في ليالي رمضان بعد إقامة العشاء',
+  'Minutes after Isha Iqama': 'دقائق بعد إقامة العشاء',
+  'Eid prayer alert': 'تنبيه صلاة العيد',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
+      'يذكّرك قبل صلاة العيد بـ 30 دقيقة (حسب التاريخ الهجري)',
+  'Eid prayer at {0}': 'صلاة العيد الساعة {0}',
+  '1 page': 'صفحة واحدة',
+  '{0} pages, rotating': '{0} صفحات بالتناوب',
+  'Open the display': 'فتح الشاشة',
+  'Mosque name': 'اسم المسجد',
+  'Shown at the top of the display': 'يظهر أعلى الشاشة',
+  'Next prayer page': 'صفحة الصلاة القادمة',
+  'Big countdown; stays on from 5 minutes before Azan until Iqama':
+      'عدّ تنازلي كبير؛ يبقى من 5 دقائق قبل الأذان حتى الإقامة',
+  'Seconds per page': 'ثوانٍ لكل صفحة',
+  'Announcements': 'الإعلانات',
+  'Add announcement': 'إضافة إعلان',
+  'e.g. "Please switch off your phones"': 'مثال: "يرجى إغلاق الهواتف"',
+  'Delete': 'حذف',
+  'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'تعرض الشاشة حتى 7 صفحات: أوقات الصلاة والصلاة القادمة و5 إعلانات. اضغط مطولاً على الشاشة للخروج.',
 };
 
 const List<String> arHijriMonths = [

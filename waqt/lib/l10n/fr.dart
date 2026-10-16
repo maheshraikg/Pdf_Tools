@@ -147,6 +147,52 @@ const Map<String, String> frStrings = {
   'Open Waqt to refresh': 'Ouvrez Waqt pour actualiser',
   'Tap and hold to exit': 'Appui long pour quitter',
   's': 's',
+  'near {0}': 'près de {0}',
+  'World places': 'Lieux du monde',
+  'Type a town or city name to search 35,000 places worldwide.': 'Tapez le nom d\'une ville pour chercher parmi 35 000 lieux dans le monde.',
+  'Place data: GeoNames (CC BY 4.0)':
+      'Données des lieux : GeoNames (CC BY 4.0)',
+  'Azan sound': 'Son de l\'adhan',
+  'Fajr Azan sound': 'Son de l\'adhan du Fajr',
+  'Same as other prayers': 'Comme les autres prières',
+  'Phone notification sound': 'Son de notification du téléphone',
+  'Soft chime': 'Carillon doux',
+  'Deep bell': 'Cloche grave',
+  'Audio file (e.g. Azan MP3)': 'Fichier audio (ex. adhan MP3)',
+  'Repeats until you dismiss it': 'Se répète jusqu\'à ce que vous l\'arrêtiez',
+  'Pick a recorded Azan saved on your phone':
+      'Choisissez un enregistrement d\'adhan sur votre téléphone',
+  'Could not use this audio file': 'Impossible d\'utiliser ce fichier audio',
+  'Play': 'Écouter',
+  'Stop': 'Arrêter',
+  'Play even when the phone is silent':
+      'Jouer même si le téléphone est en silencieux',
+  'Off: on silent or vibrate the Azan only shows and vibrates.': 'Désactivé : en silencieux ou vibreur, l\'adhan s\'affiche et vibre seulement.',
+  'Ramadan and Eid': 'Ramadan et Aïd',
+  'Taraweeh': 'Tarawih',
+  'Eid al-Fitr prayer': 'Prière de l\'Aïd al-Fitr',
+  'Eid al-Adha prayer': 'Prière de l\'Aïd al-Adha',
+  'Alert on Ramadan nights after the Isha Iqama':
+      'Alerte les nuits de Ramadan après l\'iqama d\'Isha',
+  'Minutes after Isha Iqama': 'Minutes après l\'iqama d\'Isha',
+  'Eid prayer alert': 'Alerte de la prière de l\'Aïd',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
+      'Rappel 30 minutes avant la prière de l\'Aïd (selon la date hégirienne)',
+  'Eid prayer at {0}': 'Prière de l\'Aïd à {0}',
+  '1 page': '1 page',
+  '{0} pages, rotating': '{0} pages en alternance',
+  'Open the display': 'Ouvrir l\'affichage',
+  'Mosque name': 'Nom de la mosquée',
+  'Shown at the top of the display': 'Affiché en haut de l\'écran',
+  'Next prayer page': 'Page de la prochaine prière',
+  'Big countdown; stays on from 5 minutes before Azan until Iqama': 'Grand compte à rebours ; reste affiché de 5 minutes avant l\'adhan jusqu\'à l\'iqama',
+  'Seconds per page': 'Secondes par page',
+  'Announcements': 'Annonces',
+  'Add announcement': 'Ajouter une annonce',
+  'e.g. "Please switch off your phones"':
+      'ex. « Merci d\'éteindre vos téléphones »',
+  'Delete': 'Supprimer',
+  'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'L\'affichage montre jusqu\'à 7 pages : horaires, prochaine prière et 5 annonces. Appuyez longuement sur l\'écran pour quitter.',
 };
 
 const List<String> frHijriMonths = [

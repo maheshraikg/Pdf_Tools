@@ -12,11 +12,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:waqt/app/city_data.dart';
 import 'package:waqt/app/scope.dart';
 import 'package:waqt/app/settings.dart';
 import 'package:waqt/main.dart';
 import 'package:waqt/screens/alerts_screen.dart';
 import 'package:waqt/screens/display_screen.dart';
+import 'package:waqt/screens/place_screen.dart';
+import 'package:waqt/core/alerts.dart';
 
 Future<void> loadFont(String family, List<String> paths) async {
   final loader = FontLoader(family);
@@ -148,6 +151,82 @@ void main() {
       ),
     );
     await shot(tester, key, 'en_6_display');
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 1));
+  });
+
+  testWidgets('display pages', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(960, 540));
+    final key = GlobalKey();
+    final settings = settingsFor(Lang.en)
+      ..mosqueName = 'Masjid Al-Noor, Kozhikode'
+      ..displaySeconds = 10
+      ..announcements = [
+        "Jumu'ah khutbah starts at 12:30.\nPlease switch off your phones.",
+      ];
+    // Friday 16 Oct 2026, 15:10 in Kozhikode (before Asr).
+    final now = DateTime.utc(2026, 10, 16, 9, 40);
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: key,
+        child: AppScope(
+          settings: settings,
+          child: MaterialApp(
+            theme: buildTheme(Brightness.light),
+            home: DisplayScreen(keepAwake: false, clock: () => now),
+          ),
+        ),
+      ),
+    );
+    await tester.pump(const Duration(seconds: 11));
+    await tester.pump(const Duration(seconds: 1));
+    await shot(tester, key, 'en_7_display_next');
+    await tester.pump(const Duration(seconds: 10));
+    await tester.pump(const Duration(seconds: 1));
+    await shot(tester, key, 'en_8_display_announcement');
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 1));
+  });
+
+  testWidgets('azan sound and places', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 860));
+    final key = GlobalKey();
+    final settings = settingsFor(Lang.en)
+      ..alerts = const AlertConfig(
+        azanSound: SoundChoice(
+          AzanSound.custom,
+          path: 'file:/azan.mp3',
+          fileName: 'Azan Makkah.mp3',
+        ),
+        fajrSound: SoundChoice(AzanSound.chime),
+        taraweehAlert: true,
+        eidAlert: true,
+      );
+    Widget wrap(Widget home) => RepaintBoundary(
+      key: key,
+      child: AppScope(
+        settings: settings,
+        child: MaterialApp(theme: buildTheme(Brightness.light), home: home),
+      ),
+    );
+    await tester.pumpWidget(wrap(const AlertsScreen()));
+    await tester.scrollUntilVisible(find.text('Fajr Azan sound'), 300);
+    await Scrollable.ensureVisible(
+      tester.element(find.text('Fajr Azan sound')),
+      alignment: 0.2,
+    );
+    await tester.pumpAndSettle();
+    await shot(tester, key, 'en_9_azan_sound');
+    await tester.pumpWidget(const SizedBox());
+
+    debugResetCities();
+    await tester.runAsync(loadCities);
+    await tester.pumpWidget(wrap(const PlaceScreen()));
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    await tester.pump();
+    await tester.enterText(find.byType(TextField), 'tir');
+    await tester.pump();
+    await shot(tester, key, 'en_10_places');
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 1));
   });

@@ -146,6 +146,52 @@ const Map<String, String> taStrings = {
   'Open Waqt to refresh': 'புதுப்பிக்க வக்த்தைத் திறங்கள்',
   'Tap and hold to exit': 'வெளியேற அழுத்திப் பிடியுங்கள்',
   's': 'வி',
+  'near {0}': '{0} அருகில்',
+  'World places': 'உலக இடங்கள்',
+  'Type a town or city name to search 35,000 places worldwide.':
+      'உலகெங்கும் 35,000 இடங்களில் தேட ஊர் அல்லது நகரின் பெயரை உள்ளிடவும்.',
+  'Place data: GeoNames (CC BY 4.0)': 'இடத் தரவு: GeoNames (CC BY 4.0)',
+  'Azan sound': 'பாங்கு ஒலி',
+  'Fajr Azan sound': 'ஃபஜ்ர் பாங்கு ஒலி',
+  'Same as other prayers': 'மற்ற தொழுகைகளைப் போலவே',
+  'Phone notification sound': 'போன் அறிவிப்பு ஒலி',
+  'Soft chime': 'மென்மையான மணி ஒலி',
+  'Deep bell': 'ஆழ்ந்த மணி',
+  'Audio file (e.g. Azan MP3)': 'ஆடியோ கோப்பு (எ.கா. பாங்கு MP3)',
+  'Repeats until you dismiss it': 'நிறுத்தும் வரை திரும்ப ஒலிக்கும்',
+  'Pick a recorded Azan saved on your phone':
+      'போனில் சேமித்த பாங்கு பதிவைத் தேர்ந்தெடுக்கவும்',
+  'Could not use this audio file': 'இந்த ஆடியோ கோப்பைப் பயன்படுத்த முடியவில்லை',
+  'Play': 'இயக்கு',
+  'Stop': 'நிறுத்து',
+  'Play even when the phone is silent': 'போன் அமைதியில் இருந்தாலும் இயக்கு',
+  'Off: on silent or vibrate the Azan only shows and vibrates.':
+      'அணைத்தால்: அமைதி/அதிர்வில் பாங்கு காட்டப்பட்டு அதிரும் மட்டும்.',
+  'Ramadan and Eid': 'ரமலான் மற்றும் பெருநாள்',
+  'Taraweeh': 'தராவீஹ்',
+  'Eid al-Fitr prayer': 'நோன்புப் பெருநாள் தொழுகை',
+  'Eid al-Adha prayer': 'ஹஜ்ஜுப் பெருநாள் தொழுகை',
+  'Alert on Ramadan nights after the Isha Iqama':
+      'ரமலான் இரவுகளில் இஷா இகாமத்திற்குப் பின் அறிவிப்பு',
+  'Minutes after Isha Iqama': 'இஷா இகாமத்திற்குப் பின் நிமிடங்கள்',
+  'Eid prayer alert': 'பெருநாள் தொழுகை அறிவிப்பு',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
+      'பெருநாள் தொழுகைக்கு 30 நிமிடம் முன் நினைவூட்டும் (ஹிஜ்ரி தேதிப்படி)',
+  'Eid prayer at {0}': 'பெருநாள் தொழுகை {0}',
+  '1 page': '1 பக்கம்',
+  '{0} pages, rotating': '{0} பக்கங்கள், மாறி மாறி',
+  'Open the display': 'திரையைத் திற',
+  'Mosque name': 'பள்ளிவாசல் பெயர்',
+  'Shown at the top of the display': 'திரையின் மேலே காட்டப்படும்',
+  'Next prayer page': 'அடுத்த தொழுகை பக்கம்',
+  'Big countdown; stays on from 5 minutes before Azan until Iqama': 'பெரிய கவுண்ட்டவுன்; பாங்கிற்கு 5 நிமிடம் முன் முதல் இகாமத் வரை இதுவே இருக்கும்',
+  'Seconds per page': 'பக்கத்திற்கு வினாடிகள்',
+  'Announcements': 'அறிவிப்புகள்',
+  'Add announcement': 'அறிவிப்பைச் சேர்',
+  'e.g. "Please switch off your phones"':
+      'எ.கா. "தயவுசெய்து போன்களை அணைக்கவும்"',
+  'Delete': 'நீக்கு',
+  'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'திரையில் 7 பக்கங்கள் வரை: தொழுகை நேரங்கள், அடுத்த தொழுகை, 5 அறிவிப்புகள். வெளியேற திரையை அழுத்திப் பிடிக்கவும்.',
 };
 
 const List<String> taHijriMonths = [

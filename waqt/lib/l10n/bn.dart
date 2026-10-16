@@ -148,6 +148,52 @@ const Map<String, String> bnStrings = {
   'Open Waqt to refresh': 'হালনাগাদ করতে ওয়াক্ত খুলুন',
   'Tap and hold to exit': 'বের হতে চেপে ধরে রাখুন',
   's': 'সে',
+  'near {0}': '{0}-এর কাছে',
+  'World places': 'বিশ্বের জায়গা',
+  'Type a town or city name to search 35,000 places worldwide.':
+      'বিশ্বের 35,000 জায়গায় খুঁজতে শহর বা নগরের নাম লিখুন।',
+  'Place data: GeoNames (CC BY 4.0)': 'জায়গার তথ্য: GeoNames (CC BY 4.0)',
+  'Azan sound': 'আজানের শব্দ',
+  'Fajr Azan sound': 'ফজরের আজানের শব্দ',
+  'Same as other prayers': 'অন্য নামাজের মতোই',
+  'Phone notification sound': 'ফোনের নোটিফিকেশন শব্দ',
+  'Soft chime': 'মৃদু ঘণ্টাধ্বনি',
+  'Deep bell': 'গভীর ঘণ্টা',
+  'Audio file (e.g. Azan MP3)': 'অডিও ফাইল (যেমন আজান MP3)',
+  'Repeats until you dismiss it': 'বন্ধ না করা পর্যন্ত বাজতে থাকে',
+  'Pick a recorded Azan saved on your phone':
+      'ফোনে সেভ করা আজানের রেকর্ডিং বেছে নিন',
+  'Could not use this audio file': 'এই অডিও ফাইল ব্যবহার করা গেল না',
+  'Play': 'চালান',
+  'Stop': 'থামান',
+  'Play even when the phone is silent': 'ফোন সাইলেন্ট থাকলেও চালান',
+  'Off: on silent or vibrate the Azan only shows and vibrates.':
+      'বন্ধ: সাইলেন্ট বা ভাইব্রেটে আজান শুধু দেখাবে ও ভাইব্রেট করবে।',
+  'Ramadan and Eid': 'রমজান ও ঈদ',
+  'Taraweeh': 'তারাবিহ',
+  'Eid al-Fitr prayer': 'ঈদুল ফিতরের নামাজ',
+  'Eid al-Adha prayer': 'ঈদুল আজহার নামাজ',
+  'Alert on Ramadan nights after the Isha Iqama':
+      'রমজানের রাতে এশার ইকামতের পর সতর্কতা',
+  'Minutes after Isha Iqama': 'এশার ইকামতের পর মিনিট',
+  'Eid prayer alert': 'ঈদের নামাজের সতর্কতা',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
+      'ঈদের নামাজের 30 মিনিট আগে মনে করিয়ে দেয় (হিজরি তারিখ অনুযায়ী)',
+  'Eid prayer at {0}': 'ঈদের নামাজ {0}-এ',
+  '1 page': '1 পৃষ্ঠা',
+  '{0} pages, rotating': '{0} পৃষ্ঠা, পালাক্রমে',
+  'Open the display': 'ডিসপ্লে খুলুন',
+  'Mosque name': 'মসজিদের নাম',
+  'Shown at the top of the display': 'ডিসপ্লের উপরে দেখানো হয়',
+  'Next prayer page': 'পরের নামাজের পৃষ্ঠা',
+  'Big countdown; stays on from 5 minutes before Azan until Iqama':
+      'বড় কাউন্টডাউন; আজানের 5 মিনিট আগে থেকে ইকামত পর্যন্ত এটিই থাকে',
+  'Seconds per page': 'প্রতি পৃষ্ঠায় সেকেন্ড',
+  'Announcements': 'ঘোষণা',
+  'Add announcement': 'ঘোষণা যোগ করুন',
+  'e.g. "Please switch off your phones"': 'যেমন "অনুগ্রহ করে ফোন বন্ধ করুন"',
+  'Delete': 'মুছুন',
+  'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'ডিসপ্লেতে 7টি পৃষ্ঠা পর্যন্ত: নামাজের সময়, পরের নামাজ ও 5টি ঘোষণা। বের হতে ডিসপ্লে চেপে ধরে রাখুন।',
 };
 
 const List<String> bnHijriMonths = [

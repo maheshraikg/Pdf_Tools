@@ -74,6 +74,18 @@ class AppSettings extends ChangeNotifier {
 
   AlertConfig alerts = const AlertConfig();
 
+  /// Mosque display: optional name, the big next-prayer page, seconds per
+  /// page and up to [maxAnnouncements] announcement pages.
+  String mosqueName = '';
+  bool displayNextPage = true;
+  int displaySeconds = 12;
+  List<String> announcements = [];
+  static const int maxAnnouncements = 5;
+
+  /// Pages the mosque display rotates through.
+  int get displayPageCount =>
+      1 + (displayNextPage ? 1 : 0) + announcements.length;
+
   /// Imported timetable CSV and whether it is used.
   String? timetableCsv;
   bool timetableEnabled = false;
@@ -135,13 +147,12 @@ class AppSettings extends ChangeNotifier {
 
   /// Minutes east of UTC used to show times (the place's zone, else the
   /// phone's).
-  int get displayOffsetMinutes =>
-      place.utcOffsetMinutes ?? DateTime.now().timeZoneOffset.inMinutes;
+  int get displayOffsetMinutes => place.offsetMinutesAt(DateTime.now().toUtc());
 
   /// Wall-clock time at the place for a UTC instant (as a UTC DateTime whose
   /// fields are the local clock).
   DateTime wall(DateTime utc) =>
-      utc.toUtc().add(Duration(minutes: displayOffsetMinutes));
+      utc.toUtc().add(Duration(minutes: place.offsetMinutesAt(utc.toUtc())));
 
   /// Today's civil date at the place.
   DateTime get today {
@@ -193,6 +204,19 @@ class AppSettings extends ChangeNotifier {
         );
       } catch (_) {}
     }
+    final disp = p.getString('display');
+    if (disp != null) {
+      try {
+        final j = (jsonDecode(disp) as Map).cast<String, dynamic>();
+        mosqueName = j['name'] as String? ?? '';
+        displayNextPage = j['nextPage'] as bool? ?? true;
+        displaySeconds = j['seconds'] as int? ?? 12;
+        announcements = [
+          for (final a in (j['announcements'] as List? ?? const []))
+            if (a is String && a.trim().isNotEmpty) a,
+        ].take(maxAnnouncements).toList();
+      } catch (_) {}
+    }
     timetableCsv = p.getString('timetable');
     timetableEnabled = p.getBool('timetableEnabled') ?? false;
   }
@@ -218,6 +242,15 @@ class AppSettings extends ChangeNotifier {
     await p.setInt('ishraq', ishraqMinutes);
     await p.setInt('hijriAdjust', hijriAdjust);
     await p.setString('alerts', jsonEncode(alerts.toJson()));
+    await p.setString(
+      'display',
+      jsonEncode({
+        'name': mosqueName,
+        'nextPage': displayNextPage,
+        'seconds': displaySeconds,
+        'announcements': announcements,
+      }),
+    );
     if (timetableCsv == null) {
       await p.remove('timetable');
     } else {

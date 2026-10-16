@@ -150,6 +150,52 @@ const Map<String, String> urStrings = {
   'Open Waqt to refresh': 'تازہ کرنے کے لیے وقت کھولیں',
   'Tap and hold to exit': 'باہر نکلنے کے لیے دبائے رکھیں',
   's': 'سیکنڈ',
+  'near {0}': '{0} کے قریب',
+  'World places': 'دنیا بھر کے مقامات',
+  'Type a town or city name to search 35,000 places worldwide.':
+      'دنیا بھر کے 35,000 مقامات میں تلاش کے لیے شہر یا قصبے کا نام لکھیں۔',
+  'Place data: GeoNames (CC BY 4.0)': 'مقامات کا ڈیٹا: GeoNames (CC BY 4.0)',
+  'Azan sound': 'اذان کی آواز',
+  'Fajr Azan sound': 'فجر کی اذان کی آواز',
+  'Same as other prayers': 'باقی نمازوں جیسی',
+  'Phone notification sound': 'فون کی نوٹیفکیشن آواز',
+  'Soft chime': 'نرم گھنٹی',
+  'Deep bell': 'گہری گھنٹی',
+  'Audio file (e.g. Azan MP3)': 'آڈیو فائل (مثلاً اذان MP3)',
+  'Repeats until you dismiss it': 'بند کرنے تک دہرائی جاتی ہے',
+  'Pick a recorded Azan saved on your phone':
+      'فون میں محفوظ اذان کی ریکارڈنگ منتخب کریں',
+  'Could not use this audio file': 'یہ آڈیو فائل استعمال نہیں ہو سکی',
+  'Play': 'چلائیں',
+  'Stop': 'روکیں',
+  'Play even when the phone is silent': 'فون خاموش ہو تب بھی چلائیں',
+  'Off: on silent or vibrate the Azan only shows and vibrates.':
+      'بند: خاموش یا وائبریٹ پر اذان صرف دکھائی دے گی اور وائبریٹ کرے گی۔',
+  'Ramadan and Eid': 'رمضان اور عید',
+  'Taraweeh': 'تراویح',
+  'Eid al-Fitr prayer': 'عید الفطر کی نماز',
+  'Eid al-Adha prayer': 'عید الاضحیٰ کی نماز',
+  'Alert on Ramadan nights after the Isha Iqama':
+      'رمضان کی راتوں میں عشاء کی اقامت کے بعد اطلاع',
+  'Minutes after Isha Iqama': 'عشاء کی اقامت کے بعد منٹ',
+  'Eid prayer alert': 'عید کی نماز کی اطلاع',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
+      'عید کی نماز سے 30 منٹ پہلے یاد دہانی (ہجری تاریخ کے مطابق)',
+  'Eid prayer at {0}': 'عید کی نماز {0} بجے',
+  '1 page': '1 صفحہ',
+  '{0} pages, rotating': '{0} صفحات، باری باری',
+  'Open the display': 'ڈسپلے کھولیں',
+  'Mosque name': 'مسجد کا نام',
+  'Shown at the top of the display': 'ڈسپلے کے اوپر دکھایا جاتا ہے',
+  'Next prayer page': 'اگلی نماز کا صفحہ',
+  'Big countdown; stays on from 5 minutes before Azan until Iqama':
+      'بڑی الٹی گنتی؛ اذان سے 5 منٹ پہلے سے اقامت تک یہی رہتا ہے',
+  'Seconds per page': 'فی صفحہ سیکنڈ',
+  'Announcements': 'اعلانات',
+  'Add announcement': 'اعلان شامل کریں',
+  'e.g. "Please switch off your phones"': 'مثلاً "براہ کرم فون بند کر دیں"',
+  'Delete': 'حذف کریں',
+  'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'ڈسپلے پر 7 صفحات تک: نماز کے اوقات، اگلی نماز اور 5 اعلانات۔ باہر نکلنے کے لیے ڈسپلے کو دبائے رکھیں۔',
 };
 
 const List<String> urHijriMonths = [

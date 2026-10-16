@@ -146,6 +146,13 @@ class CalcMethod {
     ishaAngle: 15,
   );
 
+  static const southeastAsia = CalcMethod(
+    id: 'sea',
+    name: 'Southeast Asia (JAKIM, Kemenag, MUIS)',
+    fajrAngle: 20,
+    ishaAngle: 18,
+  );
+
   static const List<CalcMethod> all = [
     kerala,
     karachi,
@@ -156,6 +163,7 @@ class CalcMethod {
     kuwait,
     egypt,
     isna,
+    southeastAsia,
   ];
 
   static CalcMethod byId(String? id) =>

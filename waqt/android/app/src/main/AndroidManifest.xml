@@ -5,6 +5,10 @@
     <!-- Azan/Iqama on time and auto-silent; the user grants it in settings. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Azan player (AzanPlayer.kt). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- Auto-silent in "Silent (Do Not Disturb)" mode. -->
@@ -61,6 +65,20 @@
                 <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
             </intent-filter>
         </receiver>
+
+        <!-- Azan with a chosen sound (AzanPlayer.kt). -->
+        <receiver android:exported="false" android:name=".AzanReceiver">
+            <intent-filter>
+                <action android:name="com.maheshrai.waqt.AZAN_FIRE"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.TIME_SET"/>
+                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
+            </intent-filter>
+        </receiver>
+        <service android:name=".AzanService" android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
 
         <!-- Home-screen widget (WaqtWidgetProvider.kt). -->
         <receiver android:name=".WaqtWidgetProvider" android:exported="false"

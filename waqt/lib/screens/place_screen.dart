@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../app/city_data.dart';
 import '../app/native.dart';
 import '../app/scope.dart';
+import '../core/cities.dart';
 import '../core/place.dart';
 import '../core/timetable.dart';
 import '../ui/widgets.dart';
@@ -16,6 +18,15 @@ class PlaceScreen extends StatefulWidget {
 class _PlaceScreenState extends State<PlaceScreen> {
   String _query = '';
   bool _locating = false;
+  List<City>? _cities;
+
+  @override
+  void initState() {
+    super.initState();
+    loadCities().then((c) {
+      if (mounted) setState(() => _cities = c);
+    }, onError: (Object _) {});
+  }
 
   Future<void> _useGps() async {
     final s = context.s, settings = context.settings;
@@ -35,13 +46,16 @@ class _PlaceScreenState extends State<PlaceScreen> {
       );
       return;
     }
+    final cities = _cities ?? await loadCities().catchError((_) => <City>[]);
+    final near = nearestCity(cities, r.latitude!, r.longitude!);
     // Keep the current method: a GPS place is usually where the user
     // already is.
     await settings.choosePlace(
       Place(
         id: 'gps',
-        name:
-            '${s.myLocation} (${r.latitude!.toStringAsFixed(3)}, ${r.longitude!.toStringAsFixed(3)})',
+        name: near != null
+            ? '${s.myLocation} · ${s.nearPlace(near.nameMl != null && s.ml ? near.nameMl! : near.name)}'
+            : '${s.myLocation} (${r.latitude!.toStringAsFixed(3)}, ${r.longitude!.toStringAsFixed(3)})',
         latitude: r.latitude!,
         longitude: r.longitude!,
         methodId: settings.method.id,
@@ -160,6 +174,13 @@ class _PlaceScreenState extends State<PlaceScreen> {
       regions.putIfAbsent(p.region, () => []).add(p);
     }
     final scheme = Theme.of(context).colorScheme;
+    final world = _cities == null
+        ? const <City>[]
+        : searchCities(
+            _cities!,
+            _query,
+            near: (settings.place.latitude, settings.place.longitude),
+          );
 
     return Scaffold(
       appBar: AppBar(title: Text(s.location)),
@@ -216,6 +237,33 @@ class _PlaceScreenState extends State<PlaceScreen> {
                     },
                   ),
               ],
+            ),
+          if (world.isNotEmpty)
+            Section(
+              title: s.worldPlaces,
+              children: [
+                for (final c in world)
+                  ListTile(
+                    title: Text(s.ml && c.nameMl != null ? c.nameMl! : c.name),
+                    subtitle: Text(c.region),
+                    trailing: settings.place.id == c.toPlace().id
+                        ? Icon(Icons.check_circle, color: scheme.primary)
+                        : null,
+                    onTap: () async {
+                      await settings.choosePlace(c.toPlace());
+                      if (context.mounted) Navigator.pop(context);
+                    },
+                  ),
+              ],
+            ),
+          if (q.isEmpty || world.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+              child: Text(
+                q.isEmpty ? s.searchWorldHint : s.geonamesCredit,
+                style: Theme.of(context).textTheme.bodySmall
+                    ?.copyWith(color: scheme.onSurfaceVariant),
+              ),
             ),
         ],
       ),

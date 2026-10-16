@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../app/background.dart';
@@ -112,6 +113,7 @@ class _AlertsScreenState extends State<AlertsScreen>
                 ),
             ],
           ),
+          _soundSection(context, c, set),
           Section(
             title: s.prayer(Prayer.dhuhr, friday: true),
             children: [
@@ -143,6 +145,46 @@ class _AlertsScreenState extends State<AlertsScreen>
                 value: c.tahajjudAlert,
                 onChanged: (v) => set(c.copyWith(tahajjudAlert: v)),
               ),
+            ],
+          ),
+          Section(
+            title: s.specialOccasions,
+            children: [
+              SwitchListTile(
+                secondary: const IconBadge(Icons.nights_stay_outlined),
+                title: Text(s.specialTitle(SpecialEvent.taraweeh)),
+                subtitle: Text(s.taraweehHelp),
+                value: c.taraweehAlert,
+                onChanged: (v) => set(c.copyWith(taraweehAlert: v)),
+              ),
+              if (c.taraweehAlert)
+                MinutesStepper(
+                  label: s.taraweehAfterIsha,
+                  value: c.taraweehMinutesAfterIsha,
+                  min: 0,
+                  max: 60,
+                  onChanged: (v) =>
+                      set(c.copyWith(taraweehMinutesAfterIsha: v)),
+                ),
+              SwitchListTile(
+                secondary: const IconBadge(Icons.celebration_outlined),
+                title: Text(s.eidAlert),
+                subtitle: Text(s.eidHelp),
+                value: c.eidAlert,
+                onChanged: (v) => set(c.copyWith(eidAlert: v)),
+              ),
+              if (c.eidAlert) ...[
+                _TimeTile(
+                  label: s.specialTitle(SpecialEvent.eidAlFitr),
+                  value: c.eidFitrTime,
+                  onChanged: (v) => set(c.copyWith(eidFitrTime: v)),
+                ),
+                _TimeTile(
+                  label: s.specialTitle(SpecialEvent.eidAlAdha),
+                  value: c.eidAdhaTime,
+                  onChanged: (v) => set(c.copyWith(eidAdhaTime: v)),
+                ),
+              ],
             ],
           ),
           Section(
@@ -217,6 +259,179 @@ class _AlertsScreenState extends State<AlertsScreen>
           ),
         ],
       ),
+    );
+  }
+}
+
+extension on _AlertsScreenState {
+  Widget _soundSection(
+    BuildContext context,
+    AlertConfig c,
+    void Function(AlertConfig) set,
+  ) {
+    final s = context.s, settings = context.settings;
+    final usesPlayer =
+        c.azanSound.playerSound != null || (c.fajrSound?.playerSound != null);
+
+    Widget preview(SoundChoice choice, Prayer p) {
+      final sound = choice.playerSound;
+      if (sound == null || !Native.supported) return const SizedBox.shrink();
+      return IconButton(
+        tooltip: s.playSound,
+        icon: const Icon(Icons.play_circle_outline),
+        onPressed: () => Native.playSound(
+          sound,
+          s.azanTitle(p, false),
+          settings.place.label(s.ml),
+        ),
+      );
+    }
+
+    return Section(
+      title: s.azanSoundTitle,
+      children: [
+        ListTile(
+          leading: const IconBadge(Icons.music_note_outlined),
+          title: Text(s.azanSoundTitle),
+          subtitle: Text(s.soundName(c.azanSound)),
+          trailing: preview(c.azanSound, Prayer.dhuhr),
+          onTap: () async {
+            final v = await _pickSound(context, 'azan', c.azanSound, false);
+            if (v != null) set(c.copyWith(azanSound: v.$1));
+          },
+        ),
+        ListTile(
+          leading: IconBadge(prayerIcon(Prayer.fajr)),
+          title: Text(s.fajrSoundTitle),
+          subtitle: Text(
+            c.fajrSound == null ? s.sameAsOthers : s.soundName(c.fajrSound!),
+          ),
+          trailing: preview(c.soundFor(Prayer.fajr), Prayer.fajr),
+          onTap: () async {
+            final v = await _pickSound(
+              context,
+              'fajr',
+              c.fajrSound ?? c.azanSound,
+              true,
+              same: c.fajrSound == null,
+            );
+            if (v != null) set(c.copyWith(fajrSound: v.$1));
+          },
+        ),
+        if (usesPlayer) ...[
+          SwitchListTile(
+            secondary: const IconBadge(Icons.vibration),
+            title: Text(s.vibrate),
+            value: c.vibrate,
+            onChanged: (v) => set(c.copyWith(vibrate: v)),
+          ),
+          SwitchListTile(
+            secondary: const IconBadge(Icons.notifications_paused_outlined),
+            title: Text(s.playWhenSilent),
+            subtitle: Text(s.playWhenSilentHelp),
+            value: c.playWhenSilent,
+            onChanged: (v) => set(c.copyWith(playWhenSilent: v)),
+          ),
+        ],
+      ],
+    );
+  }
+
+  /// Sound picker; returns (choice, null = "same as other prayers").
+  Future<(SoundChoice?,)?> _pickSound(
+    BuildContext context,
+    String slot,
+    SoundChoice current,
+    bool allowSame, {
+    bool same = false,
+  }) async {
+    final s = context.s;
+    final messenger = ScaffoldMessenger.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    Widget tick(bool on) => on
+        ? Icon(Icons.check_circle, color: scheme.primary)
+        : const SizedBox(width: 24);
+    final picked = await showDialog<Object>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(allowSame ? s.fajrSoundTitle : s.azanSoundTitle),
+        children: [
+          if (allowSame)
+            ListTile(
+              title: Text(s.sameAsOthers),
+              trailing: tick(same),
+              onTap: () => Navigator.pop(context, 'same'),
+            ),
+          for (final o in AzanSound.values)
+            ListTile(
+              title: Text(s.soundKindName(o)),
+              subtitle: o == AzanSound.custom
+                  ? Text(
+                      current.sound == AzanSound.custom &&
+                              current.fileName != null
+                          ? current.fileName!
+                          : s.customSoundHelp,
+                    )
+                  : o == AzanSound.system
+                  ? Text(s.systemSoundHelp)
+                  : null,
+              trailing: tick(!same && current.sound == o),
+              onTap: () => Navigator.pop(context, o),
+            ),
+        ],
+      ),
+    );
+    if (picked == null) return null;
+    if (picked == 'same') return (null,);
+    final kind = picked as AzanSound;
+    if (kind != AzanSound.custom) return (SoundChoice(kind),);
+
+    final f = await FilePicker.pickFile(type: FileType.audio);
+    if (f == null) return null;
+    try {
+      final bytes = await f.readAsBytes();
+      final dot = f.name.lastIndexOf('.');
+      final ext = dot < 0 ? 'mp3' : f.name.substring(dot + 1);
+      final path = await Native.saveSound(slot, ext, bytes);
+      if (path == null) throw StateError('not saved');
+      return (SoundChoice(AzanSound.custom, path: path, fileName: f.name),);
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(s.soundError)));
+      return null;
+    }
+  }
+}
+
+/// A clock time setting (tap to change).
+class _TimeTile extends StatelessWidget {
+  const _TimeTile({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String label;
+  final int value;
+  final ValueChanged<int> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = context.settings;
+    final h = value ~/ 60, m = (value % 60).toString().padLeft(2, '0');
+    final text = settings.use24h
+        ? '${h.toString().padLeft(2, '0')}:$m'
+        : '${h % 12 == 0 ? 12 : h % 12}:$m ${amPm(settings.lang, h)}';
+    return ListTile(
+      dense: true,
+      title: Text(label),
+      trailing: Text(text, style: const TextStyle(fontWeight: FontWeight.w600)),
+      onTap: () async {
+        final t = await showTimePicker(
+          context: context,
+          initialTime: TimeOfDay(hour: h, minute: value % 60),
+        );
+        if (t != null) onChanged(t.hour * 60 + t.minute);
+      },
     );
   }
 }

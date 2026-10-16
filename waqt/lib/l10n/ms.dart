@@ -148,6 +148,52 @@ const Map<String, String> msStrings = {
   'Open Waqt to refresh': 'Buka Waqt untuk muat semula',
   'Tap and hold to exit': 'Tekan lama untuk keluar',
   's': 's',
+  'near {0}': 'berhampiran {0}',
+  'World places': 'Tempat di dunia',
+  'Type a town or city name to search 35,000 places worldwide.': 'Taip nama bandar atau pekan untuk mencari dalam 35,000 tempat di seluruh dunia.',
+  'Place data: GeoNames (CC BY 4.0)': 'Data tempat: GeoNames (CC BY 4.0)',
+  'Azan sound': 'Bunyi azan',
+  'Fajr Azan sound': 'Bunyi azan Subuh',
+  'Same as other prayers': 'Sama seperti solat lain',
+  'Phone notification sound': 'Bunyi pemberitahuan telefon',
+  'Soft chime': 'Loceng lembut',
+  'Deep bell': 'Loceng dalam',
+  'Audio file (e.g. Azan MP3)': 'Fail audio (cth. azan MP3)',
+  'Repeats until you dismiss it': 'Berulang sehingga anda menutupnya',
+  'Pick a recorded Azan saved on your phone':
+      'Pilih rakaman azan yang disimpan dalam telefon',
+  'Could not use this audio file': 'Fail audio ini tidak dapat digunakan',
+  'Play': 'Main',
+  'Stop': 'Henti',
+  'Play even when the phone is silent':
+      'Main walaupun telefon dalam mod senyap',
+  'Off: on silent or vibrate the Azan only shows and vibrates.':
+      'Mati: dalam mod senyap atau getar, azan hanya dipaparkan dan bergetar.',
+  'Ramadan and Eid': 'Ramadan dan Hari Raya',
+  'Taraweeh': 'Tarawih',
+  'Eid al-Fitr prayer': 'Solat Aidilfitri',
+  'Eid al-Adha prayer': 'Solat Aidiladha',
+  'Alert on Ramadan nights after the Isha Iqama':
+      'Peringatan malam Ramadan selepas iqamah Isyak',
+  'Minutes after Isha Iqama': 'Minit selepas iqamah Isyak',
+  'Eid prayer alert': 'Peringatan solat Hari Raya',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
+      'Mengingatkan 30 minit sebelum solat Hari Raya (mengikut tarikh Hijrah)',
+  'Eid prayer at {0}': 'Solat Hari Raya pada {0}',
+  '1 page': '1 halaman',
+  '{0} pages, rotating': '{0} halaman, bergilir',
+  'Open the display': 'Buka paparan',
+  'Mosque name': 'Nama masjid',
+  'Shown at the top of the display': 'Dipaparkan di bahagian atas paparan',
+  'Next prayer page': 'Halaman solat seterusnya',
+  'Big countdown; stays on from 5 minutes before Azan until Iqama':
+      'Kiraan detik besar; kekal dari 5 minit sebelum azan hingga iqamah',
+  'Seconds per page': 'Saat setiap halaman',
+  'Announcements': 'Pengumuman',
+  'Add announcement': 'Tambah pengumuman',
+  'e.g. "Please switch off your phones"': 'cth. "Sila matikan telefon anda"',
+  'Delete': 'Padam',
+  'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'Paparan menunjukkan sehingga 7 halaman: waktu solat, solat seterusnya dan 5 pengumuman. Tekan lama paparan untuk keluar.',
 };
 
 const List<String> msHijriMonths = [

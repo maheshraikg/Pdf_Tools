@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:waqt/app/city_data.dart';
 import 'package:waqt/app/scope.dart';
 import 'package:waqt/app/settings.dart';
 import 'package:waqt/app/strings.dart';
@@ -7,6 +8,7 @@ import 'package:waqt/core/prayer_calc.dart';
 import 'package:waqt/main.dart';
 import 'package:waqt/screens/alerts_screen.dart';
 import 'package:waqt/screens/display_screen.dart';
+import 'package:waqt/screens/display_settings_screen.dart';
 import 'package:waqt/screens/place_screen.dart';
 import 'package:waqt/screens/timetable_screen.dart';
 import 'package:waqt/screens/today_screen.dart';
@@ -138,7 +140,7 @@ void main() {
   });
 
   testWidgets('display mode renders in landscape and portrait', (tester) async {
-    final settings = AppSettings.memory();
+    final settings = AppSettings.memory()..displayNextPage = false;
     for (final size in const [Size(1920, 1080), Size(1080, 1920)]) {
       tester.view.physicalSize = size;
       tester.view.devicePixelRatio = 1.5;
@@ -151,6 +153,103 @@ void main() {
       expect(find.text('Iqama'), findsWidgets);
     }
     tester.view.reset();
+    await _dispose(tester);
+  });
+
+  testWidgets('display pages rotate and lock for the Iqama countdown', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1920, 1080);
+    tester.view.devicePixelRatio = 1.5;
+    addTearDown(tester.view.reset);
+    final settings = AppSettings.memory()
+      ..mosqueName = 'Masjid Test'
+      ..displaySeconds = 10
+      ..announcements = ['Please switch off your phones'];
+    // Friday 16 Oct 2026, 13:30 in Kozhikode: after Jumu'ah, before Asr.
+    var now = DateTime.utc(2026, 10, 16, 8, 0);
+    await _pumpScreen(
+      tester,
+      settings,
+      DisplayScreen(keepAwake: false, clock: () => now),
+    );
+    expect(find.text('Masjid Test'), findsOneWidget);
+    expect(find.text('Iqama'), findsWidgets); // times page
+    await tester.pump(const Duration(seconds: 10));
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.text('NEXT'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 10));
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.text('Please switch off your phones'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    // Between Asr Azan and Iqama the countdown page stays.
+    final asr = settings.calculator.day(2026, 10, 16)[Prayer.asr];
+    now = asr.add(const Duration(minutes: 2));
+    for (var i = 0; i < 4; i++) {
+      await tester.pump(const Duration(seconds: 10));
+      expect(find.text('IQAMA'), findsOneWidget);
+    }
+    await _dispose(tester);
+  });
+
+  testWidgets('alerts screen offers Azan sounds and Ramadan/Eid alerts', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(360 * 3, 720 * 3);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    final settings = AppSettings.memory();
+    await _pumpScreen(tester, settings, const AlertsScreen());
+    await tester.scrollUntilVisible(find.text('Fajr Azan sound'), 200);
+    await tester.tap(find.text('Azan sound').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Soft chime'));
+    await tester.pumpAndSettle();
+    expect(settings.alerts.azanSound.sound.name, 'chime');
+    expect(find.text('Vibrate'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Eid prayer alert'), 200);
+    await Scrollable.ensureVisible(
+      tester.element(find.text('Eid prayer alert')),
+      alignment: 0.5,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Eid prayer alert'));
+    await tester.pumpAndSettle();
+    expect(settings.alerts.eidAlert, isTrue);
+    expect(find.text('Eid al-Fitr prayer'), findsOneWidget);
+    await _dispose(tester);
+  });
+
+  testWidgets('display settings: add an announcement', (tester) async {
+    final settings = AppSettings.memory();
+    await _pumpScreen(tester, settings, const DisplaySettingsScreen());
+    await tester.tap(find.text('Add announcement'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'Jumuah khutbah 12:30');
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+    expect(settings.announcements, ['Jumuah khutbah 12:30']);
+    expect(settings.displayPageCount, 3);
+    expect(find.text('Jumuah khutbah 12:30'), findsOneWidget);
+    await _dispose(tester);
+  });
+
+  testWidgets('place search finds world cities', (tester) async {
+    final settings = AppSettings.memory();
+    debugResetCities();
+    final cities = await tester.runAsync(loadCities);
+    expect(cities, isNotEmpty);
+    await _pumpScreen(tester, settings, const PlaceScreen());
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    await tester.pump();
+    await tester.enterText(find.byType(TextField), 'london');
+    await tester.pump();
+    expect(find.text('World places'.toUpperCase()), findsOneWidget);
+    await tester.tap(find.text('London').first);
+    await tester.pumpAndSettle();
+    expect(settings.place.timeZone, 'Europe/London');
+    expect(settings.method.id, 'mwl');
     await _dispose(tester);
   });
 }

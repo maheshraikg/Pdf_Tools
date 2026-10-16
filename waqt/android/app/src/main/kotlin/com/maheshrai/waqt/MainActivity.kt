@@ -61,6 +61,46 @@ class MainActivity : FlutterActivity() {
                         SilentScheduler.save(this, mode, windows)
                         result.success(null)
                     }
+                    "setAzanAlarms" -> {
+                        val events = org.json.JSONArray(call.argument<String>("events") ?: "[]")
+                        AzanScheduler.save(
+                            this,
+                            events,
+                            call.argument<Boolean>("vibrate") ?: true,
+                            call.argument<Boolean>("whenSilent") ?: false,
+                            call.argument<String>("stopLabel") ?: "Stop",
+                            call.argument<String>("channelName") ?: "Azan",
+                        )
+                        result.success(null)
+                    }
+                    "saveSound" -> {
+                        val bytes = call.argument<ByteArray>("bytes")
+                        if (bytes == null) {
+                            result.error("invalid", "No data", null)
+                        } else {
+                            result.success(
+                                AzanScheduler.saveSound(
+                                    this,
+                                    call.argument<String>("slot") ?: "azan",
+                                    call.argument<String>("ext") ?: "mp3",
+                                    bytes,
+                                ),
+                            )
+                        }
+                    }
+                    "playSound" -> {
+                        AzanService.play(
+                            this,
+                            call.argument<String>("title") ?: "",
+                            call.argument<String>("body") ?: "",
+                            call.argument<String>("sound") ?: "chime",
+                        )
+                        result.success(null)
+                    }
+                    "stopSound" -> {
+                        AzanService.stop(this)
+                        result.success(null)
+                    }
                     else -> result.notImplemented()
                 }
             }
@@ -70,6 +110,7 @@ class MainActivity : FlutterActivity() {
         super.onCreate(savedInstanceState)
         // Re-arm the silent schedule in case the process was killed.
         SilentScheduler.reschedule(this)
+        AzanScheduler.reschedule(this)
     }
 
     private fun notificationManager() =

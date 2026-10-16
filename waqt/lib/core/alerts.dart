@@ -4,9 +4,61 @@
 library;
 
 import 'day.dart';
+import 'hijri.dart';
 import 'prayer_calc.dart';
 
 enum AlertKind { reminder, azan, iqama }
+
+/// Occasions besides the daily prayers.
+enum SpecialEvent { taraweeh, eidAlFitr, eidAlAdha }
+
+/// What the Azan alert plays.
+enum AzanSound {
+  /// The phone's notification sound, repeating until dismissed.
+  system,
+
+  /// Built-in soft chime / deep bell.
+  chime,
+  bell,
+
+  /// An audio file the user picked (e.g. a recorded Azan).
+  custom,
+}
+
+/// A sound choice with the picked file (for [AzanSound.custom]).
+class SoundChoice {
+  const SoundChoice(this.sound, {this.path, this.fileName});
+  final AzanSound sound;
+
+  /// Native "file:" sound of the copied file, and its original name.
+  final String? path, fileName;
+
+  /// The native player's sound id, or null for the notification sound.
+  String? get playerSound => switch (sound) {
+    AzanSound.system => null,
+    AzanSound.chime => 'chime',
+    AzanSound.bell => 'bell',
+    AzanSound.custom => path,
+  };
+
+  Map<String, dynamic> toJson() => {
+    'sound': sound.name,
+    if (path != null) 'path': path,
+    if (fileName != null) 'file': fileName,
+  };
+
+  static SoundChoice? fromJson(Object? j) {
+    if (j is! Map) return null;
+    final s = AzanSound.values.asNameMap()[j['sound']];
+    if (s == null) return null;
+    final path = j['path'] as String?;
+    // A custom choice without its file falls back to the chime.
+    if (s == AzanSound.custom && path == null) {
+      return const SoundChoice(AzanSound.chime);
+    }
+    return SoundChoice(s, path: path, fileName: j['file'] as String?);
+  }
+}
 
 /// Alert settings of one fard prayer.
 class PrayerAlert {
@@ -82,6 +134,15 @@ class AlertConfig {
     this.jumuahSilentMinutes = 45,
     this.tahajjudAlert = false,
     this.imsakAlert = false,
+    this.azanSound = const SoundChoice(AzanSound.system),
+    this.fajrSound,
+    this.vibrate = true,
+    this.playWhenSilent = false,
+    this.taraweehAlert = false,
+    this.taraweehMinutesAfterIsha = 10,
+    this.eidAlert = false,
+    this.eidFitrTime = 7 * 60 + 30,
+    this.eidAdhaTime = 7 * 60 + 30,
   });
 
   final Map<Prayer, PrayerAlert> prayers;
@@ -101,6 +162,29 @@ class AlertConfig {
   final int jumuahSilentMinutes;
   final bool tahajjudAlert;
   final bool imsakAlert;
+
+  /// Sound of the Azan alerts, and of Fajr when [fajrSound] is set.
+  final SoundChoice azanSound;
+  final SoundChoice? fajrSound;
+
+  /// Player options (not for the notification sound).
+  final bool vibrate;
+  final bool playWhenSilent;
+
+  /// Ramadan nights: alert this long after the Isha Iqama.
+  final bool taraweehAlert;
+  final int taraweehMinutesAfterIsha;
+
+  /// Eid prayer times (local minutes after midnight); the alert comes
+  /// [eidReminderMinutes] before.
+  final bool eidAlert;
+  final int eidFitrTime;
+  final int eidAdhaTime;
+  static const int eidReminderMinutes = 30;
+
+  /// Sound of the Azan of [p].
+  SoundChoice soundFor(Prayer p) =>
+      p == Prayer.fajr && fajrSound != null ? fajrSound! : azanSound;
 
   static const Map<Prayer, PrayerAlert> defaultPrayerAlerts = {
     Prayer.fajr: PrayerAlert(iqamaDelay: 20),
@@ -130,6 +214,15 @@ class AlertConfig {
     int? jumuahSilentMinutes,
     bool? tahajjudAlert,
     bool? imsakAlert,
+    SoundChoice? azanSound,
+    Object? fajrSound = _keep,
+    bool? vibrate,
+    bool? playWhenSilent,
+    bool? taraweehAlert,
+    int? taraweehMinutesAfterIsha,
+    bool? eidAlert,
+    int? eidFitrTime,
+    int? eidAdhaTime,
   }) => AlertConfig(
     prayers: prayers ?? this.prayers,
     jumuahIqamaDelay: jumuahIqamaDelay ?? this.jumuahIqamaDelay,
@@ -143,6 +236,18 @@ class AlertConfig {
     jumuahSilentMinutes: jumuahSilentMinutes ?? this.jumuahSilentMinutes,
     tahajjudAlert: tahajjudAlert ?? this.tahajjudAlert,
     imsakAlert: imsakAlert ?? this.imsakAlert,
+    azanSound: azanSound ?? this.azanSound,
+    fajrSound: identical(fajrSound, _keep)
+        ? this.fajrSound
+        : fajrSound as SoundChoice?,
+    vibrate: vibrate ?? this.vibrate,
+    playWhenSilent: playWhenSilent ?? this.playWhenSilent,
+    taraweehAlert: taraweehAlert ?? this.taraweehAlert,
+    taraweehMinutesAfterIsha:
+        taraweehMinutesAfterIsha ?? this.taraweehMinutesAfterIsha,
+    eidAlert: eidAlert ?? this.eidAlert,
+    eidFitrTime: eidFitrTime ?? this.eidFitrTime,
+    eidAdhaTime: eidAdhaTime ?? this.eidAdhaTime,
   );
 
   AlertConfig withPrayer(Prayer p, PrayerAlert a) =>
@@ -158,6 +263,15 @@ class AlertConfig {
     'jumuahSilent': jumuahSilentMinutes,
     'tahajjud': tahajjudAlert,
     'imsak': imsakAlert,
+    'azanSound': azanSound.toJson(),
+    if (fajrSound != null) 'fajrSound': fajrSound!.toJson(),
+    'vibrate': vibrate,
+    'whenSilent': playWhenSilent,
+    'taraweeh': taraweehAlert,
+    'taraweehAfter': taraweehMinutesAfterIsha,
+    'eid': eidAlert,
+    'eidFitr': eidFitrTime,
+    'eidAdha': eidAdhaTime,
   };
 
   factory AlertConfig.fromJson(Map<String, dynamic> j) {
@@ -183,6 +297,16 @@ class AlertConfig {
       jumuahSilentMinutes: j['jumuahSilent'] as int? ?? d.jumuahSilentMinutes,
       tahajjudAlert: j['tahajjud'] as bool? ?? d.tahajjudAlert,
       imsakAlert: j['imsak'] as bool? ?? d.imsakAlert,
+      azanSound: SoundChoice.fromJson(j['azanSound']) ?? d.azanSound,
+      fajrSound: SoundChoice.fromJson(j['fajrSound']),
+      vibrate: j['vibrate'] as bool? ?? d.vibrate,
+      playWhenSilent: j['whenSilent'] as bool? ?? d.playWhenSilent,
+      taraweehAlert: j['taraweeh'] as bool? ?? d.taraweehAlert,
+      taraweehMinutesAfterIsha:
+          j['taraweehAfter'] as int? ?? d.taraweehMinutesAfterIsha,
+      eidAlert: j['eid'] as bool? ?? d.eidAlert,
+      eidFitrTime: j['eidFitr'] as int? ?? d.eidFitrTime,
+      eidAdhaTime: j['eidAdha'] as int? ?? d.eidAdhaTime,
     );
   }
 }
@@ -195,6 +319,7 @@ class PlannedAlert {
     required this.prayer,
     required this.friday,
     this.minutesBefore = 0,
+    this.special,
   });
 
   /// Stable notification id.
@@ -205,8 +330,12 @@ class PlannedAlert {
   final bool friday;
   final int minutesBefore;
 
+  /// Taraweeh / Eid; null for the daily times.
+  final SpecialEvent? special;
+
   @override
-  String toString() => '${kind.name} ${prayer.name} at $at';
+  String toString() =>
+      '${special?.name ?? '${kind.name} ${prayer.name}'} at $at';
 }
 
 class SilentWindow {
@@ -273,9 +402,63 @@ List<PlannedAlert> planAlerts(
     if (config.tahajjudAlert) {
       add(AlertKind.reminder, Prayer.tahajjud, d[Prayer.tahajjud]);
     }
+
+    void special(SpecialEvent e, DateTime at, [int before = 0]) {
+      if (!at.isAfter(now)) return;
+      out.add(
+        PlannedAlert(
+          id: 1000 + di * 40 + 36 + e.index,
+          at: at,
+          kind: AlertKind.reminder,
+          prayer: e == SpecialEvent.taraweeh ? Prayer.isha : Prayer.sunrise,
+          friday: d.isFriday,
+          minutesBefore: before,
+          special: e,
+        ),
+      );
+    }
+
+    final nextHijri = di + 1 < days.length ? days[di + 1].hijri : null;
+    if (config.taraweehAlert && _ramadanNight(d.hijri, nextHijri)) {
+      special(
+        SpecialEvent.taraweeh,
+        iqamaTime(
+          d,
+          Prayer.isha,
+          config,
+        ).add(Duration(minutes: config.taraweehMinutesAfterIsha)),
+      );
+    }
+    if (config.eidAlert) {
+      final h = d.hijri;
+      const before = AlertConfig.eidReminderMinutes;
+      if (h.month == 10 && h.day == 1) {
+        special(
+          SpecialEvent.eidAlFitr,
+          d.atLocal(config.eidFitrTime - before),
+          before,
+        );
+      } else if (h.month == 12 && h.day == 10) {
+        special(
+          SpecialEvent.eidAlAdha,
+          d.atLocal(config.eidAdhaTime - before),
+          before,
+        );
+      }
+    }
   }
   out.sort((a, b) => a.at.compareTo(b.at));
   return out;
+}
+
+/// Taraweeh is prayed on the nights before the fasts: the evening whose
+/// next day is in Ramadan. [next] is the following day's Hijri date when
+/// known; otherwise the tabular month lengths decide (Sha'ban 29 days,
+/// Ramadan 30).
+bool _ramadanNight(HijriDate today, HijriDate? next) {
+  if (next != null) return next.isRamadan;
+  return (today.month == 8 && today.day == 29) ||
+      (today.month == 9 && today.day < 30);
 }
 
 /// Auto-silent windows (Azan → Iqama + N minutes) ending after [now],

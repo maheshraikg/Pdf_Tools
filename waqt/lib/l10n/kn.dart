@@ -148,6 +148,52 @@ const Map<String, String> knStrings = {
   'Open Waqt to refresh': 'ನವೀಕರಿಸಲು ವಖ್ತ್ ತೆರೆಯಿರಿ',
   'Tap and hold to exit': 'ಹೊರಬರಲು ಒತ್ತಿ ಹಿಡಿಯಿರಿ',
   's': 'ಸೆ',
+  'near {0}': '{0} ಹತ್ತಿರ',
+  'World places': 'ವಿಶ್ವದ ಸ್ಥಳಗಳು',
+  'Type a town or city name to search 35,000 places worldwide.':
+      'ವಿಶ್ವದಾದ್ಯಂತ 35,000 ಸ್ಥಳಗಳಲ್ಲಿ ಹುಡುಕಲು ಊರು ಅಥವಾ ನಗರದ ಹೆಸರು ಬರೆಯಿರಿ.',
+  'Place data: GeoNames (CC BY 4.0)': 'ಸ್ಥಳ ಮಾಹಿತಿ: GeoNames (CC BY 4.0)',
+  'Azan sound': 'ಅಝಾನ್ ಧ್ವನಿ',
+  'Fajr Azan sound': 'ಫಜ್ರ್ ಅಝಾನ್ ಧ್ವನಿ',
+  'Same as other prayers': 'ಇತರ ನಮಾಝ್‌ಗಳಂತೆಯೇ',
+  'Phone notification sound': 'ಫೋನಿನ ಅಧಿಸೂಚನೆ ಧ್ವನಿ',
+  'Soft chime': 'ಮೃದು ಗಂಟೆ ನಾದ',
+  'Deep bell': 'ಗಂಭೀರ ಗಂಟೆ',
+  'Audio file (e.g. Azan MP3)': 'ಆಡಿಯೋ ಫೈಲ್ (ಉದಾ. ಅಝಾನ್ MP3)',
+  'Repeats until you dismiss it': 'ನಿಲ್ಲಿಸುವವರೆಗೆ ಪುನರಾವರ್ತಿಸುತ್ತದೆ',
+  'Pick a recorded Azan saved on your phone':
+      'ಫೋನಿನಲ್ಲಿ ಉಳಿಸಿದ ಅಝಾನ್ ರೆಕಾರ್ಡಿಂಗ್ ಆಯ್ಕೆಮಾಡಿ',
+  'Could not use this audio file': 'ಈ ಆಡಿಯೋ ಫೈಲ್ ಬಳಸಲಾಗಲಿಲ್ಲ',
+  'Play': 'ಪ್ಲೇ',
+  'Stop': 'ನಿಲ್ಲಿಸಿ',
+  'Play even when the phone is silent': 'ಫೋನ್ ಸೈಲೆಂಟ್‌ನಲ್ಲಿದ್ದರೂ ಪ್ಲೇ ಮಾಡಿ',
+  'Off: on silent or vibrate the Azan only shows and vibrates.':
+      'ಆಫ್: ಸೈಲೆಂಟ್/ವೈಬ್ರೇಟ್‌ನಲ್ಲಿ ಅಝಾನ್ ತೋರಿಸಿ ವೈಬ್ರೇಟ್ ಮಾತ್ರ ಆಗುತ್ತದೆ.',
+  'Ramadan and Eid': 'ರಮಝಾನ್ ಮತ್ತು ಈದ್',
+  'Taraweeh': 'ತರಾವೀಹ್',
+  'Eid al-Fitr prayer': 'ಈದುಲ್ ಫಿತ್ರ್ ನಮಾಝ್',
+  'Eid al-Adha prayer': 'ಈದುಲ್ ಅಝ್‌ಹಾ ನಮಾಝ್',
+  'Alert on Ramadan nights after the Isha Iqama':
+      'ರಮಝಾನ್ ರಾತ್ರಿಗಳಲ್ಲಿ ಇಶಾ ಇಖಾಮತ್ ನಂತರ ಅಲರ್ಟ್',
+  'Minutes after Isha Iqama': 'ಇಶಾ ಇಖಾಮತ್ ನಂತರ ನಿಮಿಷಗಳು',
+  'Eid prayer alert': 'ಈದ್ ನಮಾಝ್ ಅಲರ್ಟ್',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
+      'ಈದ್ ನಮಾಝ್‌ಗೆ 30 ನಿಮಿಷ ಮೊದಲು ನೆನಪಿಸುತ್ತದೆ (ಹಿಜ್ರಿ ದಿನಾಂಕದಂತೆ)',
+  'Eid prayer at {0}': 'ಈದ್ ನಮಾಝ್ {0}',
+  '1 page': '1 ಪುಟ',
+  '{0} pages, rotating': '{0} ಪುಟಗಳು, ಸರದಿಯಾಗಿ',
+  'Open the display': 'ಡಿಸ್ಪ್ಲೇ ತೆರೆಯಿರಿ',
+  'Mosque name': 'ಮಸೀದಿಯ ಹೆಸರು',
+  'Shown at the top of the display': 'ಡಿಸ್ಪ್ಲೇಯ ಮೇಲ್ಭಾಗದಲ್ಲಿ ತೋರಿಸಲಾಗುತ್ತದೆ',
+  'Next prayer page': 'ಮುಂದಿನ ನಮಾಝ್ ಪುಟ',
+  'Big countdown; stays on from 5 minutes before Azan until Iqama':
+      'ದೊಡ್ಡ ಕೌಂಟ್‌ಡೌನ್; ಅಝಾನ್‌ಗೆ 5 ನಿಮಿಷ ಮೊದಲಿನಿಂದ ಇಖಾಮತ್‌ವರೆಗೆ ಇದೇ ಇರುತ್ತದೆ',
+  'Seconds per page': 'ಪ್ರತಿ ಪುಟಕ್ಕೆ ಸೆಕೆಂಡುಗಳು',
+  'Announcements': 'ಪ್ರಕಟಣೆಗಳು',
+  'Add announcement': 'ಪ್ರಕಟಣೆ ಸೇರಿಸಿ',
+  'e.g. "Please switch off your phones"': 'ಉದಾ. "ದಯವಿಟ್ಟು ಫೋನ್ ಆಫ್ ಮಾಡಿ"',
+  'Delete': 'ಅಳಿಸಿ',
+  'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'ಡಿಸ್ಪ್ಲೇಯಲ್ಲಿ 7 ಪುಟಗಳವರೆಗೆ: ನಮಾಝ್ ಸಮಯಗಳು, ಮುಂದಿನ ನಮಾಝ್ ಮತ್ತು 5 ಪ್ರಕಟಣೆಗಳು. ಹೊರಬರಲು ಡಿಸ್ಪ್ಲೇ ಒತ್ತಿ ಹಿಡಿಯಿರಿ.',
 };
 
 const List<String> knHijriMonths = [
