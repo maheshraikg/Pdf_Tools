@@ -66,6 +66,9 @@ class AppSettings extends ChangeNotifier {
   /// True once the user has picked a place (first-run prompt).
   bool placeChosen = false;
 
+  /// Follow the phone's GPS position (on when "Use my location" is picked).
+  bool autoLocation = false;
+
   /// First-run setup done (existing users who picked a place skip it).
   bool onboarded = true;
 
@@ -188,6 +191,7 @@ class AppSettings extends ChangeNotifier {
     }
     placeChosen = p.getBool('placeChosen') ?? false;
     onboarded = p.getBool('onboarded') ?? placeChosen;
+    autoLocation = p.getBool('autoLocation') ?? false;
     method = CalcMethod.byId(p.getString('method'));
     asr = AsrMethod.values.asNameMap()[p.getString('asr')] ?? AsrMethod.shafii;
     highLatitude =
@@ -259,6 +263,7 @@ class AppSettings extends ChangeNotifier {
     await p.setString('place', jsonEncode(place.toJson()));
     await p.setBool('placeChosen', placeChosen);
     await p.setBool('onboarded', onboarded);
+    await p.setBool('autoLocation', autoLocation);
     await p.setString('method', method.id);
     await p.setString('asr', asr.name);
     await p.setString('highLat', highLatitude.name);
@@ -316,6 +321,7 @@ class AppSettings extends ChangeNotifier {
       update((s) {
         s.place = p;
         s.placeChosen = true;
+        s.autoLocation = p.id == 'gps';
         if (applySuggestions) {
           s.method = CalcMethod.byId(p.methodId);
           s.asr = p.asr;

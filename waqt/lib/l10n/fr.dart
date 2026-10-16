@@ -32,15 +32,12 @@ const Map<String, String> frStrings = {
   'From timetable': 'Depuis l\'horaire',
   'Calculated': 'Calculé',
   'Mosque display': 'Écran de mosquée',
-  'Choose your place for accurate times':
-      'Choisissez votre lieu pour des horaires précis',
+  'Choose your place for accurate times': 'Choisissez votre lieu pour des horaires précis',
   'Choose': 'Choisir',
   'Alerts may be missed': 'Des alertes peuvent être manquées',
   'Allow notifications': 'Autoriser les notifications',
-  'Allow exact alarms (on time Azan)':
-      'Autoriser les alarmes exactes (adhan à l\'heure)',
-  'Turn off battery optimisation for Waqt':
-      'Désactiver l\'optimisation de batterie pour Waqt',
+  'Allow exact alarms (on time Azan)': 'Autoriser les alarmes exactes (adhan à l\'heure)',
+  'Turn off battery optimisation for Waqt': 'Désactiver l\'optimisation de batterie pour Waqt',
   'Some phones (Xiaomi, Oppo, Vivo, Realme, Samsung) stop apps in the background. Set Waqt to "Unrestricted" / "No restrictions" in battery settings so Azan is never missed.': 'Certains téléphones (Xiaomi, Oppo, Vivo, Realme, Samsung) arrêtent les applis en arrière-plan. Réglez Waqt sur « Non restreint » dans les paramètres de batterie pour ne jamais manquer l\'adhan.',
   'Fix': 'Corriger',
   'Date': 'Date',
@@ -89,12 +86,10 @@ const Map<String, String> frStrings = {
   'Name': 'Nom',
   'Latitude': 'Latitude',
   'Longitude': 'Longitude',
-  'UTC offset, e.g. +05:30 (empty = phone time zone)':
-      'Décalage UTC, ex. +01:00 (vide = fuseau du téléphone)',
+  'UTC offset, e.g. +05:30 (empty = phone time zone)': 'Décalage UTC, ex. +01:00 (vide = fuseau du téléphone)',
   'Finding your location…': 'Recherche de votre position…',
   'Location permission denied.': 'Autorisation de localisation refusée.',
-  'Location is turned off. Turn it on and try again.':
-      'La localisation est désactivée. Activez-la et réessayez.',
+  'Location is turned off. Turn it on and try again.': 'La localisation est désactivée. Activez-la et réessayez.',
   'Could not get a location. Try again outdoors, or pick a place.': 'Impossible d\'obtenir une position. Réessayez dehors ou choisissez un lieu.',
   'Enter valid coordinates.': 'Saisissez des coordonnées valides.',
   'Azan alert': 'Alerte adhan',
@@ -102,8 +97,7 @@ const Map<String, String> frStrings = {
   'Fixed Iqama time': 'Heure d\'iqama fixe',
   'Fixed Jumu\'ah Iqama time': 'Heure d\'iqama fixe du Joumou\'a',
   'Off: uses the minutes after Azan': 'Désactivé : minutes après l\'adhan',
-  'Used when it is after Azan; otherwise the minutes after Azan':
-      'Utilisée si elle est après l\'adhan ; sinon les minutes après l\'adhan',
+  'Used when it is after Azan; otherwise the minutes after Azan': 'Utilisée si elle est après l\'adhan ; sinon les minutes après l\'adhan',
   'Clear': 'Effacer',
   'Iqama after Azan': 'Iqama après l\'adhan',
   'Reminder before Azan': 'Rappel avant l\'adhan',
@@ -117,8 +111,7 @@ const Map<String, String> frStrings = {
   'Vibrate': 'Vibreur',
   'Silent (Do Not Disturb)': 'Silencieux (Ne pas déranger)',
   'Stay quiet after Iqama': 'Rester silencieux après l\'iqama',
-  'Stay quiet after Jumu\'ah Iqama':
-      'Rester silencieux après l\'iqama du Joumou\'a',
+  'Stay quiet after Jumu\'ah Iqama': 'Rester silencieux après l\'iqama du Joumou\'a',
   'Silent mode needs "Do Not Disturb" access. Without it, Waqt uses vibrate.': 'Le mode silencieux nécessite l\'accès « Ne pas déranger ». Sans lui, Waqt utilise le vibreur.',
   'Grant': 'Autoriser',
   'Send a test alert': 'Envoyer une alerte test',
@@ -150,8 +143,7 @@ const Map<String, String> frStrings = {
   'near {0}': 'près de {0}',
   'World places': 'Lieux du monde',
   'Type a town or city name to search 35,000 places worldwide.': 'Tapez le nom d\'une ville pour chercher parmi 35 000 lieux dans le monde.',
-  'Place data: GeoNames (CC BY 4.0)':
-      'Données des lieux : GeoNames (CC BY 4.0)',
+  'Place data: GeoNames (CC BY 4.0)': 'Données des lieux : GeoNames (CC BY 4.0)',
   'Azan sound': 'Son de l\'adhan',
   'Fajr Azan sound': 'Son de l\'adhan du Fajr',
   'Same as other prayers': 'Comme les autres prières',
@@ -160,24 +152,20 @@ const Map<String, String> frStrings = {
   'Deep bell': 'Cloche grave',
   'Audio file (e.g. Azan MP3)': 'Fichier audio (ex. adhan MP3)',
   'Repeats until you dismiss it': 'Se répète jusqu\'à ce que vous l\'arrêtiez',
-  'Pick a recorded Azan saved on your phone':
-      'Choisissez un enregistrement d\'adhan sur votre téléphone',
+  'Pick a recorded Azan saved on your phone': 'Choisissez un enregistrement d\'adhan sur votre téléphone',
   'Could not use this audio file': 'Impossible d\'utiliser ce fichier audio',
   'Play': 'Écouter',
   'Stop': 'Arrêter',
-  'Play even when the phone is silent':
-      'Jouer même si le téléphone est en silencieux',
+  'Play even when the phone is silent': 'Jouer même si le téléphone est en silencieux',
   'Off: on silent or vibrate the Azan only shows and vibrates.': 'Désactivé : en silencieux ou vibreur, l\'adhan s\'affiche et vibre seulement.',
   'Ramadan and Eid': 'Ramadan et Aïd',
   'Taraweeh': 'Tarawih',
   'Eid al-Fitr prayer': 'Prière de l\'Aïd al-Fitr',
   'Eid al-Adha prayer': 'Prière de l\'Aïd al-Adha',
-  'Alert on Ramadan nights after the Isha Iqama':
-      'Alerte les nuits de Ramadan après l\'iqama d\'Isha',
+  'Alert on Ramadan nights after the Isha Iqama': 'Alerte les nuits de Ramadan après l\'iqama d\'Isha',
   'Minutes after Isha Iqama': 'Minutes après l\'iqama d\'Isha',
   'Eid prayer alert': 'Alerte de la prière de l\'Aïd',
-  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
-      'Rappel 30 minutes avant la prière de l\'Aïd (selon la date hégirienne)',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)': 'Rappel 30 minutes avant la prière de l\'Aïd (selon la date hégirienne)',
   'Eid prayer at {0}': 'Prière de l\'Aïd à {0}',
   '1 page': '1 page',
   '{0} pages, rotating': '{0} pages en alternance',
@@ -189,19 +177,16 @@ const Map<String, String> frStrings = {
   'Seconds per page': 'Secondes par page',
   'Announcements': 'Annonces',
   'Add announcement': 'Ajouter une annonce',
-  'e.g. "Please switch off your phones"':
-      'ex. « Merci d\'éteindre vos téléphones »',
+  'e.g. "Please switch off your phones"': 'ex. « Merci d\'éteindre vos téléphones »',
   'Delete': 'Supprimer',
   'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'L\'affichage montre jusqu\'à 7 pages : horaires, prochaine prière et 5 annonces. Appuyez longuement sur l\'écran pour quitter.',
   'Full-screen Azan': 'Adhan en plein écran',
   'Shows the Azan over the lock screen with a big Stop button': 'Affiche l\'adhan sur l\'écran de verrouillage avec un grand bouton Arrêter',
-  'Allow full-screen alerts for Waqt':
-      'Autoriser les alertes plein écran pour Waqt',
+  'Allow full-screen alerts for Waqt': 'Autoriser les alertes plein écran pour Waqt',
   'Prayer tracker': 'Suivi des prières',
   '{0} of {1} prayed today': '{0} prières sur {1} accomplies aujourd\'hui',
   '{0}-day streak': '{0} jours d\'affilée',
-  'Tap a prayer\'s icon to mark it as prayed':
-      'Touchez l\'icône d\'une prière pour la marquer comme accomplie',
+  'Tap a prayer\'s icon to mark it as prayed': 'Touchez l\'icône d\'une prière pour la marquer comme accomplie',
   'Mark as prayed': 'Marquer comme accomplie',
   'Day streak': 'Jours d\'affilée',
   'Last 7 days': '7 derniers jours',
@@ -211,8 +196,7 @@ const Map<String, String> frStrings = {
   'Next week': 'Semaine suivante',
   'Excused today': 'Dispensé aujourd\'hui',
   'Pause the tracker for the day (e.g. illness or menstruation); your streak is kept.': 'Mettez le suivi en pause pour la journée (ex. maladie ou menstruation) ; votre série est conservée.',
-  'Your tracker stays on this phone only.':
-      'Votre suivi reste uniquement sur ce téléphone.',
+  'Your tracker stays on this phone only.': 'Votre suivi reste uniquement sur ce téléphone.',
   'Tasbih': 'Tasbih',
   'After-prayer tasbih': 'Tasbih après la prière',
   'Free count': 'Comptage libre',
@@ -256,6 +240,12 @@ const Map<String, String> frStrings = {
   'Allow notifications and exact alarms so the Azan comes on time, even when the phone is asleep.': 'Autorisez les notifications et les alarmes exactes pour que l\'adhan arrive à l\'heure, même téléphone en veille.',
   'Allow alerts': 'Autoriser les alertes',
   'You can pick an Azan recording, Iqama times and more later in Settings › Azan & Iqama alerts.': 'Vous pourrez choisir un enregistrement d\'adhan, les horaires d\'iqama et plus dans Réglages › Alertes d\'adhan et d\'iqama.',
+  'Update location automatically': 'Mettre à jour le lieu automatiquement',
+  'When you open Waqt, the place follows your phone (GPS), with the local time zone.': 'À l\'ouverture de Waqt, le lieu suit votre téléphone (GPS) avec le fuseau horaire local.',
+  'Location updated: {0}': 'Lieu mis à jour : {0}',
+  'Set the phone\'s date & time to automatic': 'Réglez la date et l\'heure du téléphone en automatique',
+  'Your phone\'s clock is {0} min off': 'L\'horloge de votre téléphone a {0} min d\'écart',
+  'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.': 'Les alertes suivent l\'horloge du téléphone ; une heure ou un fuseau faux fausse tous les horaires.',
 };
 
 const List<String> frHijriMonths = [

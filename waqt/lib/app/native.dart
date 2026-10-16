@@ -22,6 +22,22 @@ class LocationResult {
   bool get ok => error == null;
 }
 
+/// How the phone keeps its clock.
+class ClockStatus {
+  const ClockStatus({this.autoTime = true, this.autoZone = true, this.offset});
+
+  /// "Automatic date & time" and "Automatic time zone" are on.
+  final bool autoTime, autoZone;
+
+  /// Phone clock minus satellite time, when a recent GPS fix gave it.
+  final Duration? offset;
+
+  /// Off by more than 90 seconds: prayer times would be shown late/early.
+  bool get clockWrong => offset != null && offset!.inSeconds.abs() > 90;
+
+  bool get ok => autoTime && autoZone && !clockWrong;
+}
+
 class Native {
   static const _ch = MethodChannel('com.maheshrai.waqt/native');
 
@@ -44,12 +60,14 @@ class Native {
 
   /// One location fix from the phone's GPS / network provider (asks for
   /// permission when needed). No Google Play services are used.
-  static Future<LocationResult> getLocation() async {
+  static Future<LocationResult> getLocation({bool prompt = true}) async {
     if (!supported) {
       return const LocationResult(error: LocationError.unavailable);
     }
     try {
-      final r = await _ch.invokeMapMethod<String, dynamic>('getLocation');
+      final r = await _ch.invokeMapMethod<String, dynamic>('getLocation', {
+        'prompt': prompt,
+      });
       if (r == null) {
         return const LocationResult(error: LocationError.unavailable);
       }
@@ -134,4 +152,17 @@ class Native {
 
   static Future<void> openFullScreenSettings() =>
       _call<void>('openFullScreenSettings');
+
+  static Future<ClockStatus> clockStatus() async {
+    final r = await _call<Map<Object?, Object?>>('clockStatus');
+    if (r == null) return const ClockStatus();
+    final off = r['offsetMs'] as num?;
+    return ClockStatus(
+      autoTime: r['autoTime'] as bool? ?? true,
+      autoZone: r['autoZone'] as bool? ?? true,
+      offset: off == null ? null : Duration(milliseconds: off.toInt()),
+    );
+  }
+
+  static Future<void> openDateSettings() => _call<void>('openDateSettings');
 }

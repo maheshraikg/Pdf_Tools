@@ -584,4 +584,30 @@ class S {
     'ബാങ്ക് റെക്കോർഡിംഗ്, ഇഖാമത്ത് സമയങ്ങൾ തുടങ്ങിയവ പിന്നീട് സെറ്റിംഗ്സിൽ '
         'തിരഞ്ഞെടുക്കാം.',
   );
+
+  // Automatic location and the phone's clock.
+  String get autoLocation =>
+      _t('Update location automatically', 'സ്ഥലം സ്വയം പുതുക്കുക');
+  String get autoLocationHelp => _t(
+    'When you open Waqt, the place follows your phone (GPS), with the local '
+        'time zone.',
+    'വഖ്ത് തുറക്കുമ്പോൾ സ്ഥലവും പ്രാദേശിക സമയമേഖലയും ഫോണിന്റെ GPS അനുസരിച്ച് മാറും.',
+  );
+  String locationUpdated(String p) =>
+      _f('Location updated: {0}', 'സ്ഥലം പുതുക്കി: {0}', [p]);
+  String get clockNotAuto => _t(
+    'Set the phone\'s date & time to automatic',
+    'ഫോണിലെ തീയതിയും സമയവും ഓട്ടോമാറ്റിക് ആക്കുക',
+  );
+  String clockOff(int minutes) => _f(
+    'Your phone\'s clock is {0} min off',
+    'ഫോണിലെ ക്ലോക്ക് {0} മിനിറ്റ് തെറ്റാണ്',
+    [minutes],
+  );
+  String get clockHelp => _t(
+    'Alerts follow the phone\'s clock; a wrong clock or time zone makes '
+        'every time wrong.',
+    'അറിയിപ്പുകൾ ഫോണിലെ ക്ലോക്ക് അനുസരിച്ചാണ്; ക്ലോക്കോ സമയമേഖലയോ തെറ്റിയാൽ '
+        'എല്ലാ സമയവും തെറ്റും.',
+  );
 }

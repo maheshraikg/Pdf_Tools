@@ -32,6 +32,14 @@ Kerala and working anywhere. No ads, no tracking and no internet permission.
 
 ## Features
 
+- **Automatic location**: "Use my location" finds you by GPS (no Google
+  services), names the nearest town and uses that town's time zone; each
+  time the app opens it follows you if you moved more than 2 km or into
+  another zone, and reschedules the alerts.
+- **Clock check**: every time depends on the phone's clock, so Today warns
+  when automatic date & time or time zone is off, or when the clock differs
+  from satellite (GNSS) time by more than 90 seconds, with a button to fix
+  it.
 - **First-run setup**: three short steps (language, place, alerts with a
   sound preview) so the app is right from the first minute.
 - **Full-screen Azan**: over the lock screen like an alarm clock, with a

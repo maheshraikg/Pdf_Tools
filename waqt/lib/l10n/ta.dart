@@ -32,15 +32,12 @@ const Map<String, String> taStrings = {
   'From timetable': 'அட்டவணையிலிருந்து',
   'Calculated': 'கணக்கிடப்பட்டது',
   'Mosque display': 'பள்ளிவாசல் திரை',
-  'Choose your place for accurate times':
-      'சரியான நேரங்களுக்கு உங்கள் இடத்தைத் தேர்ந்தெடுங்கள்',
+  'Choose your place for accurate times': 'சரியான நேரங்களுக்கு உங்கள் இடத்தைத் தேர்ந்தெடுங்கள்',
   'Choose': 'தேர்ந்தெடு',
   'Alerts may be missed': 'அறிவிப்புகள் தவறலாம்',
   'Allow notifications': 'அறிவிப்புகளை அனுமதி',
-  'Allow exact alarms (on time Azan)':
-      'துல்லியமான அலாரங்களை அனுமதி (சரியான நேரத்தில் பாங்கு)',
-  'Turn off battery optimisation for Waqt':
-      'வக்த்துக்கான பேட்டரி மேம்படுத்தலை நிறுத்து',
+  'Allow exact alarms (on time Azan)': 'துல்லியமான அலாரங்களை அனுமதி (சரியான நேரத்தில் பாங்கு)',
+  'Turn off battery optimisation for Waqt': 'வக்த்துக்கான பேட்டரி மேம்படுத்தலை நிறுத்து',
   'Some phones (Xiaomi, Oppo, Vivo, Realme, Samsung) stop apps in the background. Set Waqt to "Unrestricted" / "No restrictions" in battery settings so Azan is never missed.': 'சில போன்கள் (Xiaomi, Oppo, Vivo, Realme, Samsung) பின்னணியில் ஆப்களை நிறுத்துகின்றன. பாங்கு தவறாமல் இருக்க பேட்டரி அமைப்புகளில் வக்த்தை "Unrestricted" ஆக்குங்கள்.',
   'Fix': 'சரிசெய்',
   'Date': 'தேதி',
@@ -89,20 +86,17 @@ const Map<String, String> taStrings = {
   'Name': 'பெயர்',
   'Latitude': 'அட்சரேகை',
   'Longitude': 'தீர்க்கரேகை',
-  'UTC offset, e.g. +05:30 (empty = phone time zone)':
-      'UTC வேறுபாடு, உதா. +05:30 (காலி = போனின் நேர மண்டலம்)',
+  'UTC offset, e.g. +05:30 (empty = phone time zone)': 'UTC வேறுபாடு, உதா. +05:30 (காலி = போனின் நேர மண்டலம்)',
   'Finding your location…': 'உங்கள் இடம் கண்டறியப்படுகிறது…',
   'Location permission denied.': 'இட அனுமதி மறுக்கப்பட்டது.',
-  'Location is turned off. Turn it on and try again.':
-      'இருப்பிடம் அணைக்கப்பட்டுள்ளது. இயக்கி மீண்டும் முயலுங்கள்.',
+  'Location is turned off. Turn it on and try again.': 'இருப்பிடம் அணைக்கப்பட்டுள்ளது. இயக்கி மீண்டும் முயலுங்கள்.',
   'Could not get a location. Try again outdoors, or pick a place.': 'இடம் கிடைக்கவில்லை. வெளியே சென்று முயலுங்கள் அல்லது ஓர் இடத்தைத் தேர்ந்தெடுங்கள்.',
   'Enter valid coordinates.': 'சரியான அட்சரேகை தீர்க்கரேகை உள்ளிடுங்கள்.',
   'Azan alert': 'பாங்கு அறிவிப்பு',
   'Iqama alert': 'இகாமத் அறிவிப்பு',
   'Fixed Iqama time': 'நிலையான இகாமத் நேரம்',
   'Fixed Jumu\'ah Iqama time': 'நிலையான ஜும்ஆ இகாமத் நேரம்',
-  'Off: uses the minutes after Azan':
-      'அணைப்பு: பாங்குக்குப் பின் நிமிடங்கள் பயன்படும்',
+  'Off: uses the minutes after Azan': 'அணைப்பு: பாங்குக்குப் பின் நிமிடங்கள் பயன்படும்',
   'Used when it is after Azan; otherwise the minutes after Azan': 'பாங்குக்குப் பின் இருந்தால் இது, இல்லையெனில் பாங்குக்குப் பின் நிமிடங்கள்',
   'Clear': 'அழி',
   'Iqama after Azan': 'பாங்குக்குப் பின் இகாமத்',
@@ -148,8 +142,7 @@ const Map<String, String> taStrings = {
   's': 'வி',
   'near {0}': '{0} அருகில்',
   'World places': 'உலக இடங்கள்',
-  'Type a town or city name to search 35,000 places worldwide.':
-      'உலகெங்கும் 35,000 இடங்களில் தேட ஊர் அல்லது நகரின் பெயரை உள்ளிடவும்.',
+  'Type a town or city name to search 35,000 places worldwide.': 'உலகெங்கும் 35,000 இடங்களில் தேட ஊர் அல்லது நகரின் பெயரை உள்ளிடவும்.',
   'Place data: GeoNames (CC BY 4.0)': 'இடத் தரவு: GeoNames (CC BY 4.0)',
   'Azan sound': 'பாங்கு ஒலி',
   'Fajr Azan sound': 'ஃபஜ்ர் பாங்கு ஒலி',
@@ -159,24 +152,20 @@ const Map<String, String> taStrings = {
   'Deep bell': 'ஆழ்ந்த மணி',
   'Audio file (e.g. Azan MP3)': 'ஆடியோ கோப்பு (எ.கா. பாங்கு MP3)',
   'Repeats until you dismiss it': 'நிறுத்தும் வரை திரும்ப ஒலிக்கும்',
-  'Pick a recorded Azan saved on your phone':
-      'போனில் சேமித்த பாங்கு பதிவைத் தேர்ந்தெடுக்கவும்',
+  'Pick a recorded Azan saved on your phone': 'போனில் சேமித்த பாங்கு பதிவைத் தேர்ந்தெடுக்கவும்',
   'Could not use this audio file': 'இந்த ஆடியோ கோப்பைப் பயன்படுத்த முடியவில்லை',
   'Play': 'இயக்கு',
   'Stop': 'நிறுத்து',
   'Play even when the phone is silent': 'போன் அமைதியில் இருந்தாலும் இயக்கு',
-  'Off: on silent or vibrate the Azan only shows and vibrates.':
-      'அணைத்தால்: அமைதி/அதிர்வில் பாங்கு காட்டப்பட்டு அதிரும் மட்டும்.',
+  'Off: on silent or vibrate the Azan only shows and vibrates.': 'அணைத்தால்: அமைதி/அதிர்வில் பாங்கு காட்டப்பட்டு அதிரும் மட்டும்.',
   'Ramadan and Eid': 'ரமலான் மற்றும் பெருநாள்',
   'Taraweeh': 'தராவீஹ்',
   'Eid al-Fitr prayer': 'நோன்புப் பெருநாள் தொழுகை',
   'Eid al-Adha prayer': 'ஹஜ்ஜுப் பெருநாள் தொழுகை',
-  'Alert on Ramadan nights after the Isha Iqama':
-      'ரமலான் இரவுகளில் இஷா இகாமத்திற்குப் பின் அறிவிப்பு',
+  'Alert on Ramadan nights after the Isha Iqama': 'ரமலான் இரவுகளில் இஷா இகாமத்திற்குப் பின் அறிவிப்பு',
   'Minutes after Isha Iqama': 'இஷா இகாமத்திற்குப் பின் நிமிடங்கள்',
   'Eid prayer alert': 'பெருநாள் தொழுகை அறிவிப்பு',
-  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
-      'பெருநாள் தொழுகைக்கு 30 நிமிடம் முன் நினைவூட்டும் (ஹிஜ்ரி தேதிப்படி)',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)': 'பெருநாள் தொழுகைக்கு 30 நிமிடம் முன் நினைவூட்டும் (ஹிஜ்ரி தேதிப்படி)',
   'Eid prayer at {0}': 'பெருநாள் தொழுகை {0}',
   '1 page': '1 பக்கம்',
   '{0} pages, rotating': '{0} பக்கங்கள், மாறி மாறி',
@@ -188,20 +177,16 @@ const Map<String, String> taStrings = {
   'Seconds per page': 'பக்கத்திற்கு வினாடிகள்',
   'Announcements': 'அறிவிப்புகள்',
   'Add announcement': 'அறிவிப்பைச் சேர்',
-  'e.g. "Please switch off your phones"':
-      'எ.கா. "தயவுசெய்து போன்களை அணைக்கவும்"',
+  'e.g. "Please switch off your phones"': 'எ.கா. "தயவுசெய்து போன்களை அணைக்கவும்"',
   'Delete': 'நீக்கு',
   'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'திரையில் 7 பக்கங்கள் வரை: தொழுகை நேரங்கள், அடுத்த தொழுகை, 5 அறிவிப்புகள். வெளியேற திரையை அழுத்திப் பிடிக்கவும்.',
   'Full-screen Azan': 'முழுத்திரை பாங்கு',
-  'Shows the Azan over the lock screen with a big Stop button':
-      'பூட்டுத் திரையின் மேல் பெரிய நிறுத்து பொத்தானுடன் பாங்கைக் காட்டும்',
-  'Allow full-screen alerts for Waqt':
-      'Waqt-க்கு முழுத்திரை அறிவிப்புகளை அனுமதிக்கவும்',
+  'Shows the Azan over the lock screen with a big Stop button': 'பூட்டுத் திரையின் மேல் பெரிய நிறுத்து பொத்தானுடன் பாங்கைக் காட்டும்',
+  'Allow full-screen alerts for Waqt': 'Waqt-க்கு முழுத்திரை அறிவிப்புகளை அனுமதிக்கவும்',
   'Prayer tracker': 'தொழுகை கண்காணிப்பு',
   '{0} of {1} prayed today': 'இன்று {1}-ல் {0} தொழுதீர்கள்',
   '{0}-day streak': 'தொடர்ந்து {0} நாள்',
-  'Tap a prayer\'s icon to mark it as prayed':
-      'தொழுததாகக் குறிக்க தொழுகையின் சின்னத்தைத் தட்டவும்',
+  'Tap a prayer\'s icon to mark it as prayed': 'தொழுததாகக் குறிக்க தொழுகையின் சின்னத்தைத் தட்டவும்',
   'Mark as prayed': 'தொழுததாகக் குறி',
   'Day streak': 'தொடர் நாட்கள்',
   'Last 7 days': 'கடந்த 7 நாட்கள்',
@@ -211,8 +196,7 @@ const Map<String, String> taStrings = {
   'Next week': 'அடுத்த வாரம்',
   'Excused today': 'இன்று விலக்கு',
   'Pause the tracker for the day (e.g. illness or menstruation); your streak is kept.': 'இந்நாளுக்கு கண்காணிப்பை நிறுத்தவும் (எ.கா. நோய், மாதவிடாய்); உங்கள் தொடர் காக்கப்படும்.',
-  'Your tracker stays on this phone only.':
-      'உங்கள் கண்காணிப்பு இந்த போனில் மட்டுமே இருக்கும்.',
+  'Your tracker stays on this phone only.': 'உங்கள் கண்காணிப்பு இந்த போனில் மட்டுமே இருக்கும்.',
   'Tasbih': 'தஸ்பீஹ்',
   'After-prayer tasbih': 'தொழுகைக்குப் பிந்தைய தஸ்பீஹ்',
   'Free count': 'இலவச எண்ணிக்கை',
@@ -221,8 +205,7 @@ const Map<String, String> taStrings = {
   'Allah is the Greatest': 'அல்லாஹ் மிகப் பெரியவன்',
   'There is no god but Allah': 'அல்லாஹ்வைத் தவிர வணக்கத்திற்குரியவன் இல்லை',
   'I seek Allah\'s forgiveness': 'நான் அல்லாஹ்விடம் பாவமன்னிப்புத் தேடுகிறேன்',
-  'O Allah, send blessings upon Muhammad':
-      'அல்லாஹ்வே, முஹம்மது ﷺ மீது அருள் புரிவாயாக',
+  'O Allah, send blessings upon Muhammad': 'அல்லாஹ்வே, முஹம்மது ﷺ மீது அருள் புரிவாயாக',
   'Glory and praise be to Allah': 'அல்லாஹ் தூயவன், அவனுக்கே புகழ்',
   'Reset the counter?': 'கவுண்டரை மீட்டமைக்கவா?',
   'Tap the circle to count': 'எண்ண வட்டத்தைத் தட்டவும்',
@@ -257,6 +240,12 @@ const Map<String, String> taStrings = {
   'Allow notifications and exact alarms so the Azan comes on time, even when the phone is asleep.': 'போன் உறங்கும்போதும் பாங்கு சரியான நேரத்தில் வர அறிவிப்புகளையும் துல்லிய அலாரங்களையும் அனுமதிக்கவும்.',
   'Allow alerts': 'அறிவிப்புகளை அனுமதி',
   'You can pick an Azan recording, Iqama times and more later in Settings › Azan & Iqama alerts.': 'பாங்கு பதிவு, இகாமத் நேரங்கள் போன்றவற்றைப் பின்னர் அமைப்புகள் › பாங்கு இகாமத் அறிவிப்புகளில் தேர்வு செய்யலாம்.',
+  'Update location automatically': 'இடத்தைத் தானாகப் புதுப்பி',
+  'When you open Waqt, the place follows your phone (GPS), with the local time zone.': 'Waqt-ஐத் திறக்கும்போது இடமும் உள்ளூர் நேர மண்டலமும் உங்கள் போனின் GPS-ஐப் பின்பற்றும்.',
+  'Location updated: {0}': 'இடம் புதுப்பிக்கப்பட்டது: {0}',
+  'Set the phone\'s date & time to automatic': 'போனின் தேதி, நேரத்தைத் தானியங்கியாக்கவும்',
+  'Your phone\'s clock is {0} min off': 'உங்கள் போன் கடிகாரம் {0} நிமிடம் தவறாக உள்ளது',
+  'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.': 'அறிவிப்புகள் போன் கடிகாரத்தைப் பின்பற்றும்; தவறான கடிகாரம் அல்லது நேர மண்டலம் எல்லா நேரங்களையும் தவறாக்கும்.',
 };
 
 const List<String> taHijriMonths = [

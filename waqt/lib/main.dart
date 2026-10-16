@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app/background.dart';
+import 'app/location.dart';
 import 'app/scope.dart';
 import 'app/settings.dart';
+import 'app/strings.dart';
 import 'screens/month_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/qibla_screen.dart';
@@ -35,6 +37,7 @@ class WaqtApp extends StatefulWidget {
 
 class _WaqtAppState extends State<WaqtApp> with WidgetsBindingObserver {
   Timer? _debounce;
+  final _messenger = GlobalKey<ScaffoldMessengerState>();
 
   @override
   void initState() {
@@ -42,6 +45,18 @@ class _WaqtAppState extends State<WaqtApp> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     widget.settings.addListener(_onSettings);
     _refreshBackground();
+    _followLocation();
+  }
+
+  /// Automatic location: move the place when the phone has moved.
+  Future<void> _followLocation() async {
+    if (!widget.background) return;
+    final p = await refreshAutoLocation(widget.settings);
+    if (p == null) return;
+    final s = S(widget.settings.lang);
+    _messenger.currentState?.showSnackBar(
+      SnackBar(content: Text(s.locationUpdated(p.label(s.ml)))),
+    );
   }
 
   @override
@@ -54,7 +69,10 @@ class _WaqtAppState extends State<WaqtApp> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) _refreshBackground();
+    if (state == AppLifecycleState.resumed) {
+      _refreshBackground();
+      _followLocation();
+    }
   }
 
   void _onSettings() {
@@ -74,6 +92,7 @@ class _WaqtAppState extends State<WaqtApp> with WidgetsBindingObserver {
       listenable: widget.settings,
       builder: (context, _) => MaterialApp(
         title: 'Waqt',
+        scaffoldMessengerKey: _messenger,
         debugShowCheckedModeBanner: false,
         theme: buildTheme(Brightness.light),
         darkTheme: buildTheme(Brightness.dark),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app/city_data.dart';
+import '../app/location.dart';
 import '../app/native.dart';
 import '../app/scope.dart';
 import '../core/cities.dart';
@@ -31,13 +32,13 @@ class _PlaceScreenState extends State<PlaceScreen> {
   Future<void> _useGps() async {
     final s = context.s, settings = context.settings;
     setState(() => _locating = true);
-    final r = await Native.getLocation();
+    final err = await useMyLocation(settings);
     if (!mounted) return;
     setState(() => _locating = false);
-    if (!r.ok) {
+    if (err != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(switch (r.error!) {
+          content: Text(switch (err) {
             LocationError.denied => s.locationDenied,
             LocationError.disabled => s.locationDisabled,
             LocationError.unavailable => s.locationUnavailable,
@@ -46,24 +47,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
       );
       return;
     }
-    final cities = _cities ?? await loadCities().catchError((_) => <City>[]);
-    final near = nearestCity(cities, r.latitude!, r.longitude!);
-    // Keep the current method: a GPS place is usually where the user
-    // already is.
-    await settings.choosePlace(
-      Place(
-        id: 'gps',
-        name: near != null
-            ? '${s.myLocation} · ${s.nearPlace(near.nameMl != null && s.ml ? near.nameMl! : near.name)}'
-            : '${s.myLocation} (${r.latitude!.toStringAsFixed(3)}, ${r.longitude!.toStringAsFixed(3)})',
-        latitude: r.latitude!,
-        longitude: r.longitude!,
-        methodId: settings.method.id,
-        asr: settings.asr,
-      ),
-      applySuggestions: false,
-    );
-    if (mounted) Navigator.pop(context);
+    Navigator.pop(context);
   }
 
   Future<void> _manual() async {
@@ -213,6 +197,14 @@ class _PlaceScreenState extends State<PlaceScreen> {
                 title: Text(_locating ? s.locating : s.useMyLocation),
                 onTap: _locating ? null : _useGps,
               ),
+              if (settings.place.id == 'gps')
+                SwitchListTile(
+                  secondary: const IconBadge(Icons.sync),
+                  title: Text(s.autoLocation),
+                  subtitle: Text(s.autoLocationHelp),
+                  value: settings.autoLocation,
+                  onChanged: (v) => settings.update((x) => x.autoLocation = v),
+                ),
               ListTile(
                 leading: const IconBadge(Icons.edit_location_alt_outlined),
                 title: Text(s.enterCoordinates),

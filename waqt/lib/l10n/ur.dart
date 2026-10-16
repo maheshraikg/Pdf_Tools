@@ -32,14 +32,12 @@ const Map<String, String> urStrings = {
   'From timetable': 'جدول سے',
   'Calculated': 'حساب شدہ',
   'Mosque display': 'مسجد ڈسپلے',
-  'Choose your place for accurate times':
-      'درست اوقات کے لیے اپنی جگہ منتخب کریں',
+  'Choose your place for accurate times': 'درست اوقات کے لیے اپنی جگہ منتخب کریں',
   'Choose': 'منتخب کریں',
   'Alerts may be missed': 'الرٹس چھوٹ سکتے ہیں',
   'Allow notifications': 'اطلاعات کی اجازت دیں',
   'Allow exact alarms (on time Azan)': 'درست الارم کی اجازت دیں (بروقت اذان)',
-  'Turn off battery optimisation for Waqt':
-      'وقت کے لیے بیٹری آپٹیمائزیشن بند کریں',
+  'Turn off battery optimisation for Waqt': 'وقت کے لیے بیٹری آپٹیمائزیشن بند کریں',
   'Some phones (Xiaomi, Oppo, Vivo, Realme, Samsung) stop apps in the background. Set Waqt to "Unrestricted" / "No restrictions" in battery settings so Azan is never missed.': 'کچھ فون (Xiaomi، Oppo، Vivo، Realme، Samsung) پس منظر میں ایپس بند کر دیتے ہیں۔ بیٹری کی ترتیبات میں وقت کو "Unrestricted" کریں تاکہ اذان کبھی نہ چھوٹے۔',
   'Fix': 'درست کریں',
   'Date': 'تاریخ',
@@ -66,8 +64,7 @@ const Map<String, String> urStrings = {
   'One seventh of the night': 'رات کا ساتواں حصہ',
   'Angle based (recommended)': 'زاویے کے مطابق (تجویز کردہ)',
   'Adjust times (minutes)': 'اوقات میں ترمیم (منٹ)',
-  'Match your mosque: add or subtract minutes for each time.':
-      'اپنی مسجد سے ملائیں: ہر وقت میں منٹ جمع یا تفریق کریں۔',
+  'Match your mosque: add or subtract minutes for each time.': 'اپنی مسجد سے ملائیں: ہر وقت میں منٹ جمع یا تفریق کریں۔',
   'Imsak before Fajr': 'فجر سے پہلے امساک',
   'Ishraq after sunrise': 'طلوع کے بعد اشراق',
   'Hijri date correction': 'ہجری تاریخ کی درستی',
@@ -89,23 +86,18 @@ const Map<String, String> urStrings = {
   'Name': 'نام',
   'Latitude': 'عرض البلد',
   'Longitude': 'طول البلد',
-  'UTC offset, e.g. +05:30 (empty = phone time zone)':
-      'UTC فرق، مثلاً +05:30 (خالی = فون کا ٹائم زون)',
+  'UTC offset, e.g. +05:30 (empty = phone time zone)': 'UTC فرق، مثلاً +05:30 (خالی = فون کا ٹائم زون)',
   'Finding your location…': 'آپ کا مقام تلاش کیا جا رہا ہے…',
   'Location permission denied.': 'مقام کی اجازت مسترد کر دی گئی۔',
-  'Location is turned off. Turn it on and try again.':
-      'لوکیشن بند ہے۔ اسے آن کر کے دوبارہ کوشش کریں۔',
-  'Could not get a location. Try again outdoors, or pick a place.':
-      'مقام نہیں ملا۔ باہر جا کر کوشش کریں یا کوئی جگہ منتخب کریں۔',
+  'Location is turned off. Turn it on and try again.': 'لوکیشن بند ہے۔ اسے آن کر کے دوبارہ کوشش کریں۔',
+  'Could not get a location. Try again outdoors, or pick a place.': 'مقام نہیں ملا۔ باہر جا کر کوشش کریں یا کوئی جگہ منتخب کریں۔',
   'Enter valid coordinates.': 'درست نقاط درج کریں۔',
   'Azan alert': 'اذان الرٹ',
   'Iqama alert': 'اقامت الرٹ',
   'Fixed Iqama time': 'مقررہ اقامت کا وقت',
   'Fixed Jumu\'ah Iqama time': 'جمعہ کی مقررہ اقامت کا وقت',
-  'Off: uses the minutes after Azan':
-      'بند: اذان کے بعد کے منٹ استعمال ہوتے ہیں',
-  'Used when it is after Azan; otherwise the minutes after Azan':
-      'اذان کے بعد ہو تو یہی، ورنہ اذان کے بعد کے منٹ',
+  'Off: uses the minutes after Azan': 'بند: اذان کے بعد کے منٹ استعمال ہوتے ہیں',
+  'Used when it is after Azan; otherwise the minutes after Azan': 'اذان کے بعد ہو تو یہی، ورنہ اذان کے بعد کے منٹ',
   'Clear': 'صاف کریں',
   'Iqama after Azan': 'اذان کے بعد اقامت',
   'Reminder before Azan': 'اذان سے پہلے یاددہانی',
@@ -123,16 +115,14 @@ const Map<String, String> urStrings = {
   'Silent mode needs "Do Not Disturb" access. Without it, Waqt uses vibrate.': 'خاموش موڈ کے لیے "Do Not Disturb" اجازت درکار ہے۔ اس کے بغیر وقت وائبریٹ استعمال کرتا ہے۔',
   'Grant': 'اجازت دیں',
   'Send a test alert': 'آزمائشی الرٹ بھیجیں',
-  'Alerts are scheduled for the next 20 days. Opening Waqt now and then keeps them going.':
-      'الرٹس اگلے 20 دنوں کے لیے مقرر ہیں۔ وقت کو کبھی کبھار کھولتے رہیں۔',
+  'Alerts are scheduled for the next 20 days. Opening Waqt now and then keeps them going.': 'الرٹس اگلے 20 دنوں کے لیے مقرر ہیں۔ وقت کو کبھی کبھار کھولتے رہیں۔',
   '{0} – Azan time': '{0} – اذان کا وقت',
   '{0} – Iqama': '{0} – اقامت',
   '{0} in {1} min': '{0}، {1} منٹ میں',
   'Imsak – Suhoor ends': 'امساک – سحری ختم',
   '{0} time': '{0} کا وقت',
   'Open Waqt to keep alerts on': 'الرٹس جاری رکھنے کے لیے وقت کھولیں',
-  'Scheduled alerts end in a day. Tap to schedule the next days.':
-      'مقرر الرٹس ایک دن میں ختم ہو جائیں گے۔ اگلے دنوں کے لیے ٹیپ کریں۔',
+  'Scheduled alerts end in a day. Tap to schedule the next days.': 'مقرر الرٹس ایک دن میں ختم ہو جائیں گے۔ اگلے دنوں کے لیے ٹیپ کریں۔',
   'Reminders': 'یاددہانیاں',
   'For times that match your mosque exactly, import its yearly chart (for example a Samastha calendar) as a CSV file. Dates the table does not cover are calculated.': 'اپنی مسجد کے بالکل مطابق اوقات کے لیے اس کا سالانہ جدول CSV فائل کے طور پر درآمد کریں۔ جو تاریخیں جدول میں نہیں وہ حساب ہوں گی۔',
   'Import CSV file': 'CSV فائل درآمد کریں',
@@ -152,8 +142,7 @@ const Map<String, String> urStrings = {
   's': 'سیکنڈ',
   'near {0}': '{0} کے قریب',
   'World places': 'دنیا بھر کے مقامات',
-  'Type a town or city name to search 35,000 places worldwide.':
-      'دنیا بھر کے 35,000 مقامات میں تلاش کے لیے شہر یا قصبے کا نام لکھیں۔',
+  'Type a town or city name to search 35,000 places worldwide.': 'دنیا بھر کے 35,000 مقامات میں تلاش کے لیے شہر یا قصبے کا نام لکھیں۔',
   'Place data: GeoNames (CC BY 4.0)': 'مقامات کا ڈیٹا: GeoNames (CC BY 4.0)',
   'Azan sound': 'اذان کی آواز',
   'Fajr Azan sound': 'فجر کی اذان کی آواز',
@@ -163,24 +152,20 @@ const Map<String, String> urStrings = {
   'Deep bell': 'گہری گھنٹی',
   'Audio file (e.g. Azan MP3)': 'آڈیو فائل (مثلاً اذان MP3)',
   'Repeats until you dismiss it': 'بند کرنے تک دہرائی جاتی ہے',
-  'Pick a recorded Azan saved on your phone':
-      'فون میں محفوظ اذان کی ریکارڈنگ منتخب کریں',
+  'Pick a recorded Azan saved on your phone': 'فون میں محفوظ اذان کی ریکارڈنگ منتخب کریں',
   'Could not use this audio file': 'یہ آڈیو فائل استعمال نہیں ہو سکی',
   'Play': 'چلائیں',
   'Stop': 'روکیں',
   'Play even when the phone is silent': 'فون خاموش ہو تب بھی چلائیں',
-  'Off: on silent or vibrate the Azan only shows and vibrates.':
-      'بند: خاموش یا وائبریٹ پر اذان صرف دکھائی دے گی اور وائبریٹ کرے گی۔',
+  'Off: on silent or vibrate the Azan only shows and vibrates.': 'بند: خاموش یا وائبریٹ پر اذان صرف دکھائی دے گی اور وائبریٹ کرے گی۔',
   'Ramadan and Eid': 'رمضان اور عید',
   'Taraweeh': 'تراویح',
   'Eid al-Fitr prayer': 'عید الفطر کی نماز',
   'Eid al-Adha prayer': 'عید الاضحیٰ کی نماز',
-  'Alert on Ramadan nights after the Isha Iqama':
-      'رمضان کی راتوں میں عشاء کی اقامت کے بعد اطلاع',
+  'Alert on Ramadan nights after the Isha Iqama': 'رمضان کی راتوں میں عشاء کی اقامت کے بعد اطلاع',
   'Minutes after Isha Iqama': 'عشاء کی اقامت کے بعد منٹ',
   'Eid prayer alert': 'عید کی نماز کی اطلاع',
-  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
-      'عید کی نماز سے 30 منٹ پہلے یاد دہانی (ہجری تاریخ کے مطابق)',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)': 'عید کی نماز سے 30 منٹ پہلے یاد دہانی (ہجری تاریخ کے مطابق)',
   'Eid prayer at {0}': 'عید کی نماز {0} بجے',
   '1 page': '1 صفحہ',
   '{0} pages, rotating': '{0} صفحات، باری باری',
@@ -188,8 +173,7 @@ const Map<String, String> urStrings = {
   'Mosque name': 'مسجد کا نام',
   'Shown at the top of the display': 'ڈسپلے کے اوپر دکھایا جاتا ہے',
   'Next prayer page': 'اگلی نماز کا صفحہ',
-  'Big countdown; stays on from 5 minutes before Azan until Iqama':
-      'بڑی الٹی گنتی؛ اذان سے 5 منٹ پہلے سے اقامت تک یہی رہتا ہے',
+  'Big countdown; stays on from 5 minutes before Azan until Iqama': 'بڑی الٹی گنتی؛ اذان سے 5 منٹ پہلے سے اقامت تک یہی رہتا ہے',
   'Seconds per page': 'فی صفحہ سیکنڈ',
   'Announcements': 'اعلانات',
   'Add announcement': 'اعلان شامل کریں',
@@ -197,15 +181,12 @@ const Map<String, String> urStrings = {
   'Delete': 'حذف کریں',
   'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'ڈسپلے پر 7 صفحات تک: نماز کے اوقات، اگلی نماز اور 5 اعلانات۔ باہر نکلنے کے لیے ڈسپلے کو دبائے رکھیں۔',
   'Full-screen Azan': 'مکمل اسکرین اذان',
-  'Shows the Azan over the lock screen with a big Stop button':
-      'لاک اسکرین پر بڑے روکنے کے بٹن کے ساتھ اذان دکھاتا ہے',
-  'Allow full-screen alerts for Waqt':
-      'Waqt کو مکمل اسکرین اطلاعات کی اجازت دیں',
+  'Shows the Azan over the lock screen with a big Stop button': 'لاک اسکرین پر بڑے روکنے کے بٹن کے ساتھ اذان دکھاتا ہے',
+  'Allow full-screen alerts for Waqt': 'Waqt کو مکمل اسکرین اطلاعات کی اجازت دیں',
   'Prayer tracker': 'نماز ٹریکر',
   '{0} of {1} prayed today': 'آج {1} میں سے {0} نمازیں پڑھیں',
   '{0}-day streak': '{0} دن مسلسل',
-  'Tap a prayer\'s icon to mark it as prayed':
-      'نماز کو ادا شدہ نشان زد کرنے کے لیے اس کے آئیکن پر ٹیپ کریں',
+  'Tap a prayer\'s icon to mark it as prayed': 'نماز کو ادا شدہ نشان زد کرنے کے لیے اس کے آئیکن پر ٹیپ کریں',
   'Mark as prayed': 'ادا شدہ نشان زد کریں',
   'Day streak': 'مسلسل دن',
   'Last 7 days': 'پچھلے 7 دن',
@@ -215,8 +196,7 @@ const Map<String, String> urStrings = {
   'Next week': 'اگلا ہفتہ',
   'Excused today': 'آج معذور',
   'Pause the tracker for the day (e.g. illness or menstruation); your streak is kept.': 'اس دن کے لیے ٹریکر روکیں (مثلاً بیماری یا حیض)؛ آپ کا تسلسل برقرار رہے گا۔',
-  'Your tracker stays on this phone only.':
-      'آپ کا ٹریکر صرف اسی فون پر رہتا ہے۔',
+  'Your tracker stays on this phone only.': 'آپ کا ٹریکر صرف اسی فون پر رہتا ہے۔',
   'Tasbih': 'تسبیح',
   'After-prayer tasbih': 'نماز کے بعد کی تسبیح',
   'Free count': 'آزاد گنتی',
@@ -260,6 +240,12 @@ const Map<String, String> urStrings = {
   'Allow notifications and exact alarms so the Azan comes on time, even when the phone is asleep.': 'اطلاعات اور درست الارم کی اجازت دیں تاکہ فون سویا ہو تب بھی اذان وقت پر آئے۔',
   'Allow alerts': 'اطلاعات کی اجازت دیں',
   'You can pick an Azan recording, Iqama times and more later in Settings › Azan & Iqama alerts.': 'اذان کی ریکارڈنگ، اقامت کے اوقات وغیرہ بعد میں ترتیبات › اذان و اقامت کی اطلاعات میں منتخب کر سکتے ہیں۔',
+  'Update location automatically': 'مقام خود بخود اپڈیٹ کریں',
+  'When you open Waqt, the place follows your phone (GPS), with the local time zone.': 'Waqt کھولنے پر مقام آپ کے فون (GPS) اور مقامی ٹائم زون کے مطابق بدلے گا۔',
+  'Location updated: {0}': 'مقام اپڈیٹ ہو گیا: {0}',
+  'Set the phone\'s date & time to automatic': 'فون کی تاریخ اور وقت خودکار کریں',
+  'Your phone\'s clock is {0} min off': 'آپ کے فون کی گھڑی {0} منٹ غلط ہے',
+  'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.': 'اطلاعات فون کی گھڑی کے مطابق ہیں؛ غلط گھڑی یا ٹائم زون سے تمام اوقات غلط ہو جاتے ہیں۔',
 };
 
 const List<String> urHijriMonths = [

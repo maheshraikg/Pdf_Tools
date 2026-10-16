@@ -32,7 +32,12 @@ class MainActivity : FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
                 when (call.method) {
-                    "getLocation" -> getLocation(result)
+                    "getLocation" -> getLocation(result, call.argument<Boolean>("prompt") ?: true)
+                    "clockStatus" -> result.success(clockStatus())
+                    "openDateSettings" -> {
+                        open(Intent(Settings.ACTION_DATE_SETTINGS))
+                        result.success(null)
+                    }
                     "hasDndAccess" -> result.success(notificationManager().isNotificationPolicyAccessGranted)
                     "openDndSettings" -> {
                         open(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
@@ -149,9 +154,13 @@ class MainActivity : FlutterActivity() {
         checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
             checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
-    private fun getLocation(result: MethodChannel.Result) {
+    private fun getLocation(result: MethodChannel.Result, prompt: Boolean) {
         if (hasLocationPermission()) {
             fetchLocation(result)
+            return
+        }
+        if (!prompt) {
+            result.error("denied", "No location permission", null)
             return
         }
         if (pendingLocation != null) {
@@ -252,6 +261,25 @@ class MainActivity : FlutterActivity() {
             return
         }
         handler.postDelayed({ finish(null) }, TIMEOUT_MS)
+    }
+
+    /**
+     * Whether the phone sets its clock and time zone automatically, and how
+     * far its clock is from satellite (GNSS) time when that is known.
+     */
+    private fun clockStatus(): Map<String, Any?> {
+        val autoTime = Settings.Global.getInt(contentResolver, Settings.Global.AUTO_TIME, 1) == 1
+        val autoZone = Settings.Global.getInt(contentResolver, Settings.Global.AUTO_TIME_ZONE, 1) == 1
+        var offset: Long? = null
+        if (Build.VERSION.SDK_INT >= 29) {
+            try {
+                val gnss = android.os.SystemClock.currentGnssTimeClock().millis()
+                offset = System.currentTimeMillis() - gnss
+            } catch (e: java.time.DateTimeException) {
+                // No recent satellite fix: unknown.
+            }
+        }
+        return mapOf("autoTime" to autoTime, "autoZone" to autoZone, "offsetMs" to offset)
     }
 
     private fun toMap(l: Location): Map<String, Any?> = mapOf(

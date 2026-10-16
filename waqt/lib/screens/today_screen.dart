@@ -38,6 +38,7 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
   Timer? _tick;
   int _offsetDays = 0;
   AlertsHealth? _health;
+  ClockStatus? _clock;
 
   @override
   void initState() {
@@ -63,7 +64,13 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
 
   Future<void> _checkHealth() async {
     final h = await Background.health();
-    if (mounted) setState(() => _health = h);
+    final c = await Native.clockStatus();
+    if (mounted) {
+      setState(() {
+        _health = h;
+        _clock = c;
+      });
+    }
   }
 
   @override
@@ -109,6 +116,10 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
               children: [
                 if (!settings.placeChosen) ...[
                   _choosePlaceCard(context),
+                  const SizedBox(height: 12),
+                ],
+                if (_clock != null && !_clock!.ok) ...[
+                  _clockCard(context, _clock!),
                   const SizedBox(height: 12),
                 ],
                 if (_health != null && !_health!.ok) ...[
@@ -314,6 +325,34 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  /// The phone's clock decides when every alert fires.
+  Widget _clockCard(BuildContext context, ClockStatus c) {
+    final s = context.s;
+    final scheme = Theme.of(context).colorScheme;
+    final off = c.offset;
+    return Card(
+      color: scheme.errorContainer,
+      child: ListTile(
+        leading: Icon(Icons.schedule, color: scheme.error),
+        title: Text(
+          c.clockWrong
+              ? s.clockOff(off!.inMinutes.abs().clamp(1, 9999))
+              : s.clockNotAuto,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+        subtitle: Text(s.clockHelp),
+        trailing: FilledButton.tonal(
+          onPressed: () async {
+            await Native.openDateSettings();
+            await Future<void>.delayed(const Duration(seconds: 1));
+            await _checkHealth();
+          },
+          child: Text(s.fix),
         ),
       ),
     );

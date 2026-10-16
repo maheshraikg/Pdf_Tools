@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app/background.dart';
+import '../app/location.dart';
 import '../app/native.dart';
 import '../app/scope.dart';
 import '../app/settings.dart';
@@ -217,10 +218,10 @@ class _Location extends StatelessWidget {
             ),
           ),
         const SizedBox(height: 12),
-        FilledButton.icon(
-          icon: Icon(
-            settings.placeChosen ? Icons.edit_location_alt : Icons.search,
-          ),
+        const _GpsButton(),
+        const SizedBox(height: 10),
+        OutlinedButton.icon(
+          icon: const Icon(Icons.search),
           label: Text(settings.placeChosen ? s.changePlace : s.choosePlace),
           onPressed: () => Navigator.of(
             context,
@@ -328,6 +329,53 @@ class _BigIcon extends StatelessWidget {
         shape: BoxShape.circle,
       ),
       child: Icon(icon, size: 48, color: scheme.primary),
+    );
+  }
+}
+
+/// Locates the phone (asks for permission) and keeps following it.
+class _GpsButton extends StatefulWidget {
+  const _GpsButton();
+
+  @override
+  State<_GpsButton> createState() => _GpsButtonState();
+}
+
+class _GpsButtonState extends State<_GpsButton> {
+  bool _busy = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = context.settings, s = context.s;
+    return FilledButton.icon(
+      icon: _busy
+          ? const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : const Icon(Icons.my_location),
+      label: Text(_busy ? s.locating : s.useMyLocation),
+      onPressed: _busy
+          ? null
+          : () async {
+              final messenger = ScaffoldMessenger.of(context);
+              setState(() => _busy = true);
+              final err = await useMyLocation(settings);
+              if (!mounted) return;
+              setState(() => _busy = false);
+              if (err != null) {
+                messenger.showSnackBar(
+                  SnackBar(
+                    content: Text(switch (err) {
+                      LocationError.denied => s.locationDenied,
+                      LocationError.disabled => s.locationDisabled,
+                      LocationError.unavailable => s.locationUnavailable,
+                    }),
+                  ),
+                );
+              }
+            },
     );
   }
 }
