@@ -267,6 +267,12 @@ void main() {
     await shot(tester, key, 'en_12_tracker');
     await tester.pumpWidget(const SizedBox());
     await tester.pumpWidget(wrap(const OnboardingScreen()));
+    // Asset images decode asynchronously in tests.
+    await tester.runAsync(() async {
+      final ctx = tester.element(find.byType(OnboardingScreen));
+      await precacheImage(const AssetImage('assets/app_icon.png'), ctx);
+    });
+    await tester.pump();
     await shot(tester, key, 'en_13_setup');
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 1));

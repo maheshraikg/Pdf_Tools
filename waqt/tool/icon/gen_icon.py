@@ -1,6 +1,13 @@
-"""Builds the Azan Time launcher icon from one set of vector shapes.
+"""Builds the Azan Time launcher icon.
 
-    pip install cairosvg && python3 tool/icon/gen_icon.py
+    pip install cairosvg pillow && python3 tool/icon/gen_icon.py
+
+When tool/icon/source.png (the square artwork) exists, the coloured icon is
+made from it: the artwork sits in the adaptive icon's safe zone and a
+blurred, enlarged copy of it fills the edges, so any launcher mask
+(circle, squircle, teardrop) shows no seam. Otherwise the vector design
+below is used. The themed (monochrome) and status-bar icons always use the
+vector silhouette, since Android allows them only one colour.
 
 Writes the adaptive icon (background, foreground and Android 13 themed
 monochrome layers as vector drawables), legacy PNGs for Android 7, and
@@ -197,11 +204,100 @@ def main():
         cairosvg.svg2png(bytestring=svg(shape='circle').encode(), write_to=f'{d}/ic_launcher_round.png',
                          output_width=size, output_height=size)
 
+    if os.path.exists(SOURCE):
+        raster_icon()
+
     os.makedirs(DOCS, exist_ok=True)
     open(f'{DOCS}/icon.svg', 'w').write(svg())
-    cairosvg.svg2png(bytestring=svg().encode(), write_to=f'{DOCS}/icon-512.png',
-                     output_width=512, output_height=512)
+    if os.path.exists(SOURCE):
+        from PIL import Image
+        Image.open(SOURCE).convert('RGB').resize((512, 512), Image.LANCZOS).save(
+            f'{DOCS}/icon-512.png')
+    else:
+        cairosvg.svg2png(bytestring=svg().encode(), write_to=f'{DOCS}/icon-512.png',
+                         output_width=512, output_height=512)
     print('ok')
+
+
+SOURCE = os.path.join(ROOT, 'tool/icon/source.png')
+DENSITIES = [('mdpi', 1), ('hdpi', 1.5), ('xhdpi', 2), ('xxhdpi', 3), ('xxxhdpi', 4)]
+# Share of the 108 dp canvas the artwork takes (66 dp: the safe zone).
+ART = 66 / 108
+
+
+def _layers(px):
+    """Background and foreground bitmaps of a px x px adaptive icon."""
+    from PIL import Image, ImageDraw, ImageFilter
+    src = Image.open(SOURCE).convert('RGB')
+    src = src.resize((min(src.size),) * 2, Image.LANCZOS)
+    # Background: a smooth blend of the artwork's corner colours, so the
+    # edges continue its own background.
+    w = src.size[0]
+    k = max(4, w // 16)
+
+    def avg(x, y):
+        return src.crop((x, y, x + k, y + k)).resize((1, 1), Image.BOX).getpixel((0, 0))
+
+    tl, tr = avg(0, 0), avg(w - k, 0)
+    bl, br = avg(0, w - k), avg(w - k, w - k)
+    corners = Image.new('RGB', (2, 2))
+    for xy, c in [((0, 0), tl), ((1, 0), tr), ((0, 1), bl), ((1, 1), br)]:
+        corners.putpixel(xy, c)
+    bg = corners.resize((px, px), Image.BILINEAR).filter(
+        ImageFilter.GaussianBlur(px * 0.02))
+    a = round(px * ART)
+    art = src.resize((a, a), Image.LANCZOS).convert('RGBA')
+    # Feather the artwork's square edge into the background.
+    feather = max(2, round(a * 0.04))
+    m = Image.new('L', (a, a), 0)
+    ImageDraw.Draw(m).rounded_rectangle(
+        (feather, feather, a - 1 - feather, a - 1 - feather),
+        radius=feather * 2, fill=255)
+    art.putalpha(m.filter(ImageFilter.GaussianBlur(feather / 2)))
+    fg = Image.new('RGBA', (px, px), (0, 0, 0, 0))
+    off = (px - a) // 2
+    fg.paste(art, (off, off), art)
+    return bg, fg
+
+
+def raster_icon():
+    from PIL import Image, ImageDraw
+    for folder, scale in DENSITIES:
+        px = round(108 * scale)
+        bg, fg = _layers(px)
+        d = os.path.join(RES, f'mipmap-{folder}')
+        os.makedirs(d, exist_ok=True)
+        bg.save(f'{d}/ic_launcher_background.png')
+        fg.save(f'{d}/ic_launcher_foreground.png')
+        # Legacy icons (Android 7): the central 72 dp, masked.
+        full = bg.convert('RGBA')
+        full.alpha_composite(fg)
+        c = round(px / 6)
+        legacy = full.crop((c, c, px - c, px - c)).resize(
+            (round(48 * scale), round(48 * scale)), Image.LANCZOS)
+        for name, shape in [('ic_launcher', 'rounded'), ('ic_launcher_round', 'circle')]:
+            m = Image.new('L', legacy.size, 0)
+            dr = ImageDraw.Draw(m)
+            w = legacy.size[0] - 1
+            if shape == 'circle':
+                dr.ellipse((0, 0, w, w), fill=255)
+            else:
+                dr.rounded_rectangle((0, 0, w, w), radius=round(w * 0.22), fill=255)
+            out = legacy.copy()
+            out.putalpha(m)
+            out.save(f'{d}/{name}.png')
+    for f in ['ic_launcher_background.xml', 'ic_launcher_foreground.xml']:
+        p = os.path.join(RES, 'drawable', f)
+        if os.path.exists(p):
+            os.remove(p)
+    adaptive = ('<?xml version="1.0" encoding="utf-8"?>\n'
+                '<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">\n'
+                '    <background android:drawable="@mipmap/ic_launcher_background"/>\n'
+                '    <foreground android:drawable="@mipmap/ic_launcher_foreground"/>\n'
+                '    <monochrome android:drawable="@drawable/ic_launcher_monochrome"/>\n'
+                '</adaptive-icon>\n')
+    for n in ['ic_launcher.xml', 'ic_launcher_round.xml']:
+        open(os.path.join(RES, 'mipmap-anydpi-v26', n), 'w').write(adaptive)
 
 
 if __name__ == '__main__':

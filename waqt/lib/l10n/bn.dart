@@ -32,12 +32,15 @@ const Map<String, String> bnStrings = {
   'From timetable': 'সময়সূচি থেকে',
   'Calculated': 'হিসাবকৃত',
   'Mosque display': 'মসজিদ ডিসপ্লে',
-  'Choose your place for accurate times': 'সঠিক সময়ের জন্য আপনার স্থান বেছে নিন',
+  'Choose your place for accurate times':
+      'সঠিক সময়ের জন্য আপনার স্থান বেছে নিন',
   'Choose': 'বেছে নিন',
   'Alerts may be missed': 'সতর্কতা মিস হতে পারে',
   'Allow notifications': 'নোটিফিকেশন চালু করুন',
-  'Allow exact alarms (on time Azan)': 'সঠিক অ্যালার্ম চালু করুন (সময়মতো আযান)',
-  'Turn off battery optimisation for Azan Time': 'আজান টাইমের জন্য ব্যাটারি অপ্টিমাইজেশন বন্ধ করুন',
+  'Allow exact alarms (on time Azan)':
+      'সঠিক অ্যালার্ম চালু করুন (সময়মতো আযান)',
+  'Turn off battery optimisation for Azan Time':
+      'আজান টাইমের জন্য ব্যাটারি অপ্টিমাইজেশন বন্ধ করুন',
   'Some phones (Xiaomi, Oppo, Vivo, Realme, Samsung) stop apps in the background. Set Azan Time to "Unrestricted" / "No restrictions" in battery settings so Azan is never missed.': 'কিছু ফোন (Xiaomi, Oppo, Vivo, Realme, Samsung) ব্যাকগ্রাউন্ডে অ্যাপ বন্ধ করে দেয়। আযান যেন না ফসকায়, ব্যাটারি সেটিংসে আজান টাইমকে "Unrestricted" করুন।',
   'Fix': 'ঠিক করুন',
   'Date': 'তারিখ',
@@ -64,7 +67,8 @@ const Map<String, String> bnStrings = {
   'One seventh of the night': 'রাতের সাত ভাগের এক ভাগ',
   'Angle based (recommended)': 'কোণভিত্তিক (প্রস্তাবিত)',
   'Adjust times (minutes)': 'সময় সমন্বয় (মিনিট)',
-  'Match your mosque: add or subtract minutes for each time.': 'আপনার মসজিদের সাথে মেলান: প্রতিটি সময়ে মিনিট যোগ বা বিয়োগ করুন।',
+  'Match your mosque: add or subtract minutes for each time.':
+      'আপনার মসজিদের সাথে মেলান: প্রতিটি সময়ে মিনিট যোগ বা বিয়োগ করুন।',
   'Imsak before Fajr': 'ফজরের আগে ইমসাক',
   'Ishraq after sunrise': 'সূর্যোদয়ের পরে ইশরাক',
   'Hijri date correction': 'হিজরি তারিখ সংশোধন',
@@ -86,18 +90,22 @@ const Map<String, String> bnStrings = {
   'Name': 'নাম',
   'Latitude': 'অক্ষাংশ',
   'Longitude': 'দ্রাঘিমাংশ',
-  'UTC offset, e.g. +05:30 (empty = phone time zone)': 'UTC পার্থক্য, যেমন +05:30 (খালি = ফোনের সময় অঞ্চল)',
+  'UTC offset, e.g. +05:30 (empty = phone time zone)':
+      'UTC পার্থক্য, যেমন +05:30 (খালি = ফোনের সময় অঞ্চল)',
   'Finding your location…': 'আপনার অবস্থান খোঁজা হচ্ছে…',
   'Location permission denied.': 'অবস্থানের অনুমতি দেওয়া হয়নি।',
-  'Location is turned off. Turn it on and try again.': 'লোকেশন বন্ধ। চালু করে আবার চেষ্টা করুন।',
-  'Could not get a location. Try again outdoors, or pick a place.': 'অবস্থান পাওয়া যায়নি। বাইরে গিয়ে চেষ্টা করুন বা একটি স্থান বেছে নিন।',
+  'Location is turned off. Turn it on and try again.':
+      'লোকেশন বন্ধ। চালু করে আবার চেষ্টা করুন।',
+  'Could not get a location. Try again outdoors, or pick a place.':
+      'অবস্থান পাওয়া যায়নি। বাইরে গিয়ে চেষ্টা করুন বা একটি স্থান বেছে নিন।',
   'Enter valid coordinates.': 'সঠিক স্থানাঙ্ক লিখুন।',
   'Azan alert': 'আযান সতর্কতা',
   'Iqama alert': 'ইকামত সতর্কতা',
   'Fixed Iqama time': 'নির্দিষ্ট ইকামতের সময়',
   'Fixed Jumu\'ah Iqama time': 'জুমার নির্দিষ্ট ইকামতের সময়',
   'Off: uses the minutes after Azan': 'বন্ধ: আযানের পরের মিনিট ব্যবহার হয়',
-  'Used when it is after Azan; otherwise the minutes after Azan': 'আযানের পরে হলে এটি, নইলে আযানের পরের মিনিট',
+  'Used when it is after Azan; otherwise the minutes after Azan':
+      'আযানের পরে হলে এটি, নইলে আযানের পরের মিনিট',
   'Clear': 'মুছুন',
   'Iqama after Azan': 'আযানের পরে ইকামত',
   'Reminder before Azan': 'আযানের আগে স্মরণ',
@@ -142,7 +150,8 @@ const Map<String, String> bnStrings = {
   's': 'সে',
   'near {0}': '{0}-এর কাছে',
   'World places': 'বিশ্বের জায়গা',
-  'Type a town or city name to search 35,000 places worldwide.': 'বিশ্বের 35,000 জায়গায় খুঁজতে শহর বা নগরের নাম লিখুন।',
+  'Type a town or city name to search 35,000 places worldwide.':
+      'বিশ্বের 35,000 জায়গায় খুঁজতে শহর বা নগরের নাম লিখুন।',
   'Place data: GeoNames (CC BY 4.0)': 'জায়গার তথ্য: GeoNames (CC BY 4.0)',
   'Azan sound': 'আজানের শব্দ',
   'Fajr Azan sound': 'ফজরের আজানের শব্দ',
@@ -152,20 +161,24 @@ const Map<String, String> bnStrings = {
   'Deep bell': 'গভীর ঘণ্টা',
   'Audio file (e.g. Azan MP3)': 'অডিও ফাইল (যেমন আজান MP3)',
   'Repeats until you dismiss it': 'বন্ধ না করা পর্যন্ত বাজতে থাকে',
-  'Pick a recorded Azan saved on your phone': 'ফোনে সেভ করা আজানের রেকর্ডিং বেছে নিন',
+  'Pick a recorded Azan saved on your phone':
+      'ফোনে সেভ করা আজানের রেকর্ডিং বেছে নিন',
   'Could not use this audio file': 'এই অডিও ফাইল ব্যবহার করা গেল না',
   'Play': 'চালান',
   'Stop': 'থামান',
   'Play even when the phone is silent': 'ফোন সাইলেন্ট থাকলেও চালান',
-  'Off: on silent or vibrate the Azan only shows and vibrates.': 'বন্ধ: সাইলেন্ট বা ভাইব্রেটে আজান শুধু দেখাবে ও ভাইব্রেট করবে।',
+  'Off: on silent or vibrate the Azan only shows and vibrates.':
+      'বন্ধ: সাইলেন্ট বা ভাইব্রেটে আজান শুধু দেখাবে ও ভাইব্রেট করবে।',
   'Ramadan and Eid': 'রমজান ও ঈদ',
   'Taraweeh': 'তারাবিহ',
   'Eid al-Fitr prayer': 'ঈদুল ফিতরের নামাজ',
   'Eid al-Adha prayer': 'ঈদুল আজহার নামাজ',
-  'Alert on Ramadan nights after the Isha Iqama': 'রমজানের রাতে এশার ইকামতের পর সতর্কতা',
+  'Alert on Ramadan nights after the Isha Iqama':
+      'রমজানের রাতে এশার ইকামতের পর সতর্কতা',
   'Minutes after Isha Iqama': 'এশার ইকামতের পর মিনিট',
   'Eid prayer alert': 'ঈদের নামাজের সতর্কতা',
-  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)': 'ঈদের নামাজের 30 মিনিট আগে মনে করিয়ে দেয় (হিজরি তারিখ অনুযায়ী)',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
+      'ঈদের নামাজের 30 মিনিট আগে মনে করিয়ে দেয় (হিজরি তারিখ অনুযায়ী)',
   'Eid prayer at {0}': 'ঈদের নামাজ {0}-এ',
   '1 page': '1 পৃষ্ঠা',
   '{0} pages, rotating': '{0} পৃষ্ঠা, পালাক্রমে',
@@ -173,7 +186,8 @@ const Map<String, String> bnStrings = {
   'Mosque name': 'মসজিদের নাম',
   'Shown at the top of the display': 'ডিসপ্লের উপরে দেখানো হয়',
   'Next prayer page': 'পরের নামাজের পৃষ্ঠা',
-  'Big countdown; stays on from 5 minutes before Azan until Iqama': 'বড় কাউন্টডাউন; আজানের 5 মিনিট আগে থেকে ইকামত পর্যন্ত এটিই থাকে',
+  'Big countdown; stays on from 5 minutes before Azan until Iqama':
+      'বড় কাউন্টডাউন; আজানের 5 মিনিট আগে থেকে ইকামত পর্যন্ত এটিই থাকে',
   'Seconds per page': 'প্রতি পৃষ্ঠায় সেকেন্ড',
   'Announcements': 'ঘোষণা',
   'Add announcement': 'ঘোষণা যোগ করুন',
@@ -181,12 +195,15 @@ const Map<String, String> bnStrings = {
   'Delete': 'মুছুন',
   'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'ডিসপ্লেতে 7টি পৃষ্ঠা পর্যন্ত: নামাজের সময়, পরের নামাজ ও 5টি ঘোষণা। বের হতে ডিসপ্লে চেপে ধরে রাখুন।',
   'Full-screen Azan': 'পূর্ণ স্ক্রিন আজান',
-  'Shows the Azan over the lock screen with a big Stop button': 'লক স্ক্রিনে বড় থামুন বোতামসহ আজান দেখায়',
-  'Allow full-screen alerts for Azan Time': 'আজান টাইম-কে পূর্ণ স্ক্রিন সতর্কতার অনুমতি দিন',
+  'Shows the Azan over the lock screen with a big Stop button':
+      'লক স্ক্রিনে বড় থামুন বোতামসহ আজান দেখায়',
+  'Allow full-screen alerts for Azan Time':
+      'আজান টাইম-কে পূর্ণ স্ক্রিন সতর্কতার অনুমতি দিন',
   'Prayer tracker': 'নামাজ ট্র্যাকার',
   '{0} of {1} prayed today': 'আজ {1}টির মধ্যে {0}টি নামাজ পড়েছেন',
   '{0}-day streak': 'টানা {0} দিন',
-  'Tap a prayer\'s icon to mark it as prayed': 'পড়া হয়েছে চিহ্নিত করতে নামাজের আইকনে চাপুন',
+  'Tap a prayer\'s icon to mark it as prayed':
+      'পড়া হয়েছে চিহ্নিত করতে নামাজের আইকনে চাপুন',
   'Mark as prayed': 'পড়া হয়েছে চিহ্নিত করুন',
   'Day streak': 'টানা দিন',
   'Last 7 days': 'গত 7 দিন',
@@ -196,7 +213,8 @@ const Map<String, String> bnStrings = {
   'Next week': 'পরের সপ্তাহ',
   'Excused today': 'আজ অব্যাহতি',
   'Pause the tracker for the day (e.g. illness or menstruation); your streak is kept.': 'এই দিনের জন্য ট্র্যাকার থামান (যেমন অসুস্থতা বা মাসিক); আপনার ধারাবাহিকতা থাকবে।',
-  'Your tracker stays on this phone only.': 'আপনার ট্র্যাকার শুধু এই ফোনেই থাকে।',
+  'Your tracker stays on this phone only.':
+      'আপনার ট্র্যাকার শুধু এই ফোনেই থাকে।',
   'Tasbih': 'তাসবিহ',
   'After-prayer tasbih': 'নামাজের পরের তাসবিহ',
   'Free count': 'মুক্ত গণনা',
@@ -205,7 +223,8 @@ const Map<String, String> bnStrings = {
   'Allah is the Greatest': 'আল্লাহ সর্বশ্রেষ্ঠ',
   'There is no god but Allah': 'আল্লাহ ছাড়া কোনো উপাস্য নেই',
   'I seek Allah\'s forgiveness': 'আমি আল্লাহর কাছে ক্ষমা চাই',
-  'O Allah, send blessings upon Muhammad': 'হে আল্লাহ, মুহাম্মদ ﷺ-এর উপর রহমত বর্ষণ করুন',
+  'O Allah, send blessings upon Muhammad':
+      'হে আল্লাহ, মুহাম্মদ ﷺ-এর উপর রহমত বর্ষণ করুন',
   'Glory and praise be to Allah': 'আল্লাহ পবিত্র ও সমস্ত প্রশংসা তাঁর',
   'Reset the counter?': 'কাউন্টার রিসেট করবেন?',
   'Tap the circle to count': 'গণনা করতে বৃত্তে চাপুন',
@@ -241,11 +260,14 @@ const Map<String, String> bnStrings = {
   'Allow alerts': 'সতর্কতার অনুমতি দিন',
   'You can pick an Azan recording, Iqama times and more later in Settings › Azan & Iqama alerts.': 'আজানের রেকর্ডিং, ইকামতের সময় ইত্যাদি পরে সেটিংস › আজান ও ইকামতের সতর্কতায় বেছে নিতে পারবেন।',
   'Update location automatically': 'অবস্থান স্বয়ংক্রিয়ভাবে হালনাগাদ করুন',
-  'When you open Azan Time, the place follows your phone (GPS), with the local time zone.': 'আজান টাইম খুললে জায়গা ও স্থানীয় টাইম জোন আপনার ফোনের GPS অনুসরণ করবে।',
+  'When you open Azan Time, the place follows your phone (GPS), with the local time zone.':
+      'আজান টাইম খুললে জায়গা ও স্থানীয় টাইম জোন আপনার ফোনের GPS অনুসরণ করবে।',
   'Location updated: {0}': 'অবস্থান হালনাগাদ হয়েছে: {0}',
-  'Set the phone\'s date & time to automatic': 'ফোনের তারিখ ও সময় স্বয়ংক্রিয় করুন',
+  'Set the phone\'s date & time to automatic':
+      'ফোনের তারিখ ও সময় স্বয়ংক্রিয় করুন',
   'Your phone\'s clock is {0} min off': 'আপনার ফোনের ঘড়ি {0} মিনিট ভুল',
-  'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.': 'সতর্কতা ফোনের ঘড়ি অনুসরণ করে; ভুল ঘড়ি বা টাইম জোনে সব সময় ভুল হয়।',
+  'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.':
+      'সতর্কতা ফোনের ঘড়ি অনুসরণ করে; ভুল ঘড়ি বা টাইম জোনে সব সময় ভুল হয়।',
 };
 
 const List<String> bnHijriMonths = [

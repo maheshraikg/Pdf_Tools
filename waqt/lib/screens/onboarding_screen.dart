@@ -124,7 +124,14 @@ class _Welcome extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.mosque, color: kGold, size: 56),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(18),
+                      child: Image.asset(
+                        'assets/app_icon.png',
+                        width: 84,
+                        height: 84,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       s.appTitle,
