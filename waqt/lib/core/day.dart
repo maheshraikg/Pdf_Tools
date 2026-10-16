@@ -87,6 +87,7 @@ class DayCalculator {
             elevation: place.elevation,
             params: params,
             ramadan: ramadan,
+            utcOffsetMinutes: place.offsetMinutesAt(DateTime.utc(y, m, d, 12)),
           ),
         );
         return (

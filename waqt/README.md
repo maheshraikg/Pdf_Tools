@@ -134,7 +134,15 @@ Kerala and working anywhere. No ads, no tracking and no internet permission.
 
 - **Asr**: Shafi'i (shadow factor 1) or Hanafi (2).
 - **High latitudes**: angle-based (the default), middle of the night, or one
-  seventh of the night.
+  seventh of the night. Where the sun does not rise or set at all (polar
+  day or night), the times of the nearest latitude where it does (±65°)
+  are used.
+- **Worldwide check**: compared with an independent solar library
+  (`astral`, NOAA algorithms) for 36 cities on every continent through
+  2026, including daylight-saving changes, half-hour and 45-minute zones
+  (Tehran, Kathmandu, Chatham) and the date line (Samoa, Kiribati): all
+  times agree within about 2 minutes (mean 0.3 min), apart from the
+  intended high-latitude rules.
 - **Your own adjustments**: you can add ± minutes to any time.
 
 **How the Kerala preset was derived**: an astronomical model was fitted to

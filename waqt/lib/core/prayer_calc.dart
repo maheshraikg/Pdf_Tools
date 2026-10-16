@@ -226,6 +226,14 @@ class BasicTimes {
 ///
 /// [ramadan] switches Umm al-Qura's Isha interval. Method margins are
 /// included; user adjustments are not.
+///
+/// [utcOffsetMinutes] is the place's clock offset; it picks the solar day
+/// whose noon falls on that civil date. Without it, places whose clocks are
+/// far from their longitude (Samoa, Kiribati: UTC+13/+14 west of the date
+/// line) would get the neighbouring day.
+///
+/// Where the sun does not rise or set that day (polar day or night), the
+/// times of the nearest latitude where it does (±65°) are used.
 BasicTimes computeBasicTimes({
   required int year,
   required int month,
@@ -235,6 +243,7 @@ BasicTimes computeBasicTimes({
   double elevation = 0,
   CalcParams params = const CalcParams(),
   bool ramadan = false,
+  int? utcOffsetMinutes,
 }) {
   final jd0 = julianDay(year, month, day);
   final m = params.method;
@@ -242,9 +251,13 @@ BasicTimes computeBasicTimes({
 
   // Hours (UTC) of solar noon and of the given hour angle, iterated so the
   // sun position is taken at the event itself.
+  // Whole days to move so that local noon falls on the requested date.
+  final dayShift = utcOffsetMinutes == null
+      ? 0
+      : -24 * ((12 - longitude / 15 + utcOffsetMinutes / 60) / 24).floor();
   double noonAt(double t) {
     final eqt = sunPosition(jd0 + t / 24).equationOfTime;
-    return 12 - longitude / 15 - eqt;
+    return 12 - longitude / 15 - eqt + dayShift;
   }
 
   double? event(
@@ -266,12 +279,27 @@ BasicTimes computeBasicTimes({
     return t;
   }
 
-  double noon = 12 - longitude / 15;
+  double noon = 12 - longitude / 15 + dayShift;
   for (var i = 0; i < 3; i++) {
     noon = noonAt(noon);
   }
-  final sunrise = event(noon - 6, (_) => -horizon, -1) ?? noon - 6;
-  final sunset = event(noon + 6, (_) => -horizon, 1) ?? noon + 6;
+  final sunriseT = event(noon - 6, (_) => -horizon, -1);
+  final sunsetT = event(noon + 6, (_) => -horizon, 1);
+  if ((sunriseT == null || sunsetT == null) && latitude.abs() > 65) {
+    return computeBasicTimes(
+      year: year,
+      month: month,
+      day: day,
+      latitude: latitude.sign * 65,
+      longitude: longitude,
+      elevation: elevation,
+      params: params,
+      ramadan: ramadan,
+      utcOffsetMinutes: utcOffsetMinutes,
+    );
+  }
+  final sunrise = sunriseT ?? noon - 6;
+  final sunset = sunsetT ?? noon + 6;
   final asrT =
       event(noon + 3.5, (dec) {
         final f = params.asr.shadowFactor;
