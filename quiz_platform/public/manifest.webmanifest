@@ -1,0 +1,14 @@
+{
+  "name": "Quiz Competition",
+  "short_name": "Quiz",
+  "description": "Live 15-question quiz competitions",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f7fb",
+  "theme_color": "#1d4ed8",
+  "icons": [
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

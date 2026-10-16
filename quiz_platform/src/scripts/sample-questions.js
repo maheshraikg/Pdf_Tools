@@ -1,0 +1,17 @@
+export const sampleQuestions = [
+  { text: 'What is the capital of Karnataka?', optionA: 'Mysuru', optionB: 'Bengaluru', optionC: 'Hubballi', optionD: 'Mangaluru', correctOption: 'B', category: 'Geography' },
+  { text: 'How many sides does a hexagon have?', optionA: '5', optionB: '7', optionC: '6', optionD: '8', correctOption: 'C', category: 'Mathematics' },
+  { text: 'Which planet is known as the Red Planet?', optionA: 'Mars', optionB: 'Venus', optionC: 'Jupiter', optionD: 'Saturn', correctOption: 'A', category: 'Science' },
+  { text: 'What is 12 × 12?', optionA: '124', optionB: '142', optionC: '154', optionD: '144', correctOption: 'D', category: 'Mathematics' },
+  { text: 'Which gas do plants absorb from the air for photosynthesis?', optionA: 'Oxygen', optionB: 'Carbon dioxide', optionC: 'Nitrogen', optionD: 'Hydrogen', correctOption: 'B', category: 'Science' },
+  { text: 'Who wrote the Indian national anthem?', optionA: 'Bankim Chandra Chatterjee', optionB: 'Sarojini Naidu', optionC: 'Rabindranath Tagore', optionD: 'Kuvempu', correctOption: 'C', category: 'History' },
+  { text: 'Which river is known as the "Ganga of the South"?', optionA: 'Kaveri', optionB: 'Krishna', optionC: 'Godavari', optionD: 'Tungabhadra', correctOption: 'A', category: 'Geography' },
+  { text: 'What is the boiling point of water at sea level in °C?', optionA: '90', optionB: '100', optionC: '110', optionD: '120', correctOption: 'B', category: 'Science' },
+  { text: 'How many players are on the field for one cricket team?', optionA: '9', optionB: '10', optionC: '12', optionD: '11', correctOption: 'D', category: 'Sports' },
+  { text: 'Which is the largest ocean on Earth?', optionA: 'Atlantic', optionB: 'Indian', optionC: 'Pacific', optionD: 'Arctic', correctOption: 'C', category: 'Geography' },
+  { text: 'What is the square root of 81?', optionA: '9', optionB: '8', optionC: '7', optionD: '6', correctOption: 'A', category: 'Mathematics' },
+  { text: 'Which organ pumps blood through the human body?', optionA: 'Lungs', optionB: 'Liver', optionC: 'Kidney', optionD: 'Heart', correctOption: 'D', category: 'Science' },
+  { text: 'Hampi was the capital of which empire?', optionA: 'Maurya', optionB: 'Vijayanagara', optionC: 'Chola', optionD: 'Mughal', correctOption: 'B', category: 'History' },
+  { text: 'Which is the smallest prime number?', optionA: '0', optionB: '1', optionC: '2', optionD: '3', correctOption: 'C', category: 'Mathematics' },
+  { text: 'Which instrument is used to measure temperature?', optionA: 'Barometer', optionB: 'Thermometer', optionC: 'Hygrometer', optionD: 'Odometer', correctOption: 'B', category: 'Science' },
+];

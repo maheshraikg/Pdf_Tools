@@ -1,0 +1,39 @@
+name: Quiz Platform (Node.js)
+
+on:
+  push:
+    branches: [ master, main ]
+    paths: [ 'quiz_platform/**', '.github/workflows/quiz-platform.yml' ]
+  pull_request:
+    paths: [ 'quiz_platform/**', '.github/workflows/quiz-platform.yml' ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Automated tests (PostgreSQL)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: quiz_platform
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: quiz_test
+        ports: [ '5432:5432' ]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL_TEST: postgres://postgres:postgres@localhost:5432/quiz_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: quiz_platform/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm audit --omit=dev --audit-level=high

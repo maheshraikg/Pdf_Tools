@@ -1,0 +1,49 @@
+# Production-like stack: nginx load balancer -> N app instances -> PostgreSQL + Redis.
+#   cp .env.example .env   # fill in secrets
+#   docker compose up -d --build --scale app=3
+#   docker compose run --rm app node src/scripts/migrate.js
+#   docker compose run --rm -e ADMIN_PASSWORD='…' app node src/scripts/create-admin.js you@org "Your Name" super_admin
+services:
+  app:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://quiz:${POSTGRES_PASSWORD:-quiz}@db:5432/quiz
+      REDIS_URL: redis://redis:6379
+      TRUST_PROXY: "true"
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_started }
+    restart: unless-stopped
+    stop_grace_period: 15s
+    deploy:
+      replicas: 2
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports: ["80:80"]
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on: [app]
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: quiz
+      POSTGRES_USER: quiz
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-quiz}
+    command: ["postgres", "-c", "max_connections=300", "-c", "shared_buffers=512MB", "-c", "synchronous_commit=on"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U quiz"]
+      interval: 5s
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    restart: unless-stopped
+
+volumes:
+  pgdata:
