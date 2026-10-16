@@ -1,4 +1,7 @@
-# Waqt (വഖ്ത്) – Salah times, Azan & Iqama alerts
+# Azan Time (ബാങ്ക് സമയം) – Prayer times, Azan & Iqama alerts
+
+Play Store title: **Azan Time: Prayer Times Qibla**. (Formerly "Waqt"; the
+package id `com.maheshrai.waqt` is unchanged so updates keep installing.)
 
 <p>
 <img src="docs/screenshots/en_1_today.png" width="200">

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- No INTERNET permission in release: Waqt works fully offline. -->
+    <!-- No INTERNET permission in release: Azan Time works fully offline. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Azan/Iqama on time and auto-silent; the user grants it in settings. -->
@@ -17,7 +17,7 @@
     <uses-feature android:name="android.hardware.location" android:required="false" />
     <uses-feature android:name="android.hardware.sensor.compass" android:required="false" />
     <application
-        android:label="Waqt"
+        android:label="@string/app_name"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -90,7 +90,7 @@
 
         <!-- Home-screen widget (WaqtWidgetProvider.kt). -->
         <receiver android:name=".WaqtWidgetProvider" android:exported="false"
-            android:label="Waqt">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

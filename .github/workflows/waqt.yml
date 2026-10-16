@@ -69,6 +69,6 @@ jobs:
           gh release create waqt-apk-keep waqt.apk \
             --prerelease \
             --target "$SHA" \
-            --title "Waqt – latest test build" \
-            --notes "Latest Waqt APK built from ${SHA:0:7}. For testing; signed with the fixed test key, so it installs over earlier test builds signed with it."
+            --title "Azan Time – latest test build" \
+            --notes "Latest Azan Time APK built from ${SHA:0:7}. For testing; signed with the fixed test key, so it installs over earlier test builds signed with it."
           echo "Direct download: https://github.com/${{ github.repository }}/releases/download/waqt-apk-keep/waqt.apk" >> "$GITHUB_STEP_SUMMARY"

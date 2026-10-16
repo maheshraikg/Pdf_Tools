@@ -2,7 +2,7 @@
 # occasions, Ramadan times and first-run setup (appended after tr_more.py).
 T = {}
 T['ar'] = [
-'أذان بملء الشاشة','يعرض الأذان فوق شاشة القفل مع زر إيقاف كبير','اسمح لـ Waqt بالتنبيهات بملء الشاشة',
+'أذان بملء الشاشة','يعرض الأذان فوق شاشة القفل مع زر إيقاف كبير','اسمح لـ وقت الأذان الأذان بالتنبيهات بملء الشاشة',
 'متتبع الصلاة','صليت {0} من {1} اليوم','{0} أيام متتالية','اضغط على أيقونة الصلاة لتسجيلها كمؤداة','تسجيل كمؤداة',
 'أيام متتالية','آخر 7 أيام','آخر 30 يوماً','الأسبوع','الأسبوع السابق','الأسبوع التالي','معذور اليوم',
 'أوقف المتتبع لهذا اليوم (مثل المرض أو الحيض)؛ تبقى سلسلتك محفوظة.','يبقى متتبعك على هذا الهاتف فقط.',
@@ -18,7 +18,7 @@ T['ar'] = [
 'السماح بالتنبيهات','يمكنك لاحقاً اختيار تسجيل أذان وأوقات الإقامة وغيرها من الإعدادات › تنبيهات الأذان والإقامة.',
 ]
 T['ur'] = [
-'مکمل اسکرین اذان','لاک اسکرین پر بڑے روکنے کے بٹن کے ساتھ اذان دکھاتا ہے','Waqt کو مکمل اسکرین اطلاعات کی اجازت دیں',
+'مکمل اسکرین اذان','لاک اسکرین پر بڑے روکنے کے بٹن کے ساتھ اذان دکھاتا ہے','اذان ٹائم کو مکمل اسکرین اطلاعات کی اجازت دیں',
 'نماز ٹریکر','آج {1} میں سے {0} نمازیں پڑھیں','{0} دن مسلسل','نماز کو ادا شدہ نشان زد کرنے کے لیے اس کے آئیکن پر ٹیپ کریں','ادا شدہ نشان زد کریں',
 'مسلسل دن','پچھلے 7 دن','پچھلے 30 دن','ہفتہ','پچھلا ہفتہ','اگلا ہفتہ','آج معذور',
 'اس دن کے لیے ٹریکر روکیں (مثلاً بیماری یا حیض)؛ آپ کا تسلسل برقرار رہے گا۔','آپ کا ٹریکر صرف اسی فون پر رہتا ہے۔',
@@ -34,7 +34,7 @@ T['ur'] = [
 'اطلاعات کی اجازت دیں','اذان کی ریکارڈنگ، اقامت کے اوقات وغیرہ بعد میں ترتیبات › اذان و اقامت کی اطلاعات میں منتخب کر سکتے ہیں۔',
 ]
 T['hi'] = [
-'फ़ुल-स्क्रीन अज़ान','लॉक स्क्रीन पर बड़े रोकें बटन के साथ अज़ान दिखाता है','Waqt को फ़ुल-स्क्रीन अलर्ट की अनुमति दें',
+'फ़ुल-स्क्रीन अज़ान','लॉक स्क्रीन पर बड़े रोकें बटन के साथ अज़ान दिखाता है','अज़ान टाइम को फ़ुल-स्क्रीन अलर्ट की अनुमति दें',
 'नमाज़ ट्रैकर','आज {1} में से {0} नमाज़ें पढ़ीं','लगातार {0} दिन','नमाज़ को पढ़ी हुई चिह्नित करने के लिए उसके आइकन पर टैप करें','पढ़ी हुई चिह्नित करें',
 'लगातार दिन','पिछले 7 दिन','पिछले 30 दिन','सप्ताह','पिछला सप्ताह','अगला सप्ताह','आज छूट',
 'इस दिन ट्रैकर रोकें (जैसे बीमारी या मासिक धर्म); आपका सिलसिला बना रहेगा।','आपका ट्रैकर सिर्फ़ इसी फ़ोन पर रहता है।',
@@ -50,7 +50,7 @@ T['hi'] = [
 'अलर्ट की अनुमति दें','अज़ान रिकॉर्डिंग, इक़ामत के समय आदि बाद में सेटिंग्स › अज़ान और इक़ामत अलर्ट में चुन सकते हैं।',
 ]
 T['ta'] = [
-'முழுத்திரை பாங்கு','பூட்டுத் திரையின் மேல் பெரிய நிறுத்து பொத்தானுடன் பாங்கைக் காட்டும்','Waqt-க்கு முழுத்திரை அறிவிப்புகளை அனுமதிக்கவும்',
+'முழுத்திரை பாங்கு','பூட்டுத் திரையின் மேல் பெரிய நிறுத்து பொத்தானுடன் பாங்கைக் காட்டும்','பாங்கு நேரம்-க்கு முழுத்திரை அறிவிப்புகளை அனுமதிக்கவும்',
 'தொழுகை கண்காணிப்பு','இன்று {1}-ல் {0} தொழுதீர்கள்','தொடர்ந்து {0} நாள்','தொழுததாகக் குறிக்க தொழுகையின் சின்னத்தைத் தட்டவும்','தொழுததாகக் குறி',
 'தொடர் நாட்கள்','கடந்த 7 நாட்கள்','கடந்த 30 நாட்கள்','வாரம்','முந்தைய வாரம்','அடுத்த வாரம்','இன்று விலக்கு',
 'இந்நாளுக்கு கண்காணிப்பை நிறுத்தவும் (எ.கா. நோய், மாதவிடாய்); உங்கள் தொடர் காக்கப்படும்.','உங்கள் கண்காணிப்பு இந்த போனில் மட்டுமே இருக்கும்.',
@@ -66,7 +66,7 @@ T['ta'] = [
 'அறிவிப்புகளை அனுமதி','பாங்கு பதிவு, இகாமத் நேரங்கள் போன்றவற்றைப் பின்னர் அமைப்புகள் › பாங்கு இகாமத் அறிவிப்புகளில் தேர்வு செய்யலாம்.',
 ]
 T['kn'] = [
-'ಪೂರ್ಣ ಪರದೆ ಅಝಾನ್','ಲಾಕ್ ಸ್ಕ್ರೀನ್ ಮೇಲೆ ದೊಡ್ಡ ನಿಲ್ಲಿಸು ಬಟನ್‌ನೊಂದಿಗೆ ಅಝಾನ್ ತೋರಿಸುತ್ತದೆ','Waqt‌ಗೆ ಪೂರ್ಣ ಪರದೆ ಅಲರ್ಟ್‌ಗಳನ್ನು ಅನುಮತಿಸಿ',
+'ಪೂರ್ಣ ಪರದೆ ಅಝಾನ್','ಲಾಕ್ ಸ್ಕ್ರೀನ್ ಮೇಲೆ ದೊಡ್ಡ ನಿಲ್ಲಿಸು ಬಟನ್‌ನೊಂದಿಗೆ ಅಝಾನ್ ತೋರಿಸುತ್ತದೆ','ಅಝಾನ್ ಟೈಮ್‌ಗೆ ಪೂರ್ಣ ಪರದೆ ಅಲರ್ಟ್‌ಗಳನ್ನು ಅನುಮತಿಸಿ',
 'ನಮಾಝ್ ಟ್ರ್ಯಾಕರ್','ಇಂದು {1}ರಲ್ಲಿ {0} ನಮಾಝ್ ಮಾಡಲಾಗಿದೆ','ಸತತ {0} ದಿನ','ನಮಾಝ್ ಮಾಡಲಾಗಿದೆ ಎಂದು ಗುರುತಿಸಲು ಅದರ ಐಕಾನ್ ಟ್ಯಾಪ್ ಮಾಡಿ','ಮಾಡಲಾಗಿದೆ ಎಂದು ಗುರುತಿಸಿ',
 'ಸತತ ದಿನಗಳು','ಕಳೆದ 7 ದಿನಗಳು','ಕಳೆದ 30 ದಿನಗಳು','ವಾರ','ಹಿಂದಿನ ವಾರ','ಮುಂದಿನ ವಾರ','ಇಂದು ವಿನಾಯಿತಿ',
 'ಈ ದಿನಕ್ಕೆ ಟ್ರ್ಯಾಕರ್ ನಿಲ್ಲಿಸಿ (ಉದಾ. ಅನಾರೋಗ್ಯ ಅಥವಾ ಮುಟ್ಟು); ನಿಮ್ಮ ಸತತತೆ ಉಳಿಯುತ್ತದೆ.','ನಿಮ್ಮ ಟ್ರ್ಯಾಕರ್ ಈ ಫೋನಿನಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತದೆ.',
@@ -82,7 +82,7 @@ T['kn'] = [
 'ಅಲರ್ಟ್‌ಗಳನ್ನು ಅನುಮತಿಸಿ','ಅಝಾನ್ ರೆಕಾರ್ಡಿಂಗ್, ಇಖಾಮತ್ ಸಮಯ ಇತ್ಯಾದಿಗಳನ್ನು ನಂತರ ಸೆಟ್ಟಿಂಗ್ಸ್ › ಅಝಾನ್ ಮತ್ತು ಇಖಾಮತ್ ಅಲರ್ಟ್‌ಗಳಲ್ಲಿ ಆಯ್ಕೆಮಾಡಬಹುದು.',
 ]
 T['bn'] = [
-'পূর্ণ স্ক্রিন আজান','লক স্ক্রিনে বড় থামুন বোতামসহ আজান দেখায়','Waqt-কে পূর্ণ স্ক্রিন সতর্কতার অনুমতি দিন',
+'পূর্ণ স্ক্রিন আজান','লক স্ক্রিনে বড় থামুন বোতামসহ আজান দেখায়','আজান টাইম-কে পূর্ণ স্ক্রিন সতর্কতার অনুমতি দিন',
 'নামাজ ট্র্যাকার','আজ {1}টির মধ্যে {0}টি নামাজ পড়েছেন','টানা {0} দিন','পড়া হয়েছে চিহ্নিত করতে নামাজের আইকনে চাপুন','পড়া হয়েছে চিহ্নিত করুন',
 'টানা দিন','গত 7 দিন','গত 30 দিন','সপ্তাহ','আগের সপ্তাহ','পরের সপ্তাহ','আজ অব্যাহতি',
 'এই দিনের জন্য ট্র্যাকার থামান (যেমন অসুস্থতা বা মাসিক); আপনার ধারাবাহিকতা থাকবে।','আপনার ট্র্যাকার শুধু এই ফোনেই থাকে।',
@@ -98,7 +98,7 @@ T['bn'] = [
 'সতর্কতার অনুমতি দিন','আজানের রেকর্ডিং, ইকামতের সময় ইত্যাদি পরে সেটিংস › আজান ও ইকামতের সতর্কতায় বেছে নিতে পারবেন।',
 ]
 T['id'] = [
-'Azan layar penuh','Menampilkan azan di atas layar kunci dengan tombol Hentikan besar','Izinkan peringatan layar penuh untuk Waqt',
+'Azan layar penuh','Menampilkan azan di atas layar kunci dengan tombol Hentikan besar','Izinkan peringatan layar penuh untuk Azan Time',
 'Pelacak salat','{0} dari {1} salat hari ini','{0} hari berturut-turut','Ketuk ikon salat untuk menandainya sudah dikerjakan','Tandai sudah salat',
 'Hari berturut-turut','7 hari terakhir','30 hari terakhir','Minggu','Minggu sebelumnya','Minggu berikutnya','Berhalangan hari ini',
 'Jeda pelacak untuk hari ini (mis. sakit atau haid); rangkaian Anda tetap terjaga.','Pelacak Anda hanya tersimpan di ponsel ini.',
@@ -114,7 +114,7 @@ T['id'] = [
 'Izinkan pengingat','Anda bisa memilih rekaman azan, waktu iqamah, dan lainnya nanti di Pengaturan › Pengingat azan & iqamah.',
 ]
 T['ms'] = [
-'Azan skrin penuh','Memaparkan azan di atas skrin kunci dengan butang Henti yang besar','Benarkan amaran skrin penuh untuk Waqt',
+'Azan skrin penuh','Memaparkan azan di atas skrin kunci dengan butang Henti yang besar','Benarkan amaran skrin penuh untuk Azan Time',
 'Penjejak solat','{0} daripada {1} solat hari ini','{0} hari berturut-turut','Ketik ikon solat untuk menandakannya sudah ditunaikan','Tanda sudah solat',
 'Hari berturut-turut','7 hari lepas','30 hari lepas','Minggu','Minggu sebelumnya','Minggu seterusnya','Uzur hari ini',
 'Jeda penjejak untuk hari ini (cth. sakit atau haid); rentetan anda kekal.','Penjejak anda hanya disimpan dalam telefon ini.',
@@ -130,7 +130,7 @@ T['ms'] = [
 'Benarkan peringatan','Anda boleh memilih rakaman azan, waktu iqamah dan lain-lain kemudian dalam Tetapan › Peringatan azan & iqamah.',
 ]
 T['tr'] = [
-'Tam ekran ezan','Ezanı kilit ekranının üzerinde büyük bir Durdur düğmesiyle gösterir','Waqt için tam ekran uyarılara izin verin',
+'Tam ekran ezan','Ezanı kilit ekranının üzerinde büyük bir Durdur düğmesiyle gösterir','Azan Time için tam ekran uyarılara izin verin',
 'Namaz takibi','Bugün {1} vakitten {0} tanesi kılındı','{0} gün üst üste','Kılındı olarak işaretlemek için namazın simgesine dokunun','Kılındı olarak işaretle',
 'Gün serisi','Son 7 gün','Son 30 gün','Hafta','Önceki hafta','Sonraki hafta','Bugün mazeretli',
 'Bugün için takibi duraklatın (ör. hastalık veya adet); seriniz korunur.','Takibiniz yalnızca bu telefonda kalır.',
@@ -146,7 +146,7 @@ T['tr'] = [
 'Uyarılara izin ver','Ezan kaydı, kamet vakitleri ve diğerlerini daha sonra Ayarlar › Ezan ve kamet uyarıları\'ndan seçebilirsiniz.',
 ]
 T['fr'] = [
-'Adhan en plein écran','Affiche l\'adhan sur l\'écran de verrouillage avec un grand bouton Arrêter','Autoriser les alertes plein écran pour Waqt',
+'Adhan en plein écran','Affiche l\'adhan sur l\'écran de verrouillage avec un grand bouton Arrêter','Autoriser les alertes plein écran pour Azan Time',
 'Suivi des prières','{0} prières sur {1} accomplies aujourd\'hui','{0} jours d\'affilée','Touchez l\'icône d\'une prière pour la marquer comme accomplie','Marquer comme accomplie',
 'Jours d\'affilée','7 derniers jours','30 derniers jours','Semaine','Semaine précédente','Semaine suivante','Dispensé aujourd\'hui',
 'Mettez le suivi en pause pour la journée (ex. maladie ou menstruation) ; votre série est conservée.','Votre suivi reste uniquement sur ce téléphone.',

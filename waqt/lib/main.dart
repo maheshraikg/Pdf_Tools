@@ -91,7 +91,7 @@ class _WaqtAppState extends State<WaqtApp> with WidgetsBindingObserver {
     child: ListenableBuilder(
       listenable: widget.settings,
       builder: (context, _) => MaterialApp(
-        title: 'Waqt',
+        title: 'Azan Time',
         scaffoldMessengerKey: _messenger,
         debugShowCheckedModeBanner: false,
         theme: buildTheme(Brightness.light),

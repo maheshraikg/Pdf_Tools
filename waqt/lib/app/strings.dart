@@ -30,8 +30,8 @@ class S {
     return out;
   }
 
-  String get appTitle => _t('Waqt', 'വഖ്ത്');
-  String get appSubtitle => _t('Salah times', 'നിസ്കാര സമയം');
+  String get appTitle => _t('Azan Time', 'ബാങ്ക് സമയം');
+  String get appSubtitle => _t('Prayer Times & Qibla', 'നിസ്കാര സമയം');
   String get today => _t('Today', 'ഇന്ന്');
   String get month => _t('Month', 'മാസം');
   String get qibla => _t('Qibla', 'ഖിബ്‌ല');
@@ -77,16 +77,16 @@ class S {
   String get allowExactAlarms =>
       _t('Allow exact alarms (on time Azan)', 'കൃത്യ സമയ അലാറം അനുവദിക്കുക');
   String get disableBatteryOptimisation => _t(
-    'Turn off battery optimisation for Waqt',
-    'വഖ്തിന് ബാറ്ററി ഒപ്റ്റിമൈസേഷൻ ഓഫാക്കുക',
+    'Turn off battery optimisation for Azan Time',
+    'ബാങ്ക് സമയം ആപ്പിന് ബാറ്ററി ഒപ്റ്റിമൈസേഷൻ ഓഫാക്കുക',
   );
   String get batteryHelp => _t(
     'Some phones (Xiaomi, Oppo, Vivo, Realme, Samsung) stop apps in the '
-        'background. Set Waqt to "Unrestricted" / "No restrictions" in '
+        'background. Set Azan Time to "Unrestricted" / "No restrictions" in '
         'battery settings so Azan is never missed.',
     'ചില ഫോണുകൾ (Xiaomi, Oppo, Vivo, Realme, Samsung) പശ്ചാത്തലത്തിലുള്ള '
         'ആപ്പുകൾ നിർത്തുന്നു. ബാങ്ക് നഷ്ടപ്പെടാതിരിക്കാൻ ബാറ്ററി '
-        'ക്രമീകരണത്തിൽ വഖ്തിനെ "Unrestricted" ആക്കുക.',
+        'ക്രമീകരണത്തിൽ ബാങ്ക് സമയം ആപ്പിനെ "Unrestricted" ആക്കുക.',
   );
   String get fix => _t('Fix', 'ശരിയാക്കുക');
 
@@ -171,9 +171,9 @@ class S {
   String get alerts => _t('Azan & Iqama alerts', 'ബാങ്ക്, ഇഖാമത്ത് അലേർട്ടുകൾ');
   String get about => _t('About', 'വിവരങ്ങൾ');
   String get privacyNote => _t(
-    'Waqt works offline. It has no ads, no tracking and no internet '
+    'Azan Time works offline. It has no ads, no tracking and no internet '
         'permission. Your location never leaves the phone.',
-    'വഖ്ത് ഓഫ്‌ലൈനായി പ്രവർത്തിക്കുന്നു. പരസ്യങ്ങളോ ട്രാക്കിംഗോ '
+    'ബാങ്ക് സമയം ഓഫ്‌ലൈനായി പ്രവർത്തിക്കുന്നു. പരസ്യങ്ങളോ ട്രാക്കിംഗോ '
         'ഇന്റർനെറ്റ് അനുമതിയോ ഇല്ല. നിങ്ങളുടെ സ്ഥലം ഫോണിന് പുറത്ത് പോകുന്നില്ല.',
   );
   String get reset => _t('Reset', 'പുനഃസജ്ജമാക്കുക');
@@ -252,7 +252,7 @@ class S {
   String get jumuahSilent =>
       _t("Stay quiet after Jumu'ah Iqama", 'ജുമുഅ ഇഖാമത്തിന് ശേഷം നിശബ്ദം');
   String get dndAccessNeeded => _t(
-    'Silent mode needs "Do Not Disturb" access. Without it, Waqt uses '
+    'Silent mode needs "Do Not Disturb" access. Without it, Azan Time uses '
         'vibrate.',
     'സൈലന്റ് മോഡിന് "Do Not Disturb" അനുമതി വേണം. ഇല്ലെങ്കിൽ വൈബ്രേറ്റ് ഉപയോഗിക്കും.',
   );
@@ -260,10 +260,10 @@ class S {
   String get testAlert =>
       _t('Send a test alert', 'ടെസ്റ്റ് അലേർട്ട് അയയ്ക്കുക');
   String get alertsScheduledNote => _t(
-    'Alerts are scheduled for the next 20 days. Opening Waqt now and then '
+    'Alerts are scheduled for the next 20 days. Opening Azan Time now and then '
         'keeps them going.',
     'അടുത്ത 20 ദിവസത്തേക്ക് അലേർട്ടുകൾ ക്രമീകരിച്ചിരിക്കുന്നു. '
-        'ഇടയ്ക്കിടെ വഖ്ത് തുറന്നാൽ തുടർന്നുകൊണ്ടിരിക്കും.',
+        'ഇടയ്ക്കിടെ ബാങ്ക് സമയം തുറന്നാൽ തുടർന്നുകൊണ്ടിരിക്കും.',
   );
 
   // Notifications.
@@ -283,8 +283,10 @@ class S {
     ),
     _ => _f('{0} time', '{0} സമയം', [prayer(p)]),
   };
-  String get keepAlertsTitle =>
-      _t('Open Waqt to keep alerts on', 'അലേർട്ടുകൾ തുടരാൻ വഖ്ത് തുറക്കുക');
+  String get keepAlertsTitle => _t(
+    'Open Azan Time to keep alerts on',
+    'അലേർട്ടുകൾ തുടരാൻ ബാങ്ക് സമയം തുറക്കുക',
+  );
   String get keepAlertsBody => _t(
     'Scheduled alerts end in a day. Tap to schedule the next days.',
     'ക്രമീകരിച്ച അലേർട്ടുകൾ ഒരു ദിവസത്തിനകം അവസാനിക്കും. തുടരാൻ ടാപ്പ് ചെയ്യുക.',
@@ -324,7 +326,7 @@ class S {
   // Home-screen widget.
   String get widgetCountdown => _t('in %s', '%s കഴിഞ്ഞ്');
   String get widgetStale =>
-      _t('Open Waqt to refresh', 'പുതുക്കാൻ വഖ്ത് തുറക്കുക');
+      _t('Open Azan Time to refresh', 'പുതുക്കാൻ ബാങ്ക് സമയം തുറക്കുക');
 
   // Display mode.
   String get exitDisplay =>
@@ -448,8 +450,8 @@ class S {
     'ലോക്ക് സ്ക്രീനിന് മുകളിൽ വലിയ നിർത്തൽ ബട്ടണോടെ ബാങ്ക് കാണിക്കും',
   );
   String get fullScreenPermission => _t(
-    'Allow full-screen alerts for Waqt',
-    'വഖ്തിന് ഫുൾ സ്ക്രീൻ അറിയിപ്പുകൾ അനുവദിക്കുക',
+    'Allow full-screen alerts for Azan Time',
+    'ബാങ്ക് സമയം ആപ്പിന് ഫുൾ സ്ക്രീൻ അറിയിപ്പുകൾ അനുവദിക്കുക',
   );
 
   // Prayer tracker.
@@ -589,9 +591,9 @@ class S {
   String get autoLocation =>
       _t('Update location automatically', 'സ്ഥലം സ്വയം പുതുക്കുക');
   String get autoLocationHelp => _t(
-    'When you open Waqt, the place follows your phone (GPS), with the local '
+    'When you open Azan Time, the place follows your phone (GPS), with the local '
         'time zone.',
-    'വഖ്ത് തുറക്കുമ്പോൾ സ്ഥലവും പ്രാദേശിക സമയമേഖലയും ഫോണിന്റെ GPS അനുസരിച്ച് മാറും.',
+    'ബാങ്ക് സമയം തുറക്കുമ്പോൾ സ്ഥലവും പ്രാദേശിക സമയമേഖലയും ഫോണിന്റെ GPS അനുസരിച്ച് മാറും.',
   );
   String locationUpdated(String p) =>
       _f('Location updated: {0}', 'സ്ഥലം പുതുക്കി: {0}', [p]);

@@ -97,7 +97,7 @@ class WaqtWidgetProvider : AppWidgetProvider() {
                 val prayers = day?.optJSONArray("p")
                 if (day == null || prayers == null) {
                     views.setTextViewText(R.id.widget_title, "")
-                    views.setTextViewText(R.id.widget_next, data?.optString("stale") ?: "Waqt")
+                    views.setTextViewText(R.id.widget_next, data?.optString("stale") ?: context.getString(R.string.app_name))
                     views.setChronometer(R.id.widget_countdown, SystemClock.elapsedRealtime(), "", false)
                     for (i in NAME_IDS.indices) {
                         views.setTextViewText(NAME_IDS[i], "")
