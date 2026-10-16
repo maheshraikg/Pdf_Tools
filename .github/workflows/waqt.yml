@@ -38,7 +38,8 @@ jobs:
       - run: flutter test
 
       - name: Build release APK
-        run: flutter build apk --release
+        # A growing build number, so each build installs as an update.
+        run: flutter build apk --release --build-number=${{ github.run_number }}
 
       - name: APK size
         run: |
@@ -69,5 +70,5 @@ jobs:
             --prerelease \
             --target "$SHA" \
             --title "Waqt – latest test build" \
-            --notes "Latest Waqt APK built from ${SHA:0:7}. For testing; signed with the debug key."
+            --notes "Latest Waqt APK built from ${SHA:0:7}. For testing; signed with the fixed test key, so it installs over earlier test builds signed with it."
           echo "Direct download: https://github.com/${{ github.repository }}/releases/download/waqt-apk-keep/waqt.apk" >> "$GITHUB_STEP_SUMMARY"

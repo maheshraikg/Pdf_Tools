@@ -32,13 +32,22 @@ android {
     }
 
     // Release signing: android/key.properties (storeFile, storePassword,
-    // keyAlias, keyPassword) when present; otherwise the debug key, so that
-    // `flutter build apk --release` always produces an installable APK.
+    // keyAlias, keyPassword) when present. Otherwise the fixed test key in
+    // app/test-signing.p12, so every test build (CI included) has the same
+    // signature and installs as an update over the previous one. That key
+    // is public: use your own key.properties for store releases.
     val keyProps = Properties().apply {
         val f = rootProject.file("key.properties")
         if (f.exists()) f.inputStream().use { load(it) }
     }
     signingConfigs {
+        create("test") {
+            storeFile = file("test-signing.p12")
+            storeType = "PKCS12"
+            storePassword = "waqt-test"
+            keyAlias = "waqt-test"
+            keyPassword = "waqt-test"
+        }
         if (keyProps.containsKey("storeFile")) {
             create("release") {
                 storeFile = file(keyProps.getProperty("storeFile"))
@@ -52,7 +61,7 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.findByName("release")
-                ?: signingConfigs.getByName("debug")
+                ?: signingConfigs.getByName("test")
         }
     }
 }
