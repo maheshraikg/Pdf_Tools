@@ -15,6 +15,7 @@ class PrayerAlert {
     this.iqama = true,
     this.iqamaDelay = 15,
     this.reminderMinutes = 0,
+    this.fixedIqama,
   });
 
   final bool azan;
@@ -26,16 +27,24 @@ class PrayerAlert {
   /// Minutes before Azan for a reminder (0 = off).
   final int reminderMinutes;
 
+  /// Fixed local Iqama time (minutes after midnight), as many mosques
+  /// announce; null = [iqamaDelay] after Azan.
+  final int? fixedIqama;
+
   PrayerAlert copyWith({
     bool? azan,
     bool? iqama,
     int? iqamaDelay,
     int? reminderMinutes,
+    Object? fixedIqama = _keep,
   }) => PrayerAlert(
     azan: azan ?? this.azan,
     iqama: iqama ?? this.iqama,
     iqamaDelay: iqamaDelay ?? this.iqamaDelay,
     reminderMinutes: reminderMinutes ?? this.reminderMinutes,
+    fixedIqama: identical(fixedIqama, _keep)
+        ? this.fixedIqama
+        : fixedIqama as int?,
   );
 
   Map<String, dynamic> toJson() => {
@@ -43,6 +52,7 @@ class PrayerAlert {
     'iqama': iqama,
     'delay': iqamaDelay,
     'reminder': reminderMinutes,
+    if (fixedIqama != null) 'fixed': fixedIqama,
   };
 
   factory PrayerAlert.fromJson(Map<String, dynamic> j, PrayerAlert d) =>
@@ -51,8 +61,12 @@ class PrayerAlert {
         iqama: j['iqama'] as bool? ?? d.iqama,
         iqamaDelay: j['delay'] as int? ?? d.iqamaDelay,
         reminderMinutes: j['reminder'] as int? ?? d.reminderMinutes,
+        fixedIqama: j['fixed'] as int?,
       );
 }
+
+/// Marks "argument not given" in copyWith for nullable fields.
+const Object _keep = Object();
 
 /// How the phone is quietened.
 enum SilentMode { vibrate, silent }
@@ -61,6 +75,7 @@ class AlertConfig {
   const AlertConfig({
     this.prayers = defaultPrayerAlerts,
     this.jumuahIqamaDelay = 30,
+    this.jumuahFixedIqama,
     this.silentEnabled = false,
     this.silentMode = SilentMode.vibrate,
     this.silentMinutesAfterIqama = 20,
@@ -73,6 +88,9 @@ class AlertConfig {
 
   /// On Friday the Dhuhr Iqama is this long after Azan (khutbah).
   final int jumuahIqamaDelay;
+
+  /// Fixed local Jumu'ah Iqama time (minutes after midnight), or null.
+  final int? jumuahFixedIqama;
   final bool silentEnabled;
   final SilentMode silentMode;
 
@@ -98,9 +116,14 @@ class AlertConfig {
   int iqamaDelay(Prayer p, bool friday) =>
       p == Prayer.dhuhr && friday ? jumuahIqamaDelay : of(p).iqamaDelay;
 
+  /// Fixed local Iqama time for [p], or null.
+  int? fixedIqama(Prayer p, bool friday) =>
+      p == Prayer.dhuhr && friday ? jumuahFixedIqama : of(p).fixedIqama;
+
   AlertConfig copyWith({
     Map<Prayer, PrayerAlert>? prayers,
     int? jumuahIqamaDelay,
+    Object? jumuahFixedIqama = _keep,
     bool? silentEnabled,
     SilentMode? silentMode,
     int? silentMinutesAfterIqama,
@@ -110,6 +133,9 @@ class AlertConfig {
   }) => AlertConfig(
     prayers: prayers ?? this.prayers,
     jumuahIqamaDelay: jumuahIqamaDelay ?? this.jumuahIqamaDelay,
+    jumuahFixedIqama: identical(jumuahFixedIqama, _keep)
+        ? this.jumuahFixedIqama
+        : jumuahFixedIqama as int?,
     silentEnabled: silentEnabled ?? this.silentEnabled,
     silentMode: silentMode ?? this.silentMode,
     silentMinutesAfterIqama:
@@ -125,6 +151,7 @@ class AlertConfig {
   Map<String, dynamic> toJson() => {
     'prayers': {for (final e in prayers.entries) e.key.name: e.value.toJson()},
     'jumuahDelay': jumuahIqamaDelay,
+    if (jumuahFixedIqama != null) 'jumuahFixed': jumuahFixedIqama,
     'silent': silentEnabled,
     'silentMode': silentMode.name,
     'silentAfter': silentMinutesAfterIqama,
@@ -147,6 +174,7 @@ class AlertConfig {
               : d.of(pr),
       },
       jumuahIqamaDelay: j['jumuahDelay'] as int? ?? d.jumuahIqamaDelay,
+      jumuahFixedIqama: j['jumuahFixed'] as int?,
       silentEnabled: j['silent'] as bool? ?? d.silentEnabled,
       silentMode:
           SilentMode.values.asNameMap()[j['silentMode']] ?? d.silentMode,
@@ -189,8 +217,19 @@ class SilentWindow {
 }
 
 /// Iqama instant of a prayer.
-DateTime iqamaTime(PrayerDay d, Prayer p, AlertConfig c) =>
-    d[p].add(Duration(minutes: c.iqamaDelay(p, d.isFriday)));
+/// A fixed time is used when it falls after Azan (and within 3 hours);
+/// otherwise, e.g. when Azan moves past it with the seasons, the delay.
+DateTime iqamaTime(PrayerDay d, Prayer p, AlertConfig c) {
+  final azan = d[p];
+  final fixed = c.fixedIqama(p, d.isFriday);
+  if (fixed != null) {
+    final at = d.atLocal(fixed);
+    if (at.isAfter(azan) && at.difference(azan) <= const Duration(hours: 3)) {
+      return at;
+    }
+  }
+  return azan.add(Duration(minutes: c.iqamaDelay(p, d.isFriday)));
+}
 
 /// Alerts after [now] for [days], sorted by time.
 List<PlannedAlert> planAlerts(

@@ -13,6 +13,7 @@ import 'native.dart';
 import 'scope.dart';
 import 'settings.dart';
 import 'strings.dart';
+import 'widget_data.dart';
 
 /// Days scheduled ahead (Android allows ~500 alarms per app; 20 days of
 /// reminders + Azan + Iqama for five prayers stays well below that).
@@ -188,6 +189,8 @@ class Background {
           body: s.keepAlertsBody,
         );
       }
+
+      await Native.updateWidget(widgetJson(settings, days));
 
       final silent = planSilent(days, config, now);
       var mode = config.silentMode;

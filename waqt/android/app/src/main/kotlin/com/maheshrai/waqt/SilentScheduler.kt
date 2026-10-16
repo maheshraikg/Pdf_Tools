@@ -141,5 +141,7 @@ object SilentScheduler {
 class SilentReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         SilentScheduler.reschedule(context)
+        // After boot or a clock change, also re-arm the widget's redraw.
+        if (intent.action != SilentScheduler.ACTION_TICK) WaqtWidgetProvider.refresh(context)
     }
 }

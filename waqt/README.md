@@ -16,6 +16,14 @@ Kerala and working anywhere. No ads, no tracking and no internet permission.
   compass. It reads the sensors only while the tab is open.
 - **Alerts**: for each prayer, Azan and Iqama notifications on or off, the
   Iqama delay, and a reminder before Azan. Also Imsak and Tahajjud alerts.
+- **Fixed Iqama times**: optionally a fixed clock time per prayer and for
+  Jumu'ah, as mosques announce it (for example Dhuhr Iqama at 1:00 PM). It
+  is used whenever it falls after Azan, within 3 hours. When the seasons
+  move Azan past it, the app falls back to the minutes-after-Azan delay.
+- **Home-screen widget**: the next prayer with a live countdown and the
+  day's five times, with the next one highlighted. The app hands it 20 days
+  of times, and the widget redraws itself when each prayer passes, so it
+  stays right without the app running.
   - Alerts are scheduled as exact alarms (`alarmClock` mode), so they still
     fire when the phone is in Doze.
   - The Azan uses the alarm audio stream and repeats until dismissed, for at
@@ -136,14 +144,12 @@ lib/screens/   Today, Month, Qibla, Settings, Place, Alerts, Timetable,
                mosque display
 android/.../MainActivity.kt    GPS, DND/battery settings, method channel
 android/.../SilentScheduler.kt auto-silent alarms + boot/time receiver
+android/.../WaqtWidgetProvider.kt home-screen widget
 ```
 
 ## Not done yet (ideas)
 
-- Home-screen widget (the Tulu Panchanga widget in this repo is the
-  pattern to follow)
 - Azan audio tracks: needs recordings that are licensed for use, added under
   `android/app/src/main/res/raw/` and offered as notification channel
   sounds
 - Wear OS
-- Per-mosque fixed Iqama times (instead of a delay after Azan)

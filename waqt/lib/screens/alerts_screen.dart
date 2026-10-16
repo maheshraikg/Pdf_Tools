@@ -88,6 +88,11 @@ class _AlertsScreenState extends State<AlertsScreen>
                   onChanged: (v) =>
                       set(c.withPrayer(p, c.of(p).copyWith(iqamaDelay: v))),
                 ),
+                _FixedIqamaTile(
+                  value: c.of(p).fixedIqama,
+                  onChanged: (v) =>
+                      set(c.withPrayer(p, c.of(p).copyWith(fixedIqama: v))),
+                ),
                 MinutesStepper(
                   label: s.reminderBefore,
                   value: c.of(p).reminderMinutes,
@@ -107,6 +112,11 @@ class _AlertsScreenState extends State<AlertsScreen>
             min: 0,
             max: 90,
             onChanged: (v) => set(c.copyWith(jumuahIqamaDelay: v)),
+          ),
+          _FixedIqamaTile(
+            label: s.jumuahFixedIqama,
+            value: c.jumuahFixedIqama,
+            onChanged: (v) => set(c.copyWith(jumuahFixedIqama: v)),
           ),
           SwitchListTile(
             title: Text(s.imsakAlert),
@@ -183,6 +193,60 @@ class _AlertsScreenState extends State<AlertsScreen>
           ),
         ],
       ),
+    );
+  }
+}
+
+/// "Fixed Iqama time": tap to pick a clock time, ✕ to go back to the delay.
+class _FixedIqamaTile extends StatelessWidget {
+  const _FixedIqamaTile({
+    required this.value,
+    required this.onChanged,
+    this.label,
+  });
+
+  final int? value;
+  final String? label;
+  final ValueChanged<int?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = context.s, settings = context.settings;
+    final v = value;
+    String clock(int m) {
+      final h = m ~/ 60, min = (m % 60).toString().padLeft(2, '0');
+      if (settings.use24h) return '${h.toString().padLeft(2, '0')}:$min';
+      return '${h % 12 == 0 ? 12 : h % 12}:$min ${h < 12 ? 'AM' : 'PM'}';
+    }
+
+    return ListTile(
+      dense: true,
+      title: Text(label ?? s.fixedIqama),
+      subtitle: Text(v == null ? s.fixedIqamaOff : s.fixedIqamaHelp),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            v == null ? s.off : clock(v),
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+          if (v != null)
+            IconButton(
+              tooltip: s.clear,
+              icon: const Icon(Icons.close),
+              onPressed: () => onChanged(null),
+            ),
+        ],
+      ),
+      onTap: () async {
+        final t = await showTimePicker(
+          context: context,
+          initialTime: v == null
+              ? const TimeOfDay(hour: 13, minute: 0)
+              : TimeOfDay(hour: v ~/ 60, minute: v % 60),
+        );
+        if (t != null) onChanged(t.hour * 60 + t.minute);
+      },
     );
   }
 }

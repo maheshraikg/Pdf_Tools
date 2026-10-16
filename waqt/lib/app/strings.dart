@@ -191,6 +191,18 @@ class S {
   // Alerts screen.
   String get azanAlert => _t('Azan alert', 'ബാങ്ക് അലേർട്ട്');
   String get iqamaAlert => _t('Iqama alert', 'ഇഖാമത്ത് അലേർട്ട്');
+  String get fixedIqama => _t('Fixed Iqama time', 'നിശ്ചിത ഇഖാമത്ത് സമയം');
+  String get jumuahFixedIqama =>
+      _t("Fixed Jumu'ah Iqama time", 'നിശ്ചിത ജുമുഅ ഇഖാമത്ത് സമയം');
+  String get fixedIqamaOff => _t(
+    'Off: uses the minutes after Azan',
+    'ഓഫ്: ബാങ്കിന് ശേഷമുള്ള മിനിറ്റ് ഉപയോഗിക്കുന്നു',
+  );
+  String get fixedIqamaHelp => _t(
+    'Used when it is after Azan; otherwise the minutes after Azan',
+    'ബാങ്കിന് ശേഷമാണെങ്കിൽ ഉപയോഗിക്കും; അല്ലെങ്കിൽ ബാങ്കിന് ശേഷമുള്ള മിനിറ്റ്',
+  );
+  String get clear => _t('Clear', 'മായ്ക്കുക');
   String get iqamaAfterAzan => _t('Iqama after Azan', 'ബാങ്കിന് ശേഷം ഇഖാമത്ത്');
   String get reminderBefore =>
       _t('Reminder before Azan', 'ബാങ്കിന് മുമ്പ് ഓർമ്മപ്പെടുത്തൽ');
@@ -290,6 +302,11 @@ class S {
   String get exportCalculated =>
       _t('Copy calculated year as CSV', 'കണക്കാക്കിയ വർഷം CSV ആയി പകർത്തുക');
   String get copied => _t('Copied', 'പകർത്തി');
+
+  // Home-screen widget.
+  String get widgetCountdown => _t('in %s', '%s കഴിഞ്ഞ്');
+  String get widgetStale =>
+      _t('Open Waqt to refresh', 'പുതുക്കാൻ വഖ്ത് തുറക്കുക');
 
   // Display mode.
   String get exitDisplay =>

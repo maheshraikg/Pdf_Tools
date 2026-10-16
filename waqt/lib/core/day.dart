@@ -17,6 +17,7 @@ class PrayerDay {
     required this.times,
     required this.source,
     required this.hijri,
+    this.utcOffsetMinutes = 0,
   });
 
   /// Civil date at the place.
@@ -27,7 +28,14 @@ class PrayerDay {
   final TimeSource source;
   final HijriDate hijri;
 
+  /// Local clock offset at the place that day (for fixed Iqama times).
+  final int utcOffsetMinutes;
+
   DateTime operator [](Prayer p) => times[p]!;
+
+  /// UTC instant of local clock time [minutes] (after midnight) on this day.
+  DateTime atLocal(int minutes) =>
+      date.add(Duration(minutes: minutes - utcOffsetMinutes));
 
   /// Friday (Jumu'ah replaces Dhuhr).
   bool get isFriday =>
@@ -110,6 +118,9 @@ class DayCalculator {
       month: month,
       day: day,
       source: source,
+      utcOffsetMinutes:
+          place.utcOffsetMinutes ??
+          DateTime(year, month, day, 12).timeZoneOffset.inMinutes,
       hijri: HijriDate.fromGregorian(
         year,
         month,

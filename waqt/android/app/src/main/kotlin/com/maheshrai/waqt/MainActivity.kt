@@ -48,6 +48,10 @@ class MainActivity : FlutterActivity() {
                         }
                         result.success(null)
                     }
+                    "updateWidget" -> {
+                        call.argument<String>("data")?.let { WaqtWidgetProvider.save(this, it) }
+                        result.success(null)
+                    }
                     "setSilentWindows" -> {
                         val mode = call.argument<String>("mode") ?: "vibrate"
                         val raw = call.argument<List<List<Number>>>("windows") ?: emptyList()

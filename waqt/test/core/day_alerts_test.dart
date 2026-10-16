@@ -167,6 +167,44 @@ void main() {
       expect(planSilent(days, const AlertConfig(), start), isEmpty);
     });
 
+    test('fixed Iqama times, with fallback to the delay', () {
+      final thu = days[0], fri = days[1];
+      expect(thu.utcOffsetMinutes, 330);
+      final c = const AlertConfig(jumuahFixedIqama: 13 * 60 + 15)
+          .withPrayer(Prayer.dhuhr, const PrayerAlert(fixedIqama: 12 * 60 + 45))
+          .withPrayer(Prayer.fajr, const PrayerAlert(fixedIqama: 4 * 60));
+      // 12:45 IST = 07:15 UTC.
+      expect(
+        iqamaTime(thu, Prayer.dhuhr, c),
+        DateTime.utc(2026, 10, 15, 7, 15),
+      );
+      // Friday uses the Jumu'ah time, not the Dhuhr one.
+      expect(
+        iqamaTime(fri, Prayer.dhuhr, c),
+        DateTime.utc(2026, 10, 16, 7, 45),
+      );
+      // 04:00 is before Fajr Azan: falls back to the delay.
+      expect(
+        iqamaTime(thu, Prayer.fajr, c).difference(thu[Prayer.fajr]),
+        const Duration(minutes: 15),
+      );
+      final plan = planAlerts(days, c, start);
+      expect(
+        plan.any(
+          (a) =>
+              a.kind == AlertKind.iqama &&
+              a.at == DateTime.utc(2026, 10, 15, 7, 15),
+        ),
+        isTrue,
+      );
+      final r = AlertConfig.fromJson(c.toJson());
+      expect(r.of(Prayer.dhuhr).fixedIqama, 12 * 60 + 45);
+      expect(r.jumuahFixedIqama, 13 * 60 + 15);
+      expect(r.copyWith(jumuahFixedIqama: null).jumuahFixedIqama, isNull);
+      expect(r.of(Prayer.dhuhr).copyWith(fixedIqama: null).fixedIqama, isNull);
+      expect(r.of(Prayer.dhuhr).copyWith(azan: false).fixedIqama, 765);
+    });
+
     test('next prayer', () {
       final n = nextPrayer(days, days[0][Prayer.isha]);
       expect(n!.prayer, Prayer.fajr);

@@ -80,6 +80,10 @@ class Native {
   static Future<void> openBatterySettings() =>
       _call<void>('openBatterySettings');
 
+  /// Sends new data to the home-screen widget.
+  static Future<void> updateWidget(String json) =>
+      _call<void>('updateWidget', {'data': json});
+
   /// Replaces the auto-silent schedule.
   static Future<void> setSilentWindows(
     List<SilentWindow> windows,
