@@ -12,12 +12,13 @@ import '../core/events.dart';
 import '../core/prayer_calc.dart';
 import '../ui/theme.dart';
 import '../ui/widgets.dart';
+import 'alerts_screen.dart';
 import 'display_screen.dart';
 import 'place_screen.dart';
 import 'prayer_sheet.dart';
 import 'tracker_screen.dart';
 
-/// Prayers shown as cards, in order (extras go in the small row below).
+/// Prayers shown as cards, in order (the other times are listed below).
 const _cardPrayers = [
   Prayer.fajr,
   Prayer.sunrise,
@@ -26,7 +27,6 @@ const _cardPrayers = [
   Prayer.maghrib,
   Prayer.isha,
 ];
-const _extraPrayers = [Prayer.imsak, Prayer.ishraq, Prayer.tahajjud];
 
 class TodayScreen extends StatefulWidget {
   const TodayScreen({super.key});
@@ -147,19 +147,7 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
                   _trackerCard(context, day),
                   const SizedBox(height: 10),
                 ],
-                if (settings.showExtras) ...[
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      for (final p in _extraPrayers) ...[
-                        if (p != _extraPrayers.first) const SizedBox(width: 10),
-                        Expanded(
-                          child: _ExtraTile(day: day, prayer: p),
-                        ),
-                      ],
-                    ],
-                  ),
-                ],
+                _MoreTimes(day: day),
                 const SizedBox(height: 18),
                 Text(
                   '${day.source == TimeSource.timetable ? s.fromTimetable : '${s.calculated} · ${settings.method.name}'}'
@@ -875,7 +863,24 @@ class _PrayerCard extends StatelessWidget {
           ),
           SizedBox(
             width: 48,
-            child: alert == null
+            child: p == Prayer.sunrise
+                ? IconButton(
+                    tooltip: s.sunriseAlert,
+                    icon: Icon(
+                      settings.alerts.sunriseAlert
+                          ? Icons.notifications_active
+                          : Icons.notifications_off_outlined,
+                      color: settings.alerts.sunriseAlert
+                          ? scheme.tertiary
+                          : sub,
+                    ),
+                    onPressed: () => settings.update(
+                      (x) => x.alerts = x.alerts.copyWith(
+                        sunriseAlert: !x.alerts.sunriseAlert,
+                      ),
+                    ),
+                  )
+                : alert == null
                 ? null
                 : IconButton(
                     tooltip: s.azanAlert,
@@ -959,45 +964,179 @@ class _PrayedToggle extends StatelessWidget {
   }
 }
 
-/// Small tile for Imsak / Ishraq / Tahajjud.
-class _ExtraTile extends StatelessWidget {
-  const _ExtraTile({required this.day, required this.prayer});
+/// The other times of the original chart: Imsak, Ishraq, Jumu'ah,
+/// Taraweeh, Tahajjud and Eid, each with its alert bell.
+class _MoreTimes extends StatelessWidget {
+  const _MoreTimes({required this.day});
   final PrayerDay day;
-  final Prayer prayer;
 
   @override
   Widget build(BuildContext context) {
     final settings = context.settings, s = context.s;
-    final t = Theme.of(context).textTheme;
-    final scheme = Theme.of(context).colorScheme;
+    final c = settings.alerts;
+    void set(AlertConfig n) => settings.update((x) => x.alerts = n);
+    void openAlerts() => Navigator.of(context)
+        .push(MaterialPageRoute<void>(builder: (_) => const AlertsScreen()));
+
+    // Jumu'ah of this week (today when it is Friday).
+    final ahead = (DateTime.friday - day.date.weekday) % 7;
+    final f = day.date.add(Duration(days: ahead));
+    final friday = settings.calculator.day(f.year, f.month, f.day);
+    // The coming Eid by the Hijri date.
+    final h = day.hijri;
+    final fitr = h.month < 10 || (h.month == 10 && h.day <= 1);
+    final eidMinutes = fitr ? c.eidFitrTime : c.eidAdhaTime;
+
+    final rows = <Widget>[
+      if (settings.showExtras)
+        _MoreRow(
+          icon: prayerIcon(Prayer.imsak),
+          label: s.prayer(Prayer.imsak),
+          time: hm(settings, day[Prayer.imsak]),
+          alert: c.imsakAlert,
+          onAlert: () => set(c.copyWith(imsakAlert: !c.imsakAlert)),
+          onTap: () => showPrayerSheet(context, day, Prayer.imsak),
+        ),
+      if (settings.showExtras)
+        _MoreRow(
+          icon: prayerIcon(Prayer.ishraq),
+          label: s.prayer(Prayer.ishraq),
+          time: hm(settings, day[Prayer.ishraq]),
+          alert: c.ishraqAlert,
+          onAlert: () => set(c.copyWith(ishraqAlert: !c.ishraqAlert)),
+          onTap: () => showPrayerSheet(context, day, Prayer.ishraq),
+        ),
+      _MoreRow(
+        icon: Icons.groups_outlined,
+        label: s.prayer(Prayer.dhuhr, friday: true),
+        sub: ahead == 0
+            ? null
+            : '${weekdayName(settings.lang, DateTime.friday)} ${f.day}',
+        time: hm(settings, iqamaTime(friday, Prayer.dhuhr, c)),
+        alert: c.of(Prayer.dhuhr).iqama,
+        onAlert: () => set(
+          c.withPrayer(
+            Prayer.dhuhr,
+            c.of(Prayer.dhuhr).copyWith(iqama: !c.of(Prayer.dhuhr).iqama),
+          ),
+        ),
+        onTap: () => showPrayerSheet(context, friday, Prayer.dhuhr),
+      ),
+      _MoreRow(
+        icon: Icons.nights_stay_outlined,
+        label: s.specialTitle(SpecialEvent.taraweeh),
+        time: hm(
+          settings,
+          iqamaTime(
+            day,
+            Prayer.isha,
+            c,
+          ).add(Duration(minutes: c.taraweehMinutesAfterIsha)),
+        ),
+        alert: c.taraweehAlert,
+        onAlert: () => set(c.copyWith(taraweehAlert: !c.taraweehAlert)),
+        onTap: openAlerts,
+      ),
+      if (settings.showExtras)
+        _MoreRow(
+          icon: prayerIcon(Prayer.tahajjud),
+          label: s.prayer(Prayer.tahajjud),
+          time: hm(settings, day[Prayer.tahajjud]),
+          alert: c.tahajjudAlert,
+          onAlert: () => set(c.copyWith(tahajjudAlert: !c.tahajjudAlert)),
+          onTap: () => showPrayerSheet(context, day, Prayer.tahajjud),
+        ),
+      _MoreRow(
+        icon: Icons.celebration_outlined,
+        label: s.specialTitle(
+          fitr ? SpecialEvent.eidAlFitr : SpecialEvent.eidAlAdha,
+        ),
+        time: hm(settings, day.atLocal(eidMinutes)),
+        alert: c.eidAlert,
+        onAlert: () => set(c.copyWith(eidAlert: !c.eidAlert)),
+        onTap: openAlerts,
+      ),
+    ];
     return Card(
       clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => showPrayerSheet(context, day, prayer),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-          child: Column(
-            children: [
-              Icon(prayerIcon(prayer), size: 20, color: scheme.tertiary),
-              const SizedBox(height: 4),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  s.prayer(prayer),
-                  style: t.labelMedium?.copyWith(
-                    color: scheme.onSurfaceVariant,
+      child: Column(
+        children: [
+          for (var i = 0; i < rows.length; i++) ...[
+            if (i > 0) const Divider(height: 1, indent: 60),
+            rows[i],
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _MoreRow extends StatelessWidget {
+  const _MoreRow({
+    required this.icon,
+    required this.label,
+    required this.time,
+    required this.alert,
+    required this.onAlert,
+    required this.onTap,
+    this.sub,
+  });
+
+  final IconData icon;
+  final String label, time;
+  final String? sub;
+  final bool alert;
+  final VoidCallback onAlert, onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = context.s;
+    final t = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(14, 4, 4, 4),
+        child: Row(
+          children: [
+            Icon(icon, size: 22, color: scheme.tertiary),
+            const SizedBox(width: 22),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: t.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                   ),
-                ),
+                  if (sub != null)
+                    Text(
+                      sub!,
+                      style: t.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                ],
               ),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  hm(settings, day[prayer]),
-                  style: t.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-                ),
+            ),
+            Text(
+              time,
+              style: t.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                fontFeatures: const [FontFeature.tabularFigures()],
               ),
-            ],
-          ),
+            ),
+            IconButton(
+              tooltip: s.alerts,
+              icon: Icon(
+                alert
+                    ? Icons.notifications_active
+                    : Icons.notifications_off_outlined,
+                color: alert ? scheme.primary : scheme.outline,
+              ),
+              onPressed: onAlert,
+            ),
+          ],
         ),
       ),
     );
