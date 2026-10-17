@@ -119,7 +119,8 @@ class Native {
   }
 
   /// Replaces the Azan player schedule: events are maps with at (epoch ms),
-  /// title, body and sound.
+  /// title, body, sound, volume (% of the alarm maximum, 0 = phone volume)
+  /// and full (over the lock screen).
   static Future<void> setAzanAlarms(
     List<Map<String, Object>> events, {
     required bool vibrate,
@@ -136,13 +137,34 @@ class Native {
     'channelName': channelName,
   });
 
+  /// Reminders answered from the notification ("I did" / "Remind me in
+  /// 30 min"): maps with id, at, latest (epoch ms), title, text and done.
+  static Future<void> setNotices(
+    List<Map<String, Object>> notices, {
+    required String laterLabel,
+    required String channelName,
+  }) => _call<void>('setNotices', {
+    'notices': jsonEncode(notices),
+    'laterLabel': laterLabel,
+    'channelName': channelName,
+  });
+
   /// Copies a picked audio file into app storage; returns its sound id.
   static Future<String?> saveSound(String slot, String ext, Uint8List bytes) =>
       _call<String>('saveSound', {'slot': slot, 'ext': ext, 'bytes': bytes});
 
   /// Plays [sound] now (preview / test) with a Stop notification.
-  static Future<void> playSound(String sound, String title, String body) =>
-      _call<void>('playSound', {'sound': sound, 'title': title, 'body': body});
+  static Future<void> playSound(
+    String sound,
+    String title,
+    String body, {
+    int volume = 0,
+  }) => _call<void>('playSound', {
+    'sound': sound,
+    'title': title,
+    'body': body,
+    'volume': volume,
+  });
 
   static Future<void> stopSound() => _call<void>('stopSound');
 

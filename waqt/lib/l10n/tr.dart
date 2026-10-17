@@ -292,6 +292,34 @@ const Map<String, String> trStrings = {
   'Keep the screen on until I stop': 'Ben durdurana kadar ekranı açık tut',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'Kapalı: telefonun ekran zaman aşımı geçerli. Ekran kilit ekranında da çalışır: açın, sonra güç düğmesine iki kez basın.',
   'Adjust this time (± minutes)': 'Bu vakti ayarla (± dakika)',
+  'Sunrise alert (Fajr time ends)': 'Güneş doğuşu uyarısı (sabah vakti biter)',
+  '{0} min to sunrise – Fajr time ends':
+      'Güneş doğuşuna {0} dk – sabah vakti bitiyor',
+  'Minutes before sunrise': 'Güneş doğuşundan kaç dakika önce',
+  'Ishraq / Duha alert': 'İşrak / Kuşluk uyarısı',
+  'Iqama sound': 'Kamet sesi',
+  'Short notification sound': 'Kısa bildirim sesi',
+  'Full screen for Iqama too': 'Kamet için de tam ekran',
+  'Azan volume': 'Ezan ses düzeyi',
+  'Iqama volume': 'Kamet ses düzeyi',
+  'Phone alarm volume': 'Telefon alarm ses düzeyi',
+  'Pressing a volume button stops the Azan.':
+      'Ses düğmesine basmak ezanı durdurur.',
+  'Silence during': 'Sessiz olsun',
+  'Ramadan Niyyah reminder': 'Ramazan niyet hatırlatıcısı',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?':
+      'Ramazan\'ın her gecesi yatsıdan sonra: yarınki oruca niyet ettiniz mi?',
+  'Did you make the Niyyah for tomorrow\'s fast?':
+      'Yarınki oruca niyet ettiniz mi?',
+  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”':
+      '"Niyet ettim Allah rızası için yarınki Ramazan orucunu tutmaya."',
+  'Friday night reminder': 'Cuma gecesi hatırlatıcısı',
+  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah':
+      'Perşembe akşamdan sonra: salavat, Kehf suresi ve Cumaya hazırlık',
+  'Tonight is Friday night': 'Bu gece Cuma gecesi',
+  'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'Peygamber ﷺ\'e bolca salavat getirin. Kehf suresini okuyun ve Cumaya hazırlanın: gusül, temiz elbise, erken gidin.',
+  'I did': 'Niyet ettim',
+  'Remind me in 30 min': '30 dk sonra hatırlat',
 };
 
 const List<String> trHijriMonths = [

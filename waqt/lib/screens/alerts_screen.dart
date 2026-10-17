@@ -164,11 +164,46 @@ class _AlertsScreenState extends State<AlertsScreen>
                 value: c.tahajjudAlert,
                 onChanged: (v) => set(c.copyWith(tahajjudAlert: v)),
               ),
+              SwitchListTile(
+                secondary: IconBadge(prayerIcon(Prayer.sunrise)),
+                title: Text(s.sunriseAlert),
+                value: c.sunriseAlert,
+                onChanged: (v) => set(c.copyWith(sunriseAlert: v)),
+              ),
+              if (c.sunriseAlert)
+                MinutesStepper(
+                  label: s.minutesBeforeSunrise,
+                  value: c.sunriseMinutesBefore,
+                  min: 5,
+                  max: 60,
+                  step: 5,
+                  onChanged: (v) => set(c.copyWith(sunriseMinutesBefore: v)),
+                ),
+              SwitchListTile(
+                secondary: IconBadge(prayerIcon(Prayer.ishraq)),
+                title: Text(s.ishraqAlert),
+                value: c.ishraqAlert,
+                onChanged: (v) => set(c.copyWith(ishraqAlert: v)),
+              ),
             ],
           ),
           Section(
             title: s.specialOccasions,
             children: [
+              SwitchListTile(
+                secondary: const IconBadge(Icons.volunteer_activism_outlined),
+                title: Text(s.niyyahReminder),
+                subtitle: Text(s.niyyahReminderHelp),
+                value: c.niyyahReminder,
+                onChanged: (v) => set(c.copyWith(niyyahReminder: v)),
+              ),
+              SwitchListTile(
+                secondary: const IconBadge(Icons.auto_stories_outlined),
+                title: Text(s.fridayReminder),
+                subtitle: Text(s.fridayReminderHelp),
+                value: c.fridayReminder,
+                onChanged: (v) => set(c.copyWith(fridayReminder: v)),
+              ),
               SwitchListTile(
                 secondary: const IconBadge(Icons.nights_stay_outlined),
                 title: Text(s.specialTitle(SpecialEvent.taraweeh)),
@@ -240,6 +275,35 @@ class _AlertsScreenState extends State<AlertsScreen>
                       child: Text(s.grant),
                     ),
                   ),
+                ListTile(
+                  title: Text(s.silentFor),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        for (final p in Prayer.fard)
+                          FilterChip(
+                            label: Text(s.prayer(p)),
+                            selected: c.silentPrayers.contains(p),
+                            onSelected: (v) => set(
+                              c.copyWith(
+                                silentPrayers: v
+                                    ? {...c.silentPrayers, p}
+                                    : ({...c.silentPrayers}..remove(p)),
+                              ),
+                            ),
+                          ),
+                        FilterChip(
+                          label: Text(s.prayer(Prayer.dhuhr, friday: true)),
+                          selected: c.silentJumuah,
+                          onSelected: (v) => set(c.copyWith(silentJumuah: v)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 MinutesStepper(
                   label: s.silentAfterIqama,
                   value: c.silentMinutesAfterIqama,
@@ -290,7 +354,7 @@ extension on _AlertsScreenState {
   ) {
     final s = context.s, settings = context.settings;
 
-    Widget preview(SoundChoice choice, Prayer p) {
+    Widget preview(SoundChoice choice, Prayer p, {bool iqama = false}) {
       final sound = choice.playerSound;
       if (sound == null || !Native.supported) return const SizedBox.shrink();
       return IconButton(
@@ -298,11 +362,33 @@ extension on _AlertsScreenState {
         icon: const Icon(Icons.play_circle_outline),
         onPressed: () => Native.playSound(
           sound,
-          s.azanTitle(p, false),
+          iqama ? s.iqamaTitle(p, false) : s.azanTitle(p, false),
           settings.place.label(s.ml),
+          volume: iqama ? c.iqamaVolume : c.azanVolume,
         ),
       );
     }
+
+    Widget volume(String label, int value, ValueChanged<int> onChanged) =>
+        ListTile(
+          dense: true,
+          title: Text(label),
+          subtitle: Slider(
+            value: value.toDouble(),
+            max: 100,
+            divisions: 10,
+            label: value == 0 ? s.phoneVolume : '$value%',
+            onChanged: (v) => onChanged(v.round()),
+          ),
+          trailing: SizedBox(
+            width: 72,
+            child: Text(
+              value == 0 ? s.phoneVolume : '$value%',
+              textAlign: TextAlign.end,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+        );
 
     return Section(
       title: s.azanSoundTitle,
@@ -335,6 +421,47 @@ extension on _AlertsScreenState {
             if (v != null) set(c.copyWith(fajrSound: v.$1));
           },
         ),
+        volume(
+          s.azanVolume,
+          c.azanVolume,
+          (v) => set(c.copyWith(azanVolume: v)),
+        ),
+        ListTile(
+          leading: const IconBadge(Icons.campaign_outlined),
+          title: Text(s.iqamaSoundTitle),
+          subtitle: Text(
+            c.iqamaSound == null
+                ? s.iqamaSoundDefault
+                : s.soundName(c.iqamaSound!),
+          ),
+          trailing: c.iqamaSound == null
+              ? null
+              : preview(c.iqamaSound!, Prayer.dhuhr, iqama: true),
+          onTap: () async {
+            final v = await _pickSound(
+              context,
+              'iqama',
+              c.iqamaSound ?? const SoundChoice(AzanSound.chime),
+              false,
+              same: c.iqamaSound == null,
+              noneLabel: s.iqamaSoundDefault,
+            );
+            if (v != null) set(c.copyWith(iqamaSound: v.$1));
+          },
+        ),
+        if (c.iqamaSound != null) ...[
+          volume(
+            s.iqamaVolume,
+            c.iqamaVolume,
+            (v) => set(c.copyWith(iqamaVolume: v)),
+          ),
+          SwitchListTile(
+            secondary: const IconBadge(Icons.fullscreen),
+            title: Text(s.fullScreenIqama),
+            value: c.iqamaFullScreen,
+            onChanged: (v) => set(c.copyWith(iqamaFullScreen: v)),
+          ),
+        ],
         ...[
           SwitchListTile(
             secondary: const IconBadge(Icons.fullscreen),
@@ -365,6 +492,11 @@ extension on _AlertsScreenState {
             value: c.playWhenSilent,
             onChanged: (v) => set(c.copyWith(playWhenSilent: v)),
           ),
+          ListTile(
+            dense: true,
+            leading: const Icon(Icons.volume_down_outlined),
+            title: Text(s.volumeHelp),
+          ),
         ],
       ],
     );
@@ -377,6 +509,7 @@ extension on _AlertsScreenState {
     SoundChoice current,
     bool allowSame, {
     bool same = false,
+    String? noneLabel,
   }) async {
     final s = context.s;
     final messenger = ScaffoldMessenger.of(context);
@@ -387,30 +520,37 @@ extension on _AlertsScreenState {
     final picked = await showDialog<Object>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: Text(allowSame ? s.fajrSoundTitle : s.azanSoundTitle),
+        title: Text(
+          noneLabel != null
+              ? s.iqamaSoundTitle
+              : allowSame
+              ? s.fajrSoundTitle
+              : s.azanSoundTitle,
+        ),
         children: [
-          if (allowSame)
+          if (allowSame || noneLabel != null)
             ListTile(
-              title: Text(s.sameAsOthers),
+              title: Text(noneLabel ?? s.sameAsOthers),
               trailing: tick(same),
               onTap: () => Navigator.pop(context, 'same'),
             ),
           for (final o in AzanSound.values)
-            ListTile(
-              title: Text(s.soundKindName(o)),
-              subtitle: o == AzanSound.custom
-                  ? Text(
-                      current.sound == AzanSound.custom &&
-                              current.fileName != null
-                          ? current.fileName!
-                          : s.customSoundHelp,
-                    )
-                  : o == AzanSound.system
-                  ? Text(s.systemSoundHelp)
-                  : null,
-              trailing: tick(!same && current.sound == o),
-              onTap: () => Navigator.pop(context, o),
-            ),
+            if (noneLabel == null || o != AzanSound.system)
+              ListTile(
+                title: Text(s.soundKindName(o)),
+                subtitle: o == AzanSound.custom
+                    ? Text(
+                        current.sound == AzanSound.custom &&
+                                current.fileName != null
+                            ? current.fileName!
+                            : s.customSoundHelp,
+                      )
+                    : o == AzanSound.system
+                    ? Text(s.systemSoundHelp)
+                    : null,
+                trailing: tick(!same && current.sound == o),
+                onTap: () => Navigator.pop(context, o),
+              ),
         ],
       ),
     );

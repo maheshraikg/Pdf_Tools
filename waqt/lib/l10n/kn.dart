@@ -293,6 +293,34 @@ const Map<String, String> knStrings = {
   'Keep the screen on until I stop': 'ನಾನು ನಿಲ್ಲಿಸುವವರೆಗೆ ಪರದೆ ಆನ್ ಇರಲಿ',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'ಆಫ್ ಆದರೆ ಫೋನಿನ ಪರದೆ ಟೈಮ್‌ಔಟ್ ಅನ್ವಯಿಸುತ್ತದೆ. ಲಾಕ್ ಪರದೆಯಲ್ಲೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ: ತೆರೆಯಿರಿ, ನಂತರ ಪವರ್ ಬಟನ್ ಎರಡು ಬಾರಿ ಒತ್ತಿರಿ.',
   'Adjust this time (± minutes)': 'ಈ ಸಮಯ ಹೊಂದಿಸಿ (± ನಿಮಿಷ)',
+  'Sunrise alert (Fajr time ends)': 'ಸೂರ್ಯೋದಯ ಅಲರ್ಟ್ (ಫಜ್ರ್ ಸಮಯ ಮುಗಿಯುತ್ತದೆ)',
+  '{0} min to sunrise – Fajr time ends':
+      'ಸೂರ್ಯೋದಯಕ್ಕೆ {0} ನಿಮಿಷ – ಫಜ್ರ್ ಸಮಯ ಮುಗಿಯುತ್ತದೆ',
+  'Minutes before sunrise': 'ಸೂರ್ಯೋದಯಕ್ಕೆ ಎಷ್ಟು ನಿಮಿಷ ಮೊದಲು',
+  'Ishraq / Duha alert': 'ಇಶ್ರಾಕ್ / ಳುಹಾ ಅಲರ್ಟ್',
+  'Iqama sound': 'ಇಕಾಮತ್ ಧ್ವನಿ',
+  'Short notification sound': 'ಚಿಕ್ಕ ಅಧಿಸೂಚನೆ ಧ್ವನಿ',
+  'Full screen for Iqama too': 'ಇಕಾಮತ್‌ಗೂ ಪೂರ್ಣ ಪರದೆ',
+  'Azan volume': 'ಅಝಾನ್ ವಾಲ್ಯೂಮ್',
+  'Iqama volume': 'ಇಕಾಮತ್ ವಾಲ್ಯೂಮ್',
+  'Phone alarm volume': 'ಫೋನ್ ಅಲಾರಂ ವಾಲ್ಯೂಮ್',
+  'Pressing a volume button stops the Azan.':
+      'ವಾಲ್ಯೂಮ್ ಬಟನ್ ಒತ್ತಿದರೆ ಅಝಾನ್ ನಿಲ್ಲುತ್ತದೆ.',
+  'Silence during': 'ಈ ಸಮಯಗಳಲ್ಲಿ ಸೈಲೆಂಟ್',
+  'Ramadan Niyyah reminder': 'ರಮಝಾನ್ ನಿಯ್ಯತ್ ಜ್ಞಾಪನೆ',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?':
+      'ರಮಝಾನಿನ ಪ್ರತಿ ರಾತ್ರಿ ಇಶಾದ ನಂತರ: ನಾಳೆಯ ಉಪವಾಸಕ್ಕೆ ನಿಯ್ಯತ್ ಮಾಡಿದ್ದೀರಾ?',
+  'Did you make the Niyyah for tomorrow\'s fast?':
+      'ನಾಳೆಯ ಉಪವಾಸಕ್ಕೆ ನಿಯ್ಯತ್ ಮಾಡಿದ್ದೀರಾ?',
+  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”':
+      '"ಅಲ್ಲಾಹನಿಗಾಗಿ ನಾಳೆಯ ರಮಝಾನಿನ ಕಡ್ಡಾಯ ಉಪವಾಸ ಆಚರಿಸಲು ನಿಯ್ಯತ್ ಮಾಡುತ್ತೇನೆ."',
+  'Friday night reminder': 'ಶುಕ್ರವಾರ ರಾತ್ರಿ ಜ್ಞಾಪನೆ',
+  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah':
+      'ಗುರುವಾರ ಮಗ್ರಿಬ್ ನಂತರ: ಸಲವಾತ್, ಸೂರಾ ಅಲ್-ಕಹ್ಫ್ ಮತ್ತು ಜುಮುಅಕ್ಕೆ ಸಿದ್ಧತೆ',
+  'Tonight is Friday night': 'ಇಂದು ಶುಕ್ರವಾರ ರಾತ್ರಿ',
+  'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'ನಬಿ ﷺ ಮೇಲೆ ಹೆಚ್ಚು ಸಲವಾತ್ ಹೇಳಿ. ಸೂರಾ ಅಲ್-ಕಹ್ಫ್ ಓದಿ ಮತ್ತು ಜುಮುಅಕ್ಕೆ ಸಿದ್ಧರಾಗಿ: ಸ್ನಾನ, ಶುಚಿ ಬಟ್ಟೆ, ಬೇಗ ಹೋಗಿ.',
+  'I did': 'ನಿಯ್ಯತ್ ಮಾಡಿದೆ',
+  'Remind me in 30 min': '30 ನಿಮಿಷದ ನಂತರ ನೆನಪಿಸಿ',
 };
 
 const List<String> knHijriMonths = [

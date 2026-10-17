@@ -144,6 +144,17 @@ class AlertConfig {
     this.eidAlert = false,
     this.eidFitrTime = 7 * 60 + 30,
     this.eidAdhaTime = 7 * 60 + 30,
+    this.sunriseAlert = false,
+    this.sunriseMinutesBefore = 15,
+    this.ishraqAlert = false,
+    this.iqamaSound,
+    this.iqamaFullScreen = false,
+    this.azanVolume = 0,
+    this.iqamaVolume = 0,
+    this.silentPrayers = const {...Prayer.fard},
+    this.silentJumuah = true,
+    this.niyyahReminder = true,
+    this.fridayReminder = true,
   });
 
   final Map<Prayer, PrayerAlert> prayers;
@@ -185,6 +196,32 @@ class AlertConfig {
   final int eidFitrTime;
   final int eidAdhaTime;
   static const int eidReminderMinutes = 30;
+
+  /// Before sunrise: "Fajr time ends in N minutes".
+  final bool sunriseAlert;
+  final int sunriseMinutesBefore;
+
+  /// At Ishraq (beginning of Duha).
+  final bool ishraqAlert;
+
+  /// Iqama played by the player (null: the short notification sound).
+  final SoundChoice? iqamaSound;
+
+  /// Iqama over the lock screen too (needs [iqamaSound]).
+  final bool iqamaFullScreen;
+
+  /// Volume in % of the alarm maximum; 0 = the phone's alarm volume.
+  final int azanVolume, iqamaVolume;
+
+  /// Prayers whose Azan → Iqama window is silenced; Jumu'ah separately.
+  final Set<Prayer> silentPrayers;
+  final bool silentJumuah;
+
+  /// Ramadan nights: "Did you make the Niyyah for tomorrow's fast?"
+  final bool niyyahReminder;
+
+  /// Thursday evening: Salawat, Al-Kahf and getting ready for Jumu'ah.
+  final bool fridayReminder;
 
   /// Sound of the Azan of [p].
   SoundChoice soundFor(Prayer p) =>
@@ -228,6 +265,17 @@ class AlertConfig {
     bool? eidAlert,
     int? eidFitrTime,
     int? eidAdhaTime,
+    bool? sunriseAlert,
+    int? sunriseMinutesBefore,
+    bool? ishraqAlert,
+    Object? iqamaSound = _keep,
+    bool? iqamaFullScreen,
+    int? azanVolume,
+    int? iqamaVolume,
+    Set<Prayer>? silentPrayers,
+    bool? silentJumuah,
+    bool? niyyahReminder,
+    bool? fridayReminder,
   }) => AlertConfig(
     prayers: prayers ?? this.prayers,
     jumuahIqamaDelay: jumuahIqamaDelay ?? this.jumuahIqamaDelay,
@@ -254,6 +302,19 @@ class AlertConfig {
     eidAlert: eidAlert ?? this.eidAlert,
     eidFitrTime: eidFitrTime ?? this.eidFitrTime,
     eidAdhaTime: eidAdhaTime ?? this.eidAdhaTime,
+    sunriseAlert: sunriseAlert ?? this.sunriseAlert,
+    sunriseMinutesBefore: sunriseMinutesBefore ?? this.sunriseMinutesBefore,
+    ishraqAlert: ishraqAlert ?? this.ishraqAlert,
+    iqamaSound: identical(iqamaSound, _keep)
+        ? this.iqamaSound
+        : iqamaSound as SoundChoice?,
+    iqamaFullScreen: iqamaFullScreen ?? this.iqamaFullScreen,
+    azanVolume: azanVolume ?? this.azanVolume,
+    iqamaVolume: iqamaVolume ?? this.iqamaVolume,
+    silentPrayers: silentPrayers ?? this.silentPrayers,
+    silentJumuah: silentJumuah ?? this.silentJumuah,
+    niyyahReminder: niyyahReminder ?? this.niyyahReminder,
+    fridayReminder: fridayReminder ?? this.fridayReminder,
   );
 
   AlertConfig withPrayer(Prayer p, PrayerAlert a) =>
@@ -279,6 +340,17 @@ class AlertConfig {
     'eid': eidAlert,
     'eidFitr': eidFitrTime,
     'eidAdha': eidAdhaTime,
+    'sunrise': sunriseAlert,
+    'sunriseBefore': sunriseMinutesBefore,
+    'ishraq': ishraqAlert,
+    if (iqamaSound != null) 'iqamaSound': iqamaSound!.toJson(),
+    'iqamaFullScreen': iqamaFullScreen,
+    'azanVolume': azanVolume,
+    'iqamaVolume': iqamaVolume,
+    'silentPrayers': [for (final p in silentPrayers) p.name],
+    'silentJumuah': silentJumuah,
+    'niyyah': niyyahReminder,
+    'friday': fridayReminder,
   };
 
   factory AlertConfig.fromJson(Map<String, dynamic> j) {
@@ -315,6 +387,23 @@ class AlertConfig {
       eidAlert: j['eid'] as bool? ?? d.eidAlert,
       eidFitrTime: j['eidFitr'] as int? ?? d.eidFitrTime,
       eidAdhaTime: j['eidAdha'] as int? ?? d.eidAdhaTime,
+      sunriseAlert: j['sunrise'] as bool? ?? d.sunriseAlert,
+      sunriseMinutesBefore:
+          j['sunriseBefore'] as int? ?? d.sunriseMinutesBefore,
+      ishraqAlert: j['ishraq'] as bool? ?? d.ishraqAlert,
+      iqamaSound: SoundChoice.fromJson(j['iqamaSound']),
+      iqamaFullScreen: j['iqamaFullScreen'] as bool? ?? d.iqamaFullScreen,
+      azanVolume: j['azanVolume'] as int? ?? d.azanVolume,
+      iqamaVolume: j['iqamaVolume'] as int? ?? d.iqamaVolume,
+      silentPrayers: j['silentPrayers'] is List
+          ? {
+              for (final n in j['silentPrayers'] as List)
+                ?Prayer.values.asNameMap()[n],
+            }
+          : d.silentPrayers,
+      silentJumuah: j['silentJumuah'] as bool? ?? d.silentJumuah,
+      niyyahReminder: j['niyyah'] as bool? ?? d.niyyahReminder,
+      fridayReminder: j['friday'] as bool? ?? d.fridayReminder,
     );
   }
 }
@@ -381,7 +470,7 @@ List<PlannedAlert> planAlerts(
       if (!at.isAfter(now)) return;
       out.add(
         PlannedAlert(
-          id: 1000 + di * 40 + p.index * 4 + kind.index,
+          id: 1000 + di * 48 + p.index * 4 + kind.index,
           at: at,
           kind: kind,
           prayer: p,
@@ -410,12 +499,24 @@ List<PlannedAlert> planAlerts(
     if (config.tahajjudAlert) {
       add(AlertKind.reminder, Prayer.tahajjud, d[Prayer.tahajjud]);
     }
+    if (config.sunriseAlert) {
+      final n = config.sunriseMinutesBefore;
+      add(
+        AlertKind.reminder,
+        Prayer.sunrise,
+        d[Prayer.sunrise].subtract(Duration(minutes: n)),
+        n,
+      );
+    }
+    if (config.ishraqAlert) {
+      add(AlertKind.reminder, Prayer.ishraq, d[Prayer.ishraq]);
+    }
 
     void special(SpecialEvent e, DateTime at, [int before = 0]) {
       if (!at.isAfter(now)) return;
       out.add(
         PlannedAlert(
-          id: 1000 + di * 40 + 36 + e.index,
+          id: 1000 + di * 48 + 36 + e.index,
           at: at,
           kind: AlertKind.reminder,
           prayer: e == SpecialEvent.taraweeh ? Prayer.isha : Prayer.sunrise,
@@ -459,6 +560,50 @@ List<PlannedAlert> planAlerts(
   return out;
 }
 
+enum NoticeKind { niyyah, friday }
+
+/// A reminder the user answers ("I did" / "Remind me later"); repeats on
+/// "later" until [latest].
+class PlannedNotice {
+  const PlannedNotice(this.kind, this.at, this.latest);
+  final NoticeKind kind;
+  final DateTime at, latest;
+  @override
+  String toString() => '${kind.name} at $at (until $latest)';
+}
+
+/// Niyyah reminders (Ramadan nights, an hour after the Isha Iqama, until
+/// half an hour before Fajr) and the Friday-night reminder (Thursday,
+/// half an hour after Maghrib, until Fajr).
+List<PlannedNotice> planNotices(
+  List<PrayerDay> days,
+  AlertConfig config,
+  DateTime now,
+) {
+  final out = <PlannedNotice>[];
+  for (var di = 0; di + 1 < days.length; di++) {
+    final d = days[di], next = days[di + 1];
+    final fajr = next[Prayer.fajr];
+    if (config.niyyahReminder && _ramadanNight(d.hijri, next.hijri)) {
+      final at = iqamaTime(
+        d,
+        Prayer.isha,
+        config,
+      ).add(const Duration(hours: 1));
+      final latest = fajr.subtract(const Duration(minutes: 30));
+      if (at.isAfter(now) && at.isBefore(latest)) {
+        out.add(PlannedNotice(NoticeKind.niyyah, at, latest));
+      }
+    }
+    if (config.fridayReminder && next.isFriday) {
+      final at = d[Prayer.maghrib].add(const Duration(minutes: 30));
+      if (at.isAfter(now)) out.add(PlannedNotice(NoticeKind.friday, at, fajr));
+    }
+  }
+  out.sort((a, b) => a.at.compareTo(b.at));
+  return out;
+}
+
 /// Taraweeh is prayed on the nights before the fasts: the evening whose
 /// next day is in Ramadan. [next] is the following day's Hijri date when
 /// known; otherwise the tabular month lengths decide (Sha'ban 29 days,
@@ -481,6 +626,9 @@ List<SilentWindow> planSilent(
   for (final d in days) {
     for (final p in Prayer.fard) {
       final friday = p == Prayer.dhuhr && d.isFriday;
+      if (friday ? !config.silentJumuah : !config.silentPrayers.contains(p)) {
+        continue;
+      }
       final after = friday
           ? config.jumuahSilentMinutes
           : config.silentMinutesAfterIqama;

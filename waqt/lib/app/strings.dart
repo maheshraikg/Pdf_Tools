@@ -673,4 +673,61 @@ class S {
 
   String get adjustThisTime =>
       _t('Adjust this time (± minutes)', 'ഈ സമയം ക്രമീകരിക്കുക (± മിനിറ്റ്)');
+
+  // Features of the original app: extra alerts, reminders, volumes.
+  String get sunriseAlert => _t(
+    'Sunrise alert (Fajr time ends)',
+    'ഉദയ അലേർട്ട് (സുബ്ഹ് സമയം അവസാനിക്കുന്നു)',
+  );
+  String sunriseSoon(int minutes) => _f(
+    '{0} min to sunrise – Fajr time ends',
+    'ഉദയത്തിന് {0} മിനിറ്റ് – സുബ്ഹ് സമയം അവസാനിക്കുന്നു',
+    [minutes],
+  );
+  String get minutesBeforeSunrise =>
+      _t('Minutes before sunrise', 'ഉദയത്തിന് എത്ര മിനിറ്റ് മുമ്പ്');
+  String get ishraqAlert =>
+      _t('Ishraq / Duha alert', 'ഇശ്റാഖ് / ളുഹാ അലേർട്ട്');
+  String get iqamaSoundTitle => _t('Iqama sound', 'ഇഖാമത്ത് ശബ്ദം');
+  String get iqamaSoundDefault =>
+      _t('Short notification sound', 'ചെറിയ നോട്ടിഫിക്കേഷൻ ശബ്ദം');
+  String get fullScreenIqama =>
+      _t('Full screen for Iqama too', 'ഇഖാമത്തിനും ഫുൾ സ്ക്രീൻ');
+  String get azanVolume => _t('Azan volume', 'ബാങ്ക് വോളിയം');
+  String get iqamaVolume => _t('Iqama volume', 'ഇഖാമത്ത് വോളിയം');
+  String get phoneVolume => _t('Phone alarm volume', 'ഫോണിന്റെ അലാറം വോളിയം');
+  String get volumeHelp => _t(
+    'Pressing a volume button stops the Azan.',
+    'വോളിയം ബട്ടൺ അമർത്തിയാൽ ബാങ്ക് നിൽക്കും.',
+  );
+  String get silentFor => _t('Silence during', 'ഈ സമയങ്ങളിൽ സൈലന്റ്');
+  String get niyyahReminder =>
+      _t('Ramadan Niyyah reminder', 'റമളാൻ നിയ്യത്ത് ഓർമ്മപ്പെടുത്തൽ');
+  String get niyyahReminderHelp => _t(
+    "Every Ramadan night after Isha: did you make the intention for tomorrow's fast?",
+    'റമളാനിലെ എല്ലാ രാത്രിയും ഇശാക്ക് ശേഷം: നാളത്തെ നോമ്പിന് നിയ്യത്ത് വെച്ചോ?',
+  );
+  String get niyyahTitle => _t(
+    "Did you make the Niyyah for tomorrow's fast?",
+    'നാളത്തെ നോമ്പിന് നിയ്യത്ത് വെച്ചോ?',
+  );
+  String get niyyahText => _t(
+    "“I intend to keep tomorrow's obligatory fast of Ramadan for the sake of Allah.”",
+    '“ഈ കൊല്ലത്തെ റമളാൻ മാസത്തിലെ ഫർളായ നാളത്തെ നോമ്പ് അല്ലാഹുവിന് വേണ്ടി നോറ്റുവീട്ടുവാൻ ഞാൻ കരുതി.”',
+  );
+  String get fridayReminder =>
+      _t('Friday night reminder', 'വെള്ളിയാഴ്ച രാവ് ഓർമ്മപ്പെടുത്തൽ');
+  String get fridayReminderHelp => _t(
+    "Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu'ah",
+    'വ്യാഴാഴ്ച മഗ്‌രിബിന് ശേഷം: സ്വലാത്ത്, സൂറത്തുൽ കഹ്ഫ്, ജുമുഅക്ക് ഒരുങ്ങൽ',
+  );
+  String get fridayTitle =>
+      _t('Tonight is Friday night', 'ഇന്ന് വെള്ളിയാഴ്ച രാവാണ്');
+  String get fridayText => _t(
+    "Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu'ah: bath, clean clothes, go early.",
+    'നബി ﷺ യുടെ മേൽ ധാരാളം സ്വലാത്ത് ചൊല്ലുക. സൂറത്തുൽ കഹ്ഫ് ഓതുക, ജുമുഅക്ക് ഒരുങ്ങുക: കുളി, വൃത്തിയുള്ള വസ്ത്രം, നേരത്തെ പള്ളിയിലേക്ക്.',
+  );
+  String get iDidNiyyah => _t('I did', 'നിയ്യത്ത് വെച്ചു');
+  String get remindLater =>
+      _t('Remind me in 30 min', '30 മിനിറ്റ് കഴിഞ്ഞ് ഓർമ്മിപ്പിക്കുക');
 }

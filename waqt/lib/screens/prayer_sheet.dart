@@ -117,6 +117,30 @@ class _PrayerSheet extends StatelessWidget {
                 onChanged: (v) => settings.update((x) => x.imsakMinutes = v),
               ),
             ],
+            if (p == Prayer.sunrise) ...[
+              SwitchListTile(
+                secondary: const Icon(Icons.notifications_active_outlined),
+                title: Text(s.sunriseAlert),
+                value: c.sunriseAlert,
+                onChanged: (v) => set(c.copyWith(sunriseAlert: v)),
+              ),
+              if (c.sunriseAlert)
+                MinutesStepper(
+                  label: s.minutesBeforeSunrise,
+                  value: c.sunriseMinutesBefore,
+                  min: 5,
+                  max: 60,
+                  step: 5,
+                  onChanged: (v) => set(c.copyWith(sunriseMinutesBefore: v)),
+                ),
+            ],
+            if (p == Prayer.ishraq)
+              SwitchListTile(
+                secondary: const Icon(Icons.notifications_active_outlined),
+                title: Text(s.ishraqAlert),
+                value: c.ishraqAlert,
+                onChanged: (v) => set(c.copyWith(ishraqAlert: v)),
+              ),
             if (p == Prayer.ishraq)
               MinutesStepper(
                 label: s.ishraqAfterSunrise,

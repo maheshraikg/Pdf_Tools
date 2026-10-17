@@ -79,6 +79,15 @@ class MainActivity : FlutterActivity() {
                         )
                         result.success(null)
                     }
+                    "setNotices" -> {
+                        NoticeScheduler.save(
+                            this,
+                            org.json.JSONArray(call.argument<String>("notices") ?: "[]"),
+                            call.argument<String>("laterLabel") ?: "Remind me in 30 min",
+                            call.argument<String>("channelName") ?: "Reminders",
+                        )
+                        result.success(null)
+                    }
                     "saveSound" -> {
                         val bytes = call.argument<ByteArray>("bytes")
                         if (bytes == null) {
@@ -100,6 +109,7 @@ class MainActivity : FlutterActivity() {
                             call.argument<String>("title") ?: "",
                             call.argument<String>("body") ?: "",
                             call.argument<String>("sound") ?: "chime",
+                            volume = call.argument<Int>("volume") ?: 0,
                         )
                         result.success(null)
                     }

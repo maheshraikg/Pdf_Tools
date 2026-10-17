@@ -290,6 +290,33 @@ const Map<String, String> idStrings = {
       'Biarkan layar menyala sampai saya hentikan',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'Mati: batas waktu layar ponsel berlaku. Tampilan juga bekerja di layar kunci: buka, lalu tekan tombol daya dua kali.',
   'Adjust this time (± minutes)': 'Sesuaikan waktu ini (± menit)',
+  'Sunrise alert (Fajr time ends)': 'Pengingat terbit (waktu Subuh berakhir)',
+  '{0} min to sunrise – Fajr time ends':
+      '{0} menit lagi terbit – waktu Subuh berakhir',
+  'Minutes before sunrise': 'Menit sebelum terbit',
+  'Ishraq / Duha alert': 'Pengingat Isyraq / Duha',
+  'Iqama sound': 'Suara iqamah',
+  'Short notification sound': 'Suara notifikasi singkat',
+  'Full screen for Iqama too': 'Layar penuh untuk iqamah juga',
+  'Azan volume': 'Volume azan',
+  'Iqama volume': 'Volume iqamah',
+  'Phone alarm volume': 'Volume alarm ponsel',
+  'Pressing a volume button stops the Azan.':
+      'Menekan tombol volume menghentikan azan.',
+  'Silence during': 'Senyap saat',
+  'Ramadan Niyyah reminder': 'Pengingat niat Ramadan',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?':
+      'Setiap malam Ramadan setelah Isya: sudahkah berniat puasa esok hari?',
+  'Did you make the Niyyah for tomorrow\'s fast?':
+      'Sudahkah berniat puasa esok hari?',
+  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”': '"Aku berniat puasa esok hari untuk menunaikan fardu Ramadan karena Allah Ta\'ala."',
+  'Friday night reminder': 'Pengingat malam Jumat',
+  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah':
+      'Kamis setelah Magrib: selawat, Surah Al-Kahfi dan bersiap untuk Jumat',
+  'Tonight is Friday night': 'Malam ini malam Jumat',
+  'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'Perbanyak selawat kepada Nabi ﷺ. Baca Surah Al-Kahfi dan bersiap untuk Jumat: mandi, pakaian bersih, datang lebih awal.',
+  'I did': 'Sudah berniat',
+  'Remind me in 30 min': 'Ingatkan 30 menit lagi',
 };
 
 const List<String> idHijriMonths = [

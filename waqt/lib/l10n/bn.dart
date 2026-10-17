@@ -293,6 +293,34 @@ const Map<String, String> bnStrings = {
   'Keep the screen on until I stop': 'আমি না থামানো পর্যন্ত পর্দা চালু রাখুন',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'বন্ধ থাকলে ফোনের পর্দার টাইমআউট প্রযোজ্য। লক স্ক্রিনেও চলে: খুলুন, তারপর পাওয়ার বোতাম দুবার চাপুন।',
   'Adjust this time (± minutes)': 'এই সময় সমন্বয় (± মিনিট)',
+  'Sunrise alert (Fajr time ends)': 'সূর্যোদয় সতর্কতা (ফজরের সময় শেষ)',
+  '{0} min to sunrise – Fajr time ends':
+      'সূর্যোদয়ে {0} মিনিট – ফজরের সময় শেষ হচ্ছে',
+  'Minutes before sunrise': 'সূর্যোদয়ের কত মিনিট আগে',
+  'Ishraq / Duha alert': 'ইশরাক / চাশত সতর্কতা',
+  'Iqama sound': 'ইকামতের শব্দ',
+  'Short notification sound': 'ছোট নোটিফিকেশন শব্দ',
+  'Full screen for Iqama too': 'ইকামতের জন্যও পূর্ণ পর্দা',
+  'Azan volume': 'আজানের ভলিউম',
+  'Iqama volume': 'ইকামতের ভলিউম',
+  'Phone alarm volume': 'ফোনের অ্যালার্ম ভলিউম',
+  'Pressing a volume button stops the Azan.':
+      'ভলিউম বোতাম চাপলে আজান থেমে যায়।',
+  'Silence during': 'এই সময়গুলোতে নীরব',
+  'Ramadan Niyyah reminder': 'রমজানের নিয়ত স্মরণ',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?':
+      'রমজানের প্রতি রাতে এশার পর: আগামীকালের রোজার নিয়ত করেছেন?',
+  'Did you make the Niyyah for tomorrow\'s fast?':
+      'আগামীকালের রোজার নিয়ত করেছেন?',
+  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”':
+      '"আমি আল্লাহর জন্য আগামীকাল রমজানের ফরজ রোজা রাখার নিয়ত করছি।"',
+  'Friday night reminder': 'জুমার রাতের স্মরণ',
+  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah':
+      'বৃহস্পতিবার মাগরিবের পর: দরুদ, সূরা কাহফ ও জুমার প্রস্তুতি',
+  'Tonight is Friday night': 'আজ জুমার রাত',
+  'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'নবী ﷺ-এর উপর বেশি বেশি দরুদ পড়ুন। সূরা কাহফ পড়ুন ও জুমার প্রস্তুতি নিন: গোসল, পরিষ্কার কাপড়, তাড়াতাড়ি যান।',
+  'I did': 'নিয়ত করেছি',
+  'Remind me in 30 min': '৩০ মিনিট পরে মনে করান',
 };
 
 const List<String> bnHijriMonths = [

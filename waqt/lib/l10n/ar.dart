@@ -294,6 +294,32 @@ const Map<String, String> arStrings = {
   'Keep the screen on until I stop': 'أبقِ الشاشة مضاءة حتى أوقفها',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'عند الإيقاف تُطبَّق مهلة شاشة الهاتف. تعمل الشاشة أيضاً على شاشة القفل: افتحها ثم اضغط زر التشغيل مرتين.',
   'Adjust this time (± minutes)': 'تعديل هذا الوقت (± دقائق)',
+  'Sunrise alert (Fajr time ends)': 'تنبيه الشروق (انتهاء وقت الفجر)',
+  '{0} min to sunrise – Fajr time ends':
+      '{0} دقيقة على الشروق – ينتهي وقت الفجر',
+  'Minutes before sunrise': 'دقائق قبل الشروق',
+  'Ishraq / Duha alert': 'تنبيه الإشراق / الضحى',
+  'Iqama sound': 'صوت الإقامة',
+  'Short notification sound': 'صوت إشعار قصير',
+  'Full screen for Iqama too': 'ملء الشاشة للإقامة أيضاً',
+  'Azan volume': 'مستوى صوت الأذان',
+  'Iqama volume': 'مستوى صوت الإقامة',
+  'Phone alarm volume': 'مستوى منبه الهاتف',
+  'Pressing a volume button stops the Azan.': 'الضغط على زر الصوت يوقف الأذان.',
+  'Silence during': 'الصمت أثناء',
+  'Ramadan Niyyah reminder': 'تذكير نية رمضان',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?':
+      'كل ليلة من رمضان بعد العشاء: هل نويت صيام الغد؟',
+  'Did you make the Niyyah for tomorrow\'s fast?': 'هل نويت صيام الغد؟',
+  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”':
+      '«نويت صوم غد عن أداء فرض رمضان لله تعالى.»',
+  'Friday night reminder': 'تذكير ليلة الجمعة',
+  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah':
+      'الخميس بعد المغرب: الصلاة على النبي، سورة الكهف، والاستعداد للجمعة',
+  'Tonight is Friday night': 'الليلة ليلة الجمعة',
+  'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'أكثروا من الصلاة على النبي ﷺ. اقرأ سورة الكهف واستعد للجمعة: الغسل، الثياب النظيفة، التبكير.',
+  'I did': 'نويت',
+  'Remind me in 30 min': 'ذكّرني بعد 30 دقيقة',
 };
 
 const List<String> arHijriMonths = [

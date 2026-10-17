@@ -292,6 +292,33 @@ const Map<String, String> urStrings = {
   'Keep the screen on until I stop': 'اسکرین روشن رکھیں جب تک میں نہ روکوں',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'بند ہو تو فون کا اسکرین ٹائم آؤٹ لاگو ہوگا۔ ڈسپلے لاک اسکرین پر بھی چلتا ہے: اسے کھولیں، پھر پاور بٹن دو بار دبائیں۔',
   'Adjust this time (± minutes)': 'یہ وقت ایڈجسٹ کریں (± منٹ)',
+  'Sunrise alert (Fajr time ends)': 'طلوعِ آفتاب الرٹ (فجر کا وقت ختم)',
+  '{0} min to sunrise – Fajr time ends':
+      'طلوع میں {0} منٹ – فجر کا وقت ختم ہو رہا ہے',
+  'Minutes before sunrise': 'طلوع سے کتنے منٹ پہلے',
+  'Ishraq / Duha alert': 'اشراق / چاشت الرٹ',
+  'Iqama sound': 'اقامت کی آواز',
+  'Short notification sound': 'مختصر نوٹیفکیشن آواز',
+  'Full screen for Iqama too': 'اقامت کے لیے بھی فل اسکرین',
+  'Azan volume': 'اذان کا والیوم',
+  'Iqama volume': 'اقامت کا والیوم',
+  'Phone alarm volume': 'فون الارم والیوم',
+  'Pressing a volume button stops the Azan.':
+      'والیوم بٹن دبانے سے اذان رک جاتی ہے۔',
+  'Silence during': 'ان اوقات میں خاموش',
+  'Ramadan Niyyah reminder': 'رمضان نیت یاددہانی',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?':
+      'رمضان کی ہر رات عشاء کے بعد: کیا کل کے روزے کی نیت کی؟',
+  'Did you make the Niyyah for tomorrow\'s fast?': 'کیا کل کے روزے کی نیت کی؟',
+  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”':
+      '"میں نے اللہ کے لیے کل کے رمضان کے فرض روزے کی نیت کی۔"',
+  'Friday night reminder': 'جمعہ کی رات یاددہانی',
+  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah':
+      'جمعرات مغرب کے بعد: درود، سورۂ کہف اور جمعہ کی تیاری',
+  'Tonight is Friday night': 'آج جمعہ کی رات ہے',
+  'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'نبی ﷺ پر کثرت سے درود بھیجیں۔ سورۂ کہف پڑھیں اور جمعہ کی تیاری کریں: غسل، صاف کپڑے، جلدی جائیں۔',
+  'I did': 'نیت کر لی',
+  'Remind me in 30 min': '30 منٹ بعد یاد دلائیں',
 };
 
 const List<String> urHijriMonths = [

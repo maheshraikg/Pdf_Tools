@@ -20,6 +20,10 @@ import 'widget_data.dart';
 /// reminders + Azan + Iqama for five prayers stays well below that).
 const int kScheduleDays = 20;
 
+/// The usual Arabic Niyyah of the Ramadan fast (shown with its meaning).
+const String kNiyyahArabic =
+    'نَوَيْتُ صَوْمَ غَدٍ عَنْ أَدَاءِ فَرْضِ شَهْرِ رَمَضَانَ هَذِهِ السَّنَةِ لِلّٰهِ تَعَالَى';
+
 /// Notification id of the "open the app" reminder.
 const int kKeepAlertsId = 1;
 const int kTestId = 2;
@@ -151,6 +155,7 @@ class Background {
       for (final a in plan) {
         final title = switch (a.kind) {
           _ when a.special != null => s.specialTitle(a.special!),
+          _ when a.prayer == Prayer.sunrise => s.sunriseSoon(a.minutesBefore),
           _ when !a.prayer.isFard => s.extraTitle(a.prayer),
           AlertKind.azan => s.azanTitle(a.prayer, a.friday),
           AlertKind.iqama => s.iqamaTitle(a.prayer, a.friday),
@@ -166,13 +171,18 @@ class Background {
           _ when a.special != null => s.eidPrayerAt(
             hm(settings, a.at.add(Duration(minutes: a.minutesBefore))),
           ),
+          _ when a.prayer == Prayer.sunrise =>
+            '${s.prayer(Prayer.sunrise)} ${hm(settings, a.at.add(Duration(minutes: a.minutesBefore)))}',
           AlertKind.reminder when a.prayer.isFard =>
             '${s.azan} ${hm(settings, a.at.add(Duration(minutes: a.minutesBefore)))}',
           _ => '${hm(settings, a.at)} · ${settings.place.label(s.ml)}',
         };
-        final sound = a.kind == AlertKind.azan
-            ? config.soundFor(a.prayer).playerSound
-            : null;
+        final iqama = a.kind == AlertKind.iqama && a.special == null;
+        final sound = switch (a.kind) {
+          AlertKind.azan => config.soundFor(a.prayer).playerSound,
+          AlertKind.iqama when iqama => config.iqamaSound?.playerSound,
+          _ => null,
+        };
         if (sound != null) {
           // The native player shows its own notification with Stop.
           playerEvents.add({
@@ -180,6 +190,8 @@ class Background {
             'title': title,
             'body': body,
             'sound': sound,
+            'volume': iqama ? config.iqamaVolume : config.azanVolume,
+            'full': iqama ? config.iqamaFullScreen : config.fullScreen,
           });
           continue;
         }
@@ -218,6 +230,30 @@ class Background {
         stopLabel: s.stop,
         channelName: s.channelAzan,
         fullScreen: config.fullScreen,
+      );
+      await Native.setNotices(
+        [
+          for (final n in planNotices(days, config, now))
+            {
+              'id': n.kind.index * 100 + n.at.day,
+              'at': n.at.millisecondsSinceEpoch,
+              'latest': n.latest.millisecondsSinceEpoch,
+              ...switch (n.kind) {
+                NoticeKind.niyyah => {
+                  'title': s.niyyahTitle,
+                  'text': '${s.niyyahText}\n$kNiyyahArabic',
+                  'done': s.iDidNiyyah,
+                },
+                NoticeKind.friday => {
+                  'title': s.fridayTitle,
+                  'text': s.fridayText,
+                  'done': s.ok,
+                },
+              },
+            },
+        ],
+        laterLabel: s.remindLater,
+        channelName: s.channelReminder,
       );
       await Native.updateWidget(widgetJson(settings, days));
       await Native.setStatusStates(

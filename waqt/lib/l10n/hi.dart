@@ -291,6 +291,34 @@ const Map<String, String> hiStrings = {
   'Keep the screen on until I stop': 'जब तक मैं न रोकूँ स्क्रीन चालू रखें',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'बंद होने पर फ़ोन का स्क्रीन टाइमआउट लागू होगा। डिस्प्ले लॉक स्क्रीन पर भी चलता है: इसे खोलें, फिर पावर बटन दो बार दबाएँ।',
   'Adjust this time (± minutes)': 'यह समय बदलें (± मिनट)',
+  'Sunrise alert (Fajr time ends)': 'सूर्योदय अलर्ट (फ़ज्र का वक़्त ख़त्म)',
+  '{0} min to sunrise – Fajr time ends':
+      'सूर्योदय में {0} मिनट – फ़ज्र का वक़्त ख़त्म',
+  'Minutes before sunrise': 'सूर्योदय से कितने मिनट पहले',
+  'Ishraq / Duha alert': 'इशराक़ / चाश्त अलर्ट',
+  'Iqama sound': 'इक़ामत की आवाज़',
+  'Short notification sound': 'छोटी नोटिफ़िकेशन आवाज़',
+  'Full screen for Iqama too': 'इक़ामत के लिए भी फ़ुल स्क्रीन',
+  'Azan volume': 'अज़ान वॉल्यूम',
+  'Iqama volume': 'इक़ामत वॉल्यूम',
+  'Phone alarm volume': 'फ़ोन अलार्म वॉल्यूम',
+  'Pressing a volume button stops the Azan.':
+      'वॉल्यूम बटन दबाने पर अज़ान रुक जाती है।',
+  'Silence during': 'इन वक़्तों में साइलेंट',
+  'Ramadan Niyyah reminder': 'रमज़ान नीयत रिमाइंडर',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?':
+      'रमज़ान की हर रात इशा के बाद: क्या कल के रोज़े की नीयत की?',
+  'Did you make the Niyyah for tomorrow\'s fast?':
+      'क्या कल के रोज़े की नीयत की?',
+  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”':
+      '"मैंने अल्लाह के लिए कल के रमज़ान के फ़र्ज़ रोज़े की नीयत की।"',
+  'Friday night reminder': 'जुमे की रात रिमाइंडर',
+  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah':
+      'गुरुवार मग़रिब के बाद: दरूद, सूरह कहफ़ और जुमे की तैयारी',
+  'Tonight is Friday night': 'आज जुमे की रात है',
+  'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'नबी ﷺ पर ख़ूब दरूद भेजें। सूरह कहफ़ पढ़ें और जुमे की तैयारी करें: ग़ुस्ल, साफ़ कपड़े, जल्दी जाएँ।',
+  'I did': 'नीयत कर ली',
+  'Remind me in 30 min': '30 मिनट बाद याद दिलाएँ',
 };
 
 const List<String> hiHijriMonths = [

@@ -292,6 +292,32 @@ const Map<String, String> msStrings = {
       'Biarkan skrin menyala sehingga saya hentikan',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'Mati: tamat masa skrin telefon digunakan. Paparan juga berfungsi di skrin kunci: buka, kemudian tekan butang kuasa dua kali.',
   'Adjust this time (± minutes)': 'Laraskan waktu ini (± minit)',
+  'Sunrise alert (Fajr time ends)': 'Peringatan syuruk (waktu Subuh tamat)',
+  '{0} min to sunrise – Fajr time ends':
+      '{0} minit lagi syuruk – waktu Subuh tamat',
+  'Minutes before sunrise': 'Minit sebelum syuruk',
+  'Ishraq / Duha alert': 'Peringatan Isyraq / Dhuha',
+  'Iqama sound': 'Bunyi iqamah',
+  'Short notification sound': 'Bunyi pemberitahuan pendek',
+  'Full screen for Iqama too': 'Skrin penuh untuk iqamah juga',
+  'Azan volume': 'Kelantangan azan',
+  'Iqama volume': 'Kelantangan iqamah',
+  'Phone alarm volume': 'Kelantangan penggera telefon',
+  'Pressing a volume button stops the Azan.':
+      'Menekan butang kelantangan menghentikan azan.',
+  'Silence during': 'Senyap semasa',
+  'Ramadan Niyyah reminder': 'Peringatan niat Ramadan',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?':
+      'Setiap malam Ramadan selepas Isyak: sudahkah berniat puasa esok?',
+  'Did you make the Niyyah for tomorrow\'s fast?':
+      'Sudahkah berniat puasa esok?',
+  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”': '"Sahaja aku berpuasa esok hari menunaikan fardu Ramadan kerana Allah Taala."',
+  'Friday night reminder': 'Peringatan malam Jumaat',
+  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah': 'Khamis selepas Maghrib: selawat, Surah Al-Kahfi dan bersedia untuk Jumaat',
+  'Tonight is Friday night': 'Malam ini malam Jumaat',
+  'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'Perbanyakkan selawat ke atas Nabi ﷺ. Baca Surah Al-Kahfi dan bersedia untuk Jumaat: mandi, pakaian bersih, pergi awal.',
+  'I did': 'Sudah berniat',
+  'Remind me in 30 min': 'Ingatkan dalam 30 minit',
 };
 
 const List<String> msHijriMonths = [

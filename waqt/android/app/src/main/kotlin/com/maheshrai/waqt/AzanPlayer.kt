@@ -112,6 +112,8 @@ object AzanScheduler {
                 due.optString("body"),
                 due.optString("sound", "chime"),
                 fromAlarm = true,
+                volume = due.optInt("volume", 0),
+                full = if (due.has("full")) due.optBoolean("full") else null,
             )
         }
         // Forget played and missed events so they never repeat.
@@ -169,6 +171,13 @@ class AzanService : Service() {
     private var focus: AudioFocusRequest? = null
     private val handler = Handler(Looper.getMainLooper())
 
+    /** Alarm volume before a custom volume was set (-1: untouched). */
+    private var savedVolume = -1
+
+    /** Alarm volume while playing; a volume key press changes it → stop. */
+    private var playingVolume = -1
+    private var volumeObserver: android.database.ContentObserver? = null
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -179,6 +188,7 @@ class AzanService : Service() {
         val title = intent?.getStringExtra(EXTRA_TITLE) ?: ""
         val body = intent?.getStringExtra(EXTRA_BODY) ?: ""
         val sound = intent?.getStringExtra(EXTRA_SOUND) ?: "chime"
+        val volume = intent?.getIntExtra(EXTRA_VOLUME, 0) ?: 0
         val notification = buildNotification(this, title, body, intent?.getBooleanExtra(EXTRA_FULL, false) == true)
         if (Build.VERSION.SDK_INT >= 29) {
             startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
@@ -188,6 +198,7 @@ class AzanService : Service() {
         releasePlayer()
         if (AzanScheduler.vibrate(this)) vibrate()
         if (shouldPlaySound()) {
+            applyVolume(volume)
             start(sound)
         } else {
             // Leave the notification, without sound, and end the service.
@@ -247,6 +258,55 @@ class AzanService : Service() {
         }
     }
 
+    /** Sets the alarm stream to [percent] of its maximum (0: leave it). */
+    private fun applyVolume(percent: Int) {
+        val audio = getSystemService(AUDIO_SERVICE) as AudioManager
+        val stream = AudioManager.STREAM_ALARM
+        if (percent in 1..100) {
+            if (savedVolume < 0) savedVolume = audio.getStreamVolume(stream)
+            val max = audio.getStreamMaxVolume(stream)
+            val v = (max * percent + 50) / 100
+            try {
+                audio.setStreamVolume(stream, v.coerceIn(1, max), 0)
+            } catch (e: SecurityException) {
+                // Do Not Disturb forbids changing it: play at the phone's volume.
+            }
+        }
+        playingVolume = audio.getStreamVolume(stream)
+        watchVolumeKeys()
+    }
+
+    /** Pressing a volume key while the Azan plays stops it. */
+    private fun watchVolumeKeys() {
+        if (volumeObserver != null) return
+        val audio = getSystemService(AUDIO_SERVICE) as AudioManager
+        val o = object : android.database.ContentObserver(handler) {
+            override fun onChange(selfChange: Boolean) {
+                val now = audio.getStreamVolume(AudioManager.STREAM_ALARM)
+                if (player != null && playingVolume >= 0 && now != playingVolume) {
+                    stopAll()
+                }
+            }
+        }
+        volumeObserver = o
+        contentResolver.registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, o)
+    }
+
+    private fun restoreVolume() {
+        volumeObserver?.let { contentResolver.unregisterContentObserver(it) }
+        volumeObserver = null
+        playingVolume = -1
+        if (savedVolume >= 0) {
+            val audio = getSystemService(AUDIO_SERVICE) as AudioManager
+            try {
+                audio.setStreamVolume(AudioManager.STREAM_ALARM, savedVolume, 0)
+            } catch (e: SecurityException) {
+                // Not allowed in Do Not Disturb.
+            }
+            savedVolume = -1
+        }
+    }
+
     private fun requestFocus(attrs: AudioAttributes) {
         val audio = getSystemService(AUDIO_SERVICE) as AudioManager
         if (Build.VERSION.SDK_INT >= 26) {
@@ -279,6 +339,7 @@ class AzanService : Service() {
             it.release()
         }
         player = null
+        restoreVolume()
         val audio = getSystemService(AUDIO_SERVICE) as AudioManager
         if (Build.VERSION.SDK_INT >= 26) focus?.let { audio.abandonAudioFocusRequest(it) }
         focus = null
@@ -324,6 +385,7 @@ class AzanService : Service() {
         private const val EXTRA_BODY = "body"
         private const val EXTRA_SOUND = "sound"
         private const val EXTRA_FULL = "full"
+        private const val EXTRA_VOLUME = "volume"
         private const val CHANNEL = "azan_player"
         private const val FALLBACK_CHANNEL = "azan_player_fallback"
         private const val NOTIFICATION_ID = 7001
@@ -335,13 +397,22 @@ class AzanService : Service() {
             return Uri.parse("android.resource://${context.packageName}/$id")
         }
 
-        fun play(context: Context, title: String, body: String, sound: String, fromAlarm: Boolean = false) {
+        fun play(
+            context: Context,
+            title: String,
+            body: String,
+            sound: String,
+            fromAlarm: Boolean = false,
+            volume: Int = 0,
+            full: Boolean? = null,
+        ) {
             val i = Intent(context, AzanService::class.java)
                 .setAction(ACTION_PLAY)
                 .putExtra(EXTRA_TITLE, title)
                 .putExtra(EXTRA_BODY, body)
                 .putExtra(EXTRA_SOUND, sound)
-                .putExtra(EXTRA_FULL, fromAlarm && AzanScheduler.fullScreen(context))
+                .putExtra(EXTRA_VOLUME, volume)
+                .putExtra(EXTRA_FULL, fromAlarm && (full ?: AzanScheduler.fullScreen(context)))
             try {
                 if (Build.VERSION.SDK_INT >= 26) context.startForegroundService(i) else context.startService(i)
             } catch (e: Exception) {

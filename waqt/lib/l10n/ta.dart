@@ -291,6 +291,33 @@ const Map<String, String> taStrings = {
   'Keep the screen on until I stop': 'நான் நிறுத்தும் வரை திரையை எரிய வை',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'அணைத்தால் போனின் திரை நேர முடிவு பொருந்தும். பூட்டுத் திரையிலும் இயங்கும்: திறந்து, பவர் பொத்தானை இருமுறை அழுத்தவும்.',
   'Adjust this time (± minutes)': 'இந்த நேரத்தைச் சரிசெய் (± நிமிடம்)',
+  'Sunrise alert (Fajr time ends)':
+      'சூரிய உதய அறிவிப்பு (ஃபஜ்ர் நேரம் முடிகிறது)',
+  '{0} min to sunrise – Fajr time ends':
+      'சூரிய உதயத்திற்கு {0} நிமிடம் – ஃபஜ்ர் நேரம் முடிகிறது',
+  'Minutes before sunrise': 'சூரிய உதயத்திற்கு எத்தனை நிமிடம் முன்',
+  'Ishraq / Duha alert': 'இஷ்ராக் / ளுஹா அறிவிப்பு',
+  'Iqama sound': 'இகாமத் ஒலி',
+  'Short notification sound': 'சிறிய அறிவிப்பு ஒலி',
+  'Full screen for Iqama too': 'இகாமத்திற்கும் முழுத் திரை',
+  'Azan volume': 'பாங்கு ஒலியளவு',
+  'Iqama volume': 'இகாமத் ஒலியளவு',
+  'Phone alarm volume': 'போன் அலாரம் ஒலியளவு',
+  'Pressing a volume button stops the Azan.':
+      'ஒலியளவு பொத்தானை அழுத்தினால் பாங்கு நிற்கும்.',
+  'Silence during': 'இந்த நேரங்களில் அமைதி',
+  'Ramadan Niyyah reminder': 'ரமலான் நிய்யத் நினைவூட்டல்',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?': 'ரமலானின் ஒவ்வொரு இரவும் இஷாவுக்குப் பின்: நாளைய நோன்புக்கு நிய்யத் வைத்தீர்களா?',
+  'Did you make the Niyyah for tomorrow\'s fast?':
+      'நாளைய நோன்புக்கு நிய்யத் வைத்தீர்களா?',
+  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”':
+      '"அல்லாஹ்வுக்காக நாளைய ரமலான் கடமையான நோன்பை நோற்க நிய்யத் வைக்கிறேன்."',
+  'Friday night reminder': 'வெள்ளி இரவு நினைவூட்டல்',
+  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah': 'வியாழன் மஃரிபுக்குப் பின்: ஸலவாத், சூரா அல்-கஹ்ஃப், ஜும்ஆவுக்குத் தயாராதல்',
+  'Tonight is Friday night': 'இன்று வெள்ளி இரவு',
+  'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'நபி ﷺ மீது அதிகமாக ஸலவாத் சொல்லுங்கள். சூரா அல்-கஹ்ஃப் ஓதி ஜும்ஆவுக்குத் தயாராகுங்கள்: குளியல், சுத்தமான உடை, சீக்கிரம் செல்லுங்கள்.',
+  'I did': 'நிய்யத் வைத்தேன்',
+  'Remind me in 30 min': '30 நிமிடத்தில் நினைவூட்டு',
 };
 
 const List<String> taHijriMonths = [

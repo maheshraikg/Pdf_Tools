@@ -291,6 +291,31 @@ const Map<String, String> frStrings = {
       'Garder l\'écran allumé jusqu\'à ce que j\'arrête',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'Désactivé : la mise en veille du téléphone s\'applique. L\'affichage fonctionne aussi sur l\'écran verrouillé : ouvrez-le, puis appuyez deux fois sur le bouton marche.',
   'Adjust this time (± minutes)': 'Ajuster cette heure (± minutes)',
+  'Sunrise alert (Fajr time ends)': 'Alerte du lever du soleil (fin du Fajr)',
+  '{0} min to sunrise – Fajr time ends':
+      '{0} min avant le lever du soleil – fin du Fajr',
+  'Minutes before sunrise': 'Minutes avant le lever du soleil',
+  'Ishraq / Duha alert': 'Alerte Ishraq / Duha',
+  'Iqama sound': 'Son de l\'iqama',
+  'Short notification sound': 'Son de notification court',
+  'Full screen for Iqama too': 'Plein écran aussi pour l\'iqama',
+  'Azan volume': 'Volume de l\'adhan',
+  'Iqama volume': 'Volume de l\'iqama',
+  'Phone alarm volume': 'Volume d\'alarme du téléphone',
+  'Pressing a volume button stops the Azan.':
+      'Appuyer sur un bouton de volume arrête l\'adhan.',
+  'Silence during': 'Silence pendant',
+  'Ramadan Niyyah reminder': 'Rappel de la niyya du Ramadan',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?': 'Chaque nuit de Ramadan après Isha : avez-vous formulé l\'intention du jeûne de demain ?',
+  'Did you make the Niyyah for tomorrow\'s fast?':
+      'Avez-vous formulé l\'intention du jeûne de demain ?',
+  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”': '« J\'ai l\'intention de jeûner demain le jeûne obligatoire du Ramadan pour Allah. »',
+  'Friday night reminder': 'Rappel de la nuit du vendredi',
+  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah': 'Jeudi après Maghrib : salawat, sourate Al-Kahf et préparation du Joumou\'a',
+  'Tonight is Friday night': 'Ce soir, c\'est la nuit du vendredi',
+  'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'Multipliez les salawat sur le Prophète ﷺ. Lisez la sourate Al-Kahf et préparez le Joumou\'a : ghusl, vêtements propres, venir tôt.',
+  'I did': 'C\'est fait',
+  'Remind me in 30 min': 'Me le rappeler dans 30 min',
 };
 
 const List<String> frHijriMonths = [
