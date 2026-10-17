@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:waqt/app/settings.dart';
+import 'package:waqt/core/calibration.dart';
 import 'package:waqt/core/charts.dart';
+import 'package:waqt/core/place.dart';
 import 'package:waqt/core/prayer_calc.dart';
 
 /// A made-up chart in the bundled format (the real one is not in the repo).
@@ -43,5 +45,17 @@ void main() {
     await s.useChart(charts.last);
     final g = s.calculator.day(2026, 10, 17);
     expect(s.wall(g[Prayer.fajr]).toString().substring(11, 16), '04:35');
+  });
+
+  test('Kerala calculation gets the local calendar correction', () async {
+    final s = AppSettings.memory();
+    await s.choosePlace(presetPlaces.firstWhere((p) => p.id == 'kannur'));
+    expect(localCalibration(11.8745, 75.3704)[Prayer.fajr], 2);
+    final d = s.calculator.day(2026, 10, 17);
+    String hm(Prayer p) => s.wall(d[p]).toString().substring(11, 16);
+    expect(hm(Prayer.fajr), '05:02');
+    expect(hm(Prayer.asr), '15:38');
+    // Far from any local calendar: plain calculation.
+    expect(localCalibration(51.5, 0), isEmpty);
   });
 }

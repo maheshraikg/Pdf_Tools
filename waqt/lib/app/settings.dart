@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/alerts.dart';
+import '../core/calibration.dart';
 import '../core/charts.dart';
 import '../core/day.dart';
 import '../core/masjid.dart';
@@ -200,10 +201,23 @@ class AppSettings extends ChangeNotifier {
     method: method,
     asr: asr,
     highLatitude: highLatitude,
-    adjustments: adjustments,
+    adjustments: _withCalibration(),
     imsakMinutesBeforeFajr: imsakMinutes,
     ishraqMinutesAfterSunrise: ishraqMinutes,
   );
+
+  /// The user's adjustments plus, for calculated Kerala-method times, the
+  /// local calendar correction of the place.
+  Map<Prayer, int> _withCalibration() {
+    // A timetable's times are used as printed.
+    if (method.id != 'kerala' || timetableEnabled) return adjustments;
+    final cal = localCalibration(place.latitude, place.longitude);
+    if (cal.isEmpty) return adjustments;
+    return {
+      for (final p in {...adjustments.keys, ...cal.keys})
+        p: (adjustments[p] ?? 0) + (cal[p] ?? 0),
+    };
+  }
 
   DayCalculator? _calc;
   Object? _calcKey;

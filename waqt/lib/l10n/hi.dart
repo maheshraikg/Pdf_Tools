@@ -36,8 +36,10 @@ const Map<String, String> hiStrings = {
   'Choose': 'चुनें',
   'Alerts may be missed': 'अलर्ट छूट सकते हैं',
   'Allow notifications': 'सूचनाओं की अनुमति दें',
-  'Allow exact alarms (on time Azan)': 'सटीक अलार्म की अनुमति दें (समय पर अज़ान)',
-  'Turn off battery optimisation for Azan Time': 'अज़ान टाइम के लिए बैटरी ऑप्टिमाइज़ेशन बंद करें',
+  'Allow exact alarms (on time Azan)':
+      'सटीक अलार्म की अनुमति दें (समय पर अज़ान)',
+  'Turn off battery optimisation for Azan Time':
+      'अज़ान टाइम के लिए बैटरी ऑप्टिमाइज़ेशन बंद करें',
   'Some phones (Xiaomi, Oppo, Vivo, Realme, Samsung) stop apps in the background. Set Azan Time to "Unrestricted" / "No restrictions" in battery settings so Azan is never missed.': 'कुछ फ़ोन (Xiaomi, Oppo, Vivo, Realme, Samsung) बैकग्राउंड में ऐप बंद कर देते हैं। बैटरी सेटिंग्स में अज़ान टाइम को "Unrestricted" करें ताकि अज़ान कभी न छूटे।',
   'Fix': 'ठीक करें',
   'Date': 'तारीख़',
@@ -64,7 +66,8 @@ const Map<String, String> hiStrings = {
   'One seventh of the night': 'रात का सातवाँ भाग',
   'Angle based (recommended)': 'कोण आधारित (अनुशंसित)',
   'Adjust times (minutes)': 'समय समायोजित करें (मिनट)',
-  'Match your mosque: add or subtract minutes for each time.': 'अपनी मस्जिद से मिलाएँ: हर समय में मिनट जोड़ें या घटाएँ।',
+  'Match your mosque: add or subtract minutes for each time.':
+      'अपनी मस्जिद से मिलाएँ: हर समय में मिनट जोड़ें या घटाएँ।',
   'Imsak before Fajr': 'फ़ज्र से पहले इम्साक',
   'Ishraq after sunrise': 'सूर्योदय के बाद इशराक़',
   'Hijri date correction': 'हिजरी तारीख़ सुधार',
@@ -86,18 +89,23 @@ const Map<String, String> hiStrings = {
   'Name': 'नाम',
   'Latitude': 'अक्षांश',
   'Longitude': 'देशांतर',
-  'UTC offset, e.g. +05:30 (empty = phone time zone)': 'UTC अंतर, जैसे +05:30 (ख़ाली = फ़ोन का समय क्षेत्र)',
+  'UTC offset, e.g. +05:30 (empty = phone time zone)':
+      'UTC अंतर, जैसे +05:30 (ख़ाली = फ़ोन का समय क्षेत्र)',
   'Finding your location…': 'आपका स्थान खोजा जा रहा है…',
   'Location permission denied.': 'स्थान की अनुमति नहीं मिली।',
-  'Location is turned off. Turn it on and try again.': 'लोकेशन बंद है। चालू करके फिर कोशिश करें।',
-  'Could not get a location. Try again outdoors, or pick a place.': 'स्थान नहीं मिला। बाहर जाकर कोशिश करें या कोई जगह चुनें।',
+  'Location is turned off. Turn it on and try again.':
+      'लोकेशन बंद है। चालू करके फिर कोशिश करें।',
+  'Could not get a location. Try again outdoors, or pick a place.':
+      'स्थान नहीं मिला। बाहर जाकर कोशिश करें या कोई जगह चुनें।',
   'Enter valid coordinates.': 'सही निर्देशांक डालें।',
   'Azan alert': 'अज़ान अलर्ट',
   'Iqama alert': 'इक़ामत अलर्ट',
   'Fixed Iqama time': 'तय इक़ामत समय',
   'Fixed Jumu\'ah Iqama time': 'जुमा का तय इक़ामत समय',
-  'Off: uses the minutes after Azan': 'बंद: अज़ान के बाद के मिनट इस्तेमाल होते हैं',
-  'Used when it is after Azan; otherwise the minutes after Azan': 'अज़ान के बाद हो तो यही, वरना अज़ान के बाद के मिनट',
+  'Off: uses the minutes after Azan':
+      'बंद: अज़ान के बाद के मिनट इस्तेमाल होते हैं',
+  'Used when it is after Azan; otherwise the minutes after Azan':
+      'अज़ान के बाद हो तो यही, वरना अज़ान के बाद के मिनट',
   'Clear': 'हटाएँ',
   'Iqama after Azan': 'अज़ान के बाद इक़ामत',
   'Reminder before Azan': 'अज़ान से पहले याद',
@@ -122,7 +130,8 @@ const Map<String, String> hiStrings = {
   'Imsak – Suhoor ends': 'इम्साक – सहरी ख़त्म',
   '{0} time': '{0} का समय',
   'Open Azan Time to keep alerts on': 'अलर्ट जारी रखने के लिए अज़ान टाइम खोलें',
-  'Scheduled alerts end in a day. Tap to schedule the next days.': 'तय अलर्ट एक दिन में ख़त्म होंगे। अगले दिनों के लिए टैप करें।',
+  'Scheduled alerts end in a day. Tap to schedule the next days.':
+      'तय अलर्ट एक दिन में ख़त्म होंगे। अगले दिनों के लिए टैप करें।',
   'Reminders': 'याद दिलाना',
   'For times that match your mosque exactly, import its yearly chart (for example a Samastha calendar) as a CSV file. Dates the table does not cover are calculated.': 'अपनी मस्जिद से बिल्कुल मेल खाते समय के लिए उसका सालाना टाइमटेबल CSV फ़ाइल के रूप में आयात करें। जो तारीख़ें टेबल में नहीं हैं उनकी गणना होगी।',
   'Import CSV file': 'CSV फ़ाइल आयात करें',
@@ -142,7 +151,8 @@ const Map<String, String> hiStrings = {
   's': 'से',
   'near {0}': '{0} के पास',
   'World places': 'दुनिया भर की जगहें',
-  'Type a town or city name to search 35,000 places worldwide.': 'दुनिया भर की 35,000 जगहों में खोजने के लिए शहर या कस्बे का नाम लिखें।',
+  'Type a town or city name to search 35,000 places worldwide.':
+      'दुनिया भर की 35,000 जगहों में खोजने के लिए शहर या कस्बे का नाम लिखें।',
   'Place data: GeoNames (CC BY 4.0)': 'जगहों का डेटा: GeoNames (CC BY 4.0)',
   'Azan sound': 'अज़ान की आवाज़',
   'Fajr Azan sound': 'फ़ज्र की अज़ान की आवाज़',
@@ -152,20 +162,24 @@ const Map<String, String> hiStrings = {
   'Deep bell': 'गहरी घंटी',
   'Audio file (e.g. Azan MP3)': 'ऑडियो फ़ाइल (जैसे अज़ान MP3)',
   'Repeats until you dismiss it': 'बंद करने तक दोहराती रहती है',
-  'Pick a recorded Azan saved on your phone': 'फ़ोन में सेव की हुई अज़ान रिकॉर्डिंग चुनें',
+  'Pick a recorded Azan saved on your phone':
+      'फ़ोन में सेव की हुई अज़ान रिकॉर्डिंग चुनें',
   'Could not use this audio file': 'इस ऑडियो फ़ाइल का उपयोग नहीं हो सका',
   'Play': 'चलाएँ',
   'Stop': 'रोकें',
   'Play even when the phone is silent': 'फ़ोन साइलेंट हो तब भी चलाएँ',
-  'Off: on silent or vibrate the Azan only shows and vibrates.': 'बंद: साइलेंट या वाइब्रेट पर अज़ान सिर्फ़ दिखेगी और वाइब्रेट करेगी।',
+  'Off: on silent or vibrate the Azan only shows and vibrates.':
+      'बंद: साइलेंट या वाइब्रेट पर अज़ान सिर्फ़ दिखेगी और वाइब्रेट करेगी।',
   'Ramadan and Eid': 'रमज़ान और ईद',
   'Taraweeh': 'तरावीह',
   'Eid al-Fitr prayer': 'ईद-उल-फ़ित्र की नमाज़',
   'Eid al-Adha prayer': 'ईद-उल-अज़हा की नमाज़',
-  'Alert on Ramadan nights after the Isha Iqama': 'रमज़ान की रातों में इशा की इक़ामत के बाद सूचना',
+  'Alert on Ramadan nights after the Isha Iqama':
+      'रमज़ान की रातों में इशा की इक़ामत के बाद सूचना',
   'Minutes after Isha Iqama': 'इशा की इक़ामत के बाद मिनट',
   'Eid prayer alert': 'ईद की नमाज़ की सूचना',
-  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)': 'ईद की नमाज़ से 30 मिनट पहले याद दिलाता है (हिजरी तारीख़ के अनुसार)',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
+      'ईद की नमाज़ से 30 मिनट पहले याद दिलाता है (हिजरी तारीख़ के अनुसार)',
   'Eid prayer at {0}': 'ईद की नमाज़ {0} बजे',
   '1 page': '1 पेज',
   '{0} pages, rotating': '{0} पेज, बारी-बारी से',
@@ -173,7 +187,8 @@ const Map<String, String> hiStrings = {
   'Mosque name': 'मस्जिद का नाम',
   'Shown at the top of the display': 'डिस्प्ले में सबसे ऊपर दिखता है',
   'Next prayer page': 'अगली नमाज़ का पेज',
-  'Big countdown; stays on from 5 minutes before Azan until Iqama': 'बड़ी उलटी गिनती; अज़ान से 5 मिनट पहले से इक़ामत तक यही रहता है',
+  'Big countdown; stays on from 5 minutes before Azan until Iqama':
+      'बड़ी उलटी गिनती; अज़ान से 5 मिनट पहले से इक़ामत तक यही रहता है',
   'Seconds per page': 'हर पेज के सेकंड',
   'Announcements': 'घोषणाएँ',
   'Add announcement': 'घोषणा जोड़ें',
@@ -181,12 +196,15 @@ const Map<String, String> hiStrings = {
   'Delete': 'हटाएँ',
   'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'डिस्प्ले में 7 पेज तक: नमाज़ के समय, अगली नमाज़ और 5 घोषणाएँ। बाहर निकलने के लिए डिस्प्ले को दबाकर रखें।',
   'Full-screen Azan': 'फ़ुल-स्क्रीन अज़ान',
-  'Shows the Azan over the lock screen with a big Stop button': 'लॉक स्क्रीन पर बड़े रोकें बटन के साथ अज़ान दिखाता है',
-  'Allow full-screen alerts for Azan Time': 'अज़ान टाइम को फ़ुल-स्क्रीन अलर्ट की अनुमति दें',
+  'Shows the Azan over the lock screen with a big Stop button':
+      'लॉक स्क्रीन पर बड़े रोकें बटन के साथ अज़ान दिखाता है',
+  'Allow full-screen alerts for Azan Time':
+      'अज़ान टाइम को फ़ुल-स्क्रीन अलर्ट की अनुमति दें',
   'Prayer tracker': 'नमाज़ ट्रैकर',
   '{0} of {1} prayed today': 'आज {1} में से {0} नमाज़ें पढ़ीं',
   '{0}-day streak': 'लगातार {0} दिन',
-  'Tap a prayer\'s icon to mark it as prayed': 'नमाज़ को पढ़ी हुई चिह्नित करने के लिए उसके आइकन पर टैप करें',
+  'Tap a prayer\'s icon to mark it as prayed':
+      'नमाज़ को पढ़ी हुई चिह्नित करने के लिए उसके आइकन पर टैप करें',
   'Mark as prayed': 'पढ़ी हुई चिह्नित करें',
   'Day streak': 'लगातार दिन',
   'Last 7 days': 'पिछले 7 दिन',
@@ -196,7 +214,8 @@ const Map<String, String> hiStrings = {
   'Next week': 'अगला सप्ताह',
   'Excused today': 'आज छूट',
   'Pause the tracker for the day (e.g. illness or menstruation); your streak is kept.': 'इस दिन ट्रैकर रोकें (जैसे बीमारी या मासिक धर्म); आपका सिलसिला बना रहेगा।',
-  'Your tracker stays on this phone only.': 'आपका ट्रैकर सिर्फ़ इसी फ़ोन पर रहता है।',
+  'Your tracker stays on this phone only.':
+      'आपका ट्रैकर सिर्फ़ इसी फ़ोन पर रहता है।',
   'Tasbih': 'तस्बीह',
   'After-prayer tasbih': 'नमाज़ के बाद की तस्बीह',
   'Free count': 'मुक्त गिनती',
@@ -243,7 +262,8 @@ const Map<String, String> hiStrings = {
   'Update location automatically': 'जगह अपने आप अपडेट करें',
   'When you open Azan Time, the place follows your phone (GPS), with the local time zone.': 'अज़ान टाइम खोलने पर जगह आपके फ़ोन (GPS) और स्थानीय टाइम ज़ोन के अनुसार बदलेगी।',
   'Location updated: {0}': 'जगह अपडेट हुई: {0}',
-  'Set the phone\'s date & time to automatic': 'फ़ोन की तारीख़ और समय ऑटोमैटिक करें',
+  'Set the phone\'s date & time to automatic':
+      'फ़ोन की तारीख़ और समय ऑटोमैटिक करें',
   'Your phone\'s clock is {0} min off': 'आपके फ़ोन की घड़ी {0} मिनट ग़लत है',
   'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.': 'अलर्ट फ़ोन की घड़ी के अनुसार चलते हैं; ग़लत घड़ी या टाइम ज़ोन से सारे समय ग़लत हो जाते हैं।',
   'Mosques': 'मस्जिदें',
@@ -265,13 +285,15 @@ const Map<String, String> hiStrings = {
   '{0} Azan at {1}': '{0} अज़ान {1} बजे',
   '{0} Iqama at {1}': '{0} इक़ामत {1} बजे',
   'Next prayer in notification bar': 'नोटिफ़िकेशन बार में अगली नमाज़',
-  'A permanent notification with the next Azan (with countdown) and Iqama': 'अगली अज़ान (उलटी गिनती के साथ) और इक़ामत की स्थायी सूचना',
+  'A permanent notification with the next Azan (with countdown) and Iqama':
+      'अगली अज़ान (उलटी गिनती के साथ) और इक़ामत की स्थायी सूचना',
   '{0} Iqama was at {1}': '{0} इक़ामत {1} बजे थी',
   'Keep the screen on until I stop': 'जब तक मैं न रोकूँ स्क्रीन चालू रखें',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'बंद होने पर फ़ोन का स्क्रीन टाइमआउट लागू होगा। डिस्प्ले लॉक स्क्रीन पर भी चलता है: इसे खोलें, फिर पावर बटन दो बार दबाएँ।',
   'Adjust this time (± minutes)': 'यह समय बदलें (± मिनट)',
   'Sunrise alert (Fajr time ends)': 'सूर्योदय अलर्ट (फ़ज्र का वक़्त ख़त्म)',
-  '{0} min to sunrise – Fajr time ends': 'सूर्योदय में {0} मिनट – फ़ज्र का वक़्त ख़त्म',
+  '{0} min to sunrise – Fajr time ends':
+      'सूर्योदय में {0} मिनट – फ़ज्र का वक़्त ख़त्म',
   'Minutes before sunrise': 'सूर्योदय से कितने मिनट पहले',
   'Ishraq / Duha alert': 'इशराक़ / चाश्त अलर्ट',
   'Iqama sound': 'इक़ामत की आवाज़',
@@ -280,14 +302,19 @@ const Map<String, String> hiStrings = {
   'Azan volume': 'अज़ान वॉल्यूम',
   'Iqama volume': 'इक़ामत वॉल्यूम',
   'Phone alarm volume': 'फ़ोन अलार्म वॉल्यूम',
-  'Pressing a volume button stops the Azan.': 'वॉल्यूम बटन दबाने पर अज़ान रुक जाती है।',
+  'Pressing a volume button stops the Azan.':
+      'वॉल्यूम बटन दबाने पर अज़ान रुक जाती है।',
   'Silence during': 'इन वक़्तों में साइलेंट',
   'Ramadan Niyyah reminder': 'रमज़ान नीयत रिमाइंडर',
-  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?': 'रमज़ान की हर रात इशा के बाद: क्या कल के रोज़े की नीयत की?',
-  'Did you make the Niyyah for tomorrow\'s fast?': 'क्या कल के रोज़े की नीयत की?',
-  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”': '"मैंने अल्लाह के लिए कल के रमज़ान के फ़र्ज़ रोज़े की नीयत की।"',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?':
+      'रमज़ान की हर रात इशा के बाद: क्या कल के रोज़े की नीयत की?',
+  'Did you make the Niyyah for tomorrow\'s fast?':
+      'क्या कल के रोज़े की नीयत की?',
+  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”':
+      '"मैंने अल्लाह के लिए कल के रमज़ान के फ़र्ज़ रोज़े की नीयत की।"',
   'Friday night reminder': 'जुमे की रात रिमाइंडर',
-  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah': 'गुरुवार मग़रिब के बाद: दरूद, सूरह कहफ़ और जुमे की तैयारी',
+  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah':
+      'गुरुवार मग़रिब के बाद: दरूद, सूरह कहफ़ और जुमे की तैयारी',
   'Tonight is Friday night': 'आज जुमे की रात है',
   'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'नबी ﷺ पर ख़ूब दरूद भेजें। सूरह कहफ़ पढ़ें और जुमे की तैयारी करें: ग़ुस्ल, साफ़ कपड़े, जल्दी जाएँ।',
   'I did': 'नीयत कर ली',
@@ -298,11 +325,13 @@ const Map<String, String> hiStrings = {
   'Location settings': 'स्थान सेटिंग',
   '{0}: place and time source': '{0}: स्थान और समय का स्रोत',
   'Automatic (GPS)': 'स्वचालित (GPS)',
-  'Finds your place and sets the usual method': 'आपका स्थान ढूँढकर सामान्य तरीका लगाता है',
+  'Finds your place and sets the usual method':
+      'आपका स्थान ढूँढकर सामान्य तरीका लगाता है',
   'Time source': 'समय का स्रोत',
   'Calculated for this place': 'इस स्थान के लिए गणना',
   'Mosque\'s yearly chart': 'मस्जिद का सालाना चार्ट',
-  'Exact times from your mosque\'s printed calendar (import once)': 'आपकी मस्जिद के छपे कैलेंडर के सही समय (एक बार इम्पोर्ट करें)',
+  'Exact times from your mosque\'s printed calendar (import once)':
+      'आपकी मस्जिद के छपे कैलेंडर के सही समय (एक बार इम्पोर्ट करें)',
   'How do you find your place?': 'अपना स्थान कैसे ढूँढें?',
   'Browse': 'ब्राउज़',
   'Search': 'खोज',

@@ -32,12 +32,15 @@ const Map<String, String> msStrings = {
   'From timetable': 'Daripada jadual',
   'Calculated': 'Dikira',
   'Mosque display': 'Paparan masjid',
-  'Choose your place for accurate times': 'Pilih tempat anda supaya waktunya tepat',
+  'Choose your place for accurate times':
+      'Pilih tempat anda supaya waktunya tepat',
   'Choose': 'Pilih',
   'Alerts may be missed': 'Amaran mungkin terlepas',
   'Allow notifications': 'Benarkan pemberitahuan',
-  'Allow exact alarms (on time Azan)': 'Benarkan penggera tepat (azan tepat pada masanya)',
-  'Turn off battery optimisation for Azan Time': 'Matikan pengoptimuman bateri untuk Azan Time',
+  'Allow exact alarms (on time Azan)':
+      'Benarkan penggera tepat (azan tepat pada masanya)',
+  'Turn off battery optimisation for Azan Time':
+      'Matikan pengoptimuman bateri untuk Azan Time',
   'Some phones (Xiaomi, Oppo, Vivo, Realme, Samsung) stop apps in the background. Set Azan Time to "Unrestricted" / "No restrictions" in battery settings so Azan is never missed.': 'Sesetengah telefon (Xiaomi, Oppo, Vivo, Realme, Samsung) menghentikan aplikasi di latar belakang. Tetapkan Azan Time kepada "Tanpa sekatan" dalam tetapan bateri supaya azan tidak terlepas.',
   'Fix': 'Betulkan',
   'Date': 'Tarikh',
@@ -64,7 +67,8 @@ const Map<String, String> msStrings = {
   'One seventh of the night': 'Satu pertujuh malam',
   'Angle based (recommended)': 'Berdasarkan sudut (disyorkan)',
   'Adjust times (minutes)': 'Laraskan waktu (minit)',
-  'Match your mosque: add or subtract minutes for each time.': 'Padankan dengan masjid anda: tambah atau tolak minit bagi setiap waktu.',
+  'Match your mosque: add or subtract minutes for each time.':
+      'Padankan dengan masjid anda: tambah atau tolak minit bagi setiap waktu.',
   'Imsak before Fajr': 'Imsak sebelum Subuh',
   'Ishraq after sunrise': 'Isyraq selepas syuruk',
   'Hijri date correction': 'Pembetulan tarikh Hijrah',
@@ -86,18 +90,22 @@ const Map<String, String> msStrings = {
   'Name': 'Nama',
   'Latitude': 'Latitud',
   'Longitude': 'Longitud',
-  'UTC offset, e.g. +05:30 (empty = phone time zone)': 'Beza UTC, cth. +08:00 (kosong = zon waktu telefon)',
+  'UTC offset, e.g. +05:30 (empty = phone time zone)':
+      'Beza UTC, cth. +08:00 (kosong = zon waktu telefon)',
   'Finding your location…': 'Mencari lokasi anda…',
   'Location permission denied.': 'Kebenaran lokasi ditolak.',
-  'Location is turned off. Turn it on and try again.': 'Lokasi dimatikan. Hidupkan dan cuba lagi.',
-  'Could not get a location. Try again outdoors, or pick a place.': 'Lokasi tidak ditemui. Cuba di luar, atau pilih tempat.',
+  'Location is turned off. Turn it on and try again.':
+      'Lokasi dimatikan. Hidupkan dan cuba lagi.',
+  'Could not get a location. Try again outdoors, or pick a place.':
+      'Lokasi tidak ditemui. Cuba di luar, atau pilih tempat.',
   'Enter valid coordinates.': 'Masukkan koordinat yang sah.',
   'Azan alert': 'Amaran azan',
   'Iqama alert': 'Amaran iqamah',
   'Fixed Iqama time': 'Waktu iqamah tetap',
   'Fixed Jumu\'ah Iqama time': 'Waktu iqamah Jumaat tetap',
   'Off: uses the minutes after Azan': 'Mati: menggunakan minit selepas azan',
-  'Used when it is after Azan; otherwise the minutes after Azan': 'Digunakan jika selepas azan; jika tidak, minit selepas azan',
+  'Used when it is after Azan; otherwise the minutes after Azan':
+      'Digunakan jika selepas azan; jika tidak, minit selepas azan',
   'Clear': 'Kosongkan',
   'Iqama after Azan': 'Iqamah selepas azan',
   'Reminder before Azan': 'Peringatan sebelum azan',
@@ -121,7 +129,8 @@ const Map<String, String> msStrings = {
   '{0} in {1} min': '{0} dalam {1} minit',
   'Imsak – Suhoor ends': 'Imsak – sahur tamat',
   '{0} time': 'Waktu {0}',
-  'Open Azan Time to keep alerts on': 'Buka Azan Time supaya amaran kekal aktif',
+  'Open Azan Time to keep alerts on':
+      'Buka Azan Time supaya amaran kekal aktif',
   'Scheduled alerts end in a day. Tap to schedule the next days.': 'Amaran berjadual tamat dalam sehari. Ketik untuk menjadualkan hari berikutnya.',
   'Reminders': 'Peringatan',
   'For times that match your mosque exactly, import its yearly chart (for example a Samastha calendar) as a CSV file. Dates the table does not cover are calculated.': 'Supaya waktunya sama tepat dengan masjid anda, import jadual tahunannya sebagai fail CSV. Tarikh yang tiada dalam jadual akan dikira.',
@@ -152,20 +161,25 @@ const Map<String, String> msStrings = {
   'Deep bell': 'Loceng dalam',
   'Audio file (e.g. Azan MP3)': 'Fail audio (cth. azan MP3)',
   'Repeats until you dismiss it': 'Berulang sehingga anda menutupnya',
-  'Pick a recorded Azan saved on your phone': 'Pilih rakaman azan yang disimpan dalam telefon',
+  'Pick a recorded Azan saved on your phone':
+      'Pilih rakaman azan yang disimpan dalam telefon',
   'Could not use this audio file': 'Fail audio ini tidak dapat digunakan',
   'Play': 'Main',
   'Stop': 'Henti',
-  'Play even when the phone is silent': 'Main walaupun telefon dalam mod senyap',
-  'Off: on silent or vibrate the Azan only shows and vibrates.': 'Mati: dalam mod senyap atau getar, azan hanya dipaparkan dan bergetar.',
+  'Play even when the phone is silent':
+      'Main walaupun telefon dalam mod senyap',
+  'Off: on silent or vibrate the Azan only shows and vibrates.':
+      'Mati: dalam mod senyap atau getar, azan hanya dipaparkan dan bergetar.',
   'Ramadan and Eid': 'Ramadan dan Hari Raya',
   'Taraweeh': 'Tarawih',
   'Eid al-Fitr prayer': 'Solat Aidilfitri',
   'Eid al-Adha prayer': 'Solat Aidiladha',
-  'Alert on Ramadan nights after the Isha Iqama': 'Peringatan malam Ramadan selepas iqamah Isyak',
+  'Alert on Ramadan nights after the Isha Iqama':
+      'Peringatan malam Ramadan selepas iqamah Isyak',
   'Minutes after Isha Iqama': 'Minit selepas iqamah Isyak',
   'Eid prayer alert': 'Peringatan solat Hari Raya',
-  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)': 'Mengingatkan 30 minit sebelum solat Hari Raya (mengikut tarikh Hijrah)',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
+      'Mengingatkan 30 minit sebelum solat Hari Raya (mengikut tarikh Hijrah)',
   'Eid prayer at {0}': 'Solat Hari Raya pada {0}',
   '1 page': '1 halaman',
   '{0} pages, rotating': '{0} halaman, bergilir',
@@ -173,7 +187,8 @@ const Map<String, String> msStrings = {
   'Mosque name': 'Nama masjid',
   'Shown at the top of the display': 'Dipaparkan di bahagian atas paparan',
   'Next prayer page': 'Halaman solat seterusnya',
-  'Big countdown; stays on from 5 minutes before Azan until Iqama': 'Kiraan detik besar; kekal dari 5 minit sebelum azan hingga iqamah',
+  'Big countdown; stays on from 5 minutes before Azan until Iqama':
+      'Kiraan detik besar; kekal dari 5 minit sebelum azan hingga iqamah',
   'Seconds per page': 'Saat setiap halaman',
   'Announcements': 'Pengumuman',
   'Add announcement': 'Tambah pengumuman',
@@ -181,12 +196,15 @@ const Map<String, String> msStrings = {
   'Delete': 'Padam',
   'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'Paparan menunjukkan sehingga 7 halaman: waktu solat, solat seterusnya dan 5 pengumuman. Tekan lama paparan untuk keluar.',
   'Full-screen Azan': 'Azan skrin penuh',
-  'Shows the Azan over the lock screen with a big Stop button': 'Memaparkan azan di atas skrin kunci dengan butang Henti yang besar',
-  'Allow full-screen alerts for Azan Time': 'Benarkan amaran skrin penuh untuk Azan Time',
+  'Shows the Azan over the lock screen with a big Stop button':
+      'Memaparkan azan di atas skrin kunci dengan butang Henti yang besar',
+  'Allow full-screen alerts for Azan Time':
+      'Benarkan amaran skrin penuh untuk Azan Time',
   'Prayer tracker': 'Penjejak solat',
   '{0} of {1} prayed today': '{0} daripada {1} solat hari ini',
   '{0}-day streak': '{0} hari berturut-turut',
-  'Tap a prayer\'s icon to mark it as prayed': 'Ketik ikon solat untuk menandakannya sudah ditunaikan',
+  'Tap a prayer\'s icon to mark it as prayed':
+      'Ketik ikon solat untuk menandakannya sudah ditunaikan',
   'Mark as prayed': 'Tanda sudah solat',
   'Day streak': 'Hari berturut-turut',
   'Last 7 days': '7 hari lepas',
@@ -196,7 +214,8 @@ const Map<String, String> msStrings = {
   'Next week': 'Minggu seterusnya',
   'Excused today': 'Uzur hari ini',
   'Pause the tracker for the day (e.g. illness or menstruation); your streak is kept.': 'Jeda penjejak untuk hari ini (cth. sakit atau haid); rentetan anda kekal.',
-  'Your tracker stays on this phone only.': 'Penjejak anda hanya disimpan dalam telefon ini.',
+  'Your tracker stays on this phone only.':
+      'Penjejak anda hanya disimpan dalam telefon ini.',
   'Tasbih': 'Tasbih',
   'After-prayer tasbih': 'Tasbih selepas solat',
   'Free count': 'Kiraan bebas',
@@ -205,7 +224,8 @@ const Map<String, String> msStrings = {
   'Allah is the Greatest': 'Allah Maha Besar',
   'There is no god but Allah': 'Tiada tuhan melainkan Allah',
   'I seek Allah\'s forgiveness': 'Aku memohon ampun kepada Allah',
-  'O Allah, send blessings upon Muhammad': 'Ya Allah, limpahkan selawat ke atas Muhammad',
+  'O Allah, send blessings upon Muhammad':
+      'Ya Allah, limpahkan selawat ke atas Muhammad',
   'Glory and praise be to Allah': 'Maha Suci Allah dan segala puji bagi-Nya',
   'Reset the counter?': 'Set semula pembilang?',
   'Tap the circle to count': 'Ketik bulatan untuk mengira',
@@ -243,7 +263,8 @@ const Map<String, String> msStrings = {
   'Update location automatically': 'Kemas kini lokasi secara automatik',
   'When you open Azan Time, the place follows your phone (GPS), with the local time zone.': 'Apabila Azan Time dibuka, tempat mengikut telefon anda (GPS) serta zon waktu setempat.',
   'Location updated: {0}': 'Lokasi dikemas kini: {0}',
-  'Set the phone\'s date & time to automatic': 'Tetapkan tarikh & masa telefon kepada automatik',
+  'Set the phone\'s date & time to automatic':
+      'Tetapkan tarikh & masa telefon kepada automatik',
   'Your phone\'s clock is {0} min off': 'Jam telefon anda tersasar {0} minit',
   'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.': 'Peringatan mengikut jam telefon; jam atau zon waktu yang salah menjadikan semua waktu salah.',
   'Mosques': 'Masjid',
@@ -267,11 +288,13 @@ const Map<String, String> msStrings = {
   'Next prayer in notification bar': 'Solat seterusnya di bar pemberitahuan',
   'A permanent notification with the next Azan (with countdown) and Iqama': 'Pemberitahuan kekal dengan azan seterusnya (dengan kiraan detik) dan iqamah',
   '{0} Iqama was at {1}': 'Iqamah {0} pada {1}',
-  'Keep the screen on until I stop': 'Biarkan skrin menyala sehingga saya hentikan',
+  'Keep the screen on until I stop':
+      'Biarkan skrin menyala sehingga saya hentikan',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'Mati: tamat masa skrin telefon digunakan. Paparan juga berfungsi di skrin kunci: buka, kemudian tekan butang kuasa dua kali.',
   'Adjust this time (± minutes)': 'Laraskan waktu ini (± minit)',
   'Sunrise alert (Fajr time ends)': 'Peringatan syuruk (waktu Subuh tamat)',
-  '{0} min to sunrise – Fajr time ends': '{0} minit lagi syuruk – waktu Subuh tamat',
+  '{0} min to sunrise – Fajr time ends':
+      '{0} minit lagi syuruk – waktu Subuh tamat',
   'Minutes before sunrise': 'Minit sebelum syuruk',
   'Ishraq / Duha alert': 'Peringatan Isyraq / Dhuha',
   'Iqama sound': 'Bunyi iqamah',
@@ -280,11 +303,14 @@ const Map<String, String> msStrings = {
   'Azan volume': 'Kelantangan azan',
   'Iqama volume': 'Kelantangan iqamah',
   'Phone alarm volume': 'Kelantangan penggera telefon',
-  'Pressing a volume button stops the Azan.': 'Menekan butang kelantangan menghentikan azan.',
+  'Pressing a volume button stops the Azan.':
+      'Menekan butang kelantangan menghentikan azan.',
   'Silence during': 'Senyap semasa',
   'Ramadan Niyyah reminder': 'Peringatan niat Ramadan',
-  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?': 'Setiap malam Ramadan selepas Isyak: sudahkah berniat puasa esok?',
-  'Did you make the Niyyah for tomorrow\'s fast?': 'Sudahkah berniat puasa esok?',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?':
+      'Setiap malam Ramadan selepas Isyak: sudahkah berniat puasa esok?',
+  'Did you make the Niyyah for tomorrow\'s fast?':
+      'Sudahkah berniat puasa esok?',
   '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”': '"Sahaja aku berpuasa esok hari menunaikan fardu Ramadan kerana Allah Taala."',
   'Friday night reminder': 'Peringatan malam Jumaat',
   'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah': 'Khamis selepas Maghrib: selawat, Surah Al-Kahfi dan bersedia untuk Jumaat',
@@ -298,11 +324,13 @@ const Map<String, String> msStrings = {
   'Location settings': 'Tetapan lokasi',
   '{0}: place and time source': '{0}: tempat dan sumber waktu',
   'Automatic (GPS)': 'Automatik (GPS)',
-  'Finds your place and sets the usual method': 'Mencari tempat anda dan menetapkan kaedah biasa',
+  'Finds your place and sets the usual method':
+      'Mencari tempat anda dan menetapkan kaedah biasa',
   'Time source': 'Sumber waktu',
   'Calculated for this place': 'Dikira untuk tempat ini',
   'Mosque\'s yearly chart': 'Jadual tahunan masjid',
-  'Exact times from your mosque\'s printed calendar (import once)': 'Waktu tepat daripada kalendar bercetak masjid anda (import sekali)',
+  'Exact times from your mosque\'s printed calendar (import once)':
+      'Waktu tepat daripada kalendar bercetak masjid anda (import sekali)',
   'How do you find your place?': 'Bagaimana mencari tempat anda?',
   'Browse': 'Layari',
   'Search': 'Cari',
