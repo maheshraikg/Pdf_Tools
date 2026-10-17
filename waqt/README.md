@@ -2,8 +2,8 @@
 
 # Azan Time (ബാങ്ക് സമയം) – Prayer times, Azan & Iqama alerts
 
-Play Store title: **Azan Time: Prayer Times Qibla**. (Formerly "Waqt"; the
-package id `com.maheshrai.waqt` is unchanged so updates keep installing.)
+Play Store title: **Azan Time: Prayer Times Qibla**. (Formerly "Waqt". Package id
+`com.maheshrai.azantime`; Kotlin/Dart code keeps the `waqt` names.)
 
 <p>
 <img src="docs/screenshots/en_1_today.png" width="200">
