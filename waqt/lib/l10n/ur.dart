@@ -319,6 +319,9 @@ const Map<String, String> urStrings = {
   'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'نبی ﷺ پر کثرت سے درود بھیجیں۔ سورۂ کہف پڑھیں اور جمعہ کی تیاری کریں: غسل، صاف کپڑے، جلدی جائیں۔',
   'I did': 'نیت کر لی',
   'Remind me in 30 min': '30 منٹ بعد یاد دلائیں',
+  'Eid': 'عید',
+  'Chart': 'چارٹ',
+  'Cards': 'کارڈ',
 };
 
 const List<String> urHijriMonths = [

@@ -321,6 +321,9 @@ const Map<String, String> knStrings = {
   'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'ನಬಿ ﷺ ಮೇಲೆ ಹೆಚ್ಚು ಸಲವಾತ್ ಹೇಳಿ. ಸೂರಾ ಅಲ್-ಕಹ್ಫ್ ಓದಿ ಮತ್ತು ಜುಮುಅಕ್ಕೆ ಸಿದ್ಧರಾಗಿ: ಸ್ನಾನ, ಶುಚಿ ಬಟ್ಟೆ, ಬೇಗ ಹೋಗಿ.',
   'I did': 'ನಿಯ್ಯತ್ ಮಾಡಿದೆ',
   'Remind me in 30 min': '30 ನಿಮಿಷದ ನಂತರ ನೆನಪಿಸಿ',
+  'Eid': 'ಈದ್',
+  'Chart': 'ಚಾರ್ಟ್',
+  'Cards': 'ಕಾರ್ಡ್‌ಗಳು',
 };
 
 const List<String> knHijriMonths = [

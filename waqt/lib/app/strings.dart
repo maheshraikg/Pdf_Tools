@@ -730,4 +730,9 @@ class S {
   String get iDidNiyyah => _t('I did', 'നിയ്യത്ത് വെച്ചു');
   String get remindLater =>
       _t('Remind me in 30 min', '30 മിനിറ്റ് കഴിഞ്ഞ് ഓർമ്മിപ്പിക്കുക');
+
+  // Today as a chart.
+  String get eidShort => _t('Eid', 'പെരുന്നാൾ');
+  String get viewChart => _t('Chart', 'ചാർട്ട്');
+  String get viewCards => _t('Cards', 'കാർഡുകൾ');
 }

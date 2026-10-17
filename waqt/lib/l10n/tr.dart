@@ -320,6 +320,9 @@ const Map<String, String> trStrings = {
   'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'Peygamber ﷺ\'e bolca salavat getirin. Kehf suresini okuyun ve Cumaya hazırlanın: gusül, temiz elbise, erken gidin.',
   'I did': 'Niyet ettim',
   'Remind me in 30 min': '30 dk sonra hatırlat',
+  'Eid': 'Bayram',
+  'Chart': 'Çizelge',
+  'Cards': 'Kartlar',
 };
 
 const List<String> trHijriMonths = [

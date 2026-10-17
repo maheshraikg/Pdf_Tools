@@ -318,6 +318,9 @@ const Map<String, String> msStrings = {
   'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'Perbanyakkan selawat ke atas Nabi ﷺ. Baca Surah Al-Kahfi dan bersedia untuk Jumaat: mandi, pakaian bersih, pergi awal.',
   'I did': 'Sudah berniat',
   'Remind me in 30 min': 'Ingatkan dalam 30 minit',
+  'Eid': 'Hari Raya',
+  'Chart': 'Jadual',
+  'Cards': 'Kad',
 };
 
 const List<String> msHijriMonths = [

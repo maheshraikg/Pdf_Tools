@@ -318,6 +318,9 @@ const Map<String, String> taStrings = {
   'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'நபி ﷺ மீது அதிகமாக ஸலவாத் சொல்லுங்கள். சூரா அல்-கஹ்ஃப் ஓதி ஜும்ஆவுக்குத் தயாராகுங்கள்: குளியல், சுத்தமான உடை, சீக்கிரம் செல்லுங்கள்.',
   'I did': 'நிய்யத் வைத்தேன்',
   'Remind me in 30 min': '30 நிமிடத்தில் நினைவூட்டு',
+  'Eid': 'பெருநாள்',
+  'Chart': 'அட்டவணை',
+  'Cards': 'அட்டைகள்',
 };
 
 const List<String> taHijriMonths = [

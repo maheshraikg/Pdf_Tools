@@ -317,6 +317,9 @@ const Map<String, String> idStrings = {
   'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'Perbanyak selawat kepada Nabi ﷺ. Baca Surah Al-Kahfi dan bersiap untuk Jumat: mandi, pakaian bersih, datang lebih awal.',
   'I did': 'Sudah berniat',
   'Remind me in 30 min': 'Ingatkan 30 menit lagi',
+  'Eid': 'Id',
+  'Chart': 'Tabel',
+  'Cards': 'Kartu',
 };
 
 const List<String> idHijriMonths = [

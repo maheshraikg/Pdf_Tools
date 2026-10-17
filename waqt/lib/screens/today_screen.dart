@@ -16,6 +16,7 @@ import 'alerts_screen.dart';
 import 'display_screen.dart';
 import 'place_screen.dart';
 import 'prayer_sheet.dart';
+import 'prayer_table.dart';
 import 'tracker_screen.dart';
 
 /// Prayers shown as cards, in order (the other times are listed below).
@@ -133,7 +134,39 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
                 ],
                 _daySwitcher(context, day),
                 const SizedBox(height: 8),
-                for (final p in _cardPrayers) ...[
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: SegmentedButton<bool>(
+                    showSelectedIcon: false,
+                    style: const ButtonStyle(
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    segments: [
+                      ButtonSegment(
+                        value: true,
+                        icon: const Icon(Icons.table_rows_outlined, size: 18),
+                        label: Text(s.viewChart),
+                      ),
+                      ButtonSegment(
+                        value: false,
+                        icon: const Icon(Icons.view_agenda_outlined, size: 18),
+                        label: Text(s.viewCards),
+                      ),
+                    ],
+                    selected: {settings.todayTable},
+                    onSelectionChanged: (v) =>
+                        settings.updateQuietly((x) => x.todayTable = v.first),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                if (settings.todayTable) ...[
+                  PrayerTable(day: day, now: now, isNext: isNext),
+                  const SizedBox(height: 10),
+                ],
+                for (final p
+                    in settings.todayTable
+                        ? const <Prayer>[]
+                        : _cardPrayers) ...[
                   _PrayerCard(
                     day: day,
                     prayer: p,
@@ -147,7 +180,7 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
                   _trackerCard(context, day),
                   const SizedBox(height: 10),
                 ],
-                _MoreTimes(day: day),
+                if (!settings.todayTable) _MoreTimes(day: day),
                 const SizedBox(height: 18),
                 Text(
                   '${day.source == TimeSource.timetable ? s.fromTimetable : '${s.calculated} · ${settings.method.name}'}'

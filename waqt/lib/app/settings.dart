@@ -62,6 +62,9 @@ class AppSettings extends ChangeNotifier {
   bool use24h = false;
   bool showExtras = true;
 
+  /// Today as one chart (like the original app) instead of cards.
+  bool todayTable = true;
+
   Place place = presetPlaces.firstWhere((p) => p.id == 'kozhikode');
 
   /// True once the user has picked a place (first-run prompt).
@@ -237,6 +240,7 @@ class AppSettings extends ChangeNotifier {
         ThemeMode.values.asNameMap()[p.getString('theme')] ?? ThemeMode.system;
     use24h = p.getBool('use24h') ?? false;
     showExtras = p.getBool('showExtras') ?? true;
+    todayTable = p.getBool('todayTable') ?? true;
     final placeJson = p.getString('place');
     if (placeJson != null) {
       try {
@@ -327,6 +331,7 @@ class AppSettings extends ChangeNotifier {
     await p.setString('theme', themeMode.name);
     await p.setBool('use24h', use24h);
     await p.setBool('showExtras', showExtras);
+    await p.setBool('todayTable', todayTable);
     await p.setString('place', jsonEncode(place.toJson()));
     await p.setBool('placeChosen', placeChosen);
     await p.setBool('onboarded', onboarded);

@@ -321,6 +321,9 @@ const Map<String, String> bnStrings = {
   'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'নবী ﷺ-এর উপর বেশি বেশি দরুদ পড়ুন। সূরা কাহফ পড়ুন ও জুমার প্রস্তুতি নিন: গোসল, পরিষ্কার কাপড়, তাড়াতাড়ি যান।',
   'I did': 'নিয়ত করেছি',
   'Remind me in 30 min': '৩০ মিনিট পরে মনে করান',
+  'Eid': 'ঈদ',
+  'Chart': 'চার্ট',
+  'Cards': 'কার্ড',
 };
 
 const List<String> bnHijriMonths = [

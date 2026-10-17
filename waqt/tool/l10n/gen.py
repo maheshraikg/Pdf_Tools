@@ -17,7 +17,7 @@ T={}
 for f in ['tr_ar_ur','tr_hi_ta_kn','tr_bn_id_ms','tr_tr_fr']:
     spec=importlib.util.spec_from_file_location(f,os.path.join(D,f+'.py')); m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m); T.update(m.T)
 # Later additions, appended in key order.
-for f in ['tr_more','tr_more2','tr_more3','tr_more4','tr_more5']:
+for f in ['tr_more','tr_more2','tr_more3','tr_more4','tr_more5','tr_more6']:
     spec=importlib.util.spec_from_file_location(f,os.path.join(D,f+'.py')); m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
     for code,vals in m.T.items(): T[code]=T[code]+vals
 HIJRI={

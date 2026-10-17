@@ -320,6 +320,9 @@ const Map<String, String> arStrings = {
   'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'أكثروا من الصلاة على النبي ﷺ. اقرأ سورة الكهف واستعد للجمعة: الغسل، الثياب النظيفة، التبكير.',
   'I did': 'نويت',
   'Remind me in 30 min': 'ذكّرني بعد 30 دقيقة',
+  'Eid': 'العيد',
+  'Chart': 'جدول',
+  'Cards': 'بطاقات',
 };
 
 const List<String> arHijriMonths = [
