@@ -49,6 +49,10 @@ android {
             storePassword = "waqt-test"
             keyAlias = "waqt-test"
             keyPassword = "waqt-test"
+            // v1 (JAR) as well as v2: some phone makers' installers (seen on
+            // Xiaomi, Android 10) reject APKs without a v1 signature.
+            enableV1Signing = true
+            enableV2Signing = true
         }
         if (keyProps.containsKey("storeFile")) {
             create("release") {
@@ -56,7 +60,17 @@ android {
                 storePassword = keyProps.getProperty("storePassword")
                 keyAlias = keyProps.getProperty("keyAlias")
                 keyPassword = keyProps.getProperty("keyPassword")
+                enableV1Signing = true
+                enableV2Signing = true
             }
+        }
+    }
+
+    // Compressed native libraries, extracted at install: the most widely
+    // accepted packaging (also a smaller APK).
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
 
