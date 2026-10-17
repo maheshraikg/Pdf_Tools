@@ -134,31 +134,16 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
                 ],
                 _daySwitcher(context, day),
                 const SizedBox(height: 8),
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: SegmentedButton<bool>(
-                    showSelectedIcon: false,
-                    style: const ButtonStyle(
-                      visualDensity: VisualDensity.compact,
+                if (!settings.todayTable)
+                  Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: TextButton.icon(
+                      icon: const Icon(Icons.table_rows_outlined, size: 18),
+                      label: Text(s.viewChart),
+                      onPressed: () =>
+                          settings.updateQuietly((x) => x.todayTable = true),
                     ),
-                    segments: [
-                      ButtonSegment(
-                        value: true,
-                        icon: const Icon(Icons.table_rows_outlined, size: 18),
-                        label: Text(s.viewChart),
-                      ),
-                      ButtonSegment(
-                        value: false,
-                        icon: const Icon(Icons.view_agenda_outlined, size: 18),
-                        label: Text(s.viewCards),
-                      ),
-                    ],
-                    selected: {settings.todayTable},
-                    onSelectionChanged: (v) =>
-                        settings.updateQuietly((x) => x.todayTable = v.first),
                   ),
-                ),
-                const SizedBox(height: 8),
                 if (settings.todayTable) ...[
                   PrayerTable(day: day, now: now, isNext: isNext),
                   const SizedBox(height: 10),

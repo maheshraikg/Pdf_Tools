@@ -321,6 +321,24 @@ const Map<String, String> msStrings = {
   'Eid': 'Hari Raya',
   'Chart': 'Jadual',
   'Cards': 'Kad',
+  'Location settings': 'Tetapan lokasi',
+  '{0}: place and time source': '{0}: tempat dan sumber waktu',
+  'Automatic (GPS)': 'Automatik (GPS)',
+  'Finds your place and sets the usual method':
+      'Mencari tempat anda dan menetapkan kaedah biasa',
+  'Time source': 'Sumber waktu',
+  'Calculated for this place': 'Dikira untuk tempat ini',
+  'Mosque\'s yearly chart': 'Jadual tahunan masjid',
+  'Exact times from your mosque\'s printed calendar (import once)':
+      'Waktu tepat daripada kalendar bercetak masjid anda (import sekali)',
+  'How do you find your place?': 'Bagaimana mencari tempat anda?',
+  'Browse': 'Layari',
+  'Search': 'Cari',
+  'Coordinates': 'Koordinat',
+  'State': 'Negeri',
+  'District': 'Daerah',
+  'Place': 'Tempat',
+  'All': 'Semua',
 };
 
 const List<String> msHijriMonths = [

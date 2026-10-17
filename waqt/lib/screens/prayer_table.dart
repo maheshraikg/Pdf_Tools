@@ -179,10 +179,25 @@ class PrayerTable extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(14, 4, 4, 6),
+              padding: const EdgeInsetsDirectional.fromSTEB(2, 0, 4, 0),
               child: Row(
                 children: [
-                  const Expanded(child: SizedBox()),
+                  Expanded(
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: IconButton(
+                        tooltip: s.viewCards,
+                        visualDensity: VisualDensity.compact,
+                        icon: Icon(
+                          Icons.view_agenda_outlined,
+                          size: 20,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                        onPressed: () =>
+                            settings.updateQuietly((x) => x.todayTable = false),
+                      ),
+                    ),
+                  ),
                   SizedBox(
                     width: _timeW + _bellW,
                     child: Text(

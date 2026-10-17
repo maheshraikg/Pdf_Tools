@@ -34,6 +34,32 @@ Future<void> _pumpScreen(
   await tester.pump(const Duration(milliseconds: 100));
 }
 
+/// Location settings: switch to "Search" and bring its field into view.
+Future<void> _openSearch(WidgetTester tester) async {
+  await tester.scrollUntilVisible(
+    find.text('Search'),
+    200,
+    scrollable: find
+        .descendant(
+          of: find.byType(PlaceScreen),
+          matching: find.byType(Scrollable),
+        )
+        .first,
+  );
+  await Scrollable.ensureVisible(
+    tester.element(find.text('Search')),
+    alignment: 0.5,
+  );
+  await tester.pump(const Duration(milliseconds: 400));
+  await tester.tap(find.text('Search'));
+  await tester.pump();
+  await Scrollable.ensureVisible(
+    tester.element(find.byType(TextField)),
+    alignment: 0.3,
+  );
+  await tester.pump(const Duration(milliseconds: 400));
+}
+
 Future<void> _dispose(WidgetTester tester) async {
   await tester.pumpWidget(const SizedBox());
   await tester.pump(const Duration(seconds: 1));
@@ -50,7 +76,9 @@ void main() {
       tester.view.physicalSize = const Size(360 * 3, 720 * 3);
       tester.view.devicePixelRatio = 3;
       addTearDown(tester.view.reset);
-      final settings = AppSettings.memory()..lang = lang;
+      final settings = AppSettings.memory()
+        ..lang = lang
+        ..placeChosen = true;
       final s = settings;
       await _pumpApp(tester, settings);
 
@@ -98,9 +126,10 @@ void main() {
   testWidgets('picking a place applies its method', (tester) async {
     final settings = AppSettings.memory();
     await _pumpScreen(tester, settings, const PlaceScreen());
+    await _openSearch(tester);
     await tester.enterText(find.byType(TextField), 'dub');
     await tester.pump();
-    await tester.tap(find.text('Dubai'));
+    await tester.tap(find.text('Dubai').first);
     await tester.pump(const Duration(milliseconds: 300));
     expect(settings.place.id, 'dubai');
     expect(settings.method, CalcMethod.dubai);
@@ -255,9 +284,9 @@ void main() {
     await _pumpScreen(tester, settings, const PlaceScreen());
     await tester.runAsync(() => Future<void>.delayed(Duration.zero));
     await tester.pump();
+    await _openSearch(tester);
     await tester.enterText(find.byType(TextField), 'london');
     await tester.pump();
-    expect(find.text('World places'.toUpperCase()), findsOneWidget);
     await tester.tap(find.text('London').first);
     await tester.pumpAndSettle();
     expect(settings.place.timeZone, 'Europe/London');
@@ -327,7 +356,9 @@ void main() {
     final cont = find.widgetWithText(FilledButton, 'Continue');
     expect(tester.widget<FilledButton>(cont).onPressed, isNull);
     await tester.tap(find.text('Choose your place'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await _openSearch(tester);
     await tester.enterText(find.byType(TextField), 'tirur');
     await tester.pump();
     await tester.tap(find.text('Tirur').first);

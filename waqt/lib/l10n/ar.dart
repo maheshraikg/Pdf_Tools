@@ -323,6 +323,24 @@ const Map<String, String> arStrings = {
   'Eid': 'العيد',
   'Chart': 'جدول',
   'Cards': 'بطاقات',
+  'Location settings': 'إعدادات الموقع',
+  '{0}: place and time source': '{0}: المكان ومصدر الأوقات',
+  'Automatic (GPS)': 'تلقائي (GPS)',
+  'Finds your place and sets the usual method':
+      'يحدد مكانك ويضبط الطريقة المعتادة',
+  'Time source': 'مصدر الأوقات',
+  'Calculated for this place': 'محسوبة لهذا المكان',
+  'Mosque\'s yearly chart': 'جدول المسجد السنوي',
+  'Exact times from your mosque\'s printed calendar (import once)':
+      'أوقات دقيقة من تقويم مسجدك المطبوع (استيراد مرة واحدة)',
+  'How do you find your place?': 'كيف تجد مكانك؟',
+  'Browse': 'تصفح',
+  'Search': 'بحث',
+  'Coordinates': 'إحداثيات',
+  'State': 'الولاية',
+  'District': 'المنطقة',
+  'Place': 'المكان',
+  'All': 'الكل',
 };
 
 const List<String> arHijriMonths = [

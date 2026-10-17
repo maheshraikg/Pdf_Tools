@@ -319,6 +319,23 @@ const Map<String, String> frStrings = {
   'Eid': 'Aïd',
   'Chart': 'Tableau',
   'Cards': 'Cartes',
+  'Location settings': 'Paramètres du lieu',
+  '{0}: place and time source': '{0} : lieu et source des horaires',
+  'Automatic (GPS)': 'Automatique (GPS)',
+  'Finds your place and sets the usual method':
+      'Trouve votre lieu et règle la méthode habituelle',
+  'Time source': 'Source des horaires',
+  'Calculated for this place': 'Calculés pour ce lieu',
+  'Mosque\'s yearly chart': 'Calendrier annuel de la mosquée',
+  'Exact times from your mosque\'s printed calendar (import once)': 'Horaires exacts du calendrier imprimé de votre mosquée (à importer une fois)',
+  'How do you find your place?': 'Comment trouver votre lieu ?',
+  'Browse': 'Parcourir',
+  'Search': 'Rechercher',
+  'Coordinates': 'Coordonnées',
+  'State': 'État',
+  'District': 'District',
+  'Place': 'Lieu',
+  'All': 'Tous',
 };
 
 const List<String> frHijriMonths = [

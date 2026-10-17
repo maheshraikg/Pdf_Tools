@@ -3,6 +3,7 @@ import 'package:waqt/app/background.dart';
 import 'package:waqt/app/settings.dart';
 import 'package:waqt/core/cities.dart';
 import 'package:waqt/core/masjid.dart';
+import 'package:waqt/core/place.dart';
 import 'package:waqt/core/prayer_calc.dart';
 
 void main() {
@@ -38,6 +39,27 @@ void main() {
       expect(s.alerts.of(Prayer.dhuhr).iqamaDelay, 25);
       await s.selectMasjid(0);
       expect(s.alerts.of(Prayer.dhuhr).iqamaDelay, 12);
+    });
+
+    test('each mosque keeps its own place and time source', () async {
+      final s = AppSettings.memory();
+      await s.choosePlace(presetPlaces.firstWhere((p) => p.id == 'kannur'));
+      s.masjids = [Masjid.fromAlerts('A', '', s.alerts)];
+      s.activeMasjid = 0;
+      await s.update((x) {
+        x.masjids = [...x.masjids, Masjid.fromAlerts('B', '', x.alerts)];
+      });
+      await s.selectMasjid(1);
+      await s.choosePlace(presetPlaces.firstWhere((p) => p.id == 'dubai'));
+      expect(s.method.id, 'dubai');
+      await s.selectMasjid(0);
+      expect(s.place.id, 'kannur');
+      expect(s.method.id, 'kerala');
+      await s.selectMasjid(1);
+      expect(s.place.id, 'dubai');
+      // Survives saving.
+      final back = Masjid.fromJson(s.masjids[1].toJson());
+      expect(back.source?.place.id, 'dubai');
     });
 
     test('deleting the active mosque hands over to the next', () async {

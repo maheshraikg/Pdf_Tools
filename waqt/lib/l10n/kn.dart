@@ -324,6 +324,24 @@ const Map<String, String> knStrings = {
   'Eid': 'ಈದ್',
   'Chart': 'ಚಾರ್ಟ್',
   'Cards': 'ಕಾರ್ಡ್‌ಗಳು',
+  'Location settings': 'ಸ್ಥಳ ಸೆಟ್ಟಿಂಗ್‌ಗಳು',
+  '{0}: place and time source': '{0}: ಸ್ಥಳ ಮತ್ತು ಸಮಯದ ಮೂಲ',
+  'Automatic (GPS)': 'ಸ್ವಯಂಚಾಲಿತ (GPS)',
+  'Finds your place and sets the usual method':
+      'ನಿಮ್ಮ ಸ್ಥಳ ಕಂಡುಹಿಡಿದು ಸಾಮಾನ್ಯ ವಿಧಾನ ಹೊಂದಿಸುತ್ತದೆ',
+  'Time source': 'ಸಮಯದ ಮೂಲ',
+  'Calculated for this place': 'ಈ ಸ್ಥಳಕ್ಕೆ ಲೆಕ್ಕ ಹಾಕಿದ್ದು',
+  'Mosque\'s yearly chart': 'ಮಸೀದಿಯ ವಾರ್ಷಿಕ ಚಾರ್ಟ್',
+  'Exact times from your mosque\'s printed calendar (import once)':
+      'ನಿಮ್ಮ ಮಸೀದಿಯ ಮುದ್ರಿತ ಕ್ಯಾಲೆಂಡರ್‌ನ ನಿಖರ ಸಮಯಗಳು (ಒಮ್ಮೆ ಇಂಪೋರ್ಟ್ ಮಾಡಿ)',
+  'How do you find your place?': 'ನಿಮ್ಮ ಸ್ಥಳ ಹೇಗೆ ಹುಡುಕುವುದು?',
+  'Browse': 'ಬ್ರೌಸ್',
+  'Search': 'ಹುಡುಕಿ',
+  'Coordinates': 'ನಿರ್ದೇಶಾಂಕಗಳು',
+  'State': 'ರಾಜ್ಯ',
+  'District': 'ಜಿಲ್ಲೆ',
+  'Place': 'ಸ್ಥಳ',
+  'All': 'ಎಲ್ಲಾ',
 };
 
 const List<String> knHijriMonths = [

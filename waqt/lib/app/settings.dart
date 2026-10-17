@@ -102,10 +102,23 @@ class AppSettings extends ChangeNotifier {
   Future<void> selectMasjid(int i) => update((s) {
     s._syncMasjid();
     s.activeMasjid = i.clamp(0, s.masjids.length - 1);
-    final m = s.masjids[s.activeMasjid];
-    s.alerts = m.applyTo(s.alerts);
-    if (m.adjustments != null) s.adjustments = Map.of(m.adjustments!);
+    s._applyMasjid(s.masjids[s.activeMasjid]);
   });
+
+  /// Takes over a profile's Iqama times, adjustments and time source.
+  void _applyMasjid(Masjid m) {
+    alerts = m.applyTo(alerts);
+    if (m.adjustments != null) adjustments = Map.of(m.adjustments!);
+    final src = m.source;
+    if (src != null) {
+      place = src.place;
+      method = CalcMethod.byId(src.methodId);
+      asr = src.asr;
+      timetableCsv = src.timetableCsv;
+      timetableEnabled = src.timetableEnabled && src.timetableCsv != null;
+      if (src.place.id != 'gps') autoLocation = false;
+    }
+  }
 
   /// Deletes profile [i]; if it was active, the next one takes over.
   Future<void> removeMasjid(int i) => update((s) {
@@ -118,9 +131,7 @@ class AppSettings extends ChangeNotifier {
     if (s.masjids.isEmpty) {
       s.activeMasjid = 0;
     } else if (wasActive) {
-      final m = s.masjids[s.activeMasjid];
-      s.alerts = m.applyTo(s.alerts);
-      if (m.adjustments != null) s.adjustments = Map.of(m.adjustments!);
+      s._applyMasjid(s.masjids[s.activeMasjid]);
     }
   });
 
@@ -132,6 +143,13 @@ class AppSettings extends ChangeNotifier {
       ..[activeMasjid] = masjids[activeMasjid].withIqamaFrom(
         alerts,
         adjustments,
+        MasjidSource(
+          place: place,
+          methodId: method.id,
+          asr: asr,
+          timetableCsv: timetableCsv,
+          timetableEnabled: timetableEnabled,
+        ),
       );
   }
 

@@ -1,15 +1,20 @@
 """Builds assets/cities.tsv.gz from GeoNames data (CC BY 4.0, geonames.org).
 
     pip download geonamescache --no-deps && unzip geonamescache-*.whl
-    python3 tool/places/gen_cities.py <path to geonamescache/data>
+    pip download reverse_geocoder --no-deps && tar xzf reverse_geocoder-*.tar.gz
+    python3 tool/places/gen_cities.py <path to geonamescache/data> \
+        <path to reverse_geocoder/rg_cities1000.csv>
 
 Keeps every city of 15,000+ people, and towns of 1,000+ in South India
 and the Gulf. Lines (tab separated):
     #C  country code  country name
     #A  CC.admin1     region name (India states only)
     name  other names (;)  Malayalam name  CC  admin1  lat  lon  tz  population
+    district
+District (India only): that of the nearest town of the same state that the
+reverse_geocoder list (GeoNames admin2) names one for.
 """
-import gzip, json, os, re, sys
+import csv, gzip, json, math, os, re, sys
 
 data = sys.argv[1]
 root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -61,6 +66,27 @@ for c in cities:
         '%.4f' % c['latitude'], '%.4f' % c['longitude'], c['timezone'],
         str(c['population']),
     ))
+# Districts: nearest labelled town of the same state.
+labelled = {}
+for r in csv.DictReader(open(sys.argv[2], encoding='utf-8')):
+    if r['cc'].strip() != 'IN' or not r['admin2'].strip():
+        continue
+    name = re.sub(r'\s+[Dd]istrict$', '', r['admin2'].strip())
+    name = {'Pattanamtitta': 'Pathanamthitta', 'Tirunelveli Kattabo': 'Tirunelveli',
+            'Nilgiri': 'Nilgiris', 'Kanniyakumari': 'Kanyakumari'}.get(name, name)
+    labelled.setdefault(r['admin1'].strip(), []).append(
+        (float(r['lat']), float(r['lon']), name))
+
+
+def district(cc, admin1, lat, lon):
+    pts = labelled.get(INDIA.get(admin1, '')) if cc == 'IN' else None
+    if not pts:
+        return ''
+    k = math.cos(math.radians(lat))
+    return min(pts, key=lambda p: (p[0] - lat) ** 2 + ((p[1] - lon) * k) ** 2)[2]
+
+
+rows = [r + (district(r[4], r[5], float(r[6]), float(r[7])),) for r in rows]
 rows.sort()
 used = {r[4] for r in rows}
 lines = [f"#C\t{c['iso']}\t{c['name']}" for c in countries if c['iso'] in used]

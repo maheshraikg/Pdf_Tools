@@ -15,6 +15,7 @@ class City {
     required this.country,
     required this.countryName,
     this.regionName,
+    this.district,
     required this.latitude,
     required this.longitude,
     required this.timeZone,
@@ -30,6 +31,9 @@ class City {
 
   /// State (India only).
   final String? regionName;
+
+  /// District (India only).
+  final String? district;
   final double latitude, longitude;
   final String timeZone;
   final int population;
@@ -119,6 +123,7 @@ List<City> parseCities(String text) {
           country: f[3],
           countryName: countries[f[3]] ?? f[3],
           regionName: regions['${f[3]}.${f[4]}'],
+          district: f.length > 9 && f[9].isNotEmpty ? f[9] : null,
           latitude: double.parse(f[5]),
           longitude: double.parse(f[6]),
           timeZone: f[7],

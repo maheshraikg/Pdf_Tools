@@ -8,7 +8,8 @@ import '../core/cities.dart';
 import '../core/place.dart';
 import '../core/timetable.dart';
 import '../ui/widgets.dart';
-import 'place_browse_screen.dart';
+import '../core/prayer_calc.dart';
+import 'timetable_screen.dart';
 
 class PlaceScreen extends StatefulWidget {
   const PlaceScreen({super.key});
@@ -17,18 +18,53 @@ class PlaceScreen extends StatefulWidget {
   State<PlaceScreen> createState() => _PlaceScreenState();
 }
 
+enum _Find { browse, search, coordinates }
+
 class _PlaceScreenState extends State<PlaceScreen> {
   String _query = '';
   bool _locating = false;
   List<City>? _cities;
+  _Find _find = _Find.browse;
+
+  /// Browse selection: country, state and district names.
+  String? _country, _state, _district;
 
   @override
   void initState() {
     super.initState();
     loadCities().then((c) {
-      if (mounted) setState(() => _cities = c);
+      if (!mounted) return;
+      setState(() {
+        _cities = c;
+        _selectFrom(_currentCity(c));
+      });
     }, onError: (Object _) {});
   }
+
+  /// The listed town of the current place (or the closest one).
+  City? _currentCity(List<City> cities) {
+    final p = context.settings.place;
+    for (final c in cities) {
+      if (p.id.startsWith('gn:') && c.toPlace().id == p.id) return c;
+    }
+    return nearestCity(cities, p.latitude, p.longitude);
+  }
+
+  void _selectFrom(City? c) {
+    _country = c?.countryName ?? 'India';
+    _state = c?.regionName;
+    _district = c?.district;
+  }
+
+  /// A searchable list in a bottom sheet; returns the picked item.
+  Future<T?> _pick<T>(String title, List<T> items, String Function(T) label) =>
+      showModalBottomSheet<T>(
+        context: context,
+        isScrollControlled: true,
+        showDragHandle: true,
+        builder: (context) =>
+            _PickSheet<T>(title: title, items: items, label: label),
+      );
 
   Future<void> _useGps() async {
     final s = context.s, settings = context.settings;
@@ -142,63 +178,137 @@ class _PlaceScreenState extends State<PlaceScreen> {
   @override
   Widget build(BuildContext context) {
     final s = context.s, settings = context.settings;
-    final q = _query.trim().toLowerCase();
-    final places = presetPlaces
-        .where(
-          (p) =>
-              q.isEmpty ||
-              p.name.toLowerCase().contains(q) ||
-              (p.nameMl?.contains(q) ?? false) ||
-              p.region.toLowerCase().contains(q),
-        )
-        .toList();
-
-    // Group the (filtered) places by region, keeping their order.
-    final regions = <String, List<Place>>{};
-    for (final p in places) {
-      regions.putIfAbsent(p.region, () => []).add(p);
-    }
     final scheme = Theme.of(context).colorScheme;
-    final world = _cities == null
+    final t = Theme.of(context).textTheme;
+    final cities = _cities;
+    final masjid = settings.masjid?.name ?? s.masjidN(1);
+
+    Future<void> choose(Place p, {bool pop = false}) async {
+      await settings.choosePlace(p);
+      if (pop && context.mounted) Navigator.pop(context);
+    }
+
+    // Browse levels.
+    final inCountry = cities == null
+        ? const <City>[]
+        : cities.where((c) => c.countryName == _country).toList();
+    final states = {
+      for (final c in inCountry)
+        if (c.regionName != null) c.regionName!,
+    }.toList()..sort();
+    final inState = _state == null
+        ? inCountry
+        : inCountry.where((c) => c.regionName == _state).toList();
+    final districts = {
+      for (final c in inState)
+        if (c.district != null) c.district!,
+    }.toList()..sort();
+    final towns =
+        (_district == null
+                ? inState
+                : inState.where((c) => c.district == _district).toList())
+            .toList()
+          ..sort(
+            (a, b) => foldForSearch(a.name).compareTo(foldForSearch(b.name)),
+          );
+    String townName(City c) => s.ml && c.nameMl != null ? c.nameMl! : c.name;
+
+    Widget level(String title, String? value, VoidCallback? onTap) => ListTile(
+      title: Text(
+        title,
+        style: t.labelMedium?.copyWith(
+          color: scheme.primary,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      subtitle: Text(
+        value ?? s.choose,
+        style: t.titleMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: value == null ? scheme.onSurfaceVariant : null,
+        ),
+      ),
+      trailing: const Icon(Icons.unfold_more),
+      onTap: onTap,
+    );
+
+    final world = cities == null
         ? const <City>[]
         : searchCities(
-            _cities!,
+            cities,
             _query,
             near: (settings.place.latitude, settings.place.longitude),
           );
+    final q = _query.trim().toLowerCase();
+    final presets = q.length < 2
+        ? const <Place>[]
+        : presetPlaces
+              .where(
+                (p) =>
+                    p.name.toLowerCase().contains(q) ||
+                    (p.nameMl?.contains(q) ?? false),
+              )
+              .toList();
 
     return Scaffold(
-      appBar: AppBar(title: Text(s.location)),
+      appBar: AppBar(title: Text(s.locationSettings)),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 24),
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-            child: TextField(
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
-                hintText: s.searchPlaces,
-              ),
-              onChanged: (v) => setState(() => _query = v),
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+            child: Text(
+              s.locationSettingsOf(masjid),
+              style: t.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
             ),
           ),
-          Section(
-            children: [
-              ListTile(
-                leading: _locating
-                    ? const SizedBox(
-                        width: 36,
-                        height: 36,
-                        child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      )
-                    : const IconBadge(Icons.my_location),
-                title: Text(_locating ? s.locating : s.useMyLocation),
-                onTap: _locating ? null : _useGps,
+          // The current place.
+          Card(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            child: ListTile(
+              leading: IconBadge(Icons.place, color: scheme.primary),
+              title: Text(
+                settings.place.label(s.ml),
+                style: t.titleMedium?.copyWith(fontWeight: FontWeight.w800),
               ),
-              if (settings.place.id == 'gps')
+              subtitle: Text(
+                [
+                  if (settings.place.region.isNotEmpty) settings.place.region,
+                  settings.timetableEnabled && settings.timetable != null
+                      ? settings.timetable!.name
+                      : settings.method.name,
+                ].join(' · '),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: FilledButton.icon(
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(56),
+              ),
+              icon: _locating
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.my_location),
+              label: Text(_locating ? s.locating : s.automaticGps),
+              onPressed: _locating ? null : _useGps,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 6, 20, 0),
+            child: Text(
+              s.automaticHelp,
+              textAlign: TextAlign.center,
+              style: t.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+            ),
+          ),
+          if (settings.place.id == 'gps')
+            Section(
+              children: [
                 SwitchListTile(
                   secondary: const IconBadge(Icons.sync),
                   title: Text(s.autoLocation),
@@ -206,74 +316,277 @@ class _PlaceScreenState extends State<PlaceScreen> {
                   value: settings.autoLocation,
                   onChanged: (v) => settings.update((x) => x.autoLocation = v),
                 ),
-              ListTile(
-                leading: const IconBadge(Icons.public),
-                title: Text(s.browsePlaces),
-                subtitle: Text(s.browsePlacesHelp),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () async {
-                  final picked = await Navigator.push<bool>(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const PlaceBrowseScreen(),
-                    ),
-                  );
-                  if (picked == true && context.mounted) Navigator.pop(context);
+              ],
+            ),
+          Section(
+            title: s.timeSource,
+            children: [
+              RadioGroup<bool>(
+                groupValue: settings.timetableEnabled,
+                onChanged: (v) async {
+                  if (v == true && settings.timetableCsv == null) {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (_) => const TimetableScreen(),
+                      ),
+                    );
+                    return;
+                  }
+                  await settings.update((x) => x.timetableEnabled = v == true);
                 },
+                child: Column(
+                  children: [
+                    RadioListTile<bool>(
+                      value: false,
+                      title: Text(s.calculatedSource),
+                      subtitle: Text(
+                        '${settings.method.name} · ${s.asrName(settings.asr)}',
+                      ),
+                    ),
+                    RadioListTile<bool>(
+                      value: true,
+                      title: Text(s.chartSource),
+                      subtitle: Text(
+                        settings.timetableCsv != null &&
+                                settings.timetable != null
+                            ? settings.timetable!.name
+                            : s.chartSourceHelp,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              ListTile(
-                leading: const IconBadge(Icons.edit_location_alt_outlined),
-                title: Text(s.enterCoordinates),
-                onTap: _manual,
-              ),
+              if (!settings.timetableEnabled)
+                ListTile(
+                  leading: const IconBadge(Icons.calculate_outlined),
+                  title: Text(s.method),
+                  subtitle: Text(settings.method.name),
+                  trailing: const Icon(Icons.unfold_more),
+                  onTap: () async {
+                    final m = await _pick<CalcMethod>(
+                      s.method,
+                      CalcMethod.all,
+                      (m) => m.name,
+                    );
+                    if (m != null) await settings.update((x) => x.method = m);
+                  },
+                )
+              else
+                ListTile(
+                  leading: const IconBadge(Icons.table_chart),
+                  title: Text(s.timetable),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (_) => const TimetableScreen(),
+                    ),
+                  ),
+                ),
             ],
           ),
-          for (final e in regions.entries)
-            Section(
-              title: e.key,
-              children: [
-                for (final p in e.value)
+          Section(
+            title: s.howFindPlace,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+                child: SegmentedButton<_Find>(
+                  showSelectedIcon: false,
+                  segments: [
+                    ButtonSegment(value: _Find.browse, label: Text(s.browse)),
+                    ButtonSegment(value: _Find.search, label: Text(s.search)),
+                    ButtonSegment(
+                      value: _Find.coordinates,
+                      label: Text(s.coordinates),
+                    ),
+                  ],
+                  selected: {_find},
+                  onSelectionChanged: (v) => setState(() => _find = v.first),
+                ),
+              ),
+              if (_find == _Find.browse) ...[
+                if (cities == null)
+                  const Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                else ...[
+                  level(s.country, _country, () async {
+                    final names =
+                        {for (final c in cities) c.countryName}.toList()
+                          ..sort((a, b) {
+                            if (a == 'India') return -1;
+                            if (b == 'India') return 1;
+                            return a.compareTo(b);
+                          });
+                    final v = await _pick<String>(s.country, names, (x) => x);
+                    if (v != null && v != _country) {
+                      setState(() {
+                        _country = v;
+                        _state = _district = null;
+                      });
+                    }
+                  }),
+                  if (states.isNotEmpty)
+                    level(s.state, _state, () async {
+                      final v = await _pick<String>(s.state, states, (x) => x);
+                      if (v != null && v != _state) {
+                        setState(() {
+                          _state = v;
+                          _district = null;
+                        });
+                      }
+                    }),
+                  if (_state != null && districts.isNotEmpty)
+                    level(s.district, _district, () async {
+                      final v = await _pick<String>(s.district, [
+                        s.all,
+                        ...districts,
+                      ], (x) => x);
+                      if (v != null) {
+                        setState(() => _district = v == s.all ? null : v);
+                      }
+                    }),
+                  level(
+                    s.place,
+                    () {
+                      final cur = _currentCity(cities);
+                      return cur != null &&
+                              cur.countryName == _country &&
+                              (_state == null || cur.regionName == _state)
+                          ? townName(cur)
+                          : null;
+                    }(),
+                    states.isNotEmpty && _state == null
+                        ? null
+                        : () async {
+                            final c = await _pick<City>(
+                              s.place,
+                              towns,
+                              townName,
+                            );
+                            if (c != null) await choose(c.toPlace());
+                          },
+                  ),
+                ],
+              ],
+              if (_find == _Find.search) ...[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.search),
+                      hintText: s.searchPlaces,
+                    ),
+                    onChanged: (v) => setState(() => _query = v),
+                  ),
+                ),
+                for (final p in presets)
                   ListTile(
                     title: Text(p.label(s.ml)),
-                    subtitle: s.ml && p.nameMl != null ? Text(p.name) : null,
+                    subtitle: Text(p.region),
                     trailing: settings.place.id == p.id
                         ? Icon(Icons.check_circle, color: scheme.primary)
                         : null,
-                    onTap: () async {
-                      await settings.choosePlace(p);
-                      if (context.mounted) Navigator.pop(context);
-                    },
+                    onTap: () => choose(p, pop: true),
                   ),
-              ],
-            ),
-          if (world.isNotEmpty)
-            Section(
-              title: s.worldPlaces,
-              children: [
                 for (final c in world)
                   ListTile(
-                    title: Text(s.ml && c.nameMl != null ? c.nameMl! : c.name),
-                    subtitle: Text(c.region),
+                    title: Text(townName(c)),
+                    subtitle: Text(
+                      c.district == null
+                          ? c.region
+                          : '${c.district}, ${c.region}',
+                    ),
                     trailing: settings.place.id == c.toPlace().id
                         ? Icon(Icons.check_circle, color: scheme.primary)
                         : null,
-                    onTap: () async {
-                      await settings.choosePlace(c.toPlace());
-                      if (context.mounted) Navigator.pop(context);
-                    },
+                    onTap: () => choose(c.toPlace(), pop: true),
                   ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+                  child: Text(
+                    q.isEmpty ? s.searchWorldHint : s.geonamesCredit,
+                    style: t.bodySmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
               ],
+              if (_find == _Find.coordinates)
+                ListTile(
+                  leading: const IconBadge(Icons.edit_location_alt_outlined),
+                  title: Text(s.enterCoordinates),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: _manual,
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Bottom-sheet list with a filter field.
+class _PickSheet<T> extends StatefulWidget {
+  const _PickSheet({
+    required this.title,
+    required this.items,
+    required this.label,
+  });
+
+  final String title;
+  final List<T> items;
+  final String Function(T) label;
+
+  @override
+  State<_PickSheet<T>> createState() => _PickSheetState<T>();
+}
+
+class _PickSheetState<T> extends State<_PickSheet<T>> {
+  String _filter = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final s = context.s;
+    final f = foldForSearch(_filter.trim());
+    final items = widget.items
+        .where((x) => f.isEmpty || foldForSearch(widget.label(x)).contains(f))
+        .toList();
+    return SafeArea(
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.75,
+        child: Column(
+          children: [
+            Text(
+              widget.title,
+              style: Theme.of(context).textTheme.titleLarge
+                  ?.copyWith(fontWeight: FontWeight.w800),
             ),
-          if (q.isEmpty || world.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-              child: Text(
-                q.isEmpty ? s.searchWorldHint : s.geonamesCredit,
-                style: Theme.of(context).textTheme.bodySmall
-                    ?.copyWith(color: scheme.onSurfaceVariant),
+            if (widget.items.length > 8)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                child: TextField(
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.filter_list),
+                    hintText: s.filter,
+                  ),
+                  onChanged: (v) => setState(() => _filter = v),
+                ),
+              ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: items.length,
+                itemBuilder: (context, i) => ListTile(
+                  title: Text(widget.label(items[i])),
+                  onTap: () => Navigator.pop(context, items[i]),
+                ),
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }

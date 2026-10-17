@@ -321,6 +321,24 @@ const Map<String, String> taStrings = {
   'Eid': 'பெருநாள்',
   'Chart': 'அட்டவணை',
   'Cards': 'அட்டைகள்',
+  'Location settings': 'இட அமைப்புகள்',
+  '{0}: place and time source': '{0}: இடம் மற்றும் நேர மூலம்',
+  'Automatic (GPS)': 'தானியங்கி (GPS)',
+  'Finds your place and sets the usual method':
+      'உங்கள் இடத்தைக் கண்டறிந்து வழக்கமான முறையை அமைக்கும்',
+  'Time source': 'நேர மூலம்',
+  'Calculated for this place': 'இந்த இடத்திற்குக் கணக்கிட்டது',
+  'Mosque\'s yearly chart': 'பள்ளிவாசலின் ஆண்டு அட்டவணை',
+  'Exact times from your mosque\'s printed calendar (import once)':
+      'உங்கள் பள்ளிவாசல் நாட்காட்டியின் துல்லிய நேரங்கள் (ஒருமுறை இறக்கவும்)',
+  'How do you find your place?': 'உங்கள் இடத்தை எப்படிக் கண்டறிவது?',
+  'Browse': 'உலாவு',
+  'Search': 'தேடு',
+  'Coordinates': 'ஆயத்தொலைவுகள்',
+  'State': 'மாநிலம்',
+  'District': 'மாவட்டம்',
+  'Place': 'இடம்',
+  'All': 'அனைத்தும்',
 };
 
 const List<String> taHijriMonths = [

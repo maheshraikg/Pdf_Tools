@@ -735,4 +735,32 @@ class S {
   String get eidShort => _t('Eid', 'പെരുന്നാൾ');
   String get viewChart => _t('Chart', 'ചാർട്ട്');
   String get viewCards => _t('Cards', 'കാർഡുകൾ');
+
+  // Location settings (like the original app's).
+  String get locationSettings => _t('Location settings', 'സ്ഥല ക്രമീകരണം');
+  String locationSettingsOf(String masjid) =>
+      _f('{0}: place and time source', '{0}: സ്ഥലവും സമയ സ്രോതസ്സും', [masjid]);
+  String get automaticGps => _t('Automatic (GPS)', 'ഓട്ടോമാറ്റിക് (GPS)');
+  String get automaticHelp => _t(
+    'Finds your place and sets the usual method',
+    'നിങ്ങളുടെ സ്ഥലം കണ്ടെത്തി സാധാരണ രീതി സജ്ജമാക്കും',
+  );
+  String get timeSource => _t('Time source', 'സമയ സ്രോതസ്സ്');
+  String get calculatedSource =>
+      _t('Calculated for this place', 'ഈ സ്ഥലത്തിന് കണക്കാക്കിയത്');
+  String get chartSource =>
+      _t("Mosque's yearly chart", 'പള്ളിയുടെ വാർഷിക സമയ ചാർട്ട്');
+  String get chartSourceHelp => _t(
+    "Exact times from your mosque's printed calendar (import once)",
+    'പള്ളിയുടെ കലണ്ടറിലെ കൃത്യ സമയങ്ങൾ (ഒരിക്കൽ ഇംപോർട്ട് ചെയ്യുക)',
+  );
+  String get howFindPlace =>
+      _t('How do you find your place?', 'സ്ഥലം എങ്ങനെ കണ്ടെത്തും?');
+  String get browse => _t('Browse', 'ബ്രൗസ്');
+  String get search => _t('Search', 'തിരയുക');
+  String get coordinates => _t('Coordinates', 'കോർഡിനേറ്റുകൾ');
+  String get state => _t('State', 'സംസ്ഥാനം');
+  String get district => _t('District', 'ജില്ല');
+  String get place => _t('Place', 'സ്ഥലം');
+  String get all => _t('All', 'എല്ലാം');
 }

@@ -322,6 +322,24 @@ const Map<String, String> hiStrings = {
   'Eid': 'ईद',
   'Chart': 'चार्ट',
   'Cards': 'कार्ड',
+  'Location settings': 'स्थान सेटिंग',
+  '{0}: place and time source': '{0}: स्थान और समय का स्रोत',
+  'Automatic (GPS)': 'स्वचालित (GPS)',
+  'Finds your place and sets the usual method':
+      'आपका स्थान ढूँढकर सामान्य तरीका लगाता है',
+  'Time source': 'समय का स्रोत',
+  'Calculated for this place': 'इस स्थान के लिए गणना',
+  'Mosque\'s yearly chart': 'मस्जिद का सालाना चार्ट',
+  'Exact times from your mosque\'s printed calendar (import once)':
+      'आपकी मस्जिद के छपे कैलेंडर के सही समय (एक बार इम्पोर्ट करें)',
+  'How do you find your place?': 'अपना स्थान कैसे ढूँढें?',
+  'Browse': 'ब्राउज़',
+  'Search': 'खोज',
+  'Coordinates': 'निर्देशांक',
+  'State': 'राज्य',
+  'District': 'ज़िला',
+  'Place': 'स्थान',
+  'All': 'सभी',
 };
 
 const List<String> hiHijriMonths = [

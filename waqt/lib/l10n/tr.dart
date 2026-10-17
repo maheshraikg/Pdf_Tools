@@ -323,6 +323,24 @@ const Map<String, String> trStrings = {
   'Eid': 'Bayram',
   'Chart': 'Çizelge',
   'Cards': 'Kartlar',
+  'Location settings': 'Konum ayarları',
+  '{0}: place and time source': '{0}: yer ve vakit kaynağı',
+  'Automatic (GPS)': 'Otomatik (GPS)',
+  'Finds your place and sets the usual method':
+      'Yerinizi bulur ve olağan yöntemi ayarlar',
+  'Time source': 'Vakit kaynağı',
+  'Calculated for this place': 'Bu yer için hesaplanan',
+  'Mosque\'s yearly chart': 'Caminin yıllık çizelgesi',
+  'Exact times from your mosque\'s printed calendar (import once)':
+      'Caminizin basılı takviminden tam vakitler (bir kez içe aktarın)',
+  'How do you find your place?': 'Yerinizi nasıl bulursunuz?',
+  'Browse': 'Göz at',
+  'Search': 'Ara',
+  'Coordinates': 'Koordinatlar',
+  'State': 'Eyalet',
+  'District': 'İlçe',
+  'Place': 'Yer',
+  'All': 'Tümü',
 };
 
 const List<String> trHijriMonths = [
