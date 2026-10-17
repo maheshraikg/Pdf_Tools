@@ -1,0 +1,68 @@
+name: Beat Mitra (Flutter)
+
+on:
+  push:
+    paths: [ 'beat_mitra/**', '.github/workflows/beat-mitra.yml' ]
+  pull_request:
+    paths: [ 'beat_mitra/**', '.github/workflows/beat-mitra.yml' ]
+  workflow_dispatch:
+
+concurrency:
+  group: beat-mitra-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: beat_mitra
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.6'
+          channel: stable
+          cache: true
+
+      - name: Install packages
+        run: flutter pub get
+
+      - name: Check generated translations are up to date
+        run: |
+          python3 tool/gen_arb.py
+          flutter gen-l10n
+          git diff --exit-code -- lib/core/l10n
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+      - name: Build release APKs (offline + map)
+        run: |
+          flutter build apk --release --flavor offline
+          flutter build apk --release --flavor map
+          ls -l build/app/outputs/flutter-apk/
+
+      - name: Check the offline APK has no INTERNET permission
+        run: |
+          AAPT2=$(ls -d $ANDROID_HOME/build-tools/*/ | sort -V | tail -1)aapt2
+          $AAPT2 dump permissions build/app/outputs/flutter-apk/app-offline-release.apk | tee perms.txt
+          if grep -q "android.permission.INTERNET" perms.txt; then echo "INTERNET found in offline APK"; exit 1; fi
+          $AAPT2 dump permissions build/app/outputs/flutter-apk/app-map-release.apk | grep -q "android.permission.INTERNET"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: beat-mitra-apks
+          path: |
+            beat_mitra/build/app/outputs/flutter-apk/app-offline-release.apk
+            beat_mitra/build/app/outputs/flutter-apk/app-map-release.apk
+          if-no-files-found: error
