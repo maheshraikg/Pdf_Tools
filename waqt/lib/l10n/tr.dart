@@ -36,10 +36,8 @@ const Map<String, String> trStrings = {
   'Choose': 'Seç',
   'Alerts may be missed': 'Uyarılar kaçırılabilir',
   'Allow notifications': 'Bildirimlere izin ver',
-  'Allow exact alarms (on time Azan)':
-      'Tam zamanlı alarmlara izin ver (zamanında ezan)',
-  'Turn off battery optimisation for Azan Time':
-      'Azan Time için pil optimizasyonunu kapat',
+  'Allow exact alarms (on time Azan)': 'Tam zamanlı alarmlara izin ver (zamanında ezan)',
+  'Turn off battery optimisation for Azan Time': 'Azan Time için pil optimizasyonunu kapat',
   'Some phones (Xiaomi, Oppo, Vivo, Realme, Samsung) stop apps in the background. Set Azan Time to "Unrestricted" / "No restrictions" in battery settings so Azan is never missed.': 'Bazı telefonlar (Xiaomi, Oppo, Vivo, Realme, Samsung) arka plandaki uygulamaları durdurur. Ezanı kaçırmamak için pil ayarlarında Azan Time\'ı "Kısıtlamasız" yapın.',
   'Fix': 'Düzelt',
   'Date': 'Tarih',
@@ -66,8 +64,7 @@ const Map<String, String> trStrings = {
   'One seventh of the night': 'Gecenin yedide biri',
   'Angle based (recommended)': 'Açıya göre (önerilen)',
   'Adjust times (minutes)': 'Vakitleri ayarla (dakika)',
-  'Match your mosque: add or subtract minutes for each time.':
-      'Caminize uydurun: her vakte dakika ekleyin veya çıkarın.',
+  'Match your mosque: add or subtract minutes for each time.': 'Caminize uydurun: her vakte dakika ekleyin veya çıkarın.',
   'Imsak before Fajr': 'Sabahtan önce imsak',
   'Ishraq after sunrise': 'Güneşten sonra işrak',
   'Hijri date correction': 'Hicri tarih düzeltmesi',
@@ -89,23 +86,18 @@ const Map<String, String> trStrings = {
   'Name': 'Ad',
   'Latitude': 'Enlem',
   'Longitude': 'Boylam',
-  'UTC offset, e.g. +05:30 (empty = phone time zone)':
-      'UTC farkı, ör. +03:00 (boş = telefonun saat dilimi)',
+  'UTC offset, e.g. +05:30 (empty = phone time zone)': 'UTC farkı, ör. +03:00 (boş = telefonun saat dilimi)',
   'Finding your location…': 'Konumunuz bulunuyor…',
   'Location permission denied.': 'Konum izni reddedildi.',
-  'Location is turned off. Turn it on and try again.':
-      'Konum kapalı. Açıp tekrar deneyin.',
-  'Could not get a location. Try again outdoors, or pick a place.':
-      'Konum alınamadı. Dışarıda deneyin veya bir yer seçin.',
+  'Location is turned off. Turn it on and try again.': 'Konum kapalı. Açıp tekrar deneyin.',
+  'Could not get a location. Try again outdoors, or pick a place.': 'Konum alınamadı. Dışarıda deneyin veya bir yer seçin.',
   'Enter valid coordinates.': 'Geçerli koordinat girin.',
   'Azan alert': 'Ezan uyarısı',
   'Iqama alert': 'Kamet uyarısı',
   'Fixed Iqama time': 'Sabit kamet saati',
   'Fixed Jumu\'ah Iqama time': 'Sabit Cuma kamet saati',
-  'Off: uses the minutes after Azan':
-      'Kapalı: ezandan sonraki dakika kullanılır',
-  'Used when it is after Azan; otherwise the minutes after Azan':
-      'Ezandan sonraysa bu, değilse ezandan sonraki dakika',
+  'Off: uses the minutes after Azan': 'Kapalı: ezandan sonraki dakika kullanılır',
+  'Used when it is after Azan; otherwise the minutes after Azan': 'Ezandan sonraysa bu, değilse ezandan sonraki dakika',
   'Clear': 'Temizle',
   'Iqama after Azan': 'Ezandan sonra kamet',
   'Reminder before Azan': 'Ezandan önce hatırlatma',
@@ -129,10 +121,8 @@ const Map<String, String> trStrings = {
   '{0} in {1} min': '{0} {1} dk sonra',
   'Imsak – Suhoor ends': 'İmsak – sahur biter',
   '{0} time': '{0} vakti',
-  'Open Azan Time to keep alerts on':
-      'Uyarıların sürmesi için Azan Time\'ı açın',
-  'Scheduled alerts end in a day. Tap to schedule the next days.':
-      'Planlanan uyarılar bir gün içinde bitiyor. Sonraki günler için dokunun.',
+  'Open Azan Time to keep alerts on': 'Uyarıların sürmesi için Azan Time\'ı açın',
+  'Scheduled alerts end in a day. Tap to schedule the next days.': 'Planlanan uyarılar bir gün içinde bitiyor. Sonraki günler için dokunun.',
   'Reminders': 'Hatırlatmalar',
   'For times that match your mosque exactly, import its yearly chart (for example a Samastha calendar) as a CSV file. Dates the table does not cover are calculated.': 'Caminizle tam uyumlu vakitler için yıllık takvimini CSV dosyası olarak içe aktarın. Takvimde olmayan günler hesaplanır.',
   'Import CSV file': 'CSV dosyası içe aktar',
@@ -162,8 +152,7 @@ const Map<String, String> trStrings = {
   'Deep bell': 'Derin çan',
   'Audio file (e.g. Azan MP3)': 'Ses dosyası (ör. ezan MP3)',
   'Repeats until you dismiss it': 'Kapatana kadar tekrarlar',
-  'Pick a recorded Azan saved on your phone':
-      'Telefonunuzdaki bir ezan kaydını seçin',
+  'Pick a recorded Azan saved on your phone': 'Telefonunuzdaki bir ezan kaydını seçin',
   'Could not use this audio file': 'Bu ses dosyası kullanılamadı',
   'Play': 'Çal',
   'Stop': 'Durdur',
@@ -173,12 +162,10 @@ const Map<String, String> trStrings = {
   'Taraweeh': 'Teravih',
   'Eid al-Fitr prayer': 'Ramazan Bayramı namazı',
   'Eid al-Adha prayer': 'Kurban Bayramı namazı',
-  'Alert on Ramadan nights after the Isha Iqama':
-      'Ramazan gecelerinde yatsı kametinden sonra uyarı',
+  'Alert on Ramadan nights after the Isha Iqama': 'Ramazan gecelerinde yatsı kametinden sonra uyarı',
   'Minutes after Isha Iqama': 'Yatsı kametinden sonra dakika',
   'Eid prayer alert': 'Bayram namazı uyarısı',
-  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
-      'Bayram namazından 30 dakika önce hatırlatır (Hicri tarihe göre)',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)': 'Bayram namazından 30 dakika önce hatırlatır (Hicri tarihe göre)',
   'Eid prayer at {0}': 'Bayram namazı {0}',
   '1 page': '1 sayfa',
   '{0} pages, rotating': '{0} sayfa, dönüşümlü',
@@ -186,25 +173,20 @@ const Map<String, String> trStrings = {
   'Mosque name': 'Cami adı',
   'Shown at the top of the display': 'Ekranın üstünde gösterilir',
   'Next prayer page': 'Sıradaki namaz sayfası',
-  'Big countdown; stays on from 5 minutes before Azan until Iqama':
-      'Büyük geri sayım; ezandan 5 dakika önceden kamete kadar ekranda kalır',
+  'Big countdown; stays on from 5 minutes before Azan until Iqama': 'Büyük geri sayım; ezandan 5 dakika önceden kamete kadar ekranda kalır',
   'Seconds per page': 'Sayfa başına saniye',
   'Announcements': 'Duyurular',
   'Add announcement': 'Duyuru ekle',
-  'e.g. "Please switch off your phones"':
-      'ör. "Lütfen telefonlarınızı kapatın"',
+  'e.g. "Please switch off your phones"': 'ör. "Lütfen telefonlarınızı kapatın"',
   'Delete': 'Sil',
   'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'Ekran en fazla 7 sayfa gösterir: namaz vakitleri, sıradaki namaz ve 5 duyuru. Çıkmak için ekrana basılı tutun.',
   'Full-screen Azan': 'Tam ekran ezan',
-  'Shows the Azan over the lock screen with a big Stop button':
-      'Ezanı kilit ekranının üzerinde büyük bir Durdur düğmesiyle gösterir',
-  'Allow full-screen alerts for Azan Time':
-      'Azan Time için tam ekran uyarılara izin verin',
+  'Shows the Azan over the lock screen with a big Stop button': 'Ezanı kilit ekranının üzerinde büyük bir Durdur düğmesiyle gösterir',
+  'Allow full-screen alerts for Azan Time': 'Azan Time için tam ekran uyarılara izin verin',
   'Prayer tracker': 'Namaz takibi',
   '{0} of {1} prayed today': 'Bugün {1} vakitten {0} tanesi kılındı',
   '{0}-day streak': '{0} gün üst üste',
-  'Tap a prayer\'s icon to mark it as prayed':
-      'Kılındı olarak işaretlemek için namazın simgesine dokunun',
+  'Tap a prayer\'s icon to mark it as prayed': 'Kılındı olarak işaretlemek için namazın simgesine dokunun',
   'Mark as prayed': 'Kılındı olarak işaretle',
   'Day streak': 'Gün serisi',
   'Last 7 days': 'Son 7 gün',
@@ -213,10 +195,8 @@ const Map<String, String> trStrings = {
   'Previous week': 'Önceki hafta',
   'Next week': 'Sonraki hafta',
   'Excused today': 'Bugün mazeretli',
-  'Pause the tracker for the day (e.g. illness or menstruation); your streak is kept.':
-      'Bugün için takibi duraklatın (ör. hastalık veya adet); seriniz korunur.',
-  'Your tracker stays on this phone only.':
-      'Takibiniz yalnızca bu telefonda kalır.',
+  'Pause the tracker for the day (e.g. illness or menstruation); your streak is kept.': 'Bugün için takibi duraklatın (ör. hastalık veya adet); seriniz korunur.',
+  'Your tracker stays on this phone only.': 'Takibiniz yalnızca bu telefonda kalır.',
   'Tasbih': 'Tesbih',
   'After-prayer tasbih': 'Namaz sonrası tesbih',
   'Free count': 'Serbest sayım',
@@ -263,8 +243,7 @@ const Map<String, String> trStrings = {
   'Update location automatically': 'Konumu otomatik güncelle',
   'When you open Azan Time, the place follows your phone (GPS), with the local time zone.': 'Azan Time açıldığında yer, yerel saat dilimiyle birlikte telefonunuzu (GPS) izler.',
   'Location updated: {0}': 'Konum güncellendi: {0}',
-  'Set the phone\'s date & time to automatic':
-      'Telefonun tarih ve saatini otomatik yapın',
+  'Set the phone\'s date & time to automatic': 'Telefonun tarih ve saatini otomatik yapın',
   'Your phone\'s clock is {0} min off': 'Telefonunuzun saati {0} dk yanlış',
   'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.': 'Uyarılar telefonun saatine göre çalışır; yanlış saat veya saat dilimi tüm vakitleri yanlış yapar.',
   'Mosques': 'Camiler',
@@ -286,15 +265,13 @@ const Map<String, String> trStrings = {
   '{0} Azan at {1}': '{0} ezanı {1}',
   '{0} Iqama at {1}': '{0} kameti {1}',
   'Next prayer in notification bar': 'Bildirim çubuğunda sonraki namaz',
-  'A permanent notification with the next Azan (with countdown) and Iqama':
-      'Sonraki ezan (geri sayımlı) ve kamet ile kalıcı bildirim',
+  'A permanent notification with the next Azan (with countdown) and Iqama': 'Sonraki ezan (geri sayımlı) ve kamet ile kalıcı bildirim',
   '{0} Iqama was at {1}': '{0} kameti {1} idi',
   'Keep the screen on until I stop': 'Ben durdurana kadar ekranı açık tut',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'Kapalı: telefonun ekran zaman aşımı geçerli. Ekran kilit ekranında da çalışır: açın, sonra güç düğmesine iki kez basın.',
   'Adjust this time (± minutes)': 'Bu vakti ayarla (± dakika)',
   'Sunrise alert (Fajr time ends)': 'Güneş doğuşu uyarısı (sabah vakti biter)',
-  '{0} min to sunrise – Fajr time ends':
-      'Güneş doğuşuna {0} dk – sabah vakti bitiyor',
+  '{0} min to sunrise – Fajr time ends': 'Güneş doğuşuna {0} dk – sabah vakti bitiyor',
   'Minutes before sunrise': 'Güneş doğuşundan kaç dakika önce',
   'Ishraq / Duha alert': 'İşrak / Kuşluk uyarısı',
   'Iqama sound': 'Kamet sesi',
@@ -303,19 +280,14 @@ const Map<String, String> trStrings = {
   'Azan volume': 'Ezan ses düzeyi',
   'Iqama volume': 'Kamet ses düzeyi',
   'Phone alarm volume': 'Telefon alarm ses düzeyi',
-  'Pressing a volume button stops the Azan.':
-      'Ses düğmesine basmak ezanı durdurur.',
+  'Pressing a volume button stops the Azan.': 'Ses düğmesine basmak ezanı durdurur.',
   'Silence during': 'Sessiz olsun',
   'Ramadan Niyyah reminder': 'Ramazan niyet hatırlatıcısı',
-  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?':
-      'Ramazan\'ın her gecesi yatsıdan sonra: yarınki oruca niyet ettiniz mi?',
-  'Did you make the Niyyah for tomorrow\'s fast?':
-      'Yarınki oruca niyet ettiniz mi?',
-  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”':
-      '"Niyet ettim Allah rızası için yarınki Ramazan orucunu tutmaya."',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?': 'Ramazan\'ın her gecesi yatsıdan sonra: yarınki oruca niyet ettiniz mi?',
+  'Did you make the Niyyah for tomorrow\'s fast?': 'Yarınki oruca niyet ettiniz mi?',
+  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”': '"Niyet ettim Allah rızası için yarınki Ramazan orucunu tutmaya."',
   'Friday night reminder': 'Cuma gecesi hatırlatıcısı',
-  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah':
-      'Perşembe akşamdan sonra: salavat, Kehf suresi ve Cumaya hazırlık',
+  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah': 'Perşembe akşamdan sonra: salavat, Kehf suresi ve Cumaya hazırlık',
   'Tonight is Friday night': 'Bu gece Cuma gecesi',
   'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'Peygamber ﷺ\'e bolca salavat getirin. Kehf suresini okuyun ve Cumaya hazırlanın: gusül, temiz elbise, erken gidin.',
   'I did': 'Niyet ettim',
@@ -326,13 +298,11 @@ const Map<String, String> trStrings = {
   'Location settings': 'Konum ayarları',
   '{0}: place and time source': '{0}: yer ve vakit kaynağı',
   'Automatic (GPS)': 'Otomatik (GPS)',
-  'Finds your place and sets the usual method':
-      'Yerinizi bulur ve olağan yöntemi ayarlar',
+  'Finds your place and sets the usual method': 'Yerinizi bulur ve olağan yöntemi ayarlar',
   'Time source': 'Vakit kaynağı',
   'Calculated for this place': 'Bu yer için hesaplanan',
   'Mosque\'s yearly chart': 'Caminin yıllık çizelgesi',
-  'Exact times from your mosque\'s printed calendar (import once)':
-      'Caminizin basılı takviminden tam vakitler (bir kez içe aktarın)',
+  'Exact times from your mosque\'s printed calendar (import once)': 'Caminizin basılı takviminden tam vakitler (bir kez içe aktarın)',
   'How do you find your place?': 'Yerinizi nasıl bulursunuz?',
   'Browse': 'Göz at',
   'Search': 'Ara',
@@ -341,6 +311,8 @@ const Map<String, String> trStrings = {
   'District': 'İlçe',
   'Place': 'Yer',
   'All': 'Tümü',
+  'Azan Time Charts': 'Ezan Vakti Çizelgeleri',
+  'Exact yearly charts of {0} places': '{0} yer için kesin yıllık çizelgeler',
 };
 
 const List<String> trHijriMonths = [

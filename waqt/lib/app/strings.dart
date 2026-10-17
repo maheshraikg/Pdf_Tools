@@ -763,4 +763,12 @@ class S {
   String get district => _t('District', 'ജില്ല');
   String get place => _t('Place', 'സ്ഥലം');
   String get all => _t('All', 'എല്ലാം');
+
+  // Built-in charts.
+  String get builtinCharts => _t('Azan Time Charts', 'ബാങ്ക് സമയ ചാർട്ടുകൾ');
+  String builtinChartsHelp(int n) => _f(
+    'Exact yearly charts of {0} places',
+    '{0} സ്ഥലങ്ങളുടെ കൃത്യമായ വാർഷിക ചാർട്ടുകൾ',
+    [n],
+  );
 }

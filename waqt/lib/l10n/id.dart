@@ -32,15 +32,12 @@ const Map<String, String> idStrings = {
   'From timetable': 'Dari jadwal',
   'Calculated': 'Dihitung',
   'Mosque display': 'Tampilan masjid',
-  'Choose your place for accurate times':
-      'Pilih tempat Anda agar waktunya akurat',
+  'Choose your place for accurate times': 'Pilih tempat Anda agar waktunya akurat',
   'Choose': 'Pilih',
   'Alerts may be missed': 'Peringatan bisa terlewat',
   'Allow notifications': 'Izinkan notifikasi',
-  'Allow exact alarms (on time Azan)':
-      'Izinkan alarm tepat waktu (azan tepat waktu)',
-  'Turn off battery optimisation for Azan Time':
-      'Matikan optimasi baterai untuk Azan Time',
+  'Allow exact alarms (on time Azan)': 'Izinkan alarm tepat waktu (azan tepat waktu)',
+  'Turn off battery optimisation for Azan Time': 'Matikan optimasi baterai untuk Azan Time',
   'Some phones (Xiaomi, Oppo, Vivo, Realme, Samsung) stop apps in the background. Set Azan Time to "Unrestricted" / "No restrictions" in battery settings so Azan is never missed.': 'Beberapa ponsel (Xiaomi, Oppo, Vivo, Realme, Samsung) menghentikan aplikasi di latar belakang. Atur Azan Time ke "Tidak dibatasi" di pengaturan baterai agar azan tidak terlewat.',
   'Fix': 'Perbaiki',
   'Date': 'Tanggal',
@@ -89,22 +86,18 @@ const Map<String, String> idStrings = {
   'Name': 'Nama',
   'Latitude': 'Lintang',
   'Longitude': 'Bujur',
-  'UTC offset, e.g. +05:30 (empty = phone time zone)':
-      'Selisih UTC, mis. +07:00 (kosong = zona waktu ponsel)',
+  'UTC offset, e.g. +05:30 (empty = phone time zone)': 'Selisih UTC, mis. +07:00 (kosong = zona waktu ponsel)',
   'Finding your location…': 'Mencari lokasi Anda…',
   'Location permission denied.': 'Izin lokasi ditolak.',
-  'Location is turned off. Turn it on and try again.':
-      'Lokasi dimatikan. Nyalakan lalu coba lagi.',
-  'Could not get a location. Try again outdoors, or pick a place.':
-      'Lokasi tidak ditemukan. Coba di luar ruangan, atau pilih tempat.',
+  'Location is turned off. Turn it on and try again.': 'Lokasi dimatikan. Nyalakan lalu coba lagi.',
+  'Could not get a location. Try again outdoors, or pick a place.': 'Lokasi tidak ditemukan. Coba di luar ruangan, atau pilih tempat.',
   'Enter valid coordinates.': 'Masukkan koordinat yang valid.',
   'Azan alert': 'Peringatan azan',
   'Iqama alert': 'Peringatan iqamah',
   'Fixed Iqama time': 'Waktu iqamah tetap',
   'Fixed Jumu\'ah Iqama time': 'Waktu iqamah Jumat tetap',
   'Off: uses the minutes after Azan': 'Mati: memakai menit setelah azan',
-  'Used when it is after Azan; otherwise the minutes after Azan':
-      'Dipakai jika setelah azan; jika tidak, menit setelah azan',
+  'Used when it is after Azan; otherwise the minutes after Azan': 'Dipakai jika setelah azan; jika tidak, menit setelah azan',
   'Clear': 'Hapus',
   'Iqama after Azan': 'Iqamah setelah azan',
   'Reminder before Azan': 'Pengingat sebelum azan',
@@ -128,8 +121,7 @@ const Map<String, String> idStrings = {
   '{0} in {1} min': '{0} dalam {1} menit',
   'Imsak – Suhoor ends': 'Imsak – sahur berakhir',
   '{0} time': 'Waktu {0}',
-  'Open Azan Time to keep alerts on':
-      'Buka Azan Time agar peringatan tetap aktif',
+  'Open Azan Time to keep alerts on': 'Buka Azan Time agar peringatan tetap aktif',
   'Scheduled alerts end in a day. Tap to schedule the next days.': 'Peringatan terjadwal berakhir dalam sehari. Ketuk untuk menjadwalkan hari berikutnya.',
   'Reminders': 'Pengingat',
   'For times that match your mosque exactly, import its yearly chart (for example a Samastha calendar) as a CSV file. Dates the table does not cover are calculated.': 'Agar waktunya sama persis dengan masjid Anda, impor jadwal tahunannya sebagai file CSV. Tanggal yang tidak ada di jadwal akan dihitung.',
@@ -150,8 +142,7 @@ const Map<String, String> idStrings = {
   's': 'd',
   'near {0}': 'dekat {0}',
   'World places': 'Tempat di dunia',
-  'Type a town or city name to search 35,000 places worldwide.':
-      'Ketik nama kota untuk mencari di 35.000 tempat di seluruh dunia.',
+  'Type a town or city name to search 35,000 places worldwide.': 'Ketik nama kota untuk mencari di 35.000 tempat di seluruh dunia.',
   'Place data: GeoNames (CC BY 4.0)': 'Data tempat: GeoNames (CC BY 4.0)',
   'Azan sound': 'Suara azan',
   'Fajr Azan sound': 'Suara azan Subuh',
@@ -161,24 +152,20 @@ const Map<String, String> idStrings = {
   'Deep bell': 'Lonceng dalam',
   'Audio file (e.g. Azan MP3)': 'File audio (mis. azan MP3)',
   'Repeats until you dismiss it': 'Berulang sampai Anda menutupnya',
-  'Pick a recorded Azan saved on your phone':
-      'Pilih rekaman azan yang tersimpan di ponsel',
+  'Pick a recorded Azan saved on your phone': 'Pilih rekaman azan yang tersimpan di ponsel',
   'Could not use this audio file': 'File audio ini tidak dapat digunakan',
   'Play': 'Putar',
   'Stop': 'Hentikan',
   'Play even when the phone is silent': 'Putar meski ponsel dalam mode senyap',
-  'Off: on silent or vibrate the Azan only shows and vibrates.':
-      'Mati: saat senyap atau getar, azan hanya tampil dan bergetar.',
+  'Off: on silent or vibrate the Azan only shows and vibrates.': 'Mati: saat senyap atau getar, azan hanya tampil dan bergetar.',
   'Ramadan and Eid': 'Ramadan dan Idulfitri',
   'Taraweeh': 'Tarawih',
   'Eid al-Fitr prayer': 'Salat Idulfitri',
   'Eid al-Adha prayer': 'Salat Iduladha',
-  'Alert on Ramadan nights after the Isha Iqama':
-      'Pengingat malam Ramadan setelah iqamah Isya',
+  'Alert on Ramadan nights after the Isha Iqama': 'Pengingat malam Ramadan setelah iqamah Isya',
   'Minutes after Isha Iqama': 'Menit setelah iqamah Isya',
   'Eid prayer alert': 'Pengingat salat Id',
-  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
-      'Mengingatkan 30 menit sebelum salat Id (menurut tanggal Hijriah)',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)': 'Mengingatkan 30 menit sebelum salat Id (menurut tanggal Hijriah)',
   'Eid prayer at {0}': 'Salat Id pukul {0}',
   '1 page': '1 halaman',
   '{0} pages, rotating': '{0} halaman, bergantian',
@@ -194,15 +181,12 @@ const Map<String, String> idStrings = {
   'Delete': 'Hapus',
   'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'Layar menampilkan hingga 7 halaman: jadwal salat, salat berikutnya, dan 5 pengumuman. Tekan lama layar untuk keluar.',
   'Full-screen Azan': 'Azan layar penuh',
-  'Shows the Azan over the lock screen with a big Stop button':
-      'Menampilkan azan di atas layar kunci dengan tombol Hentikan besar',
-  'Allow full-screen alerts for Azan Time':
-      'Izinkan peringatan layar penuh untuk Azan Time',
+  'Shows the Azan over the lock screen with a big Stop button': 'Menampilkan azan di atas layar kunci dengan tombol Hentikan besar',
+  'Allow full-screen alerts for Azan Time': 'Izinkan peringatan layar penuh untuk Azan Time',
   'Prayer tracker': 'Pelacak salat',
   '{0} of {1} prayed today': '{0} dari {1} salat hari ini',
   '{0}-day streak': '{0} hari berturut-turut',
-  'Tap a prayer\'s icon to mark it as prayed':
-      'Ketuk ikon salat untuk menandainya sudah dikerjakan',
+  'Tap a prayer\'s icon to mark it as prayed': 'Ketuk ikon salat untuk menandainya sudah dikerjakan',
   'Mark as prayed': 'Tandai sudah salat',
   'Day streak': 'Hari berturut-turut',
   'Last 7 days': '7 hari terakhir',
@@ -212,8 +196,7 @@ const Map<String, String> idStrings = {
   'Next week': 'Minggu berikutnya',
   'Excused today': 'Berhalangan hari ini',
   'Pause the tracker for the day (e.g. illness or menstruation); your streak is kept.': 'Jeda pelacak untuk hari ini (mis. sakit atau haid); rangkaian Anda tetap terjaga.',
-  'Your tracker stays on this phone only.':
-      'Pelacak Anda hanya tersimpan di ponsel ini.',
+  'Your tracker stays on this phone only.': 'Pelacak Anda hanya tersimpan di ponsel ini.',
   'Tasbih': 'Tasbih',
   'After-prayer tasbih': 'Tasbih setelah salat',
   'Free count': 'Hitungan bebas',
@@ -222,8 +205,7 @@ const Map<String, String> idStrings = {
   'Allah is the Greatest': 'Allah Maha Besar',
   'There is no god but Allah': 'Tiada tuhan selain Allah',
   'I seek Allah\'s forgiveness': 'Aku memohon ampun kepada Allah',
-  'O Allah, send blessings upon Muhammad':
-      'Ya Allah, limpahkan selawat kepada Muhammad',
+  'O Allah, send blessings upon Muhammad': 'Ya Allah, limpahkan selawat kepada Muhammad',
   'Glory and praise be to Allah': 'Maha Suci Allah dan segala puji bagi-Nya',
   'Reset the counter?': 'Atur ulang penghitung?',
   'Tap the circle to count': 'Ketuk lingkaran untuk menghitung',
@@ -261,8 +243,7 @@ const Map<String, String> idStrings = {
   'Update location automatically': 'Perbarui lokasi otomatis',
   'When you open Azan Time, the place follows your phone (GPS), with the local time zone.': 'Saat Azan Time dibuka, tempat mengikuti ponsel Anda (GPS) beserta zona waktu setempat.',
   'Location updated: {0}': 'Lokasi diperbarui: {0}',
-  'Set the phone\'s date & time to automatic':
-      'Atur tanggal & waktu ponsel ke otomatis',
+  'Set the phone\'s date & time to automatic': 'Atur tanggal & waktu ponsel ke otomatis',
   'Your phone\'s clock is {0} min off': 'Jam ponsel Anda selisih {0} menit',
   'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.': 'Pengingat mengikuti jam ponsel; jam atau zona waktu yang salah membuat semua waktu salah.',
   'Mosques': 'Masjid',
@@ -286,13 +267,11 @@ const Map<String, String> idStrings = {
   'Next prayer in notification bar': 'Salat berikutnya di bilah notifikasi',
   'A permanent notification with the next Azan (with countdown) and Iqama': 'Notifikasi tetap berisi azan berikutnya (dengan hitung mundur) dan iqamah',
   '{0} Iqama was at {1}': 'Iqamah {0} pukul {1}',
-  'Keep the screen on until I stop':
-      'Biarkan layar menyala sampai saya hentikan',
+  'Keep the screen on until I stop': 'Biarkan layar menyala sampai saya hentikan',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'Mati: batas waktu layar ponsel berlaku. Tampilan juga bekerja di layar kunci: buka, lalu tekan tombol daya dua kali.',
   'Adjust this time (± minutes)': 'Sesuaikan waktu ini (± menit)',
   'Sunrise alert (Fajr time ends)': 'Pengingat terbit (waktu Subuh berakhir)',
-  '{0} min to sunrise – Fajr time ends':
-      '{0} menit lagi terbit – waktu Subuh berakhir',
+  '{0} min to sunrise – Fajr time ends': '{0} menit lagi terbit – waktu Subuh berakhir',
   'Minutes before sunrise': 'Menit sebelum terbit',
   'Ishraq / Duha alert': 'Pengingat Isyraq / Duha',
   'Iqama sound': 'Suara iqamah',
@@ -301,18 +280,14 @@ const Map<String, String> idStrings = {
   'Azan volume': 'Volume azan',
   'Iqama volume': 'Volume iqamah',
   'Phone alarm volume': 'Volume alarm ponsel',
-  'Pressing a volume button stops the Azan.':
-      'Menekan tombol volume menghentikan azan.',
+  'Pressing a volume button stops the Azan.': 'Menekan tombol volume menghentikan azan.',
   'Silence during': 'Senyap saat',
   'Ramadan Niyyah reminder': 'Pengingat niat Ramadan',
-  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?':
-      'Setiap malam Ramadan setelah Isya: sudahkah berniat puasa esok hari?',
-  'Did you make the Niyyah for tomorrow\'s fast?':
-      'Sudahkah berniat puasa esok hari?',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?': 'Setiap malam Ramadan setelah Isya: sudahkah berniat puasa esok hari?',
+  'Did you make the Niyyah for tomorrow\'s fast?': 'Sudahkah berniat puasa esok hari?',
   '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”': '"Aku berniat puasa esok hari untuk menunaikan fardu Ramadan karena Allah Ta\'ala."',
   'Friday night reminder': 'Pengingat malam Jumat',
-  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah':
-      'Kamis setelah Magrib: selawat, Surah Al-Kahfi dan bersiap untuk Jumat',
+  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah': 'Kamis setelah Magrib: selawat, Surah Al-Kahfi dan bersiap untuk Jumat',
   'Tonight is Friday night': 'Malam ini malam Jumat',
   'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'Perbanyak selawat kepada Nabi ﷺ. Baca Surah Al-Kahfi dan bersiap untuk Jumat: mandi, pakaian bersih, datang lebih awal.',
   'I did': 'Sudah berniat',
@@ -323,13 +298,11 @@ const Map<String, String> idStrings = {
   'Location settings': 'Pengaturan lokasi',
   '{0}: place and time source': '{0}: tempat dan sumber waktu',
   'Automatic (GPS)': 'Otomatis (GPS)',
-  'Finds your place and sets the usual method':
-      'Menemukan tempat Anda dan mengatur metode yang biasa',
+  'Finds your place and sets the usual method': 'Menemukan tempat Anda dan mengatur metode yang biasa',
   'Time source': 'Sumber waktu',
   'Calculated for this place': 'Dihitung untuk tempat ini',
   'Mosque\'s yearly chart': 'Jadwal tahunan masjid',
-  'Exact times from your mosque\'s printed calendar (import once)':
-      'Waktu tepat dari kalender cetak masjid Anda (impor sekali)',
+  'Exact times from your mosque\'s printed calendar (import once)': 'Waktu tepat dari kalender cetak masjid Anda (impor sekali)',
   'How do you find your place?': 'Bagaimana menemukan tempat Anda?',
   'Browse': 'Jelajahi',
   'Search': 'Cari',
@@ -338,6 +311,8 @@ const Map<String, String> idStrings = {
   'District': 'Kabupaten',
   'Place': 'Tempat',
   'All': 'Semua',
+  'Azan Time Charts': 'Jadwal Waktu Azan',
+  'Exact yearly charts of {0} places': 'Jadwal tahunan tepat untuk {0} tempat',
 };
 
 const List<String> idHijriMonths = [

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../app/chart_data.dart';
 import '../app/city_data.dart';
 import '../app/location.dart';
 import '../app/native.dart';
 import '../app/scope.dart';
+import '../core/charts.dart';
 import '../core/cities.dart';
 import '../core/place.dart';
 import '../core/timetable.dart';
@@ -20,11 +22,15 @@ class PlaceScreen extends StatefulWidget {
 
 enum _Find { browse, search, coordinates }
 
+/// Calculated, a built-in Azan Time Chart, or the mosque's own chart.
+enum _Source { calculated, builtin, own }
+
 class _PlaceScreenState extends State<PlaceScreen> {
   String _query = '';
   bool _locating = false;
   List<City>? _cities;
   _Find _find = _Find.browse;
+  List<ChartPlace> _charts = const [];
 
   /// Browse selection: country, state and district names.
   String? _country, _state, _district;
@@ -32,6 +38,9 @@ class _PlaceScreenState extends State<PlaceScreen> {
   @override
   void initState() {
     super.initState();
+    loadCharts().then((c) {
+      if (mounted) setState(() => _charts = c);
+    });
     loadCities().then((c) {
       if (!mounted) return;
       setState(() {
@@ -84,7 +93,25 @@ class _PlaceScreenState extends State<PlaceScreen> {
       );
       return;
     }
-    Navigator.pop(context);
+    // Like the original: a chart for this place when there is one.
+    final c = nearestChart(
+      _charts,
+      settings.place.latitude,
+      settings.place.longitude,
+    );
+    if (c != null) await settings.useChart(c);
+    if (mounted) Navigator.pop(context);
+  }
+
+  /// Picks one of the built-in charts (closest ones first).
+  Future<void> _pickChart() async {
+    final settings = context.settings, s = context.s;
+    final p = settings.place;
+    double d(ChartPlace c) =>
+        (c.latitude - p.latitude).abs() + (c.longitude - p.longitude).abs();
+    final sorted = [..._charts]..sort((a, b) => d(a).compareTo(d(b)));
+    final c = await _pick<ChartPlace>(s.builtinCharts, sorted, (c) => c.name);
+    if (c != null) await settings.useChart(c);
   }
 
   Future<void> _manual() async {
@@ -321,34 +348,56 @@ class _PlaceScreenState extends State<PlaceScreen> {
           Section(
             title: s.timeSource,
             children: [
-              RadioGroup<bool>(
-                groupValue: settings.timetableEnabled,
+              RadioGroup<_Source>(
+                groupValue: settings.usesChart
+                    ? _Source.builtin
+                    : settings.timetableEnabled
+                    ? _Source.own
+                    : _Source.calculated,
                 onChanged: (v) async {
-                  if (v == true && settings.timetableCsv == null) {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (_) => const TimetableScreen(),
-                      ),
-                    );
-                    return;
+                  switch (v) {
+                    case _Source.builtin:
+                      await _pickChart();
+                    case _Source.own:
+                      if (settings.timetableCsv == null || settings.usesChart) {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (_) => const TimetableScreen(),
+                          ),
+                        );
+                      } else {
+                        await settings.update((x) => x.timetableEnabled = true);
+                      }
+                    case _Source.calculated || null:
+                      await settings.update((x) => x.timetableEnabled = false);
                   }
-                  await settings.update((x) => x.timetableEnabled = v == true);
                 },
                 child: Column(
                   children: [
-                    RadioListTile<bool>(
-                      value: false,
+                    RadioListTile<_Source>(
+                      value: _Source.calculated,
                       title: Text(s.calculatedSource),
                       subtitle: Text(
                         '${settings.method.name} · ${s.asrName(settings.asr)}',
                       ),
                     ),
-                    RadioListTile<bool>(
-                      value: true,
+                    if (_charts.isNotEmpty)
+                      RadioListTile<_Source>(
+                        value: _Source.builtin,
+                        title: Text(s.builtinCharts),
+                        subtitle: Text(
+                          settings.usesChart
+                              ? settings.place.name
+                              : s.builtinChartsHelp(_charts.length),
+                        ),
+                      ),
+                    RadioListTile<_Source>(
+                      value: _Source.own,
                       title: Text(s.chartSource),
                       subtitle: Text(
-                        settings.timetableCsv != null &&
+                        !settings.usesChart &&
+                                settings.timetableCsv != null &&
                                 settings.timetable != null
                             ? settings.timetable!.name
                             : s.chartSourceHelp,
@@ -357,7 +406,15 @@ class _PlaceScreenState extends State<PlaceScreen> {
                   ],
                 ),
               ),
-              if (!settings.timetableEnabled)
+              if (settings.usesChart)
+                ListTile(
+                  leading: const IconBadge(Icons.table_chart),
+                  title: Text(s.builtinCharts),
+                  subtitle: Text(settings.place.name),
+                  trailing: const Icon(Icons.unfold_more),
+                  onTap: _pickChart,
+                )
+              else if (!settings.timetableEnabled)
                 ListTile(
                   leading: const IconBadge(Icons.calculate_outlined),
                   title: Text(s.method),

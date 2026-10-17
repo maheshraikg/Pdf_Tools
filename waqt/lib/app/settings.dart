@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/alerts.dart';
+import '../core/charts.dart';
 import '../core/day.dart';
 import '../core/masjid.dart';
 import '../core/place.dart';
@@ -414,6 +415,21 @@ class AppSettings extends ChangeNotifier {
   }
 
   /// Picks [p] and applies its suggested method and Asr school.
+  /// Uses a ready-made Azan Time Chart: its place and its exact times.
+  Future<void> useChart(ChartPlace c) => update((s) {
+    final p = c.place;
+    s.place = p;
+    s.placeChosen = true;
+    s.autoLocation = false;
+    s.method = CalcMethod.byId(p.methodId);
+    s.asr = p.asr;
+    s.timetableCsv = c.timetable.toCsv();
+    s.timetableEnabled = true;
+  });
+
+  /// The current place is a built-in chart.
+  bool get usesChart => place.id.startsWith('chart:') && timetableEnabled;
+
   Future<void> choosePlace(Place p, {bool applySuggestions = true}) =>
       update((s) {
         s.place = p;
