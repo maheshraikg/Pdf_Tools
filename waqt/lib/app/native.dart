@@ -165,4 +165,18 @@ class Native {
   }
 
   static Future<void> openDateSettings() => _call<void>('openDateSettings');
+
+  /// The permanent next-prayer notification: states with from / countdown
+  /// (epoch ms), title and text; an empty list removes it.
+  static Future<void> setStatusStates(
+    List<Map<String, Object>> states,
+    String channelName,
+  ) => _call<void>('setStatusStates', {
+    'states': jsonEncode(states),
+    'channelName': channelName,
+  });
+
+  /// Lets the mosque display show over the lock screen.
+  static Future<void> showOnLockScreen(bool on) =>
+      _call<void>('showOnLockScreen', {'on': on});
 }

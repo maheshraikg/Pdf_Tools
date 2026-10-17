@@ -265,6 +265,32 @@ const Map<String, String> frStrings = {
   'Your phone\'s clock is {0} min off':
       'L\'horloge de votre téléphone a {0} min d\'écart',
   'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.': 'Les alertes suivent l\'horloge du téléphone ; une heure ou un fuseau faux fausse tous les horaires.',
+  'Mosques': 'Mosquées',
+  'Save the Iqama times of each mosque you pray at and switch between them on the Today screen.': 'Enregistrez les heures d\'iqama de chaque mosquée où vous priez et passez de l\'une à l\'autre sur l\'écran Aujourd\'hui.',
+  'Masjid {0}': 'Mosquée {0}',
+  '{0} saved': '{0} enregistrées',
+  'No description': 'Sans description',
+  'Edit': 'Modifier',
+  'Add mosque': 'Ajouter une mosquée',
+  'Iqama times of {0}': 'Heures d\'iqama de {0}',
+  'Description (e.g. area)': 'Description (ex. quartier)',
+  'Browse places': 'Parcourir les lieux',
+  'Country › State › Place': 'Pays › État › Lieu',
+  'Country': 'Pays',
+  '{0}: choose state': '{0} : choisir l\'État',
+  'Filter': 'Filtrer',
+  'City': 'Ville',
+  'Next prayer': 'Prochaine prière',
+  '{0} Azan at {1}': 'Adhan de {0} à {1}',
+  '{0} Iqama at {1}': 'Iqama de {0} à {1}',
+  'Next prayer in notification bar':
+      'Prochaine prière dans la barre de notifications',
+  'A permanent notification with the next Azan (with countdown) and Iqama': 'Une notification permanente avec le prochain adhan (compte à rebours) et l\'iqama',
+  '{0} Iqama was at {1}': 'L\'iqama de {0} était à {1}',
+  'Keep the screen on until I stop':
+      'Garder l\'écran allumé jusqu\'à ce que j\'arrête',
+  'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'Désactivé : la mise en veille du téléphone s\'applique. L\'affichage fonctionne aussi sur l\'écran verrouillé : ouvrez-le, puis appuyez deux fois sur le bouton marche.',
+  'Adjust this time (± minutes)': 'Ajuster cette heure (± minutes)',
 };
 
 const List<String> frHijriMonths = [

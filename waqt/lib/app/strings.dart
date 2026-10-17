@@ -612,4 +612,65 @@ class S {
     'അറിയിപ്പുകൾ ഫോണിലെ ക്ലോക്ക് അനുസരിച്ചാണ്; ക്ലോക്കോ സമയമേഖലയോ തെറ്റിയാൽ '
         'എല്ലാ സമയവും തെറ്റും.',
   );
+
+  // Mosque profiles.
+  String get masjids => _t('Mosques', 'പള്ളികൾ');
+  String get masjidsHelp => _t(
+    'Save the Iqama times of each mosque you pray at and switch between '
+        'them on the Today screen.',
+    'നിങ്ങൾ നിസ്കരിക്കുന്ന ഓരോ പള്ളിയുടെയും ഇഖാമത്ത് സമയങ്ങൾ സേവ് ചെയ്ത് '
+        'ഇന്ന് സ്ക്രീനിൽ മാറ്റുക.',
+  );
+  String masjidN(int n) => _f('Masjid {0}', 'പള്ളി {0}', [n]);
+  String masjidCount(int n) => _f('{0} saved', '{0} എണ്ണം', [n]);
+  String get noDescription => _t('No description', 'വിവരണമില്ല');
+  String get edit => _t('Edit', 'തിരുത്തുക');
+  String get addMasjid => _t('Add mosque', 'പള്ളി ചേർക്കുക');
+  String editIqamaOf(String name) =>
+      _f('Iqama times of {0}', '{0} ഇഖാമത്ത് സമയങ്ങൾ', [name]);
+  String get masjidName => _t('Name', 'പേര്');
+  String get masjidDescription =>
+      _t('Description (e.g. area)', 'വിവരണം (ഉദാ. സ്ഥലം)');
+
+  // Browse places.
+  String get browsePlaces => _t('Browse places', 'സ്ഥലങ്ങൾ തിരയുക');
+  String get browsePlacesHelp =>
+      _t('Country › State › Place', 'രാജ്യം › സംസ്ഥാനം › സ്ഥലം');
+  String get country => _t('Country', 'രാജ്യം');
+  String stateOf(String country) =>
+      _f('{0}: choose state', '{0}: സംസ്ഥാനം തിരഞ്ഞെടുക്കുക', [country]);
+  String get filter => _t('Filter', 'ഫിൽട്ടർ');
+  String get bigCity => _t('City', 'നഗരം');
+
+  // Permanent notification.
+  String get channelNextPrayer => _t('Next prayer', 'അടുത്ത നിസ്കാരം');
+  String statusNextAzan(String p, String t) =>
+      _f('{0} Azan at {1}', '{0} ബാങ്ക് {1}-ന്', [p, t]);
+  String statusNextIqama(String p, String t) =>
+      _f('{0} Iqama at {1}', '{0} ഇഖാമത്ത് {1}-ന്', [p, t]);
+  String get statusNotification => _t(
+    'Next prayer in notification bar',
+    'അടുത്ത നിസ്കാരം നോട്ടിഫിക്കേഷൻ ബാറിൽ',
+  );
+  String get statusNotificationHelp => _t(
+    'A permanent notification with the next Azan (with countdown) and Iqama',
+    'അടുത്ത ബാങ്കും (കൗണ്ട്ഡൗണോടെ) ഇഖാമത്തും കാണിക്കുന്ന സ്ഥിര നോട്ടിഫിക്കേഷൻ',
+  );
+
+  // Display extras.
+  String iqamaWasAt(String p, String t) =>
+      _f('{0} Iqama was at {1}', '{0} ഇഖാമത്ത് {1}-ന് ആയിരുന്നു', [p, t]);
+  String get keepScreenOn => _t(
+    'Keep the screen on until I stop',
+    'നിർത്തുന്നത് വരെ സ്ക്രീൻ ഓണാക്കി വെക്കുക',
+  );
+  String get keepScreenOnHelp => _t(
+    'Off: the phone\'s screen timeout applies. The display also works on '
+        'the lock screen: open it, then press the power button twice.',
+    'ഓഫ്: ഫോണിലെ സ്ക്രീൻ ടൈംഔട്ട് ബാധകം. ലോക്ക് സ്ക്രീനിലും ഡിസ്‌പ്ലേ '
+        'പ്രവർത്തിക്കും: തുറന്ന ശേഷം പവർ ബട്ടൺ രണ്ടുതവണ അമർത്തുക.',
+  );
+
+  String get adjustThisTime =>
+      _t('Adjust this time (± minutes)', 'ഈ സമയം ക്രമീകരിക്കുക (± മിനിറ്റ്)');
 }

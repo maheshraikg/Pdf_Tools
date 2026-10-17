@@ -6,6 +6,7 @@ import '../core/prayer_calc.dart';
 import '../ui/widgets.dart';
 import 'alerts_screen.dart';
 import 'display_settings_screen.dart';
+import 'masjids_screen.dart';
 import 'place_screen.dart';
 import 'timetable_screen.dart';
 import 'tracker_screen.dart';
@@ -30,12 +31,23 @@ class SettingsScreen extends StatelessWidget {
                 leading: const IconBadge(Icons.place),
                 title: Text(s.location),
                 subtitle: Text(
-                  '${settings.place.label(s.ml)} · '
-                  '${settings.place.latitude.toStringAsFixed(4)}, '
-                  '${settings.place.longitude.toStringAsFixed(4)}',
+                  '${settings.place.label(s.ml)}'
+                  '${settings.place.region.isEmpty ? '' : ', ${settings.place.region}'} · '
+                  '${settings.method.name}',
                 ),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => push(const PlaceScreen()),
+              ),
+              ListTile(
+                leading: const IconBadge(Icons.mosque_outlined),
+                title: Text(s.masjids),
+                subtitle: Text(
+                  settings.masjid == null
+                      ? s.masjidN(1)
+                      : '${settings.masjid!.name} · ${s.masjidCount(settings.masjids.length)}',
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => push(const MasjidsScreen()),
               ),
               ListTile(
                 leading: const IconBadge(Icons.notifications_active),

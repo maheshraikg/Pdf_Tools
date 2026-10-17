@@ -266,6 +266,31 @@ const Map<String, String> taStrings = {
   'Your phone\'s clock is {0} min off':
       'உங்கள் போன் கடிகாரம் {0} நிமிடம் தவறாக உள்ளது',
   'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.': 'அறிவிப்புகள் போன் கடிகாரத்தைப் பின்பற்றும்; தவறான கடிகாரம் அல்லது நேர மண்டலம் எல்லா நேரங்களையும் தவறாக்கும்.',
+  'Mosques': 'பள்ளிவாசல்கள்',
+  'Save the Iqama times of each mosque you pray at and switch between them on the Today screen.': 'நீங்கள் தொழும் ஒவ்வொரு பள்ளிவாசலின் இகாமத் நேரங்களைச் சேமித்து, இன்று திரையில் மாற்றலாம்.',
+  'Masjid {0}': 'பள்ளிவாசல் {0}',
+  '{0} saved': '{0} சேமிக்கப்பட்டது',
+  'No description': 'விளக்கம் இல்லை',
+  'Edit': 'திருத்து',
+  'Add mosque': 'பள்ளிவாசல் சேர்',
+  'Iqama times of {0}': '{0} இகாமத் நேரங்கள்',
+  'Description (e.g. area)': 'விளக்கம் (எ.கா. பகுதி)',
+  'Browse places': 'இடங்களை உலாவு',
+  'Country › State › Place': 'நாடு › மாநிலம் › இடம்',
+  'Country': 'நாடு',
+  '{0}: choose state': '{0}: மாநிலத்தைத் தேர்ந்தெடு',
+  'Filter': 'வடிகட்டு',
+  'City': 'நகரம்',
+  'Next prayer': 'அடுத்த தொழுகை',
+  '{0} Azan at {1}': '{0} பாங்கு {1} மணிக்கு',
+  '{0} Iqama at {1}': '{0} இகாமத் {1} மணிக்கு',
+  'Next prayer in notification bar': 'அறிவிப்புப் பட்டியில் அடுத்த தொழுகை',
+  'A permanent notification with the next Azan (with countdown) and Iqama':
+      'அடுத்த பாங்கு (கவுண்ட்டவுனுடன்) மற்றும் இகாமத்துடன் நிரந்தர அறிவிப்பு',
+  '{0} Iqama was at {1}': '{0} இகாமத் {1} மணிக்கு இருந்தது',
+  'Keep the screen on until I stop': 'நான் நிறுத்தும் வரை திரையை எரிய வை',
+  'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'அணைத்தால் போனின் திரை நேர முடிவு பொருந்தும். பூட்டுத் திரையிலும் இயங்கும்: திறந்து, பவர் பொத்தானை இருமுறை அழுத்தவும்.',
+  'Adjust this time (± minutes)': 'இந்த நேரத்தைச் சரிசெய் (± நிமிடம்)',
 };
 
 const List<String> taHijriMonths = [

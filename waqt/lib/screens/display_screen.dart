@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+import '../app/native.dart';
 import '../app/scope.dart';
 import '../core/alerts.dart';
 import '../core/prayer_calc.dart';
@@ -36,8 +37,9 @@ class _DisplayScreenState extends State<DisplayScreen> {
       if (mounted) setState(() => _seconds++);
     });
     if (widget.keepAwake) {
-      WakelockPlus.enable();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+      // Stays usable over the lock screen, like a mosque clock.
+      Native.showOnLockScreen(true);
     }
   }
 
@@ -47,11 +49,22 @@ class _DisplayScreenState extends State<DisplayScreen> {
     if (widget.keepAwake) {
       WakelockPlus.disable();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      Native.showOnLockScreen(false);
     }
     super.dispose();
   }
 
   int _seconds = 0;
+  bool _wakeChecked = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_wakeChecked || !widget.keepAwake) return;
+    _wakeChecked = true;
+    // "Keep the screen on until I stop" (else the phone's timeout applies).
+    if (context.settings.displayKeepOn) WakelockPlus.enable();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,254 +125,310 @@ class _DisplayScreenState extends State<DisplayScreen> {
               cell: 72,
             ),
             child: SafeArea(
-              child: LayoutBuilder(
-                builder: (context, box) {
-                  final wide = box.maxWidth > box.maxHeight;
-                  final unit = (wide ? box.maxHeight : box.maxWidth) / 10;
-                  final dateLine =
-                      '${longDate(settings.lang, day.date)} · ${hijriLabel(settings.lang, day.hijri)}';
-                  final nameLine = settings.mosqueName.trim().isEmpty
-                      ? null
-                      : Text(
-                          settings.mosqueName.trim(),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: LayoutBuilder(
+                      builder: (context, box) {
+                        final wide = box.maxWidth > box.maxHeight;
+                        final unit = (wide ? box.maxHeight : box.maxWidth) / 10;
+                        final dateLine =
+                            '${longDate(settings.lang, day.date)} · ${hijriLabel(settings.lang, day.hijri)}';
+                        final shownName = settings.mosqueName.trim().isNotEmpty
+                            ? settings.mosqueName.trim()
+                            : (settings.masjid?.name ?? '');
+                        final nameLine = shownName.isEmpty
+                            ? null
+                            : Text(
+                                shownName,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: gold,
+                                  fontSize: unit * 0.55,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              );
+
+                        Widget timesPage() {
+                          final header = Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ?nameLine,
+                              FittedBox(
+                                child: Text(
+                                  clockFull,
+                                  style: TextStyle(
+                                    color: fg,
+                                    fontSize: unit * 2.2,
+                                    fontWeight: FontWeight.w300,
+                                    fontFeatures: const [
+                                      FontFeature.tabularFigures(),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                dateLine,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: gold,
+                                  fontSize: unit * 0.4,
+                                ),
+                              ),
+                              SizedBox(height: unit * 0.3),
+                              if (waitingIqama != null)
+                                Text(
+                                  '${s.prayer(waitingIqama, friday: day.isFriday)} · ${s.iqama} ${clockCountdown(iqamaAt!.difference(now))}',
+                                  style: TextStyle(
+                                    color: fg,
+                                    fontSize: unit * 0.7,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              else if (next != null)
+                                Text(
+                                  '${s.next}: ${s.prayer(next.prayer, friday: next.day.isFriday)} · ${clockCountdown(next.at.difference(now))}',
+                                  style: TextStyle(
+                                    color: fg,
+                                    fontSize: unit * 0.6,
+                                  ),
+                                ),
+                            ],
+                          );
+                          final table = _Table(
+                            unit: unit,
+                            rows: [
+                              for (final p in Prayer.fard)
+                                (
+                                  name: s.prayer(p, friday: day.isFriday),
+                                  azan: hm(settings, day[p]),
+                                  iqama: hm(
+                                    settings,
+                                    iqamaTime(day, p, settings.alerts),
+                                  ),
+                                  highlight:
+                                      p == waitingIqama ||
+                                      (waitingIqama == null &&
+                                          next?.prayer == p &&
+                                          next?.day == day),
+                                ),
+                            ],
+                            azanLabel: s.azan,
+                            iqamaLabel: s.iqama,
+                            sunrise:
+                                '${s.prayer(Prayer.sunrise)} ${hm(settings, day[Prayer.sunrise])}',
+                          );
+                          // scaleDown: any screen shape fits without overflow.
+                          return wide
+                              ? Row(
+                                  children: [
+                                    Expanded(child: _Fit(header)),
+                                    Expanded(
+                                      child: _Fit(
+                                        SizedBox(width: unit * 8, child: table),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Column(
+                                  children: [
+                                    _Fit(header),
+                                    SizedBox(height: unit * 0.4),
+                                    Expanded(
+                                      child: _Fit(
+                                        SizedBox(width: unit * 9, child: table),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                        }
+
+                        Widget footer() => Text(
+                          '$clockFull · $dateLine',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: gold,
-                            fontSize: unit * 0.55,
-                            fontWeight: FontWeight.w700,
+                            color: fg.withValues(alpha: 0.75),
+                            fontSize: unit * 0.38,
                           ),
                         );
 
-                  Widget timesPage() {
-                    final header = Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ?nameLine,
-                        FittedBox(
-                          child: Text(
-                            clockFull,
-                            style: TextStyle(
-                              color: fg,
-                              fontSize: unit * 2.2,
-                              fontWeight: FontWeight.w300,
-                              fontFeatures: const [
-                                FontFeature.tabularFigures(),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Text(
-                          dateLine,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: gold, fontSize: unit * 0.4),
-                        ),
-                        SizedBox(height: unit * 0.3),
-                        if (waitingIqama != null)
-                          Text(
-                            '${s.prayer(waitingIqama, friday: day.isFriday)} · ${s.iqama} ${clockCountdown(iqamaAt!.difference(now))}',
-                            style: TextStyle(
-                              color: fg,
-                              fontSize: unit * 0.7,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        else if (next != null)
-                          Text(
-                            '${s.next}: ${s.prayer(next.prayer, friday: next.day.isFriday)} · ${clockCountdown(next.at.difference(now))}',
-                            style: TextStyle(color: fg, fontSize: unit * 0.6),
-                          ),
-                      ],
-                    );
-                    final table = _Table(
-                      unit: unit,
-                      rows: [
-                        for (final p in Prayer.fard)
-                          (
-                            name: s.prayer(p, friday: day.isFriday),
-                            azan: hm(settings, day[p]),
-                            iqama: hm(
-                              settings,
-                              iqamaTime(day, p, settings.alerts),
-                            ),
-                            highlight:
-                                p == waitingIqama ||
-                                (waitingIqama == null &&
-                                    next?.prayer == p &&
-                                    next?.day == day),
-                          ),
-                      ],
-                      azanLabel: s.azan,
-                      iqamaLabel: s.iqama,
-                      sunrise:
-                          '${s.prayer(Prayer.sunrise)} ${hm(settings, day[Prayer.sunrise])}',
-                    );
-                    // scaleDown: any screen shape fits without overflow.
-                    return wide
-                        ? Row(
+                        Widget nextPage() {
+                          // The last Iqama today and the time since it.
+                          Prayer? lastP;
+                          DateTime? lastAt;
+                          for (final fp in Prayer.fard) {
+                            final t = iqamaTime(day, fp, settings.alerts);
+                            if (!t.isAfter(now)) {
+                              lastP = fp;
+                              lastAt = t;
+                            }
+                          }
+                          final iq = waitingIqama != null;
+                          final p = iq ? waitingIqama : next?.prayer;
+                          if (p == null) return timesPage();
+                          final friday = iq ? day.isFriday : next!.day.isFriday;
+                          final at = iq ? iqamaAt! : next!.at;
+                          return Column(
                             children: [
-                              Expanded(child: _Fit(header)),
+                              ?nameLine,
                               Expanded(
                                 child: _Fit(
-                                  SizedBox(width: unit * 8, child: table),
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        (iq ? s.iqama : s.next).toUpperCase(),
+                                        style: TextStyle(
+                                          color: gold,
+                                          fontSize: unit * 0.55,
+                                          letterSpacing: unit * 0.08,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${s.prayer(p, friday: friday)}  ${hm(settings, at)}',
+                                        style: TextStyle(
+                                          color: fg,
+                                          fontSize: unit * 1.1,
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                      ),
+                                      Directionality(
+                                        textDirection: TextDirection.ltr,
+                                        child: Text(
+                                          clockCountdown(
+                                            at.difference(now),
+                                            withHours: true,
+                                          ),
+                                          style: TextStyle(
+                                            color: fg,
+                                            fontSize: unit * 2.6,
+                                            fontWeight: FontWeight.w200,
+                                            fontFeatures: const [
+                                              FontFeature.tabularFigures(),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      if (!iq &&
+                                          lastP != null &&
+                                          lastAt != null)
+                                        Text(
+                                          '${s.iqamaWasAt(s.prayer(lastP, friday: day.isFriday), hm(settings, lastAt))}  '
+                                          '+${clockCountdown(now.difference(lastAt), withHours: true)}',
+                                          textDirection: TextDirection.ltr,
+                                          style: TextStyle(
+                                            color: gold,
+                                            fontSize: unit * 0.45,
+                                            fontFeatures: const [
+                                              FontFeature.tabularFigures(),
+                                            ],
+                                          ),
+                                        ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ],
-                          )
-                        : Column(
-                            children: [
-                              _Fit(header),
-                              SizedBox(height: unit * 0.4),
-                              Expanded(
-                                child: _Fit(
-                                  SizedBox(width: unit * 9, child: table),
-                                ),
-                              ),
+                              footer(),
                             ],
                           );
-                  }
+                        }
 
-                  Widget footer() => Text(
-                    '$clockFull · $dateLine',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: fg.withValues(alpha: 0.75),
-                      fontSize: unit * 0.38,
-                    ),
-                  );
-
-                  Widget nextPage() {
-                    final iq = waitingIqama != null;
-                    final p = iq ? waitingIqama : next?.prayer;
-                    if (p == null) return timesPage();
-                    final friday = iq ? day.isFriday : next!.day.isFriday;
-                    final at = iq ? iqamaAt! : next!.at;
-                    return Column(
-                      children: [
-                        ?nameLine,
-                        Expanded(
-                          child: _Fit(
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  (iq ? s.iqama : s.next).toUpperCase(),
-                                  style: TextStyle(
-                                    color: gold,
-                                    fontSize: unit * 0.55,
-                                    letterSpacing: unit * 0.08,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                Text(
-                                  '${s.prayer(p, friday: friday)}  ${hm(settings, at)}',
-                                  style: TextStyle(
-                                    color: fg,
-                                    fontSize: unit * 1.1,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                                Directionality(
-                                  textDirection: TextDirection.ltr,
+                        Widget announcementPage(String text) => Column(
+                          children: [
+                            ?nameLine,
+                            Expanded(
+                              child: _Fit(
+                                SizedBox(
+                                  width: unit * (wide ? 14 : 9),
                                   child: Text(
-                                    clockCountdown(
-                                      at.difference(now),
-                                      withHours: true,
-                                    ),
+                                    text,
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: fg,
-                                      fontSize: unit * 2.6,
-                                      fontWeight: FontWeight.w200,
-                                      fontFeatures: const [
-                                        FontFeature.tabularFigures(),
-                                      ],
+                                      fontSize: unit * 0.9,
+                                      height: 1.3,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        footer(),
-                      ],
-                    );
-                  }
-
-                  Widget announcementPage(String text) => Column(
-                    children: [
-                      ?nameLine,
-                      Expanded(
-                        child: _Fit(
-                          SizedBox(
-                            width: unit * (wide ? 14 : 9),
-                            child: Text(
-                              text,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: fg,
-                                fontSize: unit * 0.9,
-                                height: 1.3,
-                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                          ),
-                        ),
-                      ),
-                      if (next != null)
-                        Text(
-                          '${s.next}: ${s.prayer(next.prayer, friday: next.day.isFriday)} ${hm(settings, next.at)} · ${clockCountdown(next.at.difference(now))}',
-                          style: TextStyle(color: gold, fontSize: unit * 0.45),
-                        ),
-                      footer(),
-                    ],
-                  );
+                            if (next != null)
+                              Text(
+                                '${s.next}: ${s.prayer(next.prayer, friday: next.day.isFriday)} ${hm(settings, next.at)} · ${clockCountdown(next.at.difference(now))}',
+                                style: TextStyle(
+                                  color: gold,
+                                  fontSize: unit * 0.45,
+                                ),
+                              ),
+                            footer(),
+                          ],
+                        );
 
-                  final Widget body = switch (page) {
-                    'times' => timesPage(),
-                    'next' => nextPage(),
-                    _ => announcementPage(
-                      settings.announcements[int.parse(page.substring(1))],
-                    ),
-                  };
-                  return Padding(
-                    padding: EdgeInsets.all(unit * 0.3),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 600),
-                            child: KeyedSubtree(
-                              key: ValueKey(page),
-                              child: body,
-                            ),
+                        final Widget body = switch (page) {
+                          'times' => timesPage(),
+                          'next' => nextPage(),
+                          _ => announcementPage(
+                            settings.announcements[int.parse(
+                              page.substring(1),
+                            )],
                           ),
-                        ),
-                        if (pages.length > 1)
-                          Padding(
-                            padding: EdgeInsets.only(top: unit * 0.15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                for (final p in pages)
-                                  Container(
-                                    width: unit * 0.12,
-                                    height: unit * 0.12,
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: unit * 0.06,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: p == page
-                                          ? gold
-                                          : fg.withValues(alpha: 0.25),
-                                    ),
+                        };
+                        return Padding(
+                          padding: EdgeInsets.all(unit * 0.3),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 600),
+                                  child: KeyedSubtree(
+                                    key: ValueKey(page),
+                                    child: body,
                                   ),
-                              ],
-                            ),
+                                ),
+                              ),
+                              if (pages.length > 1)
+                                Padding(
+                                  padding: EdgeInsets.only(top: unit * 0.15),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      for (final p in pages)
+                                        Container(
+                                          width: unit * 0.12,
+                                          height: unit * 0.12,
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: unit * 0.06,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: p == page
+                                                ? gold
+                                                : fg.withValues(alpha: 0.25),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                            ],
                           ),
-                      ],
+                        );
+                      },
                     ),
-                  );
-                },
+                  ),
+                  // A visible way out besides tap-and-hold.
+                  PositionedDirectional(
+                    top: 4,
+                    end: 4,
+                    child: IconButton(
+                      tooltip: s.stop,
+                      color: Colors.white.withValues(alpha: 0.55),
+                      icon: const Icon(Icons.close_rounded),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

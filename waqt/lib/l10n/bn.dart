@@ -268,6 +268,31 @@ const Map<String, String> bnStrings = {
   'Your phone\'s clock is {0} min off': 'আপনার ফোনের ঘড়ি {0} মিনিট ভুল',
   'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.':
       'সতর্কতা ফোনের ঘড়ি অনুসরণ করে; ভুল ঘড়ি বা টাইম জোনে সব সময় ভুল হয়।',
+  'Mosques': 'মসজিদসমূহ',
+  'Save the Iqama times of each mosque you pray at and switch between them on the Today screen.': 'যেসব মসজিদে নামাজ পড়েন সেগুলোর ইকামতের সময় সংরক্ষণ করুন এবং আজকের পর্দায় বদলান।',
+  'Masjid {0}': 'মসজিদ {0}',
+  '{0} saved': '{0} সংরক্ষিত',
+  'No description': 'কোনো বিবরণ নেই',
+  'Edit': 'সম্পাদনা',
+  'Add mosque': 'মসজিদ যোগ করুন',
+  'Iqama times of {0}': '{0}-এর ইকামতের সময়',
+  'Description (e.g. area)': 'বিবরণ (যেমন এলাকা)',
+  'Browse places': 'জায়গা দেখুন',
+  'Country › State › Place': 'দেশ › রাজ্য › জায়গা',
+  'Country': 'দেশ',
+  '{0}: choose state': '{0}: রাজ্য বেছে নিন',
+  'Filter': 'ফিল্টার',
+  'City': 'শহর',
+  'Next prayer': 'পরবর্তী নামাজ',
+  '{0} Azan at {1}': '{0} আজান {1}-এ',
+  '{0} Iqama at {1}': '{0} ইকামত {1}-এ',
+  'Next prayer in notification bar': 'নোটিফিকেশন বারে পরবর্তী নামাজ',
+  'A permanent notification with the next Azan (with countdown) and Iqama':
+      'পরবর্তী আজান (কাউন্টডাউনসহ) ও ইকামতের স্থায়ী বিজ্ঞপ্তি',
+  '{0} Iqama was at {1}': '{0} ইকামত ছিল {1}-এ',
+  'Keep the screen on until I stop': 'আমি না থামানো পর্যন্ত পর্দা চালু রাখুন',
+  'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'বন্ধ থাকলে ফোনের পর্দার টাইমআউট প্রযোজ্য। লক স্ক্রিনেও চলে: খুলুন, তারপর পাওয়ার বোতাম দুবার চাপুন।',
+  'Adjust this time (± minutes)': 'এই সময় সমন্বয় (± মিনিট)',
 };
 
 const List<String> bnHijriMonths = [

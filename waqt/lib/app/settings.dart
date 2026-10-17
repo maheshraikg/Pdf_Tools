@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/alerts.dart';
 import '../core/day.dart';
+import '../core/masjid.dart';
 import '../core/place.dart';
 import '../core/prayer_calc.dart';
 import '../core/tasbih.dart';
@@ -66,6 +67,9 @@ class AppSettings extends ChangeNotifier {
   /// True once the user has picked a place (first-run prompt).
   bool placeChosen = false;
 
+  /// Permanent notification with the next Azan and Iqama.
+  bool statusNotification = true;
+
   /// Follow the phone's GPS position (on when "Use my location" is picked).
   bool autoLocation = false;
 
@@ -82,6 +86,52 @@ class AppSettings extends ChangeNotifier {
 
   AlertConfig alerts = const AlertConfig();
 
+  /// Mosque profiles (empty: just the Iqama settings in [alerts]).
+  List<Masjid> masjids = [];
+  int activeMasjid = 0;
+  static const int maxMasjids = 8;
+
+  Masjid? get masjid => masjids.isEmpty
+      ? null
+      : masjids[activeMasjid.clamp(0, masjids.length - 1)];
+
+  /// Switches to mosque [i]: its Iqama times become the active ones.
+  Future<void> selectMasjid(int i) => update((s) {
+    s._syncMasjid();
+    s.activeMasjid = i.clamp(0, s.masjids.length - 1);
+    final m = s.masjids[s.activeMasjid];
+    s.alerts = m.applyTo(s.alerts);
+    if (m.adjustments != null) s.adjustments = Map.of(m.adjustments!);
+  });
+
+  /// Deletes profile [i]; if it was active, the next one takes over.
+  Future<void> removeMasjid(int i) => update((s) {
+    s._syncMasjid();
+    final wasActive = i == s.activeMasjid;
+    s.masjids = [...s.masjids]..removeAt(i);
+    if (s.activeMasjid > i || s.activeMasjid >= s.masjids.length) {
+      s.activeMasjid--;
+    }
+    if (s.masjids.isEmpty) {
+      s.activeMasjid = 0;
+    } else if (wasActive) {
+      final m = s.masjids[s.activeMasjid];
+      s.alerts = m.applyTo(s.alerts);
+      if (m.adjustments != null) s.adjustments = Map.of(m.adjustments!);
+    }
+  });
+
+  /// Keeps the active profile in step with the Iqama settings.
+  void _syncMasjid() {
+    if (masjids.isEmpty) return;
+    activeMasjid = activeMasjid.clamp(0, masjids.length - 1);
+    masjids = [...masjids]
+      ..[activeMasjid] = masjids[activeMasjid].withIqamaFrom(
+        alerts,
+        adjustments,
+      );
+  }
+
   /// Prayer tracker (saved with the other settings).
   PrayerLog log = PrayerLog();
 
@@ -92,6 +142,10 @@ class AppSettings extends ChangeNotifier {
   String mosqueName = '';
   bool displayNextPage = true;
   int displaySeconds = 12;
+
+  /// Keep the screen on while the display is open (else the phone's
+  /// screen timeout applies).
+  bool displayKeepOn = true;
   List<String> announcements = [];
   static const int maxAnnouncements = 5;
 
@@ -192,6 +246,7 @@ class AppSettings extends ChangeNotifier {
     placeChosen = p.getBool('placeChosen') ?? false;
     onboarded = p.getBool('onboarded') ?? placeChosen;
     autoLocation = p.getBool('autoLocation') ?? false;
+    statusNotification = p.getBool('statusNotification') ?? true;
     method = CalcMethod.byId(p.getString('method'));
     asr = AsrMethod.values.asNameMap()[p.getString('asr')] ?? AsrMethod.shafii;
     highLatitude =
@@ -219,6 +274,16 @@ class AppSettings extends ChangeNotifier {
         );
       } catch (_) {}
     }
+    final mj = p.getString('masjids');
+    if (mj != null) {
+      try {
+        masjids = [
+          for (final m in (jsonDecode(mj) as List))
+            Masjid.fromJson((m as Map).cast<String, dynamic>()),
+        ];
+      } catch (_) {}
+    }
+    activeMasjid = p.getInt('activeMasjid') ?? 0;
     final tr = p.getString('tracker');
     if (tr != null) {
       try {
@@ -242,6 +307,7 @@ class AppSettings extends ChangeNotifier {
         mosqueName = j['name'] as String? ?? '';
         displayNextPage = j['nextPage'] as bool? ?? true;
         displaySeconds = j['seconds'] as int? ?? 12;
+        displayKeepOn = j['keepOn'] as bool? ?? true;
         announcements = [
           for (final a in (j['announcements'] as List? ?? const []))
             if (a is String && a.trim().isNotEmpty) a,
@@ -253,6 +319,7 @@ class AppSettings extends ChangeNotifier {
   }
 
   Future<void> _save() async {
+    _syncMasjid();
     final p = _prefs;
     notifyListeners();
     if (p == null) return;
@@ -264,6 +331,7 @@ class AppSettings extends ChangeNotifier {
     await p.setBool('placeChosen', placeChosen);
     await p.setBool('onboarded', onboarded);
     await p.setBool('autoLocation', autoLocation);
+    await p.setBool('statusNotification', statusNotification);
     await p.setString('method', method.id);
     await p.setString('asr', asr.name);
     await p.setString('highLat', highLatitude.name);
@@ -275,6 +343,11 @@ class AppSettings extends ChangeNotifier {
     await p.setInt('ishraq', ishraqMinutes);
     await p.setInt('hijriAdjust', hijriAdjust);
     await p.setString('alerts', jsonEncode(alerts.toJson()));
+    await p.setString(
+      'masjids',
+      jsonEncode([for (final m in masjids) m.toJson()]),
+    );
+    await p.setInt('activeMasjid', activeMasjid);
     await p.setString('tracker', jsonEncode(log.toJson(today)));
     await p.setString('tasbih', jsonEncode(tasbih.toJson()));
     await p.setString(
@@ -283,6 +356,7 @@ class AppSettings extends ChangeNotifier {
         'name': mosqueName,
         'nextPage': displayNextPage,
         'seconds': displaySeconds,
+        'keepOn': displayKeepOn,
         'announcements': announcements,
       }),
     );

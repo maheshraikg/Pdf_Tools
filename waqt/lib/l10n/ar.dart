@@ -268,6 +268,32 @@ const Map<String, String> arStrings = {
   'Your phone\'s clock is {0} min off':
       'ساعة هاتفك متأخرة أو متقدمة بـ {0} دقيقة',
   'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.': 'التنبيهات تتبع ساعة الهاتف؛ الساعة أو المنطقة الزمنية الخاطئة تجعل كل الأوقات خاطئة.',
+  'Mosques': 'المساجد',
+  'Save the Iqama times of each mosque you pray at and switch between them on the Today screen.':
+      'احفظ أوقات الإقامة لكل مسجد تصلي فيه وبدّل بينها من شاشة اليوم.',
+  'Masjid {0}': 'مسجد {0}',
+  '{0} saved': '{0} محفوظة',
+  'No description': 'بلا وصف',
+  'Edit': 'تعديل',
+  'Add mosque': 'إضافة مسجد',
+  'Iqama times of {0}': 'أوقات الإقامة في {0}',
+  'Description (e.g. area)': 'الوصف (مثل الحي)',
+  'Browse places': 'تصفح الأماكن',
+  'Country › State › Place': 'الدولة › الولاية › المكان',
+  'Country': 'الدولة',
+  '{0}: choose state': '{0}: اختر الولاية',
+  'Filter': 'تصفية',
+  'City': 'مدينة',
+  'Next prayer': 'الصلاة القادمة',
+  '{0} Azan at {1}': 'أذان {0} الساعة {1}',
+  '{0} Iqama at {1}': 'إقامة {0} الساعة {1}',
+  'Next prayer in notification bar': 'الصلاة القادمة في شريط الإشعارات',
+  'A permanent notification with the next Azan (with countdown) and Iqama':
+      'إشعار دائم بالأذان القادم (مع العد التنازلي) والإقامة',
+  '{0} Iqama was at {1}': 'كانت إقامة {0} الساعة {1}',
+  'Keep the screen on until I stop': 'أبقِ الشاشة مضاءة حتى أوقفها',
+  'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'عند الإيقاف تُطبَّق مهلة شاشة الهاتف. تعمل الشاشة أيضاً على شاشة القفل: افتحها ثم اضغط زر التشغيل مرتين.',
+  'Adjust this time (± minutes)': 'تعديل هذا الوقت (± دقائق)',
 };
 
 const List<String> arHijriMonths = [

@@ -72,6 +72,13 @@ class DisplaySettingsScreen extends StatelessWidget {
                 value: settings.displayNextPage,
                 onChanged: (v) => settings.update((x) => x.displayNextPage = v),
               ),
+              SwitchListTile(
+                secondary: const IconBadge(Icons.light_mode_outlined),
+                title: Text(s.keepScreenOn),
+                subtitle: Text(s.keepScreenOnHelp),
+                value: settings.displayKeepOn,
+                onChanged: (v) => settings.update((x) => x.displayKeepOn = v),
+              ),
               MinutesStepper(
                 label: s.secondsPerPage,
                 value: settings.displaySeconds,

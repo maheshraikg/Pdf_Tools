@@ -8,6 +8,7 @@ import '../core/cities.dart';
 import '../core/place.dart';
 import '../core/timetable.dart';
 import '../ui/widgets.dart';
+import 'place_browse_screen.dart';
 
 class PlaceScreen extends StatefulWidget {
   const PlaceScreen({super.key});
@@ -205,6 +206,21 @@ class _PlaceScreenState extends State<PlaceScreen> {
                   value: settings.autoLocation,
                   onChanged: (v) => settings.update((x) => x.autoLocation = v),
                 ),
+              ListTile(
+                leading: const IconBadge(Icons.public),
+                title: Text(s.browsePlaces),
+                subtitle: Text(s.browsePlacesHelp),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () async {
+                  final picked = await Navigator.push<bool>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const PlaceBrowseScreen(),
+                    ),
+                  );
+                  if (picked == true && context.mounted) Navigator.pop(context);
+                },
+              ),
               ListTile(
                 leading: const IconBadge(Icons.edit_location_alt_outlined),
                 title: Text(s.enterCoordinates),

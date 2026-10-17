@@ -14,6 +14,7 @@ import '../ui/theme.dart';
 import '../ui/widgets.dart';
 import 'display_screen.dart';
 import 'place_screen.dart';
+import 'prayer_sheet.dart';
 import 'tracker_screen.dart';
 
 /// Prayers shown as cards, in order (extras go in the small row below).
@@ -126,6 +127,10 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
                   _healthCard(context, _health!),
                   const SizedBox(height: 12),
                 ],
+                if (settings.masjids.length > 1) ...[
+                  _masjidTabs(context),
+                  const SizedBox(height: 10),
+                ],
                 _daySwitcher(context, day),
                 const SizedBox(height: 8),
                 for (final p in _cardPrayers) ...[
@@ -167,6 +172,68 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// Mosque profiles as tabs: tap to switch Iqama times.
+  Widget _masjidTabs(BuildContext context) {
+    final settings = context.settings, s = context.s;
+    final scheme = Theme.of(context).colorScheme;
+    final t = Theme.of(context).textTheme;
+    return SizedBox(
+      height: 58,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: settings.masjids.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        itemBuilder: (context, i) {
+          final m = settings.masjids[i];
+          final on = i == settings.activeMasjid;
+          return InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () => settings.selectMasjid(i),
+            child: Container(
+              constraints: const BoxConstraints(minWidth: 110, maxWidth: 190),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                gradient: on
+                    ? heroGradient(Theme.of(context).brightness)
+                    : null,
+                color: on ? null : Theme.of(context).cardTheme.color,
+                borderRadius: BorderRadius.circular(16),
+                border: on
+                    ? null
+                    : Border.all(
+                        color: scheme.outlineVariant.withValues(alpha: 0.6),
+                      ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    m.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: t.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: on ? Colors.white : null,
+                    ),
+                  ),
+                  Text(
+                    m.description.isEmpty ? s.noDescription : m.description,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: t.bodySmall?.copyWith(
+                      color: on ? kGold : scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -831,7 +898,17 @@ class _PrayerCard extends StatelessWidget {
       ),
     );
     final prayed = p.isFard && settings.log.prayed(day.date, p);
-    return Opacity(opacity: isPast && !prayed ? 0.6 : 1, child: card);
+    return Opacity(
+      opacity: isPast && !prayed ? 0.6 : 1,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () => showPrayerSheet(context, day, p),
+          child: card,
+        ),
+      ),
+    );
   }
 }
 
@@ -894,27 +971,33 @@ class _ExtraTile extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        child: Column(
-          children: [
-            Icon(prayerIcon(prayer), size: 20, color: scheme.tertiary),
-            const SizedBox(height: 4),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                s.prayer(prayer),
-                style: t.labelMedium?.copyWith(color: scheme.onSurfaceVariant),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => showPrayerSheet(context, day, prayer),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          child: Column(
+            children: [
+              Icon(prayerIcon(prayer), size: 20, color: scheme.tertiary),
+              const SizedBox(height: 4),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  s.prayer(prayer),
+                  style: t.labelMedium?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
               ),
-            ),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                hm(settings, day[prayer]),
-                style: t.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  hm(settings, day[prayer]),
+                  style: t.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

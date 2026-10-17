@@ -38,8 +38,12 @@ Future<Place> gpsPlace(
     cities = const [];
   }
   final near = nearestCity(cities, lat, lng);
-  // The nearest town's zone, else (far from any town) the phone's.
-  final zone = nearestCity(cities, lat, lng, maxKm: 150)?.timeZone;
+  // The nearest town's zone, country and method; far from any town, the
+  // phone's zone and the current method.
+  final area = nearestCity(cities, lat, lng, maxKm: 150);
+  final (method, asr) = area == null
+      ? (settings.method.id, settings.asr)
+      : suggestedMethod(area.country, area.regionName, lng);
   return Place(
     id: 'gps',
     name: near != null
@@ -47,9 +51,10 @@ Future<Place> gpsPlace(
         : '${s.myLocation} (${lat.toStringAsFixed(3)}, ${lng.toStringAsFixed(3)})',
     latitude: lat,
     longitude: lng,
-    timeZone: zone,
-    methodId: settings.method.id,
-    asr: settings.asr,
+    timeZone: area?.timeZone,
+    region: area?.region ?? '',
+    methodId: method,
+    asr: asr,
   );
 }
 
@@ -92,6 +97,7 @@ Future<Place?> refreshAutoLocation(AppSettings settings) async {
     p.longitude,
   );
   if (moved < 2 && p.timeZone == old.timeZone) return null;
-  await settings.choosePlace(p, applySuggestions: false);
+  // Same country and state: keep the user's method; new area: its own.
+  await settings.choosePlace(p, applySuggestions: p.region != old.region);
   return p;
 }

@@ -119,6 +119,27 @@ class MainActivity : FlutterActivity() {
                         }
                         result.success(null)
                     }
+                    "setStatusStates" -> {
+                        StatusNotifier.save(
+                            this,
+                            org.json.JSONArray(call.argument<String>("states") ?: "[]"),
+                            call.argument<String>("channelName") ?: "Next prayer",
+                        )
+                        result.success(null)
+                    }
+                    "showOnLockScreen" -> {
+                        val on = call.argument<Boolean>("on") ?: false
+                        if (Build.VERSION.SDK_INT >= 27) {
+                            setShowWhenLocked(on)
+                            setTurnScreenOn(on)
+                        } else {
+                            @Suppress("DEPRECATION")
+                            val flags = android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                                android.view.WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                            if (on) window.addFlags(flags) else window.clearFlags(flags)
+                        }
+                        result.success(null)
+                    }
                     "stopSound" -> {
                         AzanService.stop(this)
                         result.success(null)
@@ -133,6 +154,7 @@ class MainActivity : FlutterActivity() {
         // Re-arm the silent schedule in case the process was killed.
         SilentScheduler.reschedule(this)
         AzanScheduler.reschedule(this)
+        StatusNotifier.refresh(this)
     }
 
     private fun notificationManager() =

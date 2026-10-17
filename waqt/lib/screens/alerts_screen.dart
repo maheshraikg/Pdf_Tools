@@ -63,6 +63,18 @@ class _AlertsScreenState extends State<AlertsScreen>
         children: [
           Section(
             children: [
+              SwitchListTile(
+                secondary: const IconBadge(Icons.push_pin_outlined),
+                title: Text(s.statusNotification),
+                subtitle: Text(s.statusNotificationHelp),
+                value: settings.statusNotification,
+                onChanged: (v) =>
+                    settings.update((x) => x.statusNotification = v),
+              ),
+            ],
+          ),
+          Section(
+            children: [
               for (final p in Prayer.fard)
                 ExpansionTile(
                   leading: IconBadge(
@@ -101,7 +113,7 @@ class _AlertsScreenState extends State<AlertsScreen>
                       onChanged: (v) =>
                           set(c.withPrayer(p, c.of(p).copyWith(iqamaDelay: v))),
                     ),
-                    _FixedIqamaTile(
+                    FixedIqamaTile(
                       value: c.of(p).fixedIqama,
                       onChanged: (v) =>
                           set(c.withPrayer(p, c.of(p).copyWith(fixedIqama: v))),
@@ -131,7 +143,7 @@ class _AlertsScreenState extends State<AlertsScreen>
                 max: 90,
                 onChanged: (v) => set(c.copyWith(jumuahIqamaDelay: v)),
               ),
-              _FixedIqamaTile(
+              FixedIqamaTile(
                 label: s.jumuahFixedIqama,
                 value: c.jumuahFixedIqama,
                 onChanged: (v) => set(c.copyWith(jumuahFixedIqama: v)),
@@ -458,8 +470,9 @@ class _TimeTile extends StatelessWidget {
 }
 
 /// "Fixed Iqama time": tap to pick a clock time, ✕ to go back to the delay.
-class _FixedIqamaTile extends StatelessWidget {
-  const _FixedIqamaTile({
+class FixedIqamaTile extends StatelessWidget {
+  const FixedIqamaTile({
+    super.key,
     required this.value,
     required this.onChanged,
     this.label,

@@ -115,6 +115,11 @@ void main() {
       find.text('Auto silent during prayer'),
       200,
     );
+    await Scrollable.ensureVisible(
+      tester.element(find.text('Auto silent during prayer')),
+      alignment: 0.5,
+    );
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Auto silent during prayer'));
     await tester.pump();
     expect(settings.alerts.silentEnabled, isTrue);
@@ -204,6 +209,11 @@ void main() {
     final settings = AppSettings.memory();
     await _pumpScreen(tester, settings, const AlertsScreen());
     await tester.scrollUntilVisible(find.text('Fajr Azan sound'), 200);
+    await Scrollable.ensureVisible(
+      tester.element(find.text('Azan sound').last),
+      alignment: 0.5,
+    );
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Azan sound').last);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Soft chime'));

@@ -268,6 +268,31 @@ const Map<String, String> knStrings = {
   'Your phone\'s clock is {0} min off':
       'ನಿಮ್ಮ ಫೋನಿನ ಗಡಿಯಾರ {0} ನಿಮಿಷ ತಪ್ಪಾಗಿದೆ',
   'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.': 'ಅಲರ್ಟ್‌ಗಳು ಫೋನಿನ ಗಡಿಯಾರ ಅನುಸರಿಸುತ್ತವೆ; ತಪ್ಪು ಗಡಿಯಾರ ಅಥವಾ ಸಮಯ ವಲಯದಿಂದ ಎಲ್ಲಾ ಸಮಯಗಳೂ ತಪ್ಪಾಗುತ್ತವೆ.',
+  'Mosques': 'ಮಸೀದಿಗಳು',
+  'Save the Iqama times of each mosque you pray at and switch between them on the Today screen.': 'ನೀವು ನಮಾಝ್ ಮಾಡುವ ಪ್ರತಿ ಮಸೀದಿಯ ಇಕಾಮತ್ ಸಮಯಗಳನ್ನು ಉಳಿಸಿ ಮತ್ತು ಇಂದಿನ ಪರದೆಯಲ್ಲಿ ಬದಲಿಸಿ.',
+  'Masjid {0}': 'ಮಸೀದಿ {0}',
+  '{0} saved': '{0} ಉಳಿಸಲಾಗಿದೆ',
+  'No description': 'ವಿವರಣೆ ಇಲ್ಲ',
+  'Edit': 'ತಿದ್ದು',
+  'Add mosque': 'ಮಸೀದಿ ಸೇರಿಸಿ',
+  'Iqama times of {0}': '{0} ಇಕಾಮತ್ ಸಮಯಗಳು',
+  'Description (e.g. area)': 'ವಿವರಣೆ (ಉದಾ. ಪ್ರದೇಶ)',
+  'Browse places': 'ಸ್ಥಳಗಳನ್ನು ನೋಡಿ',
+  'Country › State › Place': 'ದೇಶ › ರಾಜ್ಯ › ಸ್ಥಳ',
+  'Country': 'ದೇಶ',
+  '{0}: choose state': '{0}: ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ',
+  'Filter': 'ಫಿಲ್ಟರ್',
+  'City': 'ನಗರ',
+  'Next prayer': 'ಮುಂದಿನ ನಮಾಝ್',
+  '{0} Azan at {1}': '{0} ಅಝಾನ್ {1}ಕ್ಕೆ',
+  '{0} Iqama at {1}': '{0} ಇಕಾಮತ್ {1}ಕ್ಕೆ',
+  'Next prayer in notification bar': 'ಅಧಿಸೂಚನೆ ಪಟ್ಟಿಯಲ್ಲಿ ಮುಂದಿನ ನಮಾಝ್',
+  'A permanent notification with the next Azan (with countdown) and Iqama':
+      'ಮುಂದಿನ ಅಝಾನ್ (ಕೌಂಟ್‌ಡೌನ್ ಸಹಿತ) ಮತ್ತು ಇಕಾಮತ್‌ನ ಶಾಶ್ವತ ಅಧಿಸೂಚನೆ',
+  '{0} Iqama was at {1}': '{0} ಇಕಾಮತ್ {1}ಕ್ಕೆ ಆಗಿತ್ತು',
+  'Keep the screen on until I stop': 'ನಾನು ನಿಲ್ಲಿಸುವವರೆಗೆ ಪರದೆ ಆನ್ ಇರಲಿ',
+  'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'ಆಫ್ ಆದರೆ ಫೋನಿನ ಪರದೆ ಟೈಮ್‌ಔಟ್ ಅನ್ವಯಿಸುತ್ತದೆ. ಲಾಕ್ ಪರದೆಯಲ್ಲೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ: ತೆರೆಯಿರಿ, ನಂತರ ಪವರ್ ಬಟನ್ ಎರಡು ಬಾರಿ ಒತ್ತಿರಿ.',
+  'Adjust this time (± minutes)': 'ಈ ಸಮಯ ಹೊಂದಿಸಿ (± ನಿಮಿಷ)',
 };
 
 const List<String> knHijriMonths = [

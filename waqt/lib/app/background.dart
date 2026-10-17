@@ -8,6 +8,7 @@ import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
 import '../core/alerts.dart';
+import '../core/day.dart';
 import '../core/prayer_calc.dart';
 import 'native.dart';
 import 'scope.dart';
@@ -219,6 +220,10 @@ class Background {
         fullScreen: config.fullScreen,
       );
       await Native.updateWidget(widgetJson(settings, days));
+      await Native.setStatusStates(
+        settings.statusNotification ? statusStates(settings, days, now) : [],
+        s.channelNextPrayer,
+      );
 
       final silent = planSilent(days, config, now);
       var mode = config.silentMode;
@@ -251,4 +256,54 @@ class Background {
       notificationDetails: _details(s, AlertKind.azan),
     );
   }
+}
+
+/// States of the permanent notification: from each Azan or Iqama (and from
+/// now) until the next one, the next Azan (with a countdown to it) and the
+/// next Iqama.
+List<Map<String, Object>> statusStates(
+  AppSettings settings,
+  List<PrayerDay> days,
+  DateTime now,
+) {
+  final s = S(settings.lang);
+  final azans = <(DateTime, Prayer, bool)>[];
+  final iqamas = <(DateTime, Prayer, bool)>[];
+  for (final d in days) {
+    for (final p in Prayer.fard) {
+      azans.add((d[p], p, d.isFriday));
+      iqamas.add((iqamaTime(d, p, settings.alerts), p, d.isFriday));
+    }
+  }
+  azans.sort((a, b) => a.$1.compareTo(b.$1));
+  iqamas.sort((a, b) => a.$1.compareTo(b.$1));
+  final where = [
+    if (settings.masjid != null) settings.masjid!.name,
+    settings.place.label(s.ml),
+  ].join(' · ');
+  final starts = <DateTime>{
+    now,
+    for (final a in azans) a.$1,
+    for (final i in iqamas) i.$1,
+  }.where((t) => !t.isBefore(now)).toList()..sort();
+  final out = <Map<String, Object>>[];
+  for (final t in starts) {
+    final a = azans.where((x) => x.$1.isAfter(t)).firstOrNull;
+    final i = iqamas.where((x) => x.$1.isAfter(t)).firstOrNull;
+    if (a == null) break;
+    out.add({
+      'from': t.millisecondsSinceEpoch,
+      'countdown': a.$1.millisecondsSinceEpoch,
+      'title': s.statusNextAzan(
+        s.prayer(a.$2, friday: a.$3),
+        hm(settings, a.$1),
+      ),
+      'text': [
+        if (i != null)
+          s.statusNextIqama(s.prayer(i.$2, friday: i.$3), hm(settings, i.$1)),
+        where,
+      ].join('\n'),
+    });
+  }
+  return out;
 }

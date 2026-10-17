@@ -41,7 +41,7 @@ class City {
       regionName == null ? countryName : '$regionName, $countryName';
 
   Place toPlace() {
-    final (method, asr) = suggestedMethod(country, regionName);
+    final (method, asr) = suggestedMethod(country, regionName, longitude);
     return Place(
       id: 'gn:$name:${latitude.toStringAsFixed(3)},${longitude.toStringAsFixed(3)}',
       name: name,
@@ -56,14 +56,23 @@ class City {
   }
 }
 
-/// Usual calculation method and Asr school in a country.
-(String, AsrMethod) suggestedMethod(String country, [String? region]) {
+/// Usual calculation method and Asr school in a country (and for India,
+/// the state; coastal Karnataka west of 75.3° E follows Kerala's charts).
+(String, AsrMethod) suggestedMethod(
+  String country, [
+  String? region,
+  double? longitude,
+]) {
   const hanafi = AsrMethod.hanafi, shafii = AsrMethod.shafii;
   switch (country) {
     case 'IN':
-      return region == 'Kerala' || region == 'Lakshadweep'
-          ? ('kerala', shafii)
-          : ('karachi', hanafi);
+      if (region == 'Kerala' || region == 'Lakshadweep') {
+        return ('kerala', shafii);
+      }
+      if (region == 'Karnataka' && longitude != null && longitude < 75.3) {
+        return ('kerala', shafii);
+      }
+      return ('karachi', hanafi);
     case 'PK' || 'BD' || 'AF':
       return ('karachi', hanafi);
     case 'LK' || 'MV':
