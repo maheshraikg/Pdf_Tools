@@ -39,18 +39,24 @@ jobs:
 
       - name: Build release APK
         # A growing build number, so each build installs as an update.
-        run: flutter build apk --release --build-number=${{ github.run_number }}
+        run: |
+          flutter build apk --release --build-number=${{ github.run_number }}
+          cp build/app/outputs/flutter-apk/app-release.apk waqt.apk
+
+      # Smaller one-architecture APKs too (most phones: arm64; older: arm32).
+      - name: Build per-architecture APKs
+        run: flutter build apk --release --split-per-abi --build-number=${{ github.run_number }}
 
       - name: APK size
         run: |
-          ls -l build/app/outputs/flutter-apk/app-release.apk
-          echo "APK: $(du -h build/app/outputs/flutter-apk/app-release.apk | cut -f1) ($(stat -c %s build/app/outputs/flutter-apk/app-release.apk) bytes)" >> "$GITHUB_STEP_SUMMARY"
+          ls -l waqt.apk build/app/outputs/flutter-apk/
+          echo "APK: $(du -h waqt.apk | cut -f1) ($(stat -c %s waqt.apk) bytes)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload release APK
         uses: actions/upload-artifact@v4
         with:
           name: waqt-release-apk
-          path: waqt/build/app/outputs/flutter-apk/app-release.apk
+          path: waqt/waqt.apk
 
       # A direct, sign-in-free download link that always serves the newest
       # build: https://github.com/<repo>/releases/download/waqt-apk-keep/waqt.apk
@@ -64,9 +70,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
-          cp build/app/outputs/flutter-apk/app-release.apk waqt.apk
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk waqt-arm64.apk
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk waqt-arm32.apk
           gh release delete waqt-apk-keep --cleanup-tag --yes || true
-          gh release create waqt-apk-keep waqt.apk \
+          gh release create waqt-apk-keep waqt.apk waqt-arm64.apk waqt-arm32.apk \
             --prerelease \
             --target "$SHA" \
             --title "Azan Time – latest test build" \
