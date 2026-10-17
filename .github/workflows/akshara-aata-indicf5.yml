@@ -1,0 +1,63 @@
+name: Akshara Aata IndicF5 kagunita
+
+# Speaks kagunita with AI4Bharat IndicF5 and checks each take with the
+# IndicConformer Kannada recogniser. Settings: akshara_aata/tool/indicf5.cfg.
+on:
+  push:
+    paths:
+      - '.github/workflows/akshara-aata-indicf5.yml'
+      - 'akshara_aata/tool/indicf5_kagunita.py'
+      - 'akshara_aata/tool/indicf5.cfg'
+
+permissions:
+  contents: write
+
+jobs:
+  speak:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39]
+    defaults:
+      run:
+        working-directory: akshara_aata
+    steps:
+      - uses: actions/checkout@v4
+      - name: Settings
+        id: cfg
+        run: |
+          grep -v '^#' tool/indicf5.cfg >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        if: matrix.shard < fromJSON(steps.cfg.outputs.SHARDS)
+        with:
+          python-version: '3.10'
+      - name: Install
+        if: matrix.shard < fromJSON(steps.cfg.outputs.SHARDS)
+        run: |
+          sudo apt-get install -y -q ffmpeg >/dev/null
+          pip install --index-url https://download.pytorch.org/whl/cpu torch==2.5.1 torchaudio==2.5.1
+          printf 'torch==2.5.1\ntorchaudio==2.5.1\n' > /tmp/pins.txt
+          pip install -c /tmp/pins.txt git+https://github.com/ai4bharat/IndicF5.git 'transformers<4.50' soundfile onnx onnxruntime
+          curl -sfLo KAN_F_HAPPY_00001.wav https://github.com/AI4Bharat/IndicF5/raw/main/prompts/KAN_F_HAPPY_00001.wav
+      - name: Speak and check
+        if: matrix.shard < fromJSON(steps.cfg.outputs.SHARDS)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SHARD: ${{ matrix.shard }}
+          SHARDS: ${{ steps.cfg.outputs.SHARDS }}
+          TEXTS: ${{ steps.cfg.outputs.TEXTS }}
+          GH_TOKEN: ${{ github.token }}
+          PROGRESS_CMD: >-
+            tar czf ../indicf5-${{ matrix.shard }}.tgz out &&
+            gh release upload akshara-aata-voice-keep ../indicf5-${{ matrix.shard }}.tgz --clobber -R ${{ github.repository }} >/dev/null 2>&1
+        run: python3 tool/indicf5_kagunita.py out
+      - name: Upload
+        if: always() && matrix.shard < fromJSON(steps.cfg.outputs.SHARDS)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p out
+          tar czf ../indicf5-${{ matrix.shard }}.tgz out
+          gh release upload akshara-aata-voice-keep ../indicf5-${{ matrix.shard }}.tgz --clobber -R "$GITHUB_REPOSITORY"
