@@ -1,0 +1,81 @@
+name: Waqt (Flutter)
+
+on:
+  push:
+    branches: [ master, main ]
+    paths: [ 'waqt/**', '.github/workflows/waqt.yml' ]
+  pull_request:
+    paths: [ 'waqt/**', '.github/workflows/waqt.yml' ]
+  workflow_dispatch:
+
+permissions:
+  contents: write  # publish the APK to the "waqt-apk-keep" pre-release
+
+jobs:
+  build:
+    name: Analyze, test and build release APK
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: waqt
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+
+      - name: Build release APK
+        # A growing build number, so each build installs as an update.
+        run: |
+          flutter build apk --release --build-number=${{ github.run_number }}
+          cp build/app/outputs/flutter-apk/app-release.apk waqt.apk
+
+      # Smaller one-architecture APKs too (most phones: arm64; older: arm32).
+      - name: Build per-architecture APKs
+        run: flutter build apk --release --split-per-abi --build-number=${{ github.run_number }}
+
+      - name: APK size
+        run: |
+          ls -l waqt.apk build/app/outputs/flutter-apk/
+          echo "APK: $(du -h waqt.apk | cut -f1) ($(stat -c %s waqt.apk) bytes)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: waqt-release-apk
+          path: waqt/waqt.apk
+
+      # A direct, sign-in-free download link that always serves the newest
+      # build: https://github.com/<repo>/releases/download/waqt-apk-keep/waqt.apk
+      # Pre-release, so the PDF app stays the repo's "Latest" release; "keep"
+      # in the tag protects it from the prune-releases job.
+      - name: Publish APK to the waqt-apk-keep pre-release
+        if: >-
+          github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk waqt-arm64.apk
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk waqt-arm32.apk
+          gh release delete waqt-apk-keep --cleanup-tag --yes || true
+          gh release create waqt-apk-keep waqt.apk waqt-arm64.apk waqt-arm32.apk \
+            --prerelease \
+            --target "$SHA" \
+            --title "Azan Time – latest test build" \
+            --notes "Latest Azan Time APK built from ${SHA:0:7}. For testing; signed with the fixed test key, so it installs over earlier test builds signed with it."
+          echo "Direct download: https://github.com/${{ github.repository }}/releases/download/waqt-apk-keep/waqt.apk" >> "$GITHUB_STEP_SUMMARY"
