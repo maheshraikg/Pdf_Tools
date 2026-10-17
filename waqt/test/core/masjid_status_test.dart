@@ -78,6 +78,8 @@ void main() {
     );
     // 16 Oct 2026 is a Friday.
     expect(states.first['title'] as String, contains("Jumu'ah Azan"));
+    expect(states.first['iqama'] as String, endsWith('⌛'));
+    expect(states.first['where'], s.place.label(false));
     for (var i = 1; i < states.length; i++) {
       expect(
         (states[i]['from'] as int) > (states[i - 1]['from'] as int),

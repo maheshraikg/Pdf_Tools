@@ -9,6 +9,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.SystemClock
+import android.widget.RemoteViews
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -89,7 +91,6 @@ object StatusNotifier {
         b.setSmallIcon(R.drawable.ic_stat_waqt)
             .setContentTitle(s.optString("title"))
             .setContentText(s.optString("text"))
-            .setStyle(Notification.BigTextStyle().bigText(s.optString("text")))
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setContentIntent(open)
@@ -99,7 +100,34 @@ object StatusNotifier {
             .setWhen(s.getLong("countdown"))
             .setUsesChronometer(true)
         if (Build.VERSION.SDK_INT >= 24) b.setChronometerCountDown(true)
+        if (s.has("iqama")) {
+            // Centred layout like the original app (texts sent from Dart).
+            b.setCustomContentView(views(context, R.layout.status_small, s, false))
+            b.setCustomBigContentView(views(context, R.layout.status_big, s, true))
+        } else {
+            b.setStyle(Notification.BigTextStyle().bigText(s.optString("text")))
+        }
         return b.build()
+    }
+
+    private fun views(context: Context, layout: Int, s: JSONObject, big: Boolean): RemoteViews {
+        val v = RemoteViews(context.packageName, layout)
+        v.setTextViewText(R.id.status_azan, s.optString("title"))
+        v.setTextViewText(R.id.status_iqama, s.optString("iqama"))
+        // Countdown to the next Azan, on the elapsed-time clock.
+        val left = s.getLong("countdown") - System.currentTimeMillis()
+        v.setChronometer(R.id.status_countdown, SystemClock.elapsedRealtime() + left, null, true)
+        v.setChronometerCountDown(R.id.status_countdown, true)
+        if (big) {
+            val where = s.optString("where")
+            v.setTextViewText(R.id.status_where_azan, where)
+            v.setTextViewText(R.id.status_where_iqama, where)
+            val gone = if (where.isEmpty()) android.view.View.GONE else android.view.View.VISIBLE
+            v.setViewVisibility(R.id.status_where_azan, gone)
+            v.setViewVisibility(R.id.status_where_iqama, gone)
+            if (s.optString("iqama").isEmpty()) v.setViewVisibility(R.id.status_iqama, android.view.View.GONE)
+        }
+        return v
     }
 
     private fun states(context: Context): List<JSONObject> {

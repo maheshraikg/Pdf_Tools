@@ -313,10 +313,12 @@ List<Map<String, Object>> statusStates(
   }
   azans.sort((a, b) => a.$1.compareTo(b.$1));
   iqamas.sort((a, b) => a.$1.compareTo(b.$1));
-  final where = [
-    if (settings.masjid != null) settings.masjid!.name,
-    settings.place.label(s.ml),
-  ].join(' · ');
+  final m = settings.masjid;
+  final place = settings.place.label(s.ml);
+  // "Masjid 1, Market road (Kannur)", as the original app shows it.
+  final where = m == null
+      ? place
+      : '${m.name}${m.description.isEmpty ? '' : ', ${m.description}'} ($place)';
   final starts = <DateTime>{
     now,
     for (final a in azans) a.$1,
@@ -339,6 +341,10 @@ List<Map<String, Object>> statusStates(
           s.statusNextIqama(s.prayer(i.$2, friday: i.$3), hm(settings, i.$1)),
         where,
       ].join('\n'),
+      'iqama': i == null
+          ? ''
+          : '${s.statusNextIqama(s.prayer(i.$2, friday: i.$3), hm(settings, i.$1))} ⌛',
+      'where': where,
     });
   }
   return out;

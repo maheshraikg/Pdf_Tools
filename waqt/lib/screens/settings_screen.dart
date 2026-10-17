@@ -55,6 +55,14 @@ class SettingsScreen extends StatelessWidget {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => push(const AlertsScreen()),
               ),
+              SwitchListTile(
+                secondary: const IconBadge(Icons.push_pin_outlined),
+                title: Text(s.statusNotification),
+                subtitle: Text(s.statusNotificationHelp),
+                value: settings.statusNotification,
+                onChanged: (v) =>
+                    settings.update((x) => x.statusNotification = v),
+              ),
               ListTile(
                 leading: const IconBadge(Icons.table_chart),
                 title: Text(s.timetable),
