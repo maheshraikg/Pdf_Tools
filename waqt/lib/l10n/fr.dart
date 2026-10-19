@@ -351,6 +351,8 @@ const Map<String, String> frStrings = {
   'Use the calculated time': 'Utiliser l\'heure calculée',
   'Fajr angle': 'Angle du Fajr',
   'Isha angle': 'Angle du Isha',
+  'Calendar': 'Calendrier',
+  'Times table': 'Tableau des horaires',
 };
 
 const List<String> frHijriMonths = [

@@ -375,4 +375,23 @@ void main() {
     );
     await shot(tester, key, 'sky_phases');
   });
+
+  testWidgets('month calendar', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 860));
+    final key = GlobalKey();
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: key,
+        child: WaqtApp(settings: settingsFor(Lang.en), background: false),
+      ),
+    );
+    await tester.pump();
+    await tester.tap(find.byIcon(Icons.calendar_month_outlined).last);
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.tap(find.byIcon(Icons.calendar_view_month));
+    await tester.pump(const Duration(milliseconds: 500));
+    await shot(tester, key, 'en_2b_calendar');
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 1));
+  });
 }

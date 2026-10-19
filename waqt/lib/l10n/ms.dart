@@ -354,6 +354,8 @@ const Map<String, String> msStrings = {
   'Use the calculated time': 'Guna waktu yang dikira',
   'Fajr angle': 'Sudut Subuh',
   'Isha angle': 'Sudut Isyak',
+  'Calendar': 'Kalendar',
+  'Times table': 'Jadual waktu',
 };
 
 const List<String> msHijriMonths = [

@@ -354,6 +354,8 @@ const Map<String, String> taStrings = {
   'Use the calculated time': 'கணக்கிட்ட நேரத்தைப் பயன்படுத்து',
   'Fajr angle': 'ஃபஜ்ர் கோணம்',
   'Isha angle': 'இஷா கோணம்',
+  'Calendar': 'நாட்காட்டி',
+  'Times table': 'நேர அட்டவணை',
 };
 
 const List<String> taHijriMonths = [

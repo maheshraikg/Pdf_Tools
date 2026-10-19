@@ -87,7 +87,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
     final heading = _heading;
     final rel = heading == null ? null : (bearing - heading + 360) % 360;
     final aligned = rel != null && (rel < 3 || rel > 357);
-    if (aligned && !_wasAligned) HapticFeedback.mediumImpact();
+    if (aligned && !_wasAligned) HapticFeedback.heavyImpact();
     _wasAligned = aligned;
 
     // How far to turn, and which way (rel < 180: the Qibla is to the right).
@@ -159,16 +159,40 @@ class _QiblaScreenState extends State<QiblaScreen> {
                           ),
                         )
                       else
-                        AspectRatio(
-                          aspectRatio: 1,
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 320),
-                            child: CustomPaint(
-                              painter: _CompassPainter(
-                                heading: heading,
-                                bearing: bearing,
-                                aligned: aligned,
-                                labelStyle: t.titleMedium ?? const TextStyle(),
+                        // Facing the Qibla: the dial glows gold and grows.
+                        AnimatedScale(
+                          scale: aligned ? 1.04 : 1,
+                          duration: const Duration(milliseconds: 350),
+                          curve: Curves.easeOutBack,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 400),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: kGold.withValues(
+                                    alpha: aligned ? 0.55 : 0,
+                                  ),
+                                  blurRadius: aligned ? 36 : 0,
+                                  spreadRadius: aligned ? 4 : 0,
+                                ),
+                              ],
+                            ),
+                            child: AspectRatio(
+                              aspectRatio: 1,
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 320,
+                                ),
+                                child: CustomPaint(
+                                  painter: _CompassPainter(
+                                    heading: heading,
+                                    bearing: bearing,
+                                    aligned: aligned,
+                                    labelStyle:
+                                        t.titleMedium ?? const TextStyle(),
+                                  ),
+                                ),
                               ),
                             ),
                           ),

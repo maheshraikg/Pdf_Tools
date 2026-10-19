@@ -356,6 +356,8 @@ const Map<String, String> trStrings = {
   'Use the calculated time': 'Hesaplanan vakti kullan',
   'Fajr angle': 'Sabah açısı',
   'Isha angle': 'Yatsı açısı',
+  'Calendar': 'Takvim',
+  'Times table': 'Vakit tablosu',
 };
 
 const List<String> trHijriMonths = [

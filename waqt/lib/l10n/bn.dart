@@ -357,6 +357,8 @@ const Map<String, String> bnStrings = {
   'Use the calculated time': 'হিসাবের সময় ব্যবহার করুন',
   'Fajr angle': 'ফজর কোণ',
   'Isha angle': 'ইশা কোণ',
+  'Calendar': 'ক্যালেন্ডার',
+  'Times table': 'সময়সূচি',
 };
 
 const List<String> bnHijriMonths = [

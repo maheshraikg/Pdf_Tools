@@ -355,6 +355,8 @@ const Map<String, String> hiStrings = {
   'Use the calculated time': 'गणना वाला समय इस्तेमाल करें',
   'Fajr angle': 'फ़ज्र कोण',
   'Isha angle': 'इशा कोण',
+  'Calendar': 'कैलेंडर',
+  'Times table': 'समय सारणी',
 };
 
 const List<String> hiHijriMonths = [

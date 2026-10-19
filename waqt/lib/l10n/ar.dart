@@ -356,6 +356,8 @@ const Map<String, String> arStrings = {
   'Use the calculated time': 'استخدم الوقت المحسوب',
   'Fajr angle': 'زاوية الفجر',
   'Isha angle': 'زاوية العشاء',
+  'Calendar': 'التقويم',
+  'Times table': 'جدول الأوقات',
 };
 
 const List<String> arHijriMonths = [

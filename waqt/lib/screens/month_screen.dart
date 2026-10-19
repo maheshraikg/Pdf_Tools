@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app/scope.dart';
+import '../core/day.dart';
 import '../core/events.dart';
 import '../core/prayer_calc.dart';
 import '../ui/theme.dart';
@@ -24,6 +25,9 @@ class MonthScreen extends StatefulWidget {
 
 class _MonthScreenState extends State<MonthScreen> {
   int _offset = 0;
+
+  /// Calendar grid instead of the times table.
+  bool _grid = false;
   final _scroll = ScrollController();
 
   /// Fixed row height, so "today" can be scrolled to without measuring.
@@ -111,6 +115,15 @@ class _MonthScreenState extends State<MonthScreen> {
                       ],
                     ),
                   ),
+                  IconButton(
+                    tooltip: _grid ? s.timesTable : s.calendarView,
+                    onPressed: () => setState(() => _grid = !_grid),
+                    icon: Icon(
+                      _grid
+                          ? Icons.table_rows_outlined
+                          : Icons.calendar_view_month,
+                    ),
+                  ),
                   IconButton.filledTonal(
                     onPressed: () => _changeMonth(-1),
                     icon: const Icon(Icons.chevron_left),
@@ -130,157 +143,165 @@ class _MonthScreenState extends State<MonthScreen> {
                 count: 6,
               ),
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
-                child: Card(
-                  clipBehavior: Clip.antiAlias,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(24),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        color: scheme.primary.withValues(alpha: 0.08),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 8,
-                        ),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 48,
-                              child: Text(
-                                s.date,
-                                style: small.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: scheme.primary,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            for (final p in _cols)
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      prayerIcon(p),
-                                      size: 16,
-                                      color: scheme.primary,
-                                    ),
-                                    const SizedBox(height: 2),
-                                    FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: Text(
-                                        s.prayer(p),
-                                        style: small.copyWith(
-                                          fontWeight: FontWeight.w700,
-                                          color: scheme.primary,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                          ],
-                        ),
+            if (_grid)
+              Expanded(
+                child: _CalendarGrid(days: days, today: today),
+              )
+            else
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
+                  child: Card(
+                    clipBehavior: Clip.antiAlias,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(24),
                       ),
-                      Expanded(
-                        child: ListView.builder(
-                          controller: _scroll,
-                          itemExtent: _rowHeight,
-                          itemCount: days.length,
-                          itemBuilder: (context, i) {
-                            final d = days[i];
-                            final isToday =
-                                d.year == today.year &&
-                                d.month == today.month &&
-                                d.day == today.day;
-                            final timeStyle = t.bodyMedium?.copyWith(
-                              fontFeatures: const [
-                                FontFeature.tabularFigures(),
-                              ],
-                              fontWeight: isToday
-                                  ? FontWeight.w700
-                                  : FontWeight.w500,
-                              color: isToday ? Colors.white : null,
-                            );
-                            return Container(
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: isToday
-                                    ? heroGradient(Theme.of(context).brightness)
-                                    : null,
-                                color: !isToday && d.isFriday
-                                    ? scheme.tertiary.withValues(alpha: 0.08)
-                                    : null,
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 2,
-                              ),
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 46,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '${d.day}',
-                                          style: t.titleMedium?.copyWith(
-                                            fontWeight: FontWeight.w800,
-                                            color: isToday
-                                                ? Colors.white
-                                                : d.isFriday
-                                                ? scheme.tertiary
-                                                : null,
-                                          ),
-                                        ),
-                                        Text(
-                                          '${d.hijri.day}'
-                                          '${IslamicEvent.values.any((e) => e.month == d.hijri.month && e.day == d.hijri.day) ? ' ★' : ''}',
-                                          style: small.copyWith(
-                                            color: isToday
-                                                ? kGold
-                                                : scheme.onSurfaceVariant,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          color: scheme.primary.withValues(alpha: 0.08),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 8,
+                          ),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 48,
+                                child: Text(
+                                  s.date,
+                                  style: small.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: scheme.primary,
                                   ),
-                                  for (final p in _cols)
-                                    Expanded(
-                                      child: FittedBox(
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              for (final p in _cols)
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        prayerIcon(p),
+                                        size: 16,
+                                        color: scheme.primary,
+                                      ),
+                                      const SizedBox(height: 2),
+                                      FittedBox(
                                         fit: BoxFit.scaleDown,
                                         child: Text(
-                                          clock(d[p]),
-                                          style: p == Prayer.sunrise && !isToday
-                                              ? timeStyle?.copyWith(
-                                                  color:
-                                                      scheme.onSurfaceVariant,
-                                                )
-                                              : timeStyle,
+                                          s.prayer(p),
+                                          style: small.copyWith(
+                                            fontWeight: FontWeight.w700,
+                                            color: scheme.primary,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                ],
-                              ),
-                            );
-                          },
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: ListView.builder(
+                            controller: _scroll,
+                            itemExtent: _rowHeight,
+                            itemCount: days.length,
+                            itemBuilder: (context, i) {
+                              final d = days[i];
+                              final isToday =
+                                  d.year == today.year &&
+                                  d.month == today.month &&
+                                  d.day == today.day;
+                              final timeStyle = t.bodyMedium?.copyWith(
+                                fontFeatures: const [
+                                  FontFeature.tabularFigures(),
+                                ],
+                                fontWeight: isToday
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                                color: isToday ? Colors.white : null,
+                              );
+                              return Container(
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: isToday
+                                      ? heroGradient(
+                                          Theme.of(context).brightness,
+                                        )
+                                      : null,
+                                  color: !isToday && d.isFriday
+                                      ? scheme.tertiary.withValues(alpha: 0.08)
+                                      : null,
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 2,
+                                ),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 46,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            '${d.day}',
+                                            style: t.titleMedium?.copyWith(
+                                              fontWeight: FontWeight.w800,
+                                              color: isToday
+                                                  ? Colors.white
+                                                  : d.isFriday
+                                                  ? scheme.tertiary
+                                                  : null,
+                                            ),
+                                          ),
+                                          Text(
+                                            '${d.hijri.day}'
+                                            '${IslamicEvent.values.any((e) => e.month == d.hijri.month && e.day == d.hijri.day) ? ' ★' : ''}',
+                                            style: small.copyWith(
+                                              color: isToday
+                                                  ? kGold
+                                                  : scheme.onSurfaceVariant,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    for (final p in _cols)
+                                      Expanded(
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            clock(d[p]),
+                                            style:
+                                                p == Prayer.sunrise && !isToday
+                                                ? timeStyle?.copyWith(
+                                                    color:
+                                                        scheme.onSurfaceVariant,
+                                                  )
+                                                : timeStyle,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -362,6 +383,198 @@ class _EventStrip extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+/// The month as a calendar: each day with its Hijri date and a star on
+/// Islamic occasions; tap a day for its times.
+class _CalendarGrid extends StatefulWidget {
+  const _CalendarGrid({required this.days, required this.today});
+
+  final List<PrayerDay> days;
+  final DateTime today;
+
+  @override
+  State<_CalendarGrid> createState() => _CalendarGridState();
+}
+
+class _CalendarGridState extends State<_CalendarGrid> {
+  DateTime? _picked;
+
+  @override
+  void didUpdateWidget(_CalendarGrid old) {
+    super.didUpdateWidget(old);
+    if (old.days.first.date != widget.days.first.date) _picked = null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = context.settings, s = context.s;
+    final scheme = Theme.of(context).colorScheme;
+    final t = Theme.of(context).textTheme;
+    final days = widget.days;
+    final inMonth = days.any((d) => d.date == widget.today);
+    final picked = days.firstWhere(
+      (d) => d.date == (_picked ?? (inMonth ? widget.today : days.first.date)),
+      orElse: () => days.first,
+    );
+    // Weeks start on Sunday.
+    final lead = days.first.date.weekday % 7;
+    final cells = [for (var i = 0; i < lead; i++) null, ...days];
+    bool event(PrayerDay d) => IslamicEvent.values.any(
+      (e) => e.month == d.hijri.month && e.day == d.hijri.day,
+    );
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(12, 4, 12, 16),
+      children: [
+        Row(
+          children: [
+            for (var w = 0; w < 7; w++)
+              Expanded(
+                child: Center(
+                  child: Text(
+                    shortWeekdayName(settings.lang, w == 0 ? 7 : w),
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: t.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: w == 5 ? scheme.tertiary : scheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        GridView.count(
+          crossAxisCount: 7,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
+          childAspectRatio: 0.82,
+          children: [
+            for (final d in cells)
+              if (d == null)
+                const SizedBox.shrink()
+              else
+                () {
+                  final isToday = d.date == widget.today;
+                  final isPicked = d.date == picked.date;
+                  return PressScale(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () => setState(() => _picked = d.date),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 250),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          gradient: isToday
+                              ? heroGradient(Theme.of(context).brightness)
+                              : null,
+                          color: isToday
+                              ? null
+                              : isPicked
+                              ? scheme.primary.withValues(alpha: 0.14)
+                              : scheme.surfaceContainerHighest.withValues(
+                                  alpha: 0.5,
+                                ),
+                          border: isPicked && !isToday
+                              ? Border.all(color: scheme.primary, width: 1.5)
+                              : null,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '${d.day}',
+                              style: t.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: isToday ? Colors.white : null,
+                              ),
+                            ),
+                            Text(
+                              '${d.hijri.day}${event(d) ? ' ★' : ''}',
+                              style: t.labelSmall?.copyWith(
+                                color: isToday ? kGold : scheme.tertiary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }(),
+          ],
+        ),
+        const SizedBox(height: 12),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 250),
+          child: Card(
+            key: ValueKey(picked.date),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    longDate(settings.lang, picked.date),
+                    style: t.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                  Text(
+                    hijriLabel(settings.lang, picked.hijri),
+                    style: t.bodySmall?.copyWith(color: scheme.tertiary),
+                  ),
+                  for (final e in IslamicEvent.values)
+                    if (e.month == picked.hijri.month &&
+                        e.day == picked.hijri.day)
+                      Text(
+                        '★ ${s.eventName(e)}',
+                        style: t.bodyMedium?.copyWith(
+                          color: scheme.tertiary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                  const SizedBox(height: 8),
+                  for (final p in [
+                    Prayer.fajr,
+                    Prayer.sunrise,
+                    Prayer.dhuhr,
+                    Prayer.asr,
+                    Prayer.maghrib,
+                    Prayer.isha,
+                  ])
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 3),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              s.prayer(p, friday: picked.isFriday),
+                              style: t.bodyMedium,
+                            ),
+                          ),
+                          Text(
+                            hm(settings, picked[p]),
+                            style: t.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              fontFeatures: const [
+                                FontFeature.tabularFigures(),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

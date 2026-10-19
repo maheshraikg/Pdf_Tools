@@ -357,6 +357,8 @@ const Map<String, String> knStrings = {
   'Use the calculated time': 'ಲೆಕ್ಕಾಚಾರದ ಸಮಯ ಬಳಸಿ',
   'Fajr angle': 'ಫಜ್ರ್ ಕೋನ',
   'Isha angle': 'ಇಶಾ ಕೋನ',
+  'Calendar': 'ಕ್ಯಾಲೆಂಡರ್',
+  'Times table': 'ಸಮಯ ಪಟ್ಟಿ',
 };
 
 const List<String> knHijriMonths = [

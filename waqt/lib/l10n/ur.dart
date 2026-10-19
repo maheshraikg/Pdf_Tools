@@ -355,6 +355,8 @@ const Map<String, String> urStrings = {
   'Use the calculated time': 'حساب شدہ وقت استعمال کریں',
   'Fajr angle': 'فجر کا زاویہ',
   'Isha angle': 'عشاء کا زاویہ',
+  'Calendar': 'کیلنڈر',
+  'Times table': 'اوقات کا جدول',
 };
 
 const List<String> urHijriMonths = [

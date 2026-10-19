@@ -801,4 +801,8 @@ class S {
       _t('Use the calculated time', 'കണക്കാക്കിയ സമയം ഉപയോഗിക്കുക');
   String get fajrAngle => _t('Fajr angle', 'സുബ്ഹ് കോൺ');
   String get ishaAngle => _t('Isha angle', 'ഇശാ കോൺ');
+
+  // Month calendar.
+  String get calendarView => _t('Calendar', 'കലണ്ടർ');
+  String get timesTable => _t('Times table', 'സമയ പട്ടിക');
 }
