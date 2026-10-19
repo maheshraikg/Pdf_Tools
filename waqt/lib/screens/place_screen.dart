@@ -96,13 +96,6 @@ class _PlaceScreenState extends State<PlaceScreen> {
     if (mounted) Navigator.pop(context);
   }
 
-  /// District of the listed town at a point (India), if known.
-  String? _districtAt(double lat, double lng) {
-    final cities = _cities;
-    if (cities == null) return null;
-    return nearestCity(cities, lat, lng, maxKm: 20)?.district;
-  }
-
   /// Picks one of the built-in charts (closest ones first).
   Future<void> _pickChart() async {
     final settings = context.settings, s = context.s;
@@ -213,13 +206,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
     Future<void> choose(Place p, {bool pop = false}) async {
       await settings.choosePlace(p);
       // Like the original: a town with an Azan Time Chart uses it.
-      final c = chartFor(
-        _charts,
-        p.latitude,
-        p.longitude,
-        district: _districtAt(p.latitude, p.longitude),
-        asr: settings.asr,
-      );
+      final c = chartFor(_charts, p.latitude, p.longitude, asr: settings.asr);
       if (c != null) await settings.useChart(c);
       if (pop && context.mounted) Navigator.pop(context);
     }

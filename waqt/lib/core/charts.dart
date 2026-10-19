@@ -104,7 +104,7 @@ ChartPlace? nearestChart(
         ? c.name.contains('Hanafi') || c.name.contains('Hanfi')
         : c.name.contains('(Shafi)');
     final variant =
-        (c.name.contains('(') && !school) ||
+        ((c.name.contains('(') || asr == AsrMethod.hanafi) && !school) ||
             c.name.contains('LAC') ||
             c.name.contains('MDK')
         ? 5
@@ -117,32 +117,16 @@ ChartPlace? nearestChart(
   return best;
 }
 
-/// How far a place may be from a chart and still use it: the sheet's
-/// times for every place it reasonably covers, calculated only beyond.
-const double chartReachKm = 50;
+/// How far a place may be from a chart and still use it, as the original
+/// app's "Automatic": the chart of the place itself; anywhere else the
+/// times are calculated for the exact position.
+const double chartReachKm = 10;
 
-/// Districts whose mosques follow one calendar for the whole district
-/// (e.g. the Dakshina Kannada calendar, "applicable to D K district only").
-const Map<String, String> districtCharts = {'Dakshina Kannada': 'Mangalore'};
-
-/// The chart for a place: its district's calendar when the district has
-/// one, otherwise the nearest chart (see [nearestChart]).
+/// The chart for a place, if it has one (see [nearestChart]).
 ChartPlace? chartFor(
   List<ChartPlace> charts,
   double lat,
   double lng, {
-  String? district,
   double maxKm = chartReachKm,
   AsrMethod? asr,
-}) {
-  final name = districtCharts[district];
-  if (name != null) {
-    final wanted = asr == AsrMethod.hanafi ? '$name (Hanafi)' : name;
-    for (final n in [wanted, name]) {
-      for (final c in charts) {
-        if (c.name == n) return c;
-      }
-    }
-  }
-  return nearestChart(charts, lat, lng, maxKm: maxKm, asr: asr);
-}
+}) => nearestChart(charts, lat, lng, maxKm: maxKm, asr: asr);

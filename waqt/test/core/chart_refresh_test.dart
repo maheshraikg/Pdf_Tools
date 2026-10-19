@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:waqt/app/city_data.dart';
 import 'package:waqt/app/location.dart';
 import 'package:waqt/app/settings.dart';
 import 'package:waqt/core/charts.dart';
@@ -14,9 +13,6 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final charts = parseCharts(
     utf8.decode(gzip.decode(File('assets/charts.tsv.gz').readAsBytesSync())),
-  );
-  final cities = parseCities(
-    utf8.decode(gzip.decode(File('assets/cities.tsv.gz').readAsBytesSync())),
   );
 
   List<String> times(AppSettings s, int m, int d) {
@@ -34,18 +30,32 @@ void main() {
     ];
   }
 
-  test('every Dakshina Kannada town gets the DK calendar', () {
-    final dk = cities.where((c) => c.district == 'Dakshina Kannada');
-    expect(dk.length, greaterThan(30));
-    for (final t in dk) {
-      final c = chartFor(
-        charts,
-        t.latitude,
-        t.longitude,
-        district: nearestCity(cities, t.latitude, t.longitude)?.district,
-      );
-      expect(c?.name, 'Mangalore', reason: t.name);
+  test('Nelyady: exact position with Karachi, as the original app', () {
+    final b = computeBasicTimes(
+      year: 2026,
+      month: 10,
+      day: 19,
+      latitude: 12.8378,
+      longitude: 75.3967,
+      params: CalcParams(
+        method: CalcMethod.byId(suggestedMethod('IN').$1),
+        asr: suggestedMethod('IN').$2,
+      ),
+      utcOffsetMinutes: 330,
+    );
+    String hm(DateTime t) {
+      final l = t.add(const Duration(minutes: 330, seconds: 30));
+      return '${l.hour}:${l.minute.toString().padLeft(2, '0')}';
     }
+
+    expect([b.fajr, b.sunrise, b.dhuhr, b.asr, b.maghrib, b.isha].map(hm), [
+      '5:08',
+      '6:19',
+      '12:13',
+      '15:34',
+      '18:08',
+      '19:19',
+    ]);
   });
 
   test('DK calendar of 17 October to the minute', () async {

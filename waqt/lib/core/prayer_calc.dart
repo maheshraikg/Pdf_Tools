@@ -114,13 +114,13 @@ class CalcMethod {
   );
   static const mwl = CalcMethod(
     id: 'mwl',
-    name: 'Muslim World League',
+    name: 'Muslim World League (MWL)',
     fajrAngle: 18,
     ishaAngle: 17,
   );
   static const ummAlQura = CalcMethod(
     id: 'umm_al_qura',
-    name: 'Umm al-Qura, Makkah',
+    name: 'Umm Al-Qura, Makkah',
     fajrAngle: 18.5,
     ishaMinutes: 90,
   );
@@ -153,7 +153,7 @@ class CalcMethod {
   );
   static const isna = CalcMethod(
     id: 'isna',
-    name: 'ISNA (North America)',
+    name: 'Islamic Society of North America (ISNA)',
     fajrAngle: 15,
     ishaAngle: 15,
   );
@@ -167,24 +167,34 @@ class CalcMethod {
 
   static const tehran = CalcMethod(
     id: 'tehran',
-    name: 'Institute of Geophysics, Tehran',
+    name: 'Institute of Geophysics, University of Tehran',
     fajrAngle: 17.7,
     ishaAngle: 14,
     maghribAngle: 4.5,
   );
 
+  static const jafari = CalcMethod(
+    id: 'jafari',
+    name: 'Ithna Ashari (Shia, Jafari)',
+    fajrAngle: 16,
+    ishaAngle: 14,
+    maghribAngle: 4,
+  );
+
+  /// The original app's methods in its order, then the regional ones.
   static const List<CalcMethod> all = [
-    kerala,
-    karachi,
-    mwl,
     ummAlQura,
+    jafari,
+    karachi,
+    isna,
+    mwl,
+    egypt,
+    tehran,
+    kerala,
     dubai,
     qatar,
     kuwait,
-    egypt,
-    isna,
     southeastAsia,
-    tehran,
   ];
 
   static CalcMethod byId(String? id) =>

@@ -60,11 +60,11 @@ Future<Place> gpsPlace(
   );
 }
 
-/// Locates the phone and switches to it ([prompt]: may ask for permission):
-/// to the Azan Time Chart of the place when there is one (the district's
-/// calendar, else the nearest chart within 50 km), otherwise to the calculated times
-/// with the usual method there (on first use). Returns the error, or null
-/// when the place was set.
+/// Locates the phone and switches to it ([prompt]: may ask for permission),
+/// as the original app's "Automatic": to the Azan Time Chart of the place
+/// when there is one, otherwise to times calculated for the exact position
+/// with the country's method. Returns the error, or null when the place
+/// was set.
 Future<LocationError?> useMyLocation(
   AppSettings settings, {
   bool prompt = true,
@@ -77,18 +77,11 @@ Future<LocationError?> useMyLocation(
     r.latitude!,
     r.longitude!,
   );
-  await settings.choosePlace(p, applySuggestions: !settings.placeChosen);
-  List<City> cities;
-  try {
-    cities = await loadCities();
-  } catch (_) {
-    cities = const [];
-  }
+  await settings.choosePlace(p);
   final c = chartFor(
     await loadCharts(),
     p.latitude,
     p.longitude,
-    district: nearestCity(cities, p.latitude, p.longitude)?.district,
     asr: settings.asr,
   );
   if (c != null) await settings.useChart(c);
@@ -122,8 +115,10 @@ Future<Place?> refreshAutoLocation(AppSettings settings) async {
 }
 
 /// On start: keeps a built-in chart in step with the bundled data (a chart
-/// saved by an older version is replaced), and moves a place set up before
-/// charts were applied by themselves onto its chart, once.
+/// saved by an older version is replaced), and once after an update checks
+/// the place as "Automatic" does: a chart far from the phone (applied for
+/// a whole district before) gives way to the exact position, and a place
+/// with a chart of its own moves onto it.
 Future<void> refreshBuiltInChart(AppSettings settings) async {
   final List<ChartPlace> charts;
   try {
@@ -131,39 +126,30 @@ Future<void> refreshBuiltInChart(AppSettings settings) async {
   } catch (_) {
     return;
   }
+  final checked = settings.chartsChecked;
   if (settings.usesChart) {
     final name = settings.place.id.substring('chart:'.length);
     for (final c in charts) {
-      if (c.name == name) {
-        if (settings.timetableCsv != c.timetable.toCsv() ||
-            settings.adjustments.isNotEmpty) {
-          await settings.useChart(c);
-        }
-        return;
+      if (c.name == name &&
+          (settings.timetableCsv != c.timetable.toCsv() ||
+              settings.adjustments.isNotEmpty)) {
+        await settings.useChart(c);
       }
     }
-    return;
   }
-  if (settings.chartsChecked) return;
-  if (settings.placeChosen && !settings.timetableEnabled) {
-    final p = settings.place;
-    List<City> cities;
-    try {
-      cities = await loadCities();
-    } catch (_) {
-      cities = const [];
-    }
-    final c = chartFor(
-      charts,
-      p.latitude,
-      p.longitude,
-      district: nearestCity(cities, p.latitude, p.longitude)?.district,
-      asr: settings.asr,
-    );
-    if (c != null) {
-      await settings.useChart(c);
-      return;
-    }
-  }
+  if (checked) return;
   await settings.update((s) => s.chartsChecked = true);
+  if (settings.usesChart) {
+    final r = await Native.getLocation(prompt: false);
+    final p = settings.place;
+    if (r.ok &&
+        distanceKm(p.latitude, p.longitude, r.latitude!, r.longitude!) >
+            chartReachKm) {
+      await useMyLocation(settings, prompt: false);
+    }
+  } else if (settings.placeChosen && !settings.timetableEnabled) {
+    final p = settings.place;
+    final c = chartFor(charts, p.latitude, p.longitude, asr: settings.asr);
+    if (c != null) await settings.useChart(c);
+  }
 }
