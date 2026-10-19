@@ -319,6 +319,13 @@ void main() {
           ),
         ),
       );
+      await tester.runAsync(
+        () => precacheImage(
+          const AssetImage('assets/app_icon.png'),
+          tester.element(find.byType(PrayerPoster)),
+        ),
+      );
+      await tester.pump();
       await shot(tester, key, 'share_poster_${l.code}');
     }
     await tester.pumpWidget(const SizedBox());

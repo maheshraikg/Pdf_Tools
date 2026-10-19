@@ -32,6 +32,13 @@ class _ShareScreenState extends State<ShareScreen> {
   /// Poster language; the app's language until another is picked.
   Lang? _lang;
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Decoded before the first capture, so the icon is in the picture.
+    precacheImage(const AssetImage(_icon), context);
+  }
+
   Future<void> _share(PrayerDay day, Lang lang) async {
     final settings = context.settings;
     setState(() => _busy = true);
@@ -179,6 +186,8 @@ class _ShareScreenState extends State<ShareScreen> {
     );
   }
 }
+
+const _icon = 'assets/app_icon.png';
 
 const _rows = [
   Prayer.fajr,
@@ -394,20 +403,27 @@ class PrayerPoster extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: Image.asset(
-                        'assets/app_icon.png',
-                        width: 18,
-                        height: 18,
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: gold, width: 1.5),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(9),
+                        child: Image.asset(
+                          _icon,
+                          width: 34,
+                          height: 34,
+                          gaplessPlayback: true,
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: 10),
                     Text(
                       s.appTitle,
-                      style: t.labelMedium?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        fontWeight: FontWeight.w600,
+                      style: t.titleMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   ],
