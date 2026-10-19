@@ -168,6 +168,9 @@ class Native {
 
   static Future<void> stopSound() => _call<void>('stopSound');
 
+  static Future<bool> isSoundPlaying() async =>
+      await _call<bool>('isSoundPlaying') ?? false;
+
   /// Android 14+ asks the user to allow full-screen alerts.
   static Future<bool> canFullScreen() async =>
       await _call<bool>('canFullScreen') ?? true;

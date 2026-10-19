@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +23,34 @@ class _AlertsScreenState extends State<AlertsScreen>
   bool _dnd = true;
   bool _fullScreenOk = true;
 
+  /// The sound being previewed (play button shows stop), and its watch.
+  String? _previewing;
+  Timer? _previewWatch;
+
+  Future<void> _togglePreview(String key, Future<void> Function() play) async {
+    _previewWatch?.cancel();
+    if (_previewing != null) {
+      final same = _previewing == key;
+      await Native.stopSound();
+      setState(() => _previewing = null);
+      if (same) return;
+    }
+    await play();
+    setState(() => _previewing = key);
+    var started = false;
+    _previewWatch = Timer.periodic(const Duration(milliseconds: 600), (
+      t,
+    ) async {
+      final on = await Native.isSoundPlaying();
+      started |= on;
+      // Finished (or never started after a few seconds).
+      if (!mounted || (!on && (started || t.tick > 8))) {
+        t.cancel();
+        if (mounted) setState(() => _previewing = null);
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +61,8 @@ class _AlertsScreenState extends State<AlertsScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _previewWatch?.cancel();
+    if (_previewing != null) Native.stopSound();
     super.dispose();
   }
 
@@ -357,14 +389,19 @@ extension on _AlertsScreenState {
     Widget preview(SoundChoice choice, Prayer p, {bool iqama = false}) {
       final sound = choice.playerSound;
       if (sound == null || !Native.supported) return const SizedBox.shrink();
+      final key = '${p.name}-$iqama';
+      final on = _previewing == key;
       return IconButton(
-        tooltip: s.playSound,
-        icon: const Icon(Icons.play_circle_outline),
-        onPressed: () => Native.playSound(
-          sound,
-          iqama ? s.iqamaTitle(p, false) : s.azanTitle(p, false),
-          settings.place.label(s.ml),
-          volume: iqama ? c.iqamaVolume : c.azanVolume,
+        tooltip: on ? s.stop : s.playSound,
+        icon: Icon(on ? Icons.stop_circle_outlined : Icons.play_circle_outline),
+        onPressed: () => _togglePreview(
+          key,
+          () => Native.playSound(
+            sound,
+            iqama ? s.iqamaTitle(p, false) : s.azanTitle(p, false),
+            settings.place.label(s.ml),
+            volume: iqama ? c.iqamaVolume : c.azanVolume,
+          ),
         ),
       );
     }

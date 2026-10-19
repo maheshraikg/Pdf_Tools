@@ -110,9 +110,11 @@ class MainActivity : FlutterActivity() {
                             call.argument<String>("body") ?: "",
                             call.argument<String>("sound") ?: "chime",
                             volume = call.argument<Int>("volume") ?: 0,
+                            preview = true,
                         )
                         result.success(null)
                     }
+                    "isSoundPlaying" -> result.success(AzanService.playing)
                     "canFullScreen" -> {
                         result.success(
                             Build.VERSION.SDK_INT < 34 || notificationManager().canUseFullScreenIntent(),

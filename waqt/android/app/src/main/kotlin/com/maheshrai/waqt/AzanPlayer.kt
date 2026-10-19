@@ -168,6 +168,9 @@ class AzanReceiver : BroadcastReceiver() {
 /** Plays one Azan in the foreground, with Stop in its notification. */
 class AzanService : Service() {
     private var player: MediaPlayer? = null
+
+    /** A preview from the settings: leaves no notification behind. */
+    private var preview = false
     private var focus: AudioFocusRequest? = null
     private val handler = Handler(Looper.getMainLooper())
 
@@ -189,6 +192,7 @@ class AzanService : Service() {
         val body = intent?.getStringExtra(EXTRA_BODY) ?: ""
         val sound = intent?.getStringExtra(EXTRA_SOUND) ?: "chime"
         val volume = intent?.getIntExtra(EXTRA_VOLUME, 0) ?: 0
+        preview = intent?.getBooleanExtra(EXTRA_PREVIEW, false) == true
         val notification = buildNotification(this, title, body, intent?.getBooleanExtra(EXTRA_FULL, false) == true)
         if (Build.VERSION.SDK_INT >= 29) {
             startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
@@ -231,20 +235,22 @@ class AzanService : Service() {
             when {
                 sound.startsWith("file:") -> mp.setDataSource(sound.removePrefix("file:"))
                 sound == "system" -> {
-                    // The phone's notification sound, repeated until stopped.
+                    // The phone's notification sound, once.
                     val uri = android.media.RingtoneManager.getDefaultUri(
                         android.media.RingtoneManager.TYPE_NOTIFICATION,
                     ) ?: rawUri(this, "chime")
                     mp.setDataSource(this, uri)
-                    mp.isLooping = true
                 }
                 else -> mp.setDataSource(this, rawUri(this, sound))
             }
             mp.setOnPreparedListener {
                 requestFocus(attrs)
                 it.start()
+                playing = true
             }
-            mp.setOnCompletionListener { stopForegroundKeepNotification() }
+            mp.setOnCompletionListener {
+                if (preview) stopAll() else stopForegroundKeepNotification()
+            }
             mp.setOnErrorListener { _, _, _ ->
                 releasePlayer()
                 if (!retried) start("chime", true) else stopForegroundKeepNotification()
@@ -339,6 +345,7 @@ class AzanService : Service() {
             it.release()
         }
         player = null
+        playing = false
         restoreVolume()
         val audio = getSystemService(AUDIO_SERVICE) as AudioManager
         if (Build.VERSION.SDK_INT >= 26) focus?.let { audio.abandonAudioFocusRequest(it) }
@@ -386,6 +393,11 @@ class AzanService : Service() {
         private const val EXTRA_SOUND = "sound"
         private const val EXTRA_FULL = "full"
         private const val EXTRA_VOLUME = "volume"
+        private const val EXTRA_PREVIEW = "preview"
+
+        /** Whether a sound is playing now (for the settings' play/stop). */
+        @Volatile
+        var playing = false
         private const val CHANNEL = "azan_player"
         private const val FALLBACK_CHANNEL = "azan_player_fallback"
         private const val NOTIFICATION_ID = 7001
@@ -409,6 +421,7 @@ class AzanService : Service() {
             fromAlarm: Boolean = false,
             volume: Int = 0,
             full: Boolean? = null,
+            preview: Boolean = false,
         ) {
             val i = Intent(context, AzanService::class.java)
                 .setAction(ACTION_PLAY)
@@ -416,6 +429,7 @@ class AzanService : Service() {
                 .putExtra(EXTRA_BODY, body)
                 .putExtra(EXTRA_SOUND, sound)
                 .putExtra(EXTRA_VOLUME, volume)
+                .putExtra(EXTRA_PREVIEW, preview)
                 .putExtra(EXTRA_FULL, fromAlarm && (full ?: AzanScheduler.fullScreen(context)))
             try {
                 if (Build.VERSION.SDK_INT >= 26) context.startForegroundService(i) else context.startService(i)
