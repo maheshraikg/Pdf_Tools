@@ -346,6 +346,8 @@ const Map<String, String> trStrings = {
   'Exact yearly charts of {0} places': '{0} yer için kesin yıllık çizelgeler',
   'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)':
       'Diğer vakitler (güneş, Cuma, teravih, teheccüd, imsak, bayram)',
+  'Share prayer times': 'Namaz vakitlerini paylaş',
+  'Azan Timings': 'Ezan Vakitleri',
 };
 
 const List<String> trHijriMonths = [

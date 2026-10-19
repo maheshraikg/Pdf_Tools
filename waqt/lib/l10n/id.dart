@@ -343,6 +343,8 @@ const Map<String, String> idStrings = {
   'Exact yearly charts of {0} places': 'Jadwal tahunan tepat untuk {0} tempat',
   'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)':
       'Waktu lainnya (terbit, Jumat, Tarawih, Tahajud, Imsak, Id)',
+  'Share prayer times': 'Bagikan waktu salat',
+  'Azan Timings': 'Waktu Azan',
 };
 
 const List<String> idHijriMonths = [

@@ -19,6 +19,7 @@ import 'package:waqt/main.dart';
 import 'package:waqt/screens/alerts_screen.dart';
 import 'package:waqt/screens/display_screen.dart';
 import 'package:waqt/screens/place_screen.dart';
+import 'package:waqt/screens/share_screen.dart';
 import 'package:waqt/screens/tracker_screen.dart';
 import 'package:waqt/screens/onboarding_screen.dart';
 import 'package:waqt/core/tracker.dart';
@@ -274,6 +275,27 @@ void main() {
     });
     await tester.pump();
     await shot(tester, key, 'en_13_setup');
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 1));
+  });
+
+  testWidgets('share poster', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 860));
+    final key = GlobalKey();
+    final settings = settingsFor(Lang.en);
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: key,
+        child: AppScope(
+          settings: settings,
+          child: MaterialApp(
+            theme: buildTheme(Brightness.light),
+            home: ShareScreen(date: settings.today),
+          ),
+        ),
+      ),
+    );
+    await shot(tester, key, 'en_12_share');
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 1));
   });

@@ -346,6 +346,8 @@ const Map<String, String> arStrings = {
   'Exact yearly charts of {0} places': 'جداول سنوية دقيقة لـ {0} مكاناً',
   'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)':
       'أوقات أخرى (الشروق، الجمعة، التراويح، التهجد، الإمساك، العيد)',
+  'Share prayer times': 'مشاركة أوقات الصلاة',
+  'Azan Timings': 'أوقات الأذان',
 };
 
 const List<String> arHijriMonths = [

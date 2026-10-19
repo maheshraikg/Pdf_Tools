@@ -17,6 +17,7 @@ import 'display_screen.dart';
 import 'place_screen.dart';
 import 'prayer_sheet.dart';
 import 'prayer_table.dart';
+import 'share_screen.dart';
 import 'tracker_screen.dart';
 
 /// Prayers shown as cards, in order (the other times are listed below).
@@ -553,6 +554,16 @@ class _Hero extends StatelessWidget {
                       Flexible(child: _placeChip(context)),
                       const Spacer(),
                       IconButton(
+                        tooltip: s.shareTimes,
+                        color: white,
+                        icon: const Icon(Icons.share_rounded),
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => ShareScreen(date: day.date),
+                          ),
+                        ),
+                      ),
+                      IconButton(
                         tooltip: s.displayMode,
                         color: white,
                         icon: const Icon(Icons.tv_rounded),
@@ -564,7 +575,45 @@ class _Hero extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
+                  // The exact time now, with seconds (like a clock).
+                  () {
+                    final w = settings.wall(now);
+                    final h = settings.use24h
+                        ? w.hour.toString().padLeft(2, '0')
+                        : '${w.hour % 12 == 0 ? 12 : w.hour % 12}';
+                    String two(int v) => v.toString().padLeft(2, '0');
+                    return Directionality(
+                      textDirection: TextDirection.ltr,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          RollingText(
+                            '$h:${two(w.minute)}:${two(w.second)}',
+                            style: t.headlineLarge?.copyWith(
+                              color: white,
+                              fontWeight: FontWeight.w700,
+                              fontFeatures: const [
+                                FontFeature.tabularFigures(),
+                              ],
+                            ),
+                          ),
+                          if (!settings.use24h) ...[
+                            const SizedBox(width: 6),
+                            Text(
+                              amPm(lang, w.hour),
+                              style: t.titleMedium?.copyWith(
+                                color: kGold,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    );
+                  }(),
+                  const SizedBox(height: 4),
                   Text(
                     longDate(lang, day.date),
                     style: t.titleMedium?.copyWith(color: dim),

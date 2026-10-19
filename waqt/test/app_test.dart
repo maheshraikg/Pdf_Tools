@@ -13,6 +13,7 @@ import 'package:waqt/screens/alerts_screen.dart';
 import 'package:waqt/screens/display_screen.dart';
 import 'package:waqt/screens/display_settings_screen.dart';
 import 'package:waqt/screens/place_screen.dart';
+import 'package:waqt/screens/share_screen.dart';
 import 'package:waqt/screens/tasbih_screen.dart';
 import 'package:waqt/screens/timetable_screen.dart';
 import 'package:waqt/screens/today_screen.dart';
@@ -415,5 +416,31 @@ void main() {
     expect(settings.placeChosen, isTrue);
     expect(settings.usesChart, isTrue);
     expect(settings.place.name, 'Kannur');
+  });
+
+  testWidgets('share poster for today and tomorrow', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    final settings = AppSettings.memory();
+    await _pumpScreen(tester, settings, ShareScreen(date: settings.today));
+    expect(find.byType(PrayerPoster), findsOneWidget);
+    expect(find.text('AZAN TIMINGS'), findsOneWidget);
+    expect(find.text('Subh (Fajr)'), findsOneWidget);
+    expect(find.text('Sunrise'), findsOneWidget);
+    expect(find.text('Isha'), findsOneWidget);
+    await tester.tap(find.text('Tomorrow'));
+    await tester.pump(const Duration(milliseconds: 400));
+    final tomorrow = settings.today.add(const Duration(days: 1));
+    expect(find.text(longDate(settings.lang, tomorrow)), findsOneWidget);
+    final day = settings.calculator.day(
+      tomorrow.year,
+      tomorrow.month,
+      tomorrow.day,
+    );
+    final text = posterText(settings, S(settings.lang), day);
+    expect(text, contains('Azan Timings'));
+    expect(text, contains(hm(settings, day[Prayer.maghrib])));
+    await _dispose(tester);
   });
 }

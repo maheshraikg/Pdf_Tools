@@ -347,6 +347,8 @@ const Map<String, String> knStrings = {
   'Exact yearly charts of {0} places': '{0} ಸ್ಥಳಗಳ ನಿಖರ ವಾರ್ಷಿಕ ಚಾರ್ಟ್‌ಗಳು',
   'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)':
       'ಇನ್ನಷ್ಟು ಸಮಯಗಳು (ಸೂರ್ಯೋದಯ, ಜುಮಾ, ತರಾವೀಹ್, ತಹಜ್ಜುದ್, ಇಮ್ಸಾಕ್, ಈದ್)',
+  'Share prayer times': 'ನಮಾಜ್ ಸಮಯ ಹಂಚಿಕೊಳ್ಳಿ',
+  'Azan Timings': 'ಅಝಾನ್ ಸಮಯಗಳು',
 };
 
 const List<String> knHijriMonths = [

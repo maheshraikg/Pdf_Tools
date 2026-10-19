@@ -345,6 +345,8 @@ const Map<String, String> urStrings = {
   'Exact yearly charts of {0} places': '{0} مقامات کے درست سالانہ چارٹ',
   'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)':
       'مزید اوقات (طلوع، جمعہ، تراویح، تہجد، امساک، عید)',
+  'Share prayer times': 'نماز کے اوقات شیئر کریں',
+  'Azan Timings': 'اذان کے اوقات',
 };
 
 const List<String> urHijriMonths = [

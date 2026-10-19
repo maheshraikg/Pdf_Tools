@@ -777,4 +777,9 @@ class S {
     'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)',
     'കൂടുതൽ സമയങ്ങൾ (ഉദയം, ജുമുഅ, തറാവീഹ്, തഹജ്ജുദ്, ഇംസാക്, പെരുന്നാൾ)',
   );
+
+  // Sharing the times as a poster.
+  String get shareTimes => _t('Share prayer times', 'നമസ്കാര സമയം പങ്കിടുക');
+  String get azanTimings => _t('Azan Timings', 'ബാങ്ക് സമയങ്ങൾ');
+  String get tomorrow => _t('Tomorrow', 'നാളെ');
 }

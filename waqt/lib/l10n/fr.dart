@@ -341,6 +341,8 @@ const Map<String, String> frStrings = {
   'Exact yearly charts of {0} places':
       'Calendriers annuels exacts de {0} lieux',
   'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)': 'Autres horaires (lever du soleil, Joumou\'a, tarawih, tahajjud, imsak, Aïd)',
+  'Share prayer times': 'Partager les horaires',
+  'Azan Timings': 'Horaires de l\'adhan',
 };
 
 const List<String> frHijriMonths = [

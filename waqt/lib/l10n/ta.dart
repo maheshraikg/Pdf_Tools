@@ -344,6 +344,8 @@ const Map<String, String> taStrings = {
   'Exact yearly charts of {0} places':
       '{0} இடங்களின் துல்லியமான ஆண்டு அட்டவணைகள்',
   'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)': 'மேலும் நேரங்கள் (சூரிய உதயம், ஜும்ஆ, தராவீஹ், தஹஜ்ஜுத், இம்ஸாக், பெருநாள்)',
+  'Share prayer times': 'தொழுகை நேரங்களைப் பகிர்',
+  'Azan Timings': 'பாங்கு நேரங்கள்',
 };
 
 const List<String> taHijriMonths = [
