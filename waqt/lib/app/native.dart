@@ -60,6 +60,29 @@ class Native {
 
   /// One location fix from the phone's GPS / network provider (asks for
   /// permission when needed). No Google Play services are used.
+  /// The place's name at a point from the phone's geocoder (needs the
+  /// internet; null when unknown): locality, subLocality, district, state,
+  /// country.
+  static Future<Map<String, String?>?> placeName(
+    double latitude,
+    double longitude,
+    String lang,
+  ) async {
+    if (!supported) return null;
+    try {
+      final r = await _ch
+          .invokeMapMethod<String, String?>('placeName', {
+            'latitude': latitude,
+            'longitude': longitude,
+            'lang': lang,
+          })
+          .timeout(const Duration(seconds: 6));
+      return r;
+    } catch (_) {
+      return null;
+    }
+  }
+
   static Future<LocationResult> getLocation({bool prompt = true}) async {
     if (!supported) {
       return const LocationResult(error: LocationError.unavailable);

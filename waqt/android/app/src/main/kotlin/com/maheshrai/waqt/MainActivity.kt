@@ -33,6 +33,12 @@ class MainActivity : FlutterActivity() {
             .setMethodCallHandler { call, result ->
                 when (call.method) {
                     "getLocation" -> getLocation(result, call.argument<Boolean>("prompt") ?: true)
+                    "placeName" -> placeName(
+                        result,
+                        call.argument<Double>("latitude") ?: 0.0,
+                        call.argument<Double>("longitude") ?: 0.0,
+                        call.argument<String>("lang") ?: "en",
+                    )
                     "clockStatus" -> result.success(clockStatus())
                     "openDateSettings" -> {
                         open(Intent(Settings.ACTION_DATE_SETTINGS))
@@ -187,6 +193,55 @@ class MainActivity : FlutterActivity() {
     private fun hasLocationPermission() =
         checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
             checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+    /** Name of the place at a point from the phone's geocoder, as the original. */
+    private fun placeName(result: MethodChannel.Result, lat: Double, lng: Double, lang: String) {
+        if (!android.location.Geocoder.isPresent()) {
+            result.success(null)
+            return
+        }
+        val geocoder = android.location.Geocoder(this, java.util.Locale(lang))
+        val main = Handler(Looper.getMainLooper())
+        fun send(a: android.location.Address?) = main.post {
+            result.success(
+                a?.let {
+                    mapOf(
+                        "locality" to it.locality,
+                        "subLocality" to it.subLocality,
+                        "district" to it.subAdminArea,
+                        "state" to it.adminArea,
+                        "country" to it.countryName,
+                    )
+                },
+            )
+        }
+        if (Build.VERSION.SDK_INT >= 33) {
+            geocoder.getFromLocation(
+                lat,
+                lng,
+                1,
+                object : android.location.Geocoder.GeocodeListener {
+                    override fun onGeocode(addresses: MutableList<android.location.Address>) {
+                        send(addresses.firstOrNull())
+                    }
+
+                    override fun onError(errorMessage: String?) {
+                        send(null)
+                    }
+                },
+            )
+        } else {
+            Thread {
+                val a = try {
+                    @Suppress("DEPRECATION")
+                    geocoder.getFromLocation(lat, lng, 1)?.firstOrNull()
+                } catch (e: Exception) {
+                    null
+                }
+                send(a)
+            }.start()
+        }
+    }
 
     private fun getLocation(result: MethodChannel.Result, prompt: Boolean) {
         if (hasLocationPermission()) {

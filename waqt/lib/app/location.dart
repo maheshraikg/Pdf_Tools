@@ -40,6 +40,14 @@ Future<Place> gpsPlace(
     cities = const [];
   }
   final near = nearestCity(cities, lat, lng);
+  // The name of the very place, as the original app (Nelyady, not "near
+  // Uppinangadi"), when the phone can look it up.
+  final geo = await Native.placeName(lat, lng, settings.lang.code);
+  final named = [
+    geo?['locality'],
+    geo?['subLocality'],
+    geo?['district'],
+  ].firstWhere((n) => n != null && n.trim().isNotEmpty, orElse: () => null);
   // The nearest town's zone, country and method; far from any town, the
   // phone's zone and the current method.
   final area = nearestCity(cities, lat, lng, maxKm: 150);
@@ -48,7 +56,9 @@ Future<Place> gpsPlace(
       : suggestedMethod(area.country, area.regionName, lng);
   return Place(
     id: 'gps',
-    name: near != null
+    name: named != null
+        ? named.trim()
+        : near != null
         ? '${s.myLocation} · ${s.nearPlace(near.nameMl != null && s.ml ? near.nameMl! : near.name)}'
         : '${s.myLocation} (${lat.toStringAsFixed(3)}, ${lng.toStringAsFixed(3)})',
     latitude: lat,
