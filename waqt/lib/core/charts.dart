@@ -90,7 +90,7 @@ ChartPlace? nearestChart(
   List<ChartPlace> charts,
   double lat,
   double lng, {
-  double maxKm = 20,
+  double maxKm = chartReachKm,
   AsrMethod? asr,
 }) {
   ChartPlace? best;
@@ -117,6 +117,10 @@ ChartPlace? nearestChart(
   return best;
 }
 
+/// How far a place may be from a chart and still use it: the sheet's
+/// times for every place it reasonably covers, calculated only beyond.
+const double chartReachKm = 50;
+
 /// Districts whose mosques follow one calendar for the whole district
 /// (e.g. the Dakshina Kannada calendar, "applicable to D K district only").
 const Map<String, String> districtCharts = {'Dakshina Kannada': 'Mangalore'};
@@ -128,7 +132,7 @@ ChartPlace? chartFor(
   double lat,
   double lng, {
   String? district,
-  double maxKm = 20,
+  double maxKm = chartReachKm,
   AsrMethod? asr,
 }) {
   final name = districtCharts[district];

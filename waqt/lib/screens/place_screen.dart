@@ -218,7 +218,6 @@ class _PlaceScreenState extends State<PlaceScreen> {
         p.latitude,
         p.longitude,
         district: _districtAt(p.latitude, p.longitude),
-        maxKm: 10,
         asr: settings.asr,
       );
       if (c != null) await settings.useChart(c);

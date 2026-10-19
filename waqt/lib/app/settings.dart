@@ -286,7 +286,7 @@ class AppSettings extends ChangeNotifier {
     }
     placeChosen = p.getBool('placeChosen') ?? false;
     onboarded = p.getBool('onboarded') ?? placeChosen;
-    chartsChecked = p.getBool('chartsChecked') ?? false;
+    chartsChecked = p.getBool('sheetChecked') ?? false;
     autoLocation = p.getBool('autoLocation') ?? false;
     statusNotification = p.getBool('statusNotification') ?? true;
     method = CalcMethod.byId(p.getString('method'));
@@ -373,7 +373,7 @@ class AppSettings extends ChangeNotifier {
     await p.setString('place', jsonEncode(place.toJson()));
     await p.setBool('placeChosen', placeChosen);
     await p.setBool('onboarded', onboarded);
-    await p.setBool('chartsChecked', chartsChecked);
+    await p.setBool('sheetChecked', chartsChecked);
     await p.setBool('autoLocation', autoLocation);
     await p.setBool('statusNotification', statusNotification);
     await p.setString('method', method.id);

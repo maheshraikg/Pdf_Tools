@@ -62,7 +62,7 @@ Future<Place> gpsPlace(
 
 /// Locates the phone and switches to it ([prompt]: may ask for permission):
 /// to the Azan Time Chart of the place when there is one (the district's
-/// calendar, else a chart within 20 km), otherwise to the calculated times
+/// calendar, else the nearest chart within 50 km), otherwise to the calculated times
 /// with the usual method there (on first use). Returns the error, or null
 /// when the place was set.
 Future<LocationError?> useMyLocation(
@@ -158,7 +158,6 @@ Future<void> refreshBuiltInChart(AppSettings settings) async {
       p.latitude,
       p.longitude,
       district: nearestCity(cities, p.latitude, p.longitude)?.district,
-      maxKm: p.id == 'gps' ? 20 : 10,
       asr: settings.asr,
     );
     if (c != null) {
