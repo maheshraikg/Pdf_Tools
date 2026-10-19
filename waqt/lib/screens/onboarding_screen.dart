@@ -294,7 +294,12 @@ class _AlertsState extends State<_Alerts> {
           spacing: 8,
           runSpacing: 8,
           children: [
-            for (final k in [AzanSound.chime, AzanSound.bell, AzanSound.system])
+            for (final k in [
+              AzanSound.azan,
+              AzanSound.chime,
+              AzanSound.bell,
+              AzanSound.system,
+            ])
               ChoiceChip(
                 label: Text(s.soundKindName(k)),
                 selected: c.azanSound.sound == k,

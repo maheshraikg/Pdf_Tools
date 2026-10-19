@@ -62,7 +62,7 @@ class AppSettings extends ChangeNotifier {
   Lang lang = Lang.en;
   ThemeMode themeMode = ThemeMode.system;
   bool use24h = false;
-  bool showExtras = true;
+  bool showExtras = false;
 
   /// Today as one chart (like the original app) instead of cards.
   bool todayTable = true;
@@ -272,7 +272,7 @@ class AppSettings extends ChangeNotifier {
     themeMode =
         ThemeMode.values.asNameMap()[p.getString('theme')] ?? ThemeMode.system;
     use24h = p.getBool('use24h') ?? false;
-    showExtras = p.getBool('showExtras') ?? true;
+    showExtras = p.getBool('showMoreTimes') ?? false;
     todayTable = p.getBool('todayTable') ?? true;
     final placeJson = p.getString('place');
     if (placeJson != null) {
@@ -363,7 +363,7 @@ class AppSettings extends ChangeNotifier {
     await p.setString('lang', lang.name);
     await p.setString('theme', themeMode.name);
     await p.setBool('use24h', use24h);
-    await p.setBool('showExtras', showExtras);
+    await p.setBool('showMoreTimes', showExtras);
     await p.setBool('todayTable', todayTable);
     await p.setString('place', jsonEncode(place.toJson()));
     await p.setBool('placeChosen', placeChosen);

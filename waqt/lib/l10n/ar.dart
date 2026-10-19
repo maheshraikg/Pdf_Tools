@@ -159,6 +159,7 @@ const Map<String, String> arStrings = {
   'Fajr Azan sound': 'صوت أذان الفجر',
   'Same as other prayers': 'مثل باقي الصلوات',
   'Phone notification sound': 'صوت إشعارات الهاتف',
+  'Azan (recorded)': 'أذان (مسجّل)',
   'Soft chime': 'رنين ناعم',
   'Deep bell': 'جرس عميق',
   'Audio file (e.g. Azan MP3)': 'ملف صوتي (مثل أذان MP3)',
@@ -343,6 +344,8 @@ const Map<String, String> arStrings = {
   'All': 'الكل',
   'Azan Time Charts': 'جداول أوقات الأذان',
   'Exact yearly charts of {0} places': 'جداول سنوية دقيقة لـ {0} مكاناً',
+  'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)':
+      'أوقات أخرى (الشروق، الجمعة، التراويح، التهجد، الإمساك، العيد)',
 };
 
 const List<String> arHijriMonths = [

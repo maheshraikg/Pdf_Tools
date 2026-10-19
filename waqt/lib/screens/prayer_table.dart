@@ -85,86 +85,88 @@ class PrayerTable extends StatelessWidget {
             onTap: () => sheet(day, p),
           );
         }(),
-      _Row(
-        icon: prayerIcon(Prayer.sunrise),
-        name: s.prayer(Prayer.sunrise),
-        first: t(day[Prayer.sunrise]),
-        firstBell: c.sunriseAlert,
-        onFirstBell: () => set(c.copyWith(sunriseAlert: !c.sunriseAlert)),
-        box: '${settings.ishraqMinutes}',
-        second: t(day[Prayer.ishraq]),
-        secondBell: c.ishraqAlert,
-        onSecondBell: () => set(c.copyWith(ishraqAlert: !c.ishraqAlert)),
-        extra: true,
-        onTap: () => sheet(day, Prayer.ishraq),
-      ),
-      if (!day.isFriday)
+      if (settings.showExtras) ...[
         _Row(
-          icon: Icons.groups_outlined,
-          name: s.prayer(Prayer.dhuhr, friday: true),
-          first: t(friday[Prayer.dhuhr]),
-          box: c.jumuahFixedIqama != null
-              ? clock(c.jumuahFixedIqama!)
-              : '${c.jumuahIqamaDelay}',
-          second: t(iqamaTime(friday, Prayer.dhuhr, c)),
-          secondBell: c.of(Prayer.dhuhr).iqama,
-          onSecondBell: () => set(
-            c.withPrayer(
-              Prayer.dhuhr,
-              c.of(Prayer.dhuhr).copyWith(iqama: !c.of(Prayer.dhuhr).iqama),
-            ),
-          ),
+          icon: prayerIcon(Prayer.sunrise),
+          name: s.prayer(Prayer.sunrise),
+          first: t(day[Prayer.sunrise]),
+          firstBell: c.sunriseAlert,
+          onFirstBell: () => set(c.copyWith(sunriseAlert: !c.sunriseAlert)),
+          box: '${settings.ishraqMinutes}',
+          second: t(day[Prayer.ishraq]),
+          secondBell: c.ishraqAlert,
+          onSecondBell: () => set(c.copyWith(ishraqAlert: !c.ishraqAlert)),
           extra: true,
-          onTap: () => sheet(friday, Prayer.dhuhr),
+          onTap: () => sheet(day, Prayer.ishraq),
         ),
-      _Row(
-        icon: Icons.nights_stay_outlined,
-        name: s.specialTitle(SpecialEvent.taraweeh),
-        first: t(day[Prayer.isha]),
-        box: '+${c.taraweehMinutesAfterIsha}',
-        second: t(taraweeh),
-        secondBell: c.taraweehAlert,
-        onSecondBell: () => set(c.copyWith(taraweehAlert: !c.taraweehAlert)),
-        extra: true,
-        onTap: openAlerts,
-      ),
-      _Row(
-        icon: prayerIcon(Prayer.tahajjud),
-        name: s.prayer(Prayer.tahajjud),
-        first: t(day[Prayer.fajr]),
-        // Minutes before Fajr, whichever night the time falls in.
-        box: signed(
-          -((day[Prayer.fajr].difference(day[Prayer.tahajjud]).inMinutes) %
-              (24 * 60)),
+        if (!day.isFriday)
+          _Row(
+            icon: Icons.groups_outlined,
+            name: s.prayer(Prayer.dhuhr, friday: true),
+            first: t(friday[Prayer.dhuhr]),
+            box: c.jumuahFixedIqama != null
+                ? clock(c.jumuahFixedIqama!)
+                : '${c.jumuahIqamaDelay}',
+            second: t(iqamaTime(friday, Prayer.dhuhr, c)),
+            secondBell: c.of(Prayer.dhuhr).iqama,
+            onSecondBell: () => set(
+              c.withPrayer(
+                Prayer.dhuhr,
+                c.of(Prayer.dhuhr).copyWith(iqama: !c.of(Prayer.dhuhr).iqama),
+              ),
+            ),
+            extra: true,
+            onTap: () => sheet(friday, Prayer.dhuhr),
+          ),
+        _Row(
+          icon: Icons.nights_stay_outlined,
+          name: s.specialTitle(SpecialEvent.taraweeh),
+          first: t(day[Prayer.isha]),
+          box: '+${c.taraweehMinutesAfterIsha}',
+          second: t(taraweeh),
+          secondBell: c.taraweehAlert,
+          onSecondBell: () => set(c.copyWith(taraweehAlert: !c.taraweehAlert)),
+          extra: true,
+          onTap: openAlerts,
         ),
-        second: t(day[Prayer.tahajjud]),
-        secondBell: c.tahajjudAlert,
-        onSecondBell: () => set(c.copyWith(tahajjudAlert: !c.tahajjudAlert)),
-        extra: true,
-        onTap: () => sheet(day, Prayer.tahajjud),
-      ),
-      _Row(
-        icon: prayerIcon(Prayer.imsak),
-        name: s.prayer(Prayer.imsak),
-        first: t(day[Prayer.fajr]),
-        box: '-${settings.imsakMinutes}',
-        second: t(day[Prayer.imsak]),
-        secondBell: c.imsakAlert,
-        onSecondBell: () => set(c.copyWith(imsakAlert: !c.imsakAlert)),
-        extra: true,
-        onTap: () => sheet(day, Prayer.imsak),
-      ),
-      _Row(
-        icon: Icons.celebration_outlined,
-        name: s.eidShort,
-        first: t(day[Prayer.sunrise]),
-        box: clock(eidMinutes),
-        second: t(eidAt),
-        secondBell: c.eidAlert,
-        onSecondBell: () => set(c.copyWith(eidAlert: !c.eidAlert)),
-        extra: true,
-        onTap: openAlerts,
-      ),
+        _Row(
+          icon: prayerIcon(Prayer.tahajjud),
+          name: s.prayer(Prayer.tahajjud),
+          first: t(day[Prayer.fajr]),
+          // Minutes before Fajr, whichever night the time falls in.
+          box: signed(
+            -((day[Prayer.fajr].difference(day[Prayer.tahajjud]).inMinutes) %
+                (24 * 60)),
+          ),
+          second: t(day[Prayer.tahajjud]),
+          secondBell: c.tahajjudAlert,
+          onSecondBell: () => set(c.copyWith(tahajjudAlert: !c.tahajjudAlert)),
+          extra: true,
+          onTap: () => sheet(day, Prayer.tahajjud),
+        ),
+        _Row(
+          icon: prayerIcon(Prayer.imsak),
+          name: s.prayer(Prayer.imsak),
+          first: t(day[Prayer.fajr]),
+          box: '-${settings.imsakMinutes}',
+          second: t(day[Prayer.imsak]),
+          secondBell: c.imsakAlert,
+          onSecondBell: () => set(c.copyWith(imsakAlert: !c.imsakAlert)),
+          extra: true,
+          onTap: () => sheet(day, Prayer.imsak),
+        ),
+        _Row(
+          icon: Icons.celebration_outlined,
+          name: s.eidShort,
+          first: t(day[Prayer.sunrise]),
+          box: clock(eidMinutes),
+          second: t(eidAt),
+          secondBell: c.eidAlert,
+          onSecondBell: () => set(c.copyWith(eidAlert: !c.eidAlert)),
+          extra: true,
+          onTap: openAlerts,
+        ),
+      ],
     ];
 
     final head = theme.textTheme.labelSmall?.copyWith(

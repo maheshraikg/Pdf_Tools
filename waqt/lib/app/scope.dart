@@ -64,8 +64,11 @@ DateSymbols _symbols(Lang lang) {
 
 /// Localised AM/PM marker for [hour] (0–23).
 String amPm(Lang lang, int hour) {
-  // intl's Urdu markers are just "a"/"p"; the English ones read better.
-  final marks = lang == Lang.ur ? const ['AM', 'PM'] : _symbols(lang).AMPMS;
+  // intl's Urdu and Kannada markers are just "a"/"p"; the English ones
+  // read better.
+  final marks = lang == Lang.ur || lang == Lang.kn
+      ? const ['AM', 'PM']
+      : _symbols(lang).AMPMS;
   return marks[hour < 12 ? 0 : 1];
 }
 

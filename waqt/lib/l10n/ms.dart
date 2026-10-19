@@ -157,6 +157,7 @@ const Map<String, String> msStrings = {
   'Fajr Azan sound': 'Bunyi azan Subuh',
   'Same as other prayers': 'Sama seperti solat lain',
   'Phone notification sound': 'Bunyi pemberitahuan telefon',
+  'Azan (recorded)': 'Azan (rakaman)',
   'Soft chime': 'Loceng lembut',
   'Deep bell': 'Loceng dalam',
   'Audio file (e.g. Azan MP3)': 'Fail audio (cth. azan MP3)',
@@ -341,6 +342,8 @@ const Map<String, String> msStrings = {
   'All': 'Semua',
   'Azan Time Charts': 'Jadual Waktu Azan',
   'Exact yearly charts of {0} places': 'Jadual tahunan tepat untuk {0} tempat',
+  'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)':
+      'Waktu lain (syuruk, Jumaat, Tarawih, Tahajud, Imsak, Hari Raya)',
 };
 
 const List<String> msHijriMonths = [

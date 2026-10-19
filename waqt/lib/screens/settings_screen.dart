@@ -247,7 +247,7 @@ class SettingsScreen extends StatelessWidget {
               ),
               SwitchListTile(
                 secondary: const IconBadge(Icons.nights_stay_outlined),
-                title: Text(s.showExtras),
+                title: Text(s.moreTimes),
                 value: settings.showExtras,
                 onChanged: (v) => settings.update((x) => x.showExtras = v),
               ),

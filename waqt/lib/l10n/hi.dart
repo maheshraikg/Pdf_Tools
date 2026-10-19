@@ -158,6 +158,7 @@ const Map<String, String> hiStrings = {
   'Fajr Azan sound': 'फ़ज्र की अज़ान की आवाज़',
   'Same as other prayers': 'बाक़ी नमाज़ों जैसी',
   'Phone notification sound': 'फ़ोन की नोटिफ़िकेशन आवाज़',
+  'Azan (recorded)': 'अज़ान (रिकॉर्ड की हुई)',
   'Soft chime': 'हल्की घंटी',
   'Deep bell': 'गहरी घंटी',
   'Audio file (e.g. Azan MP3)': 'ऑडियो फ़ाइल (जैसे अज़ान MP3)',
@@ -342,6 +343,8 @@ const Map<String, String> hiStrings = {
   'All': 'सभी',
   'Azan Time Charts': 'अज़ान टाइम चार्ट',
   'Exact yearly charts of {0} places': '{0} जगहों के सटीक सालाना चार्ट',
+  'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)':
+      'और समय (सूर्योदय, जुमा, तरावीह, तहज्जुद, इम्साक, ईद)',
 };
 
 const List<String> hiHijriMonths = [

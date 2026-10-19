@@ -393,7 +393,11 @@ class AzanService : Service() {
         private val TIMEOUT_TOKEN = Any()
 
         fun rawUri(context: Context, sound: String): Uri {
-            val id = if (sound == "bell") R.raw.waqt_bell else R.raw.waqt_chime
+            val id = when (sound) {
+                "azan" -> R.raw.waqt_azan
+                "bell" -> R.raw.waqt_bell
+                else -> R.raw.waqt_chime
+            }
             return Uri.parse("android.resource://${context.packageName}/$id")
         }
 

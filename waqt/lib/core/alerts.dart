@@ -14,6 +14,9 @@ enum SpecialEvent { taraweeh, eidAlFitr, eidAlAdha }
 
 /// What the Azan alert plays.
 enum AzanSound {
+  /// The built-in recorded Azan.
+  azan,
+
   /// The phone's notification sound, repeating until dismissed.
   system,
 
@@ -35,6 +38,7 @@ class SoundChoice {
 
   /// The native player's sound id.
   String? get playerSound => switch (sound) {
+    AzanSound.azan => 'azan',
     AzanSound.system => 'system',
     AzanSound.chime => 'chime',
     AzanSound.bell => 'bell',
@@ -134,7 +138,7 @@ class AlertConfig {
     this.jumuahSilentMinutes = 45,
     this.tahajjudAlert = false,
     this.imsakAlert = false,
-    this.azanSound = const SoundChoice(AzanSound.system),
+    this.azanSound = const SoundChoice(AzanSound.azan),
     this.fajrSound,
     this.vibrate = true,
     this.playWhenSilent = false,

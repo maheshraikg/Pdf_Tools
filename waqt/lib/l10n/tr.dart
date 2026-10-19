@@ -158,6 +158,7 @@ const Map<String, String> trStrings = {
   'Fajr Azan sound': 'Sabah ezanı sesi',
   'Same as other prayers': 'Diğer namazlarla aynı',
   'Phone notification sound': 'Telefonun bildirim sesi',
+  'Azan (recorded)': 'Ezan (kayıt)',
   'Soft chime': 'Yumuşak çan',
   'Deep bell': 'Derin çan',
   'Audio file (e.g. Azan MP3)': 'Ses dosyası (ör. ezan MP3)',
@@ -343,6 +344,8 @@ const Map<String, String> trStrings = {
   'All': 'Tümü',
   'Azan Time Charts': 'Ezan Vakti Çizelgeleri',
   'Exact yearly charts of {0} places': '{0} yer için kesin yıllık çizelgeler',
+  'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)':
+      'Diğer vakitler (güneş, Cuma, teravih, teheccüd, imsak, bayram)',
 };
 
 const List<String> trHijriMonths = [

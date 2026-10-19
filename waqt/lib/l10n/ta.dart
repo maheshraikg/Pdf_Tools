@@ -156,6 +156,7 @@ const Map<String, String> taStrings = {
   'Fajr Azan sound': 'ஃபஜ்ர் பாங்கு ஒலி',
   'Same as other prayers': 'மற்ற தொழுகைகளைப் போலவே',
   'Phone notification sound': 'போன் அறிவிப்பு ஒலி',
+  'Azan (recorded)': 'பாங்கு (பதிவு)',
   'Soft chime': 'மென்மையான மணி ஒலி',
   'Deep bell': 'ஆழ்ந்த மணி',
   'Audio file (e.g. Azan MP3)': 'ஆடியோ கோப்பு (எ.கா. பாங்கு MP3)',
@@ -342,6 +343,7 @@ const Map<String, String> taStrings = {
   'Azan Time Charts': 'பாங்கு நேர அட்டவணைகள்',
   'Exact yearly charts of {0} places':
       '{0} இடங்களின் துல்லியமான ஆண்டு அட்டவணைகள்',
+  'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)': 'மேலும் நேரங்கள் (சூரிய உதயம், ஜும்ஆ, தராவீஹ், தஹஜ்ஜுத், இம்ஸாக், பெருநாள்)',
 };
 
 const List<String> taHijriMonths = [

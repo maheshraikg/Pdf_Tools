@@ -357,6 +357,7 @@ class S {
       'Phone notification sound',
       'ഫോണിലെ അറിയിപ്പ് ശബ്ദം',
     ),
+    AzanSound.azan => _t('Azan (recorded)', 'ബാങ്ക് (റെക്കോർഡിംഗ്)'),
     AzanSound.chime => _t('Soft chime', 'മൃദുവായ മണിനാദം'),
     AzanSound.bell => _t('Deep bell', 'ഗംഭീര മണി'),
     AzanSound.custom => _t(
@@ -770,5 +771,9 @@ class S {
     'Exact yearly charts of {0} places',
     '{0} സ്ഥലങ്ങളുടെ കൃത്യമായ വാർഷിക ചാർട്ടുകൾ',
     [n],
+  );
+  String get moreTimes => _t(
+    'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)',
+    'കൂടുതൽ സമയങ്ങൾ (ഉദയം, ജുമുഅ, തറാവീഹ്, തഹജ്ജുദ്, ഇംസാക്, പെരുന്നാൾ)',
   );
 }

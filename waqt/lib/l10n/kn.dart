@@ -9,11 +9,11 @@ const Map<String, String> knStrings = {
   'Qibla': 'ಕಿಬ್ಲಾ',
   'Settings': 'ಸೆಟ್ಟಿಂಗ್ಸ್',
   'Imsak': 'ಇಮ್ಸಾಕ್',
-  'Fajr': 'ಫಜ್ರ್',
+  'Fajr': 'ಸುಬಹಿ',
   'Sunrise': 'ಸೂರ್ಯೋದಯ',
   'Ishraq': 'ಇಶ್ರಾಕ್',
   'Jumu\'ah': 'ಜುಮಾ',
-  'Dhuhr': 'ಝುಹರ್',
+  'Dhuhr': 'ಳುಹರ್',
   'Asr': 'ಅಸರ್',
   'Maghrib': 'ಮಗ್ರಿಬ್',
   'Isha': 'ಇಶಾ',
@@ -69,7 +69,7 @@ const Map<String, String> knStrings = {
   'Adjust times (minutes)': 'ಸಮಯ ಹೊಂದಿಸಿ (ನಿಮಿಷ)',
   'Match your mosque: add or subtract minutes for each time.':
       'ನಿಮ್ಮ ಮಸೀದಿಗೆ ಹೊಂದಿಸಿ: ಪ್ರತಿ ಸಮಯಕ್ಕೆ ನಿಮಿಷ ಸೇರಿಸಿ ಅಥವಾ ಕಳೆಯಿರಿ.',
-  'Imsak before Fajr': 'ಫಜ್ರ್‌ಗೆ ಮೊದಲು ಇಮ್ಸಾಕ್',
+  'Imsak before Fajr': 'ಸುಬಹಿ‌ಗೆ ಮೊದಲು ಇಮ್ಸಾಕ್',
   'Ishraq after sunrise': 'ಸೂರ್ಯೋದಯದ ನಂತರ ಇಶ್ರಾಕ್',
   'Hijri date correction': 'ಹಿಜ್ರಿ ದಿನಾಂಕ ತಿದ್ದುಪಡಿ',
   'Kerala follows moon sighting. If the Hijri date is a day off, correct it here.': 'ಹಿಜ್ರಿ ದಿನಾಂಕ ಚಂದ್ರದರ್ಶನವನ್ನು ಅವಲಂಬಿಸಿದೆ. ಒಂದು ದಿನ ವ್ಯತ್ಯಾಸವಿದ್ದರೆ ಇಲ್ಲಿ ಸರಿಪಡಿಸಿ.',
@@ -155,9 +155,10 @@ const Map<String, String> knStrings = {
       'ವಿಶ್ವದಾದ್ಯಂತ 35,000 ಸ್ಥಳಗಳಲ್ಲಿ ಹುಡುಕಲು ಊರು ಅಥವಾ ನಗರದ ಹೆಸರು ಬರೆಯಿರಿ.',
   'Place data: GeoNames (CC BY 4.0)': 'ಸ್ಥಳ ಮಾಹಿತಿ: GeoNames (CC BY 4.0)',
   'Azan sound': 'ಅಝಾನ್ ಧ್ವನಿ',
-  'Fajr Azan sound': 'ಫಜ್ರ್ ಅಝಾನ್ ಧ್ವನಿ',
+  'Fajr Azan sound': 'ಸುಬಹಿ ಅಝಾನ್ ಧ್ವನಿ',
   'Same as other prayers': 'ಇತರ ನಮಾಝ್‌ಗಳಂತೆಯೇ',
   'Phone notification sound': 'ಫೋನಿನ ಅಧಿಸೂಚನೆ ಧ್ವನಿ',
+  'Azan (recorded)': 'ಅಝಾನ್ (ರೆಕಾರ್ಡ್)',
   'Soft chime': 'ಮೃದು ಗಂಟೆ ನಾದ',
   'Deep bell': 'ಗಂಭೀರ ಗಂಟೆ',
   'Audio file (e.g. Azan MP3)': 'ಆಡಿಯೋ ಫೈಲ್ (ಉದಾ. ಅಝಾನ್ MP3)',
@@ -293,9 +294,9 @@ const Map<String, String> knStrings = {
   'Keep the screen on until I stop': 'ನಾನು ನಿಲ್ಲಿಸುವವರೆಗೆ ಪರದೆ ಆನ್ ಇರಲಿ',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'ಆಫ್ ಆದರೆ ಫೋನಿನ ಪರದೆ ಟೈಮ್‌ಔಟ್ ಅನ್ವಯಿಸುತ್ತದೆ. ಲಾಕ್ ಪರದೆಯಲ್ಲೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ: ತೆರೆಯಿರಿ, ನಂತರ ಪವರ್ ಬಟನ್ ಎರಡು ಬಾರಿ ಒತ್ತಿರಿ.',
   'Adjust this time (± minutes)': 'ಈ ಸಮಯ ಹೊಂದಿಸಿ (± ನಿಮಿಷ)',
-  'Sunrise alert (Fajr time ends)': 'ಸೂರ್ಯೋದಯ ಅಲರ್ಟ್ (ಫಜ್ರ್ ಸಮಯ ಮುಗಿಯುತ್ತದೆ)',
+  'Sunrise alert (Fajr time ends)': 'ಸೂರ್ಯೋದಯ ಅಲರ್ಟ್ (ಸುಬಹಿ ಸಮಯ ಮುಗಿಯುತ್ತದೆ)',
   '{0} min to sunrise – Fajr time ends':
-      'ಸೂರ್ಯೋದಯಕ್ಕೆ {0} ನಿಮಿಷ – ಫಜ್ರ್ ಸಮಯ ಮುಗಿಯುತ್ತದೆ',
+      'ಸೂರ್ಯೋದಯಕ್ಕೆ {0} ನಿಮಿಷ – ಸುಬಹಿ ಸಮಯ ಮುಗಿಯುತ್ತದೆ',
   'Minutes before sunrise': 'ಸೂರ್ಯೋದಯಕ್ಕೆ ಎಷ್ಟು ನಿಮಿಷ ಮೊದಲು',
   'Ishraq / Duha alert': 'ಇಶ್ರಾಕ್ / ಳುಹಾ ಅಲರ್ಟ್',
   'Iqama sound': 'ಇಕಾಮತ್ ಧ್ವನಿ',
@@ -344,6 +345,8 @@ const Map<String, String> knStrings = {
   'All': 'ಎಲ್ಲಾ',
   'Azan Time Charts': 'ಅಝಾನ್ ಸಮಯ ಚಾರ್ಟ್‌ಗಳು',
   'Exact yearly charts of {0} places': '{0} ಸ್ಥಳಗಳ ನಿಖರ ವಾರ್ಷಿಕ ಚಾರ್ಟ್‌ಗಳು',
+  'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)':
+      'ಇನ್ನಷ್ಟು ಸಮಯಗಳು (ಸೂರ್ಯೋದಯ, ಜುಮಾ, ತರಾವೀಹ್, ತಹಜ್ಜುದ್, ಇಮ್ಸಾಕ್, ಈದ್)',
 };
 
 const List<String> knHijriMonths = [

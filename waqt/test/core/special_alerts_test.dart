@@ -93,7 +93,8 @@ void main() {
     );
     expect(c.soundFor(Prayer.dhuhr).playerSound, 'file:/x/azan.mp3');
     expect(c.soundFor(Prayer.fajr).playerSound, 'bell');
-    expect(const AlertConfig().soundFor(Prayer.fajr).playerSound, 'system');
+    // The recorded Azan by default.
+    expect(const AlertConfig().soundFor(Prayer.fajr).playerSound, 'azan');
     final back = AlertConfig.fromJson(
       (jsonDecode(jsonEncode(c.toJson())) as Map).cast<String, dynamic>(),
     );
@@ -102,7 +103,7 @@ void main() {
     expect(back.vibrate, isFalse);
     expect(back.playWhenSilent, isTrue);
     expect(back.copyWith(fajrSound: null).fajrSound, isNull);
-    // Old settings without the new keys keep the notification sound.
-    expect(AlertConfig.fromJson({}).azanSound.sound, AzanSound.system);
+    // Settings saved before sounds existed get the recorded Azan too.
+    expect(AlertConfig.fromJson({}).azanSound.sound, AzanSound.azan);
   });
 }

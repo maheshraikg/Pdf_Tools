@@ -157,6 +157,7 @@ const Map<String, String> bnStrings = {
   'Fajr Azan sound': 'ফজরের আজানের শব্দ',
   'Same as other prayers': 'অন্য নামাজের মতোই',
   'Phone notification sound': 'ফোনের নোটিফিকেশন শব্দ',
+  'Azan (recorded)': 'আজান (রেকর্ড করা)',
   'Soft chime': 'মৃদু ঘণ্টাধ্বনি',
   'Deep bell': 'গভীর ঘণ্টা',
   'Audio file (e.g. Azan MP3)': 'অডিও ফাইল (যেমন আজান MP3)',
@@ -344,6 +345,8 @@ const Map<String, String> bnStrings = {
   'All': 'সব',
   'Azan Time Charts': 'আজান সময় চার্ট',
   'Exact yearly charts of {0} places': '{0}টি জায়গার সঠিক বার্ষিক চার্ট',
+  'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)':
+      'আরও সময় (সূর্যোদয়, জুমা, তারাবীহ, তাহাজ্জুদ, ইমসাক, ঈদ)',
 };
 
 const List<String> bnHijriMonths = [

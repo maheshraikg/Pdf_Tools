@@ -151,7 +151,9 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
                 for (final p
                     in settings.todayTable
                         ? const <Prayer>[]
-                        : _cardPrayers) ...[
+                        : _cardPrayers.where(
+                            (p) => p.isFard || settings.showExtras,
+                          )) ...[
                   _PrayerCard(
                     day: day,
                     prayer: p,
@@ -165,7 +167,8 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
                   _trackerCard(context, day),
                   const SizedBox(height: 10),
                 ],
-                if (!settings.todayTable) _MoreTimes(day: day),
+                if (!settings.todayTable && settings.showExtras)
+                  _MoreTimes(day: day),
                 const SizedBox(height: 18),
                 Text(
                   '${day.source == TimeSource.timetable ? s.fromTimetable : '${s.calculated} · ${settings.method.name}'}'
