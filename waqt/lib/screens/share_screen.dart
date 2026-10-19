@@ -77,111 +77,117 @@ class _ShareScreenState extends State<ShareScreen> {
     final lang = _lang ?? settings.lang;
     return Scaffold(
       appBar: AppBar(title: Text(s.shareTimes)),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-        children: [
-          Row(
-            children: [
-              IconButton.filledTonal(
-                tooltip: s.previousDay,
-                onPressed: () => setState(
-                  () => _date = _date.subtract(const Duration(days: 1)),
-                ),
-                icon: const Icon(Icons.chevron_left),
-              ),
-              Expanded(
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 8,
-                  children: [
-                    ChoiceChip(
-                      label: Text(s.today),
-                      selected: offset == 0,
-                      onSelected: (_) => setState(() => _date = today),
-                    ),
-                    ChoiceChip(
-                      label: Text(s.tomorrow),
-                      selected: offset == 1,
-                      onSelected: (_) => setState(
-                        () => _date = today.add(const Duration(days: 1)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              IconButton.filledTonal(
-                tooltip: s.nextDay,
-                onPressed: () =>
-                    setState(() => _date = _date.add(const Duration(days: 1))),
-                icon: const Icon(Icons.chevron_right),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 48,
-            child: ListView(
-              key: const Key('poster-languages'),
-              scrollDirection: Axis.horizontal,
+      // Everything on one screen: the poster shrinks to the space left.
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+        child: Column(
+          children: [
+            Row(
               children: [
-                Padding(
-                  padding: const EdgeInsetsDirectional.only(end: 8),
-                  child: Row(
+                IconButton.filledTonal(
+                  tooltip: s.previousDay,
+                  onPressed: () => setState(
+                    () => _date = _date.subtract(const Duration(days: 1)),
+                  ),
+                  icon: const Icon(Icons.chevron_left),
+                ),
+                Expanded(
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
                     children: [
-                      const Icon(Icons.translate, size: 18),
-                      const SizedBox(width: 4),
-                      Text(s.language),
+                      ChoiceChip(
+                        label: Text(s.today),
+                        selected: offset == 0,
+                        onSelected: (_) => setState(() => _date = today),
+                      ),
+                      ChoiceChip(
+                        label: Text(s.tomorrow),
+                        selected: offset == 1,
+                        onSelected: (_) => setState(
+                          () => _date = today.add(const Duration(days: 1)),
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                for (final l in Lang.values)
-                  Padding(
-                    padding: const EdgeInsetsDirectional.only(end: 6),
-                    child: ChoiceChip(
-                      key: ValueKey('poster-${l.name}'),
-                      label: Text(l.nativeName),
-                      selected: lang == l,
-                      onSelected: (_) => setState(() => _lang = l),
-                    ),
+                IconButton.filledTonal(
+                  tooltip: s.nextDay,
+                  onPressed: () => setState(
+                    () => _date = _date.add(const Duration(days: 1)),
                   ),
+                  icon: const Icon(Icons.chevron_right),
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 12),
-          Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(18),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: RepaintBoundary(
-                  key: _poster,
-                  child: KeyedSubtree(
-                    key: ValueKey((_date, lang)),
-                    child: SizedBox(
-                      width: 360,
-                      child: PrayerPoster(day: day, lang: lang),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 48,
+              child: ListView(
+                key: const Key('poster-languages'),
+                scrollDirection: Axis.horizontal,
+                children: [
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(end: 8),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.translate, size: 18),
+                        const SizedBox(width: 4),
+                        Text(s.language),
+                      ],
+                    ),
+                  ),
+                  for (final l in Lang.values)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(end: 6),
+                      child: ChoiceChip(
+                        key: ValueKey('poster-${l.name}'),
+                        label: Text(l.nativeName),
+                        selected: lang == l,
+                        onSelected: (_) => setState(() => _lang = l),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: FittedBox(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: RepaintBoundary(
+                      key: _poster,
+                      child: KeyedSubtree(
+                        key: ValueKey((_date, lang)),
+                        child: SizedBox(
+                          width: 360,
+                          child: PrayerPoster(day: day, lang: lang),
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-          FilledButton.icon(
-            style: FilledButton.styleFrom(
-              minimumSize: const Size.fromHeight(54),
-            ),
-            icon: _busy
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.share),
-            label: Text(s.shareTimes),
-            onPressed: _busy ? null : () => _share(day, lang),
-          ),
-        ],
+          ],
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        minimum: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+        child: FilledButton.icon(
+          style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(54)),
+          icon: _busy
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.share),
+          label: Text(s.shareTimes),
+          onPressed: _busy ? null : () => _share(day, lang),
+        ),
       ),
     );
   }

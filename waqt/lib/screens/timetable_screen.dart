@@ -182,7 +182,12 @@ class TimetableScreen extends StatelessWidget {
               color: Theme.of(context).colorScheme.surfaceContainerHigh,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: SelectableText(_example, style: mono),
+            // Each line whole (shrunk to fit), never broken mid-number.
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: AlignmentDirectional.centerStart,
+              child: Text(_example, style: mono, softWrap: false),
+            ),
           ),
         ],
       ),

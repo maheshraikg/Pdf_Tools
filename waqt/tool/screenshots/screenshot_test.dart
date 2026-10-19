@@ -296,6 +296,28 @@ void main() {
       ),
     );
     await shot(tester, key, 'en_12_share');
+    // Small phone, large text.
+    await tester.binding.setSurfaceSize(const Size(360, 720));
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: key,
+        child: AppScope(
+          settings: settings..lang = Lang.kn,
+          child: MaterialApp(
+            theme: buildTheme(Brightness.light),
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: const TextScaler.linear(1.3)),
+              child: child!,
+            ),
+            home: ShareScreen(date: settings.today),
+          ),
+        ),
+      ),
+    );
+    await shot(tester, key, 'kn_12_share_small');
+    settings.lang = Lang.en;
+    await tester.binding.setSurfaceSize(const Size(400, 860));
     for (final l in [Lang.kn, Lang.ml, Lang.ar]) {
       await tester.pumpWidget(
         RepaintBoundary(
