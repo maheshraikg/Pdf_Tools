@@ -122,3 +122,35 @@ class IconBadge extends StatelessWidget {
     );
   }
 }
+
+/// Fades and slides [child] in when it first appears, [index] steps after
+/// the first (a staggered list). Plays once; off when the phone asks for
+/// no animations.
+class Appear extends StatelessWidget {
+  const Appear({super.key, required this.index, required this.child});
+
+  final int index;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) return child;
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: Duration(milliseconds: 320 + 70 * index),
+      curve: Interval(
+        (70 * index) / (320 + 70 * index),
+        1,
+        curve: Curves.easeOutCubic,
+      ),
+      builder: (context, v, child) => Opacity(
+        opacity: v,
+        child: Transform.translate(
+          offset: Offset(0, 18 * (1 - v)),
+          child: child,
+        ),
+      ),
+      child: child,
+    );
+  }
+}

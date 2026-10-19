@@ -9,11 +9,11 @@ const Map<String, String> knStrings = {
   'Qibla': 'ಕಿಬ್ಲಾ',
   'Settings': 'ಸೆಟ್ಟಿಂಗ್ಸ್',
   'Imsak': 'ಇಮ್ಸಾಕ್',
-  'Fajr': 'ಸುಬಹಿ',
+  'Subh (Fajr)': 'ಸುಬಹಿ (ಫಜ್ರ್)',
   'Sunrise': 'ಸೂರ್ಯೋದಯ',
   'Ishraq': 'ಇಶ್ರಾಕ್',
   'Jumu\'ah': 'ಜುಮಾ',
-  'Dhuhr': 'ಳುಹರ್',
+  'Luhr (Dhuhr)': 'ಳುಹರ್ (ಝುಹರ್)',
   'Asr': 'ಅಸರ್',
   'Maghrib': 'ಮಗ್ರಿಬ್',
   'Isha': 'ಇಶಾ',
@@ -32,15 +32,12 @@ const Map<String, String> knStrings = {
   'From timetable': 'ವೇಳಾಪಟ್ಟಿಯಿಂದ',
   'Calculated': 'ಲೆಕ್ಕಹಾಕಿದ್ದು',
   'Mosque display': 'ಮಸೀದಿ ಪ್ರದರ್ಶನ',
-  'Choose your place for accurate times':
-      'ನಿಖರ ಸಮಯಕ್ಕಾಗಿ ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಆರಿಸಿ',
+  'Choose your place for accurate times': 'ನಿಖರ ಸಮಯಕ್ಕಾಗಿ ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಆರಿಸಿ',
   'Choose': 'ಆರಿಸಿ',
   'Alerts may be missed': 'ಎಚ್ಚರಿಕೆಗಳು ತಪ್ಪಬಹುದು',
   'Allow notifications': 'ಅಧಿಸೂಚನೆಗಳನ್ನು ಅನುಮತಿಸಿ',
-  'Allow exact alarms (on time Azan)':
-      'ನಿಖರ ಅಲಾರಂಗಳನ್ನು ಅನುಮತಿಸಿ (ಸಮಯಕ್ಕೆ ಅಜಾನ್)',
-  'Turn off battery optimisation for Azan Time':
-      'ಅಝಾನ್ ಟೈಮ್‌ಗೆ ಬ್ಯಾಟರಿ ಆಪ್ಟಿಮೈಸೇಶನ್ ಆಫ್ ಮಾಡಿ',
+  'Allow exact alarms (on time Azan)': 'ನಿಖರ ಅಲಾರಂಗಳನ್ನು ಅನುಮತಿಸಿ (ಸಮಯಕ್ಕೆ ಅಜಾನ್)',
+  'Turn off battery optimisation for Azan Time': 'ಅಝಾನ್ ಟೈಮ್‌ಗೆ ಬ್ಯಾಟರಿ ಆಪ್ಟಿಮೈಸೇಶನ್ ಆಫ್ ಮಾಡಿ',
   'Some phones (Xiaomi, Oppo, Vivo, Realme, Samsung) stop apps in the background. Set Azan Time to "Unrestricted" / "No restrictions" in battery settings so Azan is never missed.': 'ಕೆಲವು ಫೋನ್‌ಗಳು (Xiaomi, Oppo, Vivo, Realme, Samsung) ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಆ್ಯಪ್‌ಗಳನ್ನು ನಿಲ್ಲಿಸುತ್ತವೆ. ಅಜಾನ್ ತಪ್ಪದಂತೆ ಬ್ಯಾಟರಿ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಅಝಾನ್ ಟೈಮ್ ಅನ್ನು "Unrestricted" ಮಾಡಿ.',
   'Fix': 'ಸರಿಪಡಿಸಿ',
   'Date': 'ದಿನಾಂಕ',
@@ -67,8 +64,7 @@ const Map<String, String> knStrings = {
   'One seventh of the night': 'ರಾತ್ರಿಯ ಏಳನೇ ಒಂದು ಭಾಗ',
   'Angle based (recommended)': 'ಕೋನ ಆಧಾರಿತ (ಶಿಫಾರಸು)',
   'Adjust times (minutes)': 'ಸಮಯ ಹೊಂದಿಸಿ (ನಿಮಿಷ)',
-  'Match your mosque: add or subtract minutes for each time.':
-      'ನಿಮ್ಮ ಮಸೀದಿಗೆ ಹೊಂದಿಸಿ: ಪ್ರತಿ ಸಮಯಕ್ಕೆ ನಿಮಿಷ ಸೇರಿಸಿ ಅಥವಾ ಕಳೆಯಿರಿ.',
+  'Match your mosque: add or subtract minutes for each time.': 'ನಿಮ್ಮ ಮಸೀದಿಗೆ ಹೊಂದಿಸಿ: ಪ್ರತಿ ಸಮಯಕ್ಕೆ ನಿಮಿಷ ಸೇರಿಸಿ ಅಥವಾ ಕಳೆಯಿರಿ.',
   'Imsak before Fajr': 'ಸುಬಹಿ‌ಗೆ ಮೊದಲು ಇಮ್ಸಾಕ್',
   'Ishraq after sunrise': 'ಸೂರ್ಯೋದಯದ ನಂತರ ಇಶ್ರಾಕ್',
   'Hijri date correction': 'ಹಿಜ್ರಿ ದಿನಾಂಕ ತಿದ್ದುಪಡಿ',
@@ -90,22 +86,18 @@ const Map<String, String> knStrings = {
   'Name': 'ಹೆಸರು',
   'Latitude': 'ಅಕ್ಷಾಂಶ',
   'Longitude': 'ರೇಖಾಂಶ',
-  'UTC offset, e.g. +05:30 (empty = phone time zone)':
-      'UTC ವ್ಯತ್ಯಾಸ, ಉದಾ. +05:30 (ಖಾಲಿ = ಫೋನ್ ಸಮಯ ವಲಯ)',
+  'UTC offset, e.g. +05:30 (empty = phone time zone)': 'UTC ವ್ಯತ್ಯಾಸ, ಉದಾ. +05:30 (ಖಾಲಿ = ಫೋನ್ ಸಮಯ ವಲಯ)',
   'Finding your location…': 'ನಿಮ್ಮ ಸ್ಥಳ ಹುಡುಕಲಾಗುತ್ತಿದೆ…',
   'Location permission denied.': 'ಸ್ಥಳದ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ.',
-  'Location is turned off. Turn it on and try again.':
-      'ಸ್ಥಳ ಸೇವೆ ಆಫ್ ಆಗಿದೆ. ಆನ್ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
-  'Could not get a location. Try again outdoors, or pick a place.':
-      'ಸ್ಥಳ ಸಿಗಲಿಲ್ಲ. ಹೊರಗೆ ಹೋಗಿ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಸ್ಥಳ ಆರಿಸಿ.',
+  'Location is turned off. Turn it on and try again.': 'ಸ್ಥಳ ಸೇವೆ ಆಫ್ ಆಗಿದೆ. ಆನ್ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+  'Could not get a location. Try again outdoors, or pick a place.': 'ಸ್ಥಳ ಸಿಗಲಿಲ್ಲ. ಹೊರಗೆ ಹೋಗಿ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಸ್ಥಳ ಆರಿಸಿ.',
   'Enter valid coordinates.': 'ಸರಿಯಾದ ನಿರ್ದೇಶಾಂಕ ನಮೂದಿಸಿ.',
   'Azan alert': 'ಅಜಾನ್ ಎಚ್ಚರಿಕೆ',
   'Iqama alert': 'ಇಕಾಮತ್ ಎಚ್ಚರಿಕೆ',
   'Fixed Iqama time': 'ನಿಗದಿತ ಇಕಾಮತ್ ಸಮಯ',
   'Fixed Jumu\'ah Iqama time': 'ನಿಗದಿತ ಜುಮಾ ಇಕಾಮತ್ ಸಮಯ',
   'Off: uses the minutes after Azan': 'ಆಫ್: ಅಜಾನ್ ನಂತರದ ನಿಮಿಷ ಬಳಸಲಾಗುತ್ತದೆ',
-  'Used when it is after Azan; otherwise the minutes after Azan':
-      'ಅಜಾನ್ ನಂತರ ಇದ್ದರೆ ಇದು, ಇಲ್ಲದಿದ್ದರೆ ಅಜಾನ್ ನಂತರದ ನಿಮಿಷ',
+  'Used when it is after Azan; otherwise the minutes after Azan': 'ಅಜಾನ್ ನಂತರ ಇದ್ದರೆ ಇದು, ಇಲ್ಲದಿದ್ದರೆ ಅಜಾನ್ ನಂತರದ ನಿಮಿಷ',
   'Clear': 'ಅಳಿಸಿ',
   'Iqama after Azan': 'ಅಜಾನ್ ನಂತರ ಇಕಾಮತ್',
   'Reminder before Azan': 'ಅಜಾನ್‌ಗೆ ಮೊದಲು ಜ್ಞಾಪನೆ',
@@ -129,8 +121,7 @@ const Map<String, String> knStrings = {
   '{0} in {1} min': '{0} {1} ನಿಮಿಷದಲ್ಲಿ',
   'Imsak – Suhoor ends': 'ಇಮ್ಸಾಕ್ – ಸಹರ್ ಮುಕ್ತಾಯ',
   '{0} time': '{0} ಸಮಯ',
-  'Open Azan Time to keep alerts on':
-      'ಎಚ್ಚರಿಕೆಗಳು ಮುಂದುವರಿಯಲು ಅಝಾನ್ ಟೈಮ್ ತೆರೆಯಿರಿ',
+  'Open Azan Time to keep alerts on': 'ಎಚ್ಚರಿಕೆಗಳು ಮುಂದುವರಿಯಲು ಅಝಾನ್ ಟೈಮ್ ತೆರೆಯಿರಿ',
   'Scheduled alerts end in a day. Tap to schedule the next days.': 'ನಿಗದಿತ ಎಚ್ಚರಿಕೆಗಳು ಒಂದು ದಿನದಲ್ಲಿ ಮುಗಿಯುತ್ತವೆ. ಮುಂದಿನ ದಿನಗಳಿಗಾಗಿ ಟ್ಯಾಪ್ ಮಾಡಿ.',
   'Reminders': 'ಜ್ಞಾಪನೆಗಳು',
   'For times that match your mosque exactly, import its yearly chart (for example a Samastha calendar) as a CSV file. Dates the table does not cover are calculated.': 'ನಿಮ್ಮ ಮಸೀದಿಗೆ ನಿಖರವಾಗಿ ಹೊಂದುವ ಸಮಯಕ್ಕಾಗಿ ಅದರ ವಾರ್ಷಿಕ ವೇಳಾಪಟ್ಟಿಯನ್ನು CSV ಫೈಲ್ ಆಗಿ ಆಮದು ಮಾಡಿ. ವೇಳಾಪಟ್ಟಿಯಲ್ಲಿ ಇಲ್ಲದ ದಿನಗಳನ್ನು ಲೆಕ್ಕಹಾಕಲಾಗುತ್ತದೆ.',
@@ -151,8 +142,7 @@ const Map<String, String> knStrings = {
   's': 'ಸೆ',
   'near {0}': '{0} ಹತ್ತಿರ',
   'World places': 'ವಿಶ್ವದ ಸ್ಥಳಗಳು',
-  'Type a town or city name to search 35,000 places worldwide.':
-      'ವಿಶ್ವದಾದ್ಯಂತ 35,000 ಸ್ಥಳಗಳಲ್ಲಿ ಹುಡುಕಲು ಊರು ಅಥವಾ ನಗರದ ಹೆಸರು ಬರೆಯಿರಿ.',
+  'Type a town or city name to search 35,000 places worldwide.': 'ವಿಶ್ವದಾದ್ಯಂತ 35,000 ಸ್ಥಳಗಳಲ್ಲಿ ಹುಡುಕಲು ಊರು ಅಥವಾ ನಗರದ ಹೆಸರು ಬರೆಯಿರಿ.',
   'Place data: GeoNames (CC BY 4.0)': 'ಸ್ಥಳ ಮಾಹಿತಿ: GeoNames (CC BY 4.0)',
   'Azan sound': 'ಅಝಾನ್ ಧ್ವನಿ',
   'Fajr Azan sound': 'ಸುಬಹಿ ಅಝಾನ್ ಧ್ವನಿ',
@@ -163,24 +153,20 @@ const Map<String, String> knStrings = {
   'Deep bell': 'ಗಂಭೀರ ಗಂಟೆ',
   'Audio file (e.g. Azan MP3)': 'ಆಡಿಯೋ ಫೈಲ್ (ಉದಾ. ಅಝಾನ್ MP3)',
   'Repeats until you dismiss it': 'ನಿಲ್ಲಿಸುವವರೆಗೆ ಪುನರಾವರ್ತಿಸುತ್ತದೆ',
-  'Pick a recorded Azan saved on your phone':
-      'ಫೋನಿನಲ್ಲಿ ಉಳಿಸಿದ ಅಝಾನ್ ರೆಕಾರ್ಡಿಂಗ್ ಆಯ್ಕೆಮಾಡಿ',
+  'Pick a recorded Azan saved on your phone': 'ಫೋನಿನಲ್ಲಿ ಉಳಿಸಿದ ಅಝಾನ್ ರೆಕಾರ್ಡಿಂಗ್ ಆಯ್ಕೆಮಾಡಿ',
   'Could not use this audio file': 'ಈ ಆಡಿಯೋ ಫೈಲ್ ಬಳಸಲಾಗಲಿಲ್ಲ',
   'Play': 'ಪ್ಲೇ',
   'Stop': 'ನಿಲ್ಲಿಸಿ',
   'Play even when the phone is silent': 'ಫೋನ್ ಸೈಲೆಂಟ್‌ನಲ್ಲಿದ್ದರೂ ಪ್ಲೇ ಮಾಡಿ',
-  'Off: on silent or vibrate the Azan only shows and vibrates.':
-      'ಆಫ್: ಸೈಲೆಂಟ್/ವೈಬ್ರೇಟ್‌ನಲ್ಲಿ ಅಝಾನ್ ತೋರಿಸಿ ವೈಬ್ರೇಟ್ ಮಾತ್ರ ಆಗುತ್ತದೆ.',
+  'Off: on silent or vibrate the Azan only shows and vibrates.': 'ಆಫ್: ಸೈಲೆಂಟ್/ವೈಬ್ರೇಟ್‌ನಲ್ಲಿ ಅಝಾನ್ ತೋರಿಸಿ ವೈಬ್ರೇಟ್ ಮಾತ್ರ ಆಗುತ್ತದೆ.',
   'Ramadan and Eid': 'ರಮಝಾನ್ ಮತ್ತು ಈದ್',
   'Taraweeh': 'ತರಾವೀಹ್',
   'Eid al-Fitr prayer': 'ಈದುಲ್ ಫಿತ್ರ್ ನಮಾಝ್',
   'Eid al-Adha prayer': 'ಈದುಲ್ ಅಝ್‌ಹಾ ನಮಾಝ್',
-  'Alert on Ramadan nights after the Isha Iqama':
-      'ರಮಝಾನ್ ರಾತ್ರಿಗಳಲ್ಲಿ ಇಶಾ ಇಖಾಮತ್ ನಂತರ ಅಲರ್ಟ್',
+  'Alert on Ramadan nights after the Isha Iqama': 'ರಮಝಾನ್ ರಾತ್ರಿಗಳಲ್ಲಿ ಇಶಾ ಇಖಾಮತ್ ನಂತರ ಅಲರ್ಟ್',
   'Minutes after Isha Iqama': 'ಇಶಾ ಇಖಾಮತ್ ನಂತರ ನಿಮಿಷಗಳು',
   'Eid prayer alert': 'ಈದ್ ನಮಾಝ್ ಅಲರ್ಟ್',
-  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
-      'ಈದ್ ನಮಾಝ್‌ಗೆ 30 ನಿಮಿಷ ಮೊದಲು ನೆನಪಿಸುತ್ತದೆ (ಹಿಜ್ರಿ ದಿನಾಂಕದಂತೆ)',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)': 'ಈದ್ ನಮಾಝ್‌ಗೆ 30 ನಿಮಿಷ ಮೊದಲು ನೆನಪಿಸುತ್ತದೆ (ಹಿಜ್ರಿ ದಿನಾಂಕದಂತೆ)',
   'Eid prayer at {0}': 'ಈದ್ ನಮಾಝ್ {0}',
   '1 page': '1 ಪುಟ',
   '{0} pages, rotating': '{0} ಪುಟಗಳು, ಸರದಿಯಾಗಿ',
@@ -188,8 +174,7 @@ const Map<String, String> knStrings = {
   'Mosque name': 'ಮಸೀದಿಯ ಹೆಸರು',
   'Shown at the top of the display': 'ಡಿಸ್ಪ್ಲೇಯ ಮೇಲ್ಭಾಗದಲ್ಲಿ ತೋರಿಸಲಾಗುತ್ತದೆ',
   'Next prayer page': 'ಮುಂದಿನ ನಮಾಝ್ ಪುಟ',
-  'Big countdown; stays on from 5 minutes before Azan until Iqama':
-      'ದೊಡ್ಡ ಕೌಂಟ್‌ಡೌನ್; ಅಝಾನ್‌ಗೆ 5 ನಿಮಿಷ ಮೊದಲಿನಿಂದ ಇಖಾಮತ್‌ವರೆಗೆ ಇದೇ ಇರುತ್ತದೆ',
+  'Big countdown; stays on from 5 minutes before Azan until Iqama': 'ದೊಡ್ಡ ಕೌಂಟ್‌ಡೌನ್; ಅಝಾನ್‌ಗೆ 5 ನಿಮಿಷ ಮೊದಲಿನಿಂದ ಇಖಾಮತ್‌ವರೆಗೆ ಇದೇ ಇರುತ್ತದೆ',
   'Seconds per page': 'ಪ್ರತಿ ಪುಟಕ್ಕೆ ಸೆಕೆಂಡುಗಳು',
   'Announcements': 'ಪ್ರಕಟಣೆಗಳು',
   'Add announcement': 'ಪ್ರಕಟಣೆ ಸೇರಿಸಿ',
@@ -197,15 +182,12 @@ const Map<String, String> knStrings = {
   'Delete': 'ಅಳಿಸಿ',
   'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'ಡಿಸ್ಪ್ಲೇಯಲ್ಲಿ 7 ಪುಟಗಳವರೆಗೆ: ನಮಾಝ್ ಸಮಯಗಳು, ಮುಂದಿನ ನಮಾಝ್ ಮತ್ತು 5 ಪ್ರಕಟಣೆಗಳು. ಹೊರಬರಲು ಡಿಸ್ಪ್ಲೇ ಒತ್ತಿ ಹಿಡಿಯಿರಿ.',
   'Full-screen Azan': 'ಪೂರ್ಣ ಪರದೆ ಅಝಾನ್',
-  'Shows the Azan over the lock screen with a big Stop button':
-      'ಲಾಕ್ ಸ್ಕ್ರೀನ್ ಮೇಲೆ ದೊಡ್ಡ ನಿಲ್ಲಿಸು ಬಟನ್‌ನೊಂದಿಗೆ ಅಝಾನ್ ತೋರಿಸುತ್ತದೆ',
-  'Allow full-screen alerts for Azan Time':
-      'ಅಝಾನ್ ಟೈಮ್‌ಗೆ ಪೂರ್ಣ ಪರದೆ ಅಲರ್ಟ್‌ಗಳನ್ನು ಅನುಮತಿಸಿ',
+  'Shows the Azan over the lock screen with a big Stop button': 'ಲಾಕ್ ಸ್ಕ್ರೀನ್ ಮೇಲೆ ದೊಡ್ಡ ನಿಲ್ಲಿಸು ಬಟನ್‌ನೊಂದಿಗೆ ಅಝಾನ್ ತೋರಿಸುತ್ತದೆ',
+  'Allow full-screen alerts for Azan Time': 'ಅಝಾನ್ ಟೈಮ್‌ಗೆ ಪೂರ್ಣ ಪರದೆ ಅಲರ್ಟ್‌ಗಳನ್ನು ಅನುಮತಿಸಿ',
   'Prayer tracker': 'ನಮಾಝ್ ಟ್ರ್ಯಾಕರ್',
   '{0} of {1} prayed today': 'ಇಂದು {1}ರಲ್ಲಿ {0} ನಮಾಝ್ ಮಾಡಲಾಗಿದೆ',
   '{0}-day streak': 'ಸತತ {0} ದಿನ',
-  'Tap a prayer\'s icon to mark it as prayed':
-      'ನಮಾಝ್ ಮಾಡಲಾಗಿದೆ ಎಂದು ಗುರುತಿಸಲು ಅದರ ಐಕಾನ್ ಟ್ಯಾಪ್ ಮಾಡಿ',
+  'Tap a prayer\'s icon to mark it as prayed': 'ನಮಾಝ್ ಮಾಡಲಾಗಿದೆ ಎಂದು ಗುರುತಿಸಲು ಅದರ ಐಕಾನ್ ಟ್ಯಾಪ್ ಮಾಡಿ',
   'Mark as prayed': 'ಮಾಡಲಾಗಿದೆ ಎಂದು ಗುರುತಿಸಿ',
   'Day streak': 'ಸತತ ದಿನಗಳು',
   'Last 7 days': 'ಕಳೆದ 7 ದಿನಗಳು',
@@ -215,8 +197,7 @@ const Map<String, String> knStrings = {
   'Next week': 'ಮುಂದಿನ ವಾರ',
   'Excused today': 'ಇಂದು ವಿನಾಯಿತಿ',
   'Pause the tracker for the day (e.g. illness or menstruation); your streak is kept.': 'ಈ ದಿನಕ್ಕೆ ಟ್ರ್ಯಾಕರ್ ನಿಲ್ಲಿಸಿ (ಉದಾ. ಅನಾರೋಗ್ಯ ಅಥವಾ ಮುಟ್ಟು); ನಿಮ್ಮ ಸತತತೆ ಉಳಿಯುತ್ತದೆ.',
-  'Your tracker stays on this phone only.':
-      'ನಿಮ್ಮ ಟ್ರ್ಯಾಕರ್ ಈ ಫೋನಿನಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತದೆ.',
+  'Your tracker stays on this phone only.': 'ನಿಮ್ಮ ಟ್ರ್ಯಾಕರ್ ಈ ಫೋನಿನಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತದೆ.',
   'Tasbih': 'ತಸ್ಬೀಹ್',
   'After-prayer tasbih': 'ನಮಾಝ್ ನಂತರದ ತಸ್ಬೀಹ್',
   'Free count': 'ಮುಕ್ತ ಎಣಿಕೆ',
@@ -225,8 +206,7 @@ const Map<String, String> knStrings = {
   'Allah is the Greatest': 'ಅಲ್ಲಾಹನು ಅತಿ ದೊಡ್ಡವನು',
   'There is no god but Allah': 'ಅಲ್ಲಾಹನ ಹೊರತು ಆರಾಧ್ಯನಿಲ್ಲ',
   'I seek Allah\'s forgiveness': 'ನಾನು ಅಲ್ಲಾಹನಲ್ಲಿ ಕ್ಷಮೆ ಯಾಚಿಸುತ್ತೇನೆ',
-  'O Allah, send blessings upon Muhammad':
-      'ಅಲ್ಲಾಹನೇ, ಮುಹಮ್ಮದ್ ﷺ ಮೇಲೆ ಅನುಗ್ರಹ ಸುರಿಸು',
+  'O Allah, send blessings upon Muhammad': 'ಅಲ್ಲಾಹನೇ, ಮುಹಮ್ಮದ್ ﷺ ಮೇಲೆ ಅನುಗ್ರಹ ಸುರಿಸು',
   'Glory and praise be to Allah': 'ಅಲ್ಲಾಹನು ಪರಿಶುದ್ಧನು, ಅವನಿಗೆ ಸ್ತುತಿ',
   'Reset the counter?': 'ಕೌಂಟರ್ ಮರುಹೊಂದಿಸಬೇಕೆ?',
   'Tap the circle to count': 'ಎಣಿಸಲು ವೃತ್ತವನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ',
@@ -264,10 +244,8 @@ const Map<String, String> knStrings = {
   'Update location automatically': 'ಸ್ಥಳವನ್ನು ತಾನಾಗಿ ನವೀಕರಿಸಿ',
   'When you open Azan Time, the place follows your phone (GPS), with the local time zone.': 'ಅಝಾನ್ ಟೈಮ್ ತೆರೆದಾಗ ಸ್ಥಳ ಮತ್ತು ಸ್ಥಳೀಯ ಸಮಯ ವಲಯ ನಿಮ್ಮ ಫೋನಿನ GPS ಅನುಸರಿಸುತ್ತದೆ.',
   'Location updated: {0}': 'ಸ್ಥಳ ನವೀಕರಿಸಲಾಗಿದೆ: {0}',
-  'Set the phone\'s date & time to automatic':
-      'ಫೋನಿನ ದಿನಾಂಕ ಮತ್ತು ಸಮಯವನ್ನು ಸ್ವಯಂಚಾಲಿತಗೊಳಿಸಿ',
-  'Your phone\'s clock is {0} min off':
-      'ನಿಮ್ಮ ಫೋನಿನ ಗಡಿಯಾರ {0} ನಿಮಿಷ ತಪ್ಪಾಗಿದೆ',
+  'Set the phone\'s date & time to automatic': 'ಫೋನಿನ ದಿನಾಂಕ ಮತ್ತು ಸಮಯವನ್ನು ಸ್ವಯಂಚಾಲಿತಗೊಳಿಸಿ',
+  'Your phone\'s clock is {0} min off': 'ನಿಮ್ಮ ಫೋನಿನ ಗಡಿಯಾರ {0} ನಿಮಿಷ ತಪ್ಪಾಗಿದೆ',
   'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.': 'ಅಲರ್ಟ್‌ಗಳು ಫೋನಿನ ಗಡಿಯಾರ ಅನುಸರಿಸುತ್ತವೆ; ತಪ್ಪು ಗಡಿಯಾರ ಅಥವಾ ಸಮಯ ವಲಯದಿಂದ ಎಲ್ಲಾ ಸಮಯಗಳೂ ತಪ್ಪಾಗುತ್ತವೆ.',
   'Mosques': 'ಮಸೀದಿಗಳು',
   'Save the Iqama times of each mosque you pray at and switch between them on the Today screen.': 'ನೀವು ನಮಾಝ್ ಮಾಡುವ ಪ್ರತಿ ಮಸೀದಿಯ ಇಕಾಮತ್ ಸಮಯಗಳನ್ನು ಉಳಿಸಿ ಮತ್ತು ಇಂದಿನ ಪರದೆಯಲ್ಲಿ ಬದಲಿಸಿ.',
@@ -288,15 +266,13 @@ const Map<String, String> knStrings = {
   '{0} Azan at {1}': '{0} ಅಝಾನ್ {1}ಕ್ಕೆ',
   '{0} Iqama at {1}': '{0} ಇಕಾಮತ್ {1}ಕ್ಕೆ',
   'Next prayer in notification bar': 'ಅಧಿಸೂಚನೆ ಪಟ್ಟಿಯಲ್ಲಿ ಮುಂದಿನ ನಮಾಝ್',
-  'A permanent notification with the next Azan (with countdown) and Iqama':
-      'ಮುಂದಿನ ಅಝಾನ್ (ಕೌಂಟ್‌ಡೌನ್ ಸಹಿತ) ಮತ್ತು ಇಕಾಮತ್‌ನ ಶಾಶ್ವತ ಅಧಿಸೂಚನೆ',
+  'A permanent notification with the next Azan (with countdown) and Iqama': 'ಮುಂದಿನ ಅಝಾನ್ (ಕೌಂಟ್‌ಡೌನ್ ಸಹಿತ) ಮತ್ತು ಇಕಾಮತ್‌ನ ಶಾಶ್ವತ ಅಧಿಸೂಚನೆ',
   '{0} Iqama was at {1}': '{0} ಇಕಾಮತ್ {1}ಕ್ಕೆ ಆಗಿತ್ತು',
   'Keep the screen on until I stop': 'ನಾನು ನಿಲ್ಲಿಸುವವರೆಗೆ ಪರದೆ ಆನ್ ಇರಲಿ',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'ಆಫ್ ಆದರೆ ಫೋನಿನ ಪರದೆ ಟೈಮ್‌ಔಟ್ ಅನ್ವಯಿಸುತ್ತದೆ. ಲಾಕ್ ಪರದೆಯಲ್ಲೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ: ತೆರೆಯಿರಿ, ನಂತರ ಪವರ್ ಬಟನ್ ಎರಡು ಬಾರಿ ಒತ್ತಿರಿ.',
   'Adjust this time (± minutes)': 'ಈ ಸಮಯ ಹೊಂದಿಸಿ (± ನಿಮಿಷ)',
   'Sunrise alert (Fajr time ends)': 'ಸೂರ್ಯೋದಯ ಅಲರ್ಟ್ (ಸುಬಹಿ ಸಮಯ ಮುಗಿಯುತ್ತದೆ)',
-  '{0} min to sunrise – Fajr time ends':
-      'ಸೂರ್ಯೋದಯಕ್ಕೆ {0} ನಿಮಿಷ – ಸುಬಹಿ ಸಮಯ ಮುಗಿಯುತ್ತದೆ',
+  '{0} min to sunrise – Fajr time ends': 'ಸೂರ್ಯೋದಯಕ್ಕೆ {0} ನಿಮಿಷ – ಸುಬಹಿ ಸಮಯ ಮುಗಿಯುತ್ತದೆ',
   'Minutes before sunrise': 'ಸೂರ್ಯೋದಯಕ್ಕೆ ಎಷ್ಟು ನಿಮಿಷ ಮೊದಲು',
   'Ishraq / Duha alert': 'ಇಶ್ರಾಕ್ / ಳುಹಾ ಅಲರ್ಟ್',
   'Iqama sound': 'ಇಕಾಮತ್ ಧ್ವನಿ',
@@ -305,19 +281,14 @@ const Map<String, String> knStrings = {
   'Azan volume': 'ಅಝಾನ್ ವಾಲ್ಯೂಮ್',
   'Iqama volume': 'ಇಕಾಮತ್ ವಾಲ್ಯೂಮ್',
   'Phone alarm volume': 'ಫೋನ್ ಅಲಾರಂ ವಾಲ್ಯೂಮ್',
-  'Pressing a volume button stops the Azan.':
-      'ವಾಲ್ಯೂಮ್ ಬಟನ್ ಒತ್ತಿದರೆ ಅಝಾನ್ ನಿಲ್ಲುತ್ತದೆ.',
+  'Pressing a volume button stops the Azan.': 'ವಾಲ್ಯೂಮ್ ಬಟನ್ ಒತ್ತಿದರೆ ಅಝಾನ್ ನಿಲ್ಲುತ್ತದೆ.',
   'Silence during': 'ಈ ಸಮಯಗಳಲ್ಲಿ ಸೈಲೆಂಟ್',
   'Ramadan Niyyah reminder': 'ರಮಝಾನ್ ನಿಯ್ಯತ್ ಜ್ಞಾಪನೆ',
-  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?':
-      'ರಮಝಾನಿನ ಪ್ರತಿ ರಾತ್ರಿ ಇಶಾದ ನಂತರ: ನಾಳೆಯ ಉಪವಾಸಕ್ಕೆ ನಿಯ್ಯತ್ ಮಾಡಿದ್ದೀರಾ?',
-  'Did you make the Niyyah for tomorrow\'s fast?':
-      'ನಾಳೆಯ ಉಪವಾಸಕ್ಕೆ ನಿಯ್ಯತ್ ಮಾಡಿದ್ದೀರಾ?',
-  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”':
-      '"ಅಲ್ಲಾಹನಿಗಾಗಿ ನಾಳೆಯ ರಮಝಾನಿನ ಕಡ್ಡಾಯ ಉಪವಾಸ ಆಚರಿಸಲು ನಿಯ್ಯತ್ ಮಾಡುತ್ತೇನೆ."',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?': 'ರಮಝಾನಿನ ಪ್ರತಿ ರಾತ್ರಿ ಇಶಾದ ನಂತರ: ನಾಳೆಯ ಉಪವಾಸಕ್ಕೆ ನಿಯ್ಯತ್ ಮಾಡಿದ್ದೀರಾ?',
+  'Did you make the Niyyah for tomorrow\'s fast?': 'ನಾಳೆಯ ಉಪವಾಸಕ್ಕೆ ನಿಯ್ಯತ್ ಮಾಡಿದ್ದೀರಾ?',
+  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”': '"ಅಲ್ಲಾಹನಿಗಾಗಿ ನಾಳೆಯ ರಮಝಾನಿನ ಕಡ್ಡಾಯ ಉಪವಾಸ ಆಚರಿಸಲು ನಿಯ್ಯತ್ ಮಾಡುತ್ತೇನೆ."',
   'Friday night reminder': 'ಶುಕ್ರವಾರ ರಾತ್ರಿ ಜ್ಞಾಪನೆ',
-  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah':
-      'ಗುರುವಾರ ಮಗ್ರಿಬ್ ನಂತರ: ಸಲವಾತ್, ಸೂರಾ ಅಲ್-ಕಹ್ಫ್ ಮತ್ತು ಜುಮುಅಕ್ಕೆ ಸಿದ್ಧತೆ',
+  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah': 'ಗುರುವಾರ ಮಗ್ರಿಬ್ ನಂತರ: ಸಲವಾತ್, ಸೂರಾ ಅಲ್-ಕಹ್ಫ್ ಮತ್ತು ಜುಮುಅಕ್ಕೆ ಸಿದ್ಧತೆ',
   'Tonight is Friday night': 'ಇಂದು ಶುಕ್ರವಾರ ರಾತ್ರಿ',
   'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'ನಬಿ ﷺ ಮೇಲೆ ಹೆಚ್ಚು ಸಲವಾತ್ ಹೇಳಿ. ಸೂರಾ ಅಲ್-ಕಹ್ಫ್ ಓದಿ ಮತ್ತು ಜುಮುಅಕ್ಕೆ ಸಿದ್ಧರಾಗಿ: ಸ್ನಾನ, ಶುಚಿ ಬಟ್ಟೆ, ಬೇಗ ಹೋಗಿ.',
   'I did': 'ನಿಯ್ಯತ್ ಮಾಡಿದೆ',
@@ -328,13 +299,11 @@ const Map<String, String> knStrings = {
   'Location settings': 'ಸ್ಥಳ ಸೆಟ್ಟಿಂಗ್‌ಗಳು',
   '{0}: place and time source': '{0}: ಸ್ಥಳ ಮತ್ತು ಸಮಯದ ಮೂಲ',
   'Automatic (GPS)': 'ಸ್ವಯಂಚಾಲಿತ (GPS)',
-  'Finds your place and sets the usual method':
-      'ನಿಮ್ಮ ಸ್ಥಳ ಕಂಡುಹಿಡಿದು ಸಾಮಾನ್ಯ ವಿಧಾನ ಹೊಂದಿಸುತ್ತದೆ',
+  'Finds your place and sets the usual method': 'ನಿಮ್ಮ ಸ್ಥಳ ಕಂಡುಹಿಡಿದು ಸಾಮಾನ್ಯ ವಿಧಾನ ಹೊಂದಿಸುತ್ತದೆ',
   'Time source': 'ಸಮಯದ ಮೂಲ',
   'Calculated for this place': 'ಈ ಸ್ಥಳಕ್ಕೆ ಲೆಕ್ಕ ಹಾಕಿದ್ದು',
   'Mosque\'s yearly chart': 'ಮಸೀದಿಯ ವಾರ್ಷಿಕ ಚಾರ್ಟ್',
-  'Exact times from your mosque\'s printed calendar (import once)':
-      'ನಿಮ್ಮ ಮಸೀದಿಯ ಮುದ್ರಿತ ಕ್ಯಾಲೆಂಡರ್‌ನ ನಿಖರ ಸಮಯಗಳು (ಒಮ್ಮೆ ಇಂಪೋರ್ಟ್ ಮಾಡಿ)',
+  'Exact times from your mosque\'s printed calendar (import once)': 'ನಿಮ್ಮ ಮಸೀದಿಯ ಮುದ್ರಿತ ಕ್ಯಾಲೆಂಡರ್‌ನ ನಿಖರ ಸಮಯಗಳು (ಒಮ್ಮೆ ಇಂಪೋರ್ಟ್ ಮಾಡಿ)',
   'How do you find your place?': 'ನಿಮ್ಮ ಸ್ಥಳ ಹೇಗೆ ಹುಡುಕುವುದು?',
   'Browse': 'ಬ್ರೌಸ್',
   'Search': 'ಹುಡುಕಿ',
@@ -345,8 +314,7 @@ const Map<String, String> knStrings = {
   'All': 'ಎಲ್ಲಾ',
   'Azan Time Charts': 'ಅಝಾನ್ ಸಮಯ ಚಾರ್ಟ್‌ಗಳು',
   'Exact yearly charts of {0} places': '{0} ಸ್ಥಳಗಳ ನಿಖರ ವಾರ್ಷಿಕ ಚಾರ್ಟ್‌ಗಳು',
-  'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)':
-      'ಇನ್ನಷ್ಟು ಸಮಯಗಳು (ಸೂರ್ಯೋದಯ, ಜುಮಾ, ತರಾವೀಹ್, ತಹಜ್ಜುದ್, ಇಮ್ಸಾಕ್, ಈದ್)',
+  'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)': 'ಇನ್ನಷ್ಟು ಸಮಯಗಳು (ಸೂರ್ಯೋದಯ, ಜುಮಾ, ತರಾವೀಹ್, ತಹಜ್ಜುದ್, ಇಮ್ಸಾಕ್, ಈದ್)',
 };
 
 const List<String> knHijriMonths = [

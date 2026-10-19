@@ -148,18 +148,19 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
                   PrayerTable(day: day, now: now, isNext: isNext),
                   const SizedBox(height: 10),
                 ],
-                for (final p
-                    in settings.todayTable
-                        ? const <Prayer>[]
-                        : _cardPrayers.where(
-                            (p) => p.isFard || settings.showExtras,
-                          )) ...[
-                  _PrayerCard(
-                    day: day,
-                    prayer: p,
-                    isNext: isNext(p),
-                    isPast: day[p].isBefore(now) && !isNext(p),
-                    started: !day[p].isAfter(now),
+                for (final (i, p)
+                    in (settings.todayTable ? const <Prayer>[] : _cardPrayers)
+                        .indexed) ...[
+                  Appear(
+                    key: ValueKey('${day.date}-$p'),
+                    index: i,
+                    child: _PrayerCard(
+                      day: day,
+                      prayer: p,
+                      isNext: isNext(p),
+                      isPast: day[p].isBefore(now) && !isNext(p),
+                      started: !day[p].isAfter(now),
+                    ),
                   ),
                   const SizedBox(height: 10),
                 ],
@@ -594,11 +595,25 @@ class _Hero extends StatelessWidget {
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
                               alignment: AlignmentDirectional.centerStart,
-                              child: Text(
-                                s.prayer(n.prayer, friday: n.day.isFriday),
-                                style: t.headlineMedium?.copyWith(
-                                  color: white,
-                                  fontWeight: FontWeight.w800,
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 500),
+                                transitionBuilder: (child, a) => FadeTransition(
+                                  opacity: a,
+                                  child: SlideTransition(
+                                    position: Tween(
+                                      begin: const Offset(0, 0.4),
+                                      end: Offset.zero,
+                                    ).animate(a),
+                                    child: child,
+                                  ),
+                                ),
+                                child: Text(
+                                  s.prayer(n.prayer, friday: n.day.isFriday),
+                                  key: ValueKey(n.prayer),
+                                  style: t.headlineMedium?.copyWith(
+                                    color: white,
+                                    fontWeight: FontWeight.w800,
+                                  ),
                                 ),
                               ),
                             ),
@@ -632,12 +647,17 @@ class _Hero extends StatelessWidget {
                         padding: const EdgeInsetsDirectional.only(end: 8),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: LinearProgressIndicator(
-                            value: progress,
-                            minHeight: 6,
-                            color: kGold,
-                            backgroundColor: Colors.white.withValues(
-                              alpha: 0.18,
+                          child: TweenAnimationBuilder<double>(
+                            tween: Tween(begin: 0, end: progress),
+                            duration: const Duration(milliseconds: 900),
+                            curve: Curves.easeOutCubic,
+                            builder: (context, v, _) => LinearProgressIndicator(
+                              value: v,
+                              minHeight: 6,
+                              color: kGold,
+                              backgroundColor: Colors.white.withValues(
+                                alpha: 0.18,
+                              ),
                             ),
                           ),
                         ),

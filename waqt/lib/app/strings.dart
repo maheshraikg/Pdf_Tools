@@ -39,10 +39,11 @@ class S {
 
   String prayer(Prayer p, {bool friday = false}) => switch (p) {
     Prayer.imsak => _t('Imsak', 'ഇംസാക്'),
-    Prayer.fajr => _t('Fajr', 'സുബ്ഹ്'),
+    Prayer.fajr => _t('Subh (Fajr)', 'സുബ്ഹ്'),
     Prayer.sunrise => _t('Sunrise', 'ഉദയം'),
     Prayer.ishraq => _t('Ishraq', 'ഇശ്റാഖ്'),
-    Prayer.dhuhr => friday ? _t("Jumu'ah", 'ജുമുഅ') : _t('Dhuhr', 'ളുഹ്ർ'),
+    Prayer.dhuhr =>
+      friday ? _t("Jumu'ah", 'ജുമുഅ') : _t('Luhr (Dhuhr)', 'ളുഹ്ർ'),
     Prayer.asr => _t('Asr', 'അസ്ർ'),
     Prayer.maghrib => _t('Maghrib', 'മഗ്‌രിബ്'),
     Prayer.isha => _t('Isha', 'ഇശാ'),

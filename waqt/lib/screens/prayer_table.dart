@@ -57,7 +57,7 @@ class PrayerTable extends StatelessWidget {
         t(day.atLocal(minutes)); // a fixed local time, e.g. 1:00
 
     final rows = <_Row>[
-      for (final p in Prayer.fard)
+      for (final p in Prayer.fard) ...[
         () {
           final fri = p == Prayer.dhuhr && day.isFriday;
           final fixed = c.fixedIqama(p, day.isFriday);
@@ -85,14 +85,28 @@ class PrayerTable extends StatelessWidget {
             onTap: () => sheet(day, p),
           );
         }(),
+        // Sunrise right after Subh, as on the printed calendars.
+        if (p == Prayer.fajr)
+          _Row(
+            icon: prayerIcon(Prayer.sunrise),
+            name: s.prayer(Prayer.sunrise),
+            first: t(day[Prayer.sunrise]),
+            firstBell: c.sunriseAlert,
+            onFirstBell: () => set(c.copyWith(sunriseAlert: !c.sunriseAlert)),
+            box: '',
+            second: '',
+            secondBell: null,
+            onSecondBell: null,
+            past: !day[Prayer.sunrise].isAfter(now),
+            onTap: () => sheet(day, Prayer.sunrise),
+          ),
+      ],
       if (settings.showExtras) ...[
         _Row(
-          icon: prayerIcon(Prayer.sunrise),
-          name: s.prayer(Prayer.sunrise),
+          icon: prayerIcon(Prayer.ishraq),
+          name: s.prayer(Prayer.ishraq),
           first: t(day[Prayer.sunrise]),
-          firstBell: c.sunriseAlert,
-          onFirstBell: () => set(c.copyWith(sunriseAlert: !c.sunriseAlert)),
-          box: '${settings.ishraqMinutes}',
+          box: '+${settings.ishraqMinutes}',
           second: t(day[Prayer.ishraq]),
           secondBell: c.ishraqAlert,
           onSecondBell: () => set(c.copyWith(ishraqAlert: !c.ishraqAlert)),
@@ -221,7 +235,7 @@ class PrayerTable extends StatelessWidget {
               ),
             ),
             for (var i = 0; i < rows.length; i++) ...[
-              if (i == Prayer.fard.length)
+              if (i == Prayer.fard.length + 1)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Divider(
@@ -231,7 +245,7 @@ class PrayerTable extends StatelessWidget {
                     endIndent: 14,
                   ),
                 ),
-              rows[i],
+              Appear(key: ValueKey('${day.date}-$i'), index: i, child: rows[i]),
             ],
           ],
         ),
@@ -279,9 +293,10 @@ class _Row extends StatelessWidget {
   final IconData icon;
   final String name, first, box, second;
   final bool? firstBell;
-  final bool secondBell;
+  final bool? secondBell;
   final VoidCallback? onFirstBell;
-  final VoidCallback onSecondBell, onTap;
+  final VoidCallback? onSecondBell;
+  final VoidCallback onTap;
 
   /// The next prayer (highlighted), a passed one (dimmed), or one of the
   /// rows below the five prayers (base time greyed, like the original).
@@ -309,14 +324,22 @@ class _Row extends StatelessWidget {
           : InkResponse(
               onTap: onTap,
               radius: 18,
-              child: Icon(
-                on
-                    ? Icons.notifications_active
-                    : Icons.notifications_off_outlined,
-                size: 20,
-                color: on
-                    ? (next ? kGold : scheme.primary)
-                    : (next ? Colors.white54 : scheme.outline),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 260),
+                transitionBuilder: (child, a) => ScaleTransition(
+                  scale: CurvedAnimation(parent: a, curve: Curves.elasticOut),
+                  child: child,
+                ),
+                child: Icon(
+                  on
+                      ? Icons.notifications_active
+                      : Icons.notifications_off_outlined,
+                  key: ValueKey(on),
+                  size: 20,
+                  color: on
+                      ? (next ? kGold : scheme.primary)
+                      : (next ? Colors.white54 : scheme.outline),
+                ),
               ),
             ),
     );
@@ -335,12 +358,28 @@ class _Row extends StatelessWidget {
       ),
     );
 
-    final row = Container(
-      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-      padding: const EdgeInsetsDirectional.fromSTEB(8, 9, 0, 9),
+    final row = AnimatedContainer(
+      duration: const Duration(milliseconds: 450),
+      curve: Curves.easeOutCubic,
+      margin: EdgeInsets.symmetric(horizontal: next ? 4 : 6, vertical: 1),
+      padding: EdgeInsetsDirectional.fromSTEB(
+        8,
+        next ? 12 : 9,
+        0,
+        next ? 12 : 9,
+      ),
       decoration: BoxDecoration(
         gradient: next ? heroGradient(theme.brightness) : null,
         borderRadius: BorderRadius.circular(14),
+        boxShadow: next
+            ? [
+                BoxShadow(
+                  color: kEmerald.withValues(alpha: 0.22),
+                  blurRadius: 14,
+                  offset: const Offset(0, 3),
+                ),
+              ]
+            : const [],
       ),
       child: Row(
         children: [
@@ -397,28 +436,35 @@ class _Row extends StatelessWidget {
           bell(firstBell, onFirstBell),
           SizedBox(
             width: _boxW,
-            child: Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                decoration: BoxDecoration(
-                  color: next
-                      ? Colors.white.withValues(alpha: 0.16)
-                      : scheme.secondaryContainer.withValues(alpha: 0.7),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    box,
-                    style: tt.labelMedium?.copyWith(
-                      color: next ? Colors.white : scheme.onSecondaryContainer,
-                      fontWeight: FontWeight.w700,
-                      fontFeatures: const [FontFeature.tabularFigures()],
+            child: box.isEmpty
+                ? null
+                : Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: next
+                            ? Colors.white.withValues(alpha: 0.16)
+                            : scheme.secondaryContainer.withValues(alpha: 0.7),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          box,
+                          style: tt.labelMedium?.copyWith(
+                            color: next
+                                ? Colors.white
+                                : scheme.onSecondaryContainer,
+                            fontWeight: FontWeight.w700,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
           ),
           time(second),
           bell(secondBell, onSecondBell),
