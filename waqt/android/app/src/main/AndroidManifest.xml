@@ -127,6 +127,15 @@
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/waqt_widget_info" />
         </receiver>
+        <!-- Tall poster widget (WaqtWidgetProvider.kt). -->
+        <receiver android:name=".WaqtPosterWidgetProvider" android:exported="false"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/waqt_widget_poster_info" />
+        </receiver>
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">ബാങ്ക് സമയം</string>
     <string name="widget_description">അടുത്ത നിസ്കാരവും ഇന്നത്തെ സമയങ്ങളും</string>
+    <string name="widget_poster_description">ഇന്നത്തെ അഞ്ച് നിസ്കാര സമയങ്ങളും കൗണ്ട്ഡൗണും</string>
 </resources>

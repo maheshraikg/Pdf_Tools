@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Azan Time</string>
     <string name="widget_description">Next prayer with a countdown and today\'s times</string>
+    <string name="widget_poster_description">All five prayer times like the shared poster, with a countdown</string>
 </resources>

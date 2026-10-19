@@ -23,8 +23,9 @@ import org.json.JSONObject
  *   "days": [{"title", "p": [{"n", "s", "t"(epoch ms)} × 5]}]}
  */
 class WaqtWidgetProvider : AppWidgetProvider() {
+    // Redraws both widget kinds (the next-prayer alarm targets this one).
     override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {
-        render(context, manager, ids)
+        refresh(context)
     }
 
     companion object {
@@ -52,11 +53,16 @@ class WaqtWidgetProvider : AppWidgetProvider() {
 
         fun refresh(context: Context) {
             val manager = AppWidgetManager.getInstance(context)
-            val ids = manager.getAppWidgetIds(ComponentName(context, WaqtWidgetProvider::class.java))
-            if (ids.isNotEmpty()) render(context, manager, ids)
+            for ((kind, layout) in listOf(
+                WaqtWidgetProvider::class.java to R.layout.waqt_widget,
+                WaqtPosterWidgetProvider::class.java to R.layout.waqt_widget_poster,
+            )) {
+                val ids = manager.getAppWidgetIds(ComponentName(context, kind))
+                if (ids.isNotEmpty()) render(context, manager, ids, layout)
+            }
         }
 
-        private fun render(context: Context, manager: AppWidgetManager, ids: IntArray) {
+        private fun render(context: Context, manager: AppWidgetManager, ids: IntArray, layout: Int) {
             val raw = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
                 .getString(KEY_DATA, null)
             val data = try {
@@ -91,7 +97,7 @@ class WaqtWidgetProvider : AppWidgetProvider() {
             }
 
             for (id in ids) {
-                val views = RemoteViews(context.packageName, R.layout.waqt_widget)
+                val views = RemoteViews(context.packageName, layout)
                 views.setOnClickPendingIntent(R.id.widget_root, launch)
                 views.setTextViewText(R.id.widget_place, data?.optString("place") ?: "")
                 val prayers = day?.optJSONArray("p")
@@ -154,5 +160,12 @@ class WaqtWidgetProvider : AppWidgetProvider() {
                 am.set(AlarmManager.RTC, time, pi)
             }
         }
+    }
+}
+
+/** The tall widget, all five times like the shared poster. */
+class WaqtPosterWidgetProvider : AppWidgetProvider() {
+    override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {
+        WaqtWidgetProvider.refresh(context)
     }
 }
