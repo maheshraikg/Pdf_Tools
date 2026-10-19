@@ -342,7 +342,6 @@ const Map<String, String> taStrings = {
   'Azan Time Charts': 'பாங்கு நேர அட்டவணைகள்',
   'Exact yearly charts of {0} places':
       '{0} இடங்களின் துல்லியமான ஆண்டு அட்டவணைகள்',
-  'Azan Time Charts: yearly prayer calendars of local mosques, as collected in the Niskara Samayam app (mifthi.com).': 'பாங்கு நேர அட்டவணைகள்: Niskara Samayam செயலியில் (mifthi.com) சேகரிக்கப்பட்ட உள்ளூர் பள்ளிவாசல்களின் ஆண்டு தொழுகை நாட்காட்டிகள்.',
 };
 
 const List<String> taHijriMonths = [

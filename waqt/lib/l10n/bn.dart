@@ -344,7 +344,6 @@ const Map<String, String> bnStrings = {
   'All': 'সব',
   'Azan Time Charts': 'আজান সময় চার্ট',
   'Exact yearly charts of {0} places': '{0}টি জায়গার সঠিক বার্ষিক চার্ট',
-  'Azan Time Charts: yearly prayer calendars of local mosques, as collected in the Niskara Samayam app (mifthi.com).': 'আজান সময় চার্ট: Niskara Samayam অ্যাপে (mifthi.com) সংগৃহীত স্থানীয় মসজিদের বার্ষিক নামাজের ক্যালেন্ডার।',
 };
 
 const List<String> bnHijriMonths = [

@@ -340,7 +340,6 @@ const Map<String, String> idStrings = {
   'All': 'Semua',
   'Azan Time Charts': 'Jadwal Waktu Azan',
   'Exact yearly charts of {0} places': 'Jadwal tahunan tepat untuk {0} tempat',
-  'Azan Time Charts: yearly prayer calendars of local mosques, as collected in the Niskara Samayam app (mifthi.com).': 'Jadwal Waktu Azan: kalender salat tahunan masjid setempat, sebagaimana dikumpulkan dalam aplikasi Niskara Samayam (mifthi.com).',
 };
 
 const List<String> idHijriMonths = [

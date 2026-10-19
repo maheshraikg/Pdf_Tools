@@ -342,7 +342,6 @@ const Map<String, String> hiStrings = {
   'All': 'सभी',
   'Azan Time Charts': 'अज़ान टाइम चार्ट',
   'Exact yearly charts of {0} places': '{0} जगहों के सटीक सालाना चार्ट',
-  'Azan Time Charts: yearly prayer calendars of local mosques, as collected in the Niskara Samayam app (mifthi.com).': 'अज़ान टाइम चार्ट: स्थानीय मस्जिदों के सालाना नमाज़ कैलेंडर, जैसे Niskara Samayam ऐप (mifthi.com) में जमा किए गए।',
 };
 
 const List<String> hiHijriMonths = [

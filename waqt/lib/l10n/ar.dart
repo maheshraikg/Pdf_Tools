@@ -343,7 +343,6 @@ const Map<String, String> arStrings = {
   'All': 'الكل',
   'Azan Time Charts': 'جداول أوقات الأذان',
   'Exact yearly charts of {0} places': 'جداول سنوية دقيقة لـ {0} مكاناً',
-  'Azan Time Charts: yearly prayer calendars of local mosques, as collected in the Niskara Samayam app (mifthi.com).': 'جداول أوقات الأذان: تقاويم الصلاة السنوية للمساجد المحلية كما جُمعت في تطبيق Niskara Samayam (mifthi.com).',
 };
 
 const List<String> arHijriMonths = [

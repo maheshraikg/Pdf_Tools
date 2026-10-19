@@ -344,7 +344,6 @@ const Map<String, String> knStrings = {
   'All': 'ಎಲ್ಲಾ',
   'Azan Time Charts': 'ಅಝಾನ್ ಸಮಯ ಚಾರ್ಟ್‌ಗಳು',
   'Exact yearly charts of {0} places': '{0} ಸ್ಥಳಗಳ ನಿಖರ ವಾರ್ಷಿಕ ಚಾರ್ಟ್‌ಗಳು',
-  'Azan Time Charts: yearly prayer calendars of local mosques, as collected in the Niskara Samayam app (mifthi.com).': 'ಅಝಾನ್ ಸಮಯ ಚಾರ್ಟ್‌ಗಳು: Niskara Samayam ಆ್ಯಪ್‌ನಲ್ಲಿ (mifthi.com) ಸಂಗ್ರಹಿಸಿದ ಸ್ಥಳೀಯ ಮಸೀದಿಗಳ ವಾರ್ಷಿಕ ನಮಾಝ್ ಕ್ಯಾಲೆಂಡರ್‌ಗಳು.',
 };
 
 const List<String> knHijriMonths = [
