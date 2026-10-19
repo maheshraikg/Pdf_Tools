@@ -353,6 +353,18 @@ const Map<String, String> frStrings = {
   'Isha angle': 'Angle du Isha',
   'Calendar': 'Calendrier',
   'Times table': 'Tableau des horaires',
+  'Duas & Azkar': 'Douas et adhkar',
+  'Morning & evening': 'Matin et soir',
+  'After prayer': 'Après la prière',
+  'Daily': 'Quotidien',
+  'Tap to count': 'Touchez pour compter',
+  'Ramadan': 'Ramadan',
+  'Ramadan in {0} days': 'Ramadan dans {0} jours',
+  'Day {0} of Ramadan': '{0}e jour du Ramadan',
+  'Iftar in': 'Iftar dans',
+  'Suhoor ends in': 'Fin du suhour dans',
+  'Ramadan timetable': 'Calendrier du Ramadan',
+  'Niyyah for the fast': 'Intention du jeûne',
 };
 
 const List<String> frHijriMonths = [

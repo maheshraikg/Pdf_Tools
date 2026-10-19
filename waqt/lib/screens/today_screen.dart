@@ -15,9 +15,11 @@ import '../ui/theme.dart';
 import '../ui/widgets.dart';
 import 'alerts_screen.dart';
 import 'display_screen.dart';
+import 'duas_screen.dart';
 import 'place_screen.dart';
 import 'prayer_sheet.dart';
 import 'prayer_table.dart';
+import 'ramadan_screen.dart';
 import 'share_screen.dart';
 import 'tracker_screen.dart';
 
@@ -172,6 +174,8 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
                   _trackerCard(context, day),
                   const SizedBox(height: 10),
                 ],
+                const _FeatureCards(),
+                const SizedBox(height: 10),
                 if (!settings.todayTable && settings.showExtras)
                   _MoreTimes(day: day),
                 const SizedBox(height: 18),
@@ -1252,6 +1256,95 @@ class _MoreRow extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Duas & Azkar and Ramadan, side by side.
+class _FeatureCards extends StatelessWidget {
+  const _FeatureCards();
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = context.settings, s = context.s;
+    final t = Theme.of(context).textTheme;
+    final days = ramadanDays(settings);
+    final i = days.indexWhere((d) => d.date == settings.today);
+    final ramadanLine = i >= 0
+        ? '${s.ramadanDay(i + 1)} · ${s.iftar} ${hm(settings, days[i][Prayer.maghrib])}'
+        : days.isEmpty
+        ? ''
+        : s.ramadanIn(days.first.date.difference(settings.today).inDays);
+
+    Widget card(
+      IconData icon,
+      String title,
+      String line,
+      List<Color> colors,
+      Widget Function() page,
+    ) => Expanded(
+      child: PressScale(
+        child: Material(
+          borderRadius: BorderRadius.circular(22),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: () =>
+                Navigator.of(context)
+                    .push(MaterialPageRoute<void>(builder: (_) => page())),
+            child: Ink(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: colors,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(icon, color: kGold, size: 28),
+                    const SizedBox(height: 10),
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: t.titleSmall?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    Text(
+                      line,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: t.bodySmall?.copyWith(color: Colors.white70),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    return Row(
+      children: [
+        card(
+          Icons.menu_book_rounded,
+          s.duasTitle,
+          '${s.groupMorningEvening} · ${s.groupAfterPrayer}',
+          const [kEmeraldDeep, kTeal],
+          () => const DuasScreen(),
+        ),
+        const SizedBox(width: 10),
+        card(Icons.nights_stay_rounded, s.ramadanTitle, ramadanLine, const [
+          Color(0xFF122556),
+          Color(0xFF3A2B6B),
+        ], () => const RamadanScreen()),
+      ],
     );
   }
 }

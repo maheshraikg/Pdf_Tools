@@ -357,6 +357,18 @@ const Map<String, String> urStrings = {
   'Isha angle': 'عشاء کا زاویہ',
   'Calendar': 'کیلنڈر',
   'Times table': 'اوقات کا جدول',
+  'Duas & Azkar': 'دعائیں اور اذکار',
+  'Morning & evening': 'صبح و شام',
+  'After prayer': 'نماز کے بعد',
+  'Daily': 'روزانہ',
+  'Tap to count': 'گننے کے لیے ٹیپ کریں',
+  'Ramadan': 'رمضان',
+  'Ramadan in {0} days': 'رمضان {0} دن میں',
+  'Day {0} of Ramadan': 'رمضان کا {0}واں دن',
+  'Iftar in': 'افطار میں',
+  'Suhoor ends in': 'سحری ختم ہونے میں',
+  'Ramadan timetable': 'رمضان کا نظام الاوقات',
+  'Niyyah for the fast': 'روزے کی نیت',
 };
 
 const List<String> urHijriMonths = [

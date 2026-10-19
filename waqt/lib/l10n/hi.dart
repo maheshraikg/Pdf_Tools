@@ -357,6 +357,18 @@ const Map<String, String> hiStrings = {
   'Isha angle': 'इशा कोण',
   'Calendar': 'कैलेंडर',
   'Times table': 'समय सारणी',
+  'Duas & Azkar': 'दुआएँ और अज़कार',
+  'Morning & evening': 'सुबह और शाम',
+  'After prayer': 'नमाज़ के बाद',
+  'Daily': 'रोज़ाना',
+  'Tap to count': 'गिनने के लिए टैप करें',
+  'Ramadan': 'रमज़ान',
+  'Ramadan in {0} days': 'रमज़ान {0} दिन में',
+  'Day {0} of Ramadan': 'रमज़ान का {0}वाँ दिन',
+  'Iftar in': 'इफ़्तार में',
+  'Suhoor ends in': 'सहरी ख़त्म होने में',
+  'Ramadan timetable': 'रमज़ान समय सारणी',
+  'Niyyah for the fast': 'रोज़े की नीयत',
 };
 
 const List<String> hiHijriMonths = [

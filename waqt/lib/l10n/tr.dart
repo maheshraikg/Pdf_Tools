@@ -358,6 +358,18 @@ const Map<String, String> trStrings = {
   'Isha angle': 'Yatsı açısı',
   'Calendar': 'Takvim',
   'Times table': 'Vakit tablosu',
+  'Duas & Azkar': 'Dualar ve Zikirler',
+  'Morning & evening': 'Sabah ve akşam',
+  'After prayer': 'Namazdan sonra',
+  'Daily': 'Günlük',
+  'Tap to count': 'Saymak için dokunun',
+  'Ramadan': 'Ramazan',
+  'Ramadan in {0} days': 'Ramazan’a {0} gün',
+  'Day {0} of Ramadan': 'Ramazan’ın {0}. günü',
+  'Iftar in': 'İftara',
+  'Suhoor ends in': 'Sahurun bitmesine',
+  'Ramadan timetable': 'Ramazan imsakiyesi',
+  'Niyyah for the fast': 'Oruç niyeti',
 };
 
 const List<String> trHijriMonths = [

@@ -20,6 +20,8 @@ import 'package:waqt/screens/alerts_screen.dart';
 import 'package:waqt/screens/display_screen.dart';
 import 'package:waqt/screens/place_screen.dart';
 import 'package:waqt/screens/share_screen.dart';
+import 'package:waqt/screens/duas_screen.dart';
+import 'package:waqt/screens/ramadan_screen.dart';
 import 'package:waqt/ui/sky_scene.dart';
 import 'package:waqt/screens/tracker_screen.dart';
 import 'package:waqt/screens/onboarding_screen.dart';
@@ -391,6 +393,33 @@ void main() {
     await tester.tap(find.byIcon(Icons.calendar_view_month));
     await tester.pump(const Duration(milliseconds: 500));
     await shot(tester, key, 'en_2b_calendar');
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 1));
+  });
+
+  testWidgets('duas and ramadan', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 860));
+    final key = GlobalKey();
+    final settings = settingsFor(Lang.en);
+    for (final (name, screen) in [
+      ('en_13_duas', const DuasScreen() as Widget),
+      ('en_14_ramadan', const RamadanScreen()),
+    ]) {
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: AppScope(
+            settings: settings,
+            child: MaterialApp(
+              theme: buildTheme(Brightness.light),
+              home: screen,
+            ),
+          ),
+        ),
+      );
+      await tester.pump(const Duration(seconds: 2));
+      await shot(tester, key, name);
+    }
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 1));
   });

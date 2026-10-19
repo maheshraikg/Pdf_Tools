@@ -805,4 +805,21 @@ class S {
   // Month calendar.
   String get calendarView => _t('Calendar', 'കലണ്ടർ');
   String get timesTable => _t('Times table', 'സമയ പട്ടിക');
+
+  // Duas and the Ramadan page.
+  String get duasTitle => _t('Duas & Azkar', 'ദുആകളും ദിക്റുകളും');
+  String get groupMorningEvening =>
+      _t('Morning & evening', 'രാവിലെയും വൈകുന്നേരവും');
+  String get groupAfterPrayer => _t('After prayer', 'നിസ്കാരശേഷം');
+  String get groupDaily => _t('Daily', 'ദിവസേന');
+  String get tapToCount => _t('Tap to count', 'എണ്ണാൻ തൊടുക');
+  String get ramadanTitle => _t('Ramadan', 'റമളാൻ');
+  String ramadanIn(int n) =>
+      _f('Ramadan in {0} days', 'റമളാനിന് {0} ദിവസം', [n]);
+  String ramadanDay(int n) =>
+      _f('Day {0} of Ramadan', 'റമളാൻ {0}-ാം ദിവസം', [n]);
+  String get iftarIn => _t('Iftar in', 'നോമ്പ് തുറക്കാൻ');
+  String get suhoorEndsIn => _t('Suhoor ends in', 'അത്താഴം അവസാനിക്കാൻ');
+  String get ramadanTimetable => _t('Ramadan timetable', 'റമളാൻ സമയപ്പട്ടിക');
+  String get niyyahLabel => _t('Niyyah for the fast', 'നോമ്പിന്റെ നിയ്യത്ത്');
 }

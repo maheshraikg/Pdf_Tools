@@ -356,6 +356,18 @@ const Map<String, String> taStrings = {
   'Isha angle': 'இஷா கோணம்',
   'Calendar': 'நாட்காட்டி',
   'Times table': 'நேர அட்டவணை',
+  'Duas & Azkar': 'துஆக்கள் & திக்ருகள்',
+  'Morning & evening': 'காலை & மாலை',
+  'After prayer': 'தொழுகைக்குப் பின்',
+  'Daily': 'தினசரி',
+  'Tap to count': 'எண்ண தட்டவும்',
+  'Ramadan': 'ரமலான்',
+  'Ramadan in {0} days': 'ரமலானுக்கு {0} நாட்கள்',
+  'Day {0} of Ramadan': 'ரமலான் {0}-ம் நாள்',
+  'Iftar in': 'இஃப்தாருக்கு',
+  'Suhoor ends in': 'ஸஹர் முடிய',
+  'Ramadan timetable': 'ரமலான் நேர அட்டவணை',
+  'Niyyah for the fast': 'நோன்பின் நிய்யத்',
 };
 
 const List<String> taHijriMonths = [

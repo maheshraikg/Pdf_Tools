@@ -359,6 +359,18 @@ const Map<String, String> knStrings = {
   'Isha angle': 'ಇಶಾ ಕೋನ',
   'Calendar': 'ಕ್ಯಾಲೆಂಡರ್',
   'Times table': 'ಸಮಯ ಪಟ್ಟಿ',
+  'Duas & Azkar': 'ದುಆ ಮತ್ತು ದಿಕ್ರ್',
+  'Morning & evening': 'ಬೆಳಿಗ್ಗೆ ಮತ್ತು ಸಂಜೆ',
+  'After prayer': 'ನಮಾಜಿನ ನಂತರ',
+  'Daily': 'ದಿನನಿತ್ಯ',
+  'Tap to count': 'ಎಣಿಸಲು ಒತ್ತಿ',
+  'Ramadan': 'ರಮಝಾನ್',
+  'Ramadan in {0} days': 'ರಮಝಾನ್‌ಗೆ {0} ದಿನಗಳು',
+  'Day {0} of Ramadan': 'ರಮಝಾನ್ {0}ನೇ ದಿನ',
+  'Iftar in': 'ಇಫ್ತಾರ್‌ಗೆ',
+  'Suhoor ends in': 'ಸಹರಿ ಮುಗಿಯಲು',
+  'Ramadan timetable': 'ರಮಝಾನ್ ಸಮಯ ಪಟ್ಟಿ',
+  'Niyyah for the fast': 'ಉಪವಾಸದ ನಿಯ್ಯತ್',
 };
 
 const List<String> knHijriMonths = [

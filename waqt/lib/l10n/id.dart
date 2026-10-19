@@ -355,6 +355,18 @@ const Map<String, String> idStrings = {
   'Isha angle': 'Sudut Isya',
   'Calendar': 'Kalender',
   'Times table': 'Tabel waktu',
+  'Duas & Azkar': 'Doa & Zikir',
+  'Morning & evening': 'Pagi & petang',
+  'After prayer': 'Setelah salat',
+  'Daily': 'Harian',
+  'Tap to count': 'Ketuk untuk menghitung',
+  'Ramadan': 'Ramadan',
+  'Ramadan in {0} days': 'Ramadan {0} hari lagi',
+  'Day {0} of Ramadan': 'Hari ke-{0} Ramadan',
+  'Iftar in': 'Berbuka dalam',
+  'Suhoor ends in': 'Sahur berakhir dalam',
+  'Ramadan timetable': 'Jadwal Ramadan',
+  'Niyyah for the fast': 'Niat puasa',
 };
 
 const List<String> idHijriMonths = [
