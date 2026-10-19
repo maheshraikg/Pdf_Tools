@@ -36,8 +36,10 @@ const Map<String, String> arStrings = {
   'Choose': 'اختر',
   'Alerts may be missed': 'قد تفوتك التنبيهات',
   'Allow notifications': 'السماح بالإشعارات',
-  'Allow exact alarms (on time Azan)': 'السماح بالمنبهات الدقيقة (أذان في وقته)',
-  'Turn off battery optimisation for Azan Time': 'أوقف تحسين البطارية لتطبيق وقت الأذان',
+  'Allow exact alarms (on time Azan)':
+      'السماح بالمنبهات الدقيقة (أذان في وقته)',
+  'Turn off battery optimisation for Azan Time':
+      'أوقف تحسين البطارية لتطبيق وقت الأذان',
   'Some phones (Xiaomi, Oppo, Vivo, Realme, Samsung) stop apps in the background. Set Azan Time to "Unrestricted" / "No restrictions" in battery settings so Azan is never missed.': 'بعض الهواتف (Xiaomi وOppo وVivo وRealme وSamsung) توقف التطبيقات في الخلفية. اجعل وقت الأذان "غير مقيد" في إعدادات البطارية حتى لا يفوتك الأذان.',
   'Fix': 'إصلاح',
   'Date': 'التاريخ',
@@ -64,11 +66,13 @@ const Map<String, String> arStrings = {
   'One seventh of the night': 'سُبع الليل',
   'Angle based (recommended)': 'حسب الزاوية (موصى به)',
   'Adjust times (minutes)': 'تعديل الأوقات (بالدقائق)',
-  'Match your mosque: add or subtract minutes for each time.': 'طابق مسجدك: أضف أو اطرح دقائق لكل وقت.',
+  'Match your mosque: add or subtract minutes for each time.':
+      'طابق مسجدك: أضف أو اطرح دقائق لكل وقت.',
   'Imsak before Fajr': 'الإمساك قبل الفجر',
   'Ishraq after sunrise': 'الإشراق بعد الشروق',
   'Hijri date correction': 'تصحيح التاريخ الهجري',
-  'Kerala follows moon sighting. If the Hijri date is a day off, correct it here.': 'يعتمد التاريخ الهجري على رؤية الهلال. إذا اختلف بيوم، صححه هنا.',
+  'Kerala follows moon sighting. If the Hijri date is a day off, correct it here.':
+      'يعتمد التاريخ الهجري على رؤية الهلال. إذا اختلف بيوم، صححه هنا.',
   '{0} day': '{0} يوم',
   '{0} days': '{0} أيام',
   'Timetable': 'الجدول',
@@ -86,18 +90,22 @@ const Map<String, String> arStrings = {
   'Name': 'الاسم',
   'Latitude': 'خط العرض',
   'Longitude': 'خط الطول',
-  'UTC offset, e.g. +05:30 (empty = phone time zone)': 'فرق التوقيت عن UTC، مثل +05:30 (فارغ = منطقة الهاتف)',
+  'UTC offset, e.g. +05:30 (empty = phone time zone)':
+      'فرق التوقيت عن UTC، مثل +05:30 (فارغ = منطقة الهاتف)',
   'Finding your location…': 'جارٍ تحديد موقعك…',
   'Location permission denied.': 'تم رفض إذن الموقع.',
-  'Location is turned off. Turn it on and try again.': 'خدمة الموقع متوقفة. شغّلها وحاول مرة أخرى.',
-  'Could not get a location. Try again outdoors, or pick a place.': 'تعذر تحديد الموقع. حاول في الخارج، أو اختر مكانًا.',
+  'Location is turned off. Turn it on and try again.':
+      'خدمة الموقع متوقفة. شغّلها وحاول مرة أخرى.',
+  'Could not get a location. Try again outdoors, or pick a place.':
+      'تعذر تحديد الموقع. حاول في الخارج، أو اختر مكانًا.',
   'Enter valid coordinates.': 'أدخل إحداثيات صحيحة.',
   'Azan alert': 'تنبيه الأذان',
   'Iqama alert': 'تنبيه الإقامة',
   'Fixed Iqama time': 'وقت إقامة ثابت',
   'Fixed Jumu\'ah Iqama time': 'وقت إقامة الجمعة الثابت',
   'Off: uses the minutes after Azan': 'متوقف: يُستخدم عدد الدقائق بعد الأذان',
-  'Used when it is after Azan; otherwise the minutes after Azan': 'يُستخدم إذا كان بعد الأذان، وإلا فالدقائق بعد الأذان',
+  'Used when it is after Azan; otherwise the minutes after Azan':
+      'يُستخدم إذا كان بعد الأذان، وإلا فالدقائق بعد الأذان',
   'Clear': 'مسح',
   'Iqama after Azan': 'الإقامة بعد الأذان',
   'Reminder before Azan': 'تذكير قبل الأذان',
@@ -106,7 +114,8 @@ const Map<String, String> arStrings = {
   'Imsak alert (Suhoor ends)': 'تنبيه الإمساك (نهاية السحور)',
   'Tahajjud alert': 'تنبيه التهجد',
   'Auto silent during prayer': 'الصامت التلقائي أثناء الصلاة',
-  'Quietens the phone from Azan until the time below after Iqama, then restores it.': 'يُسكت الهاتف من الأذان حتى الوقت المحدد أدناه بعد الإقامة، ثم يعيده.',
+  'Quietens the phone from Azan until the time below after Iqama, then restores it.':
+      'يُسكت الهاتف من الأذان حتى الوقت المحدد أدناه بعد الإقامة، ثم يعيده.',
   'Mode': 'الوضع',
   'Vibrate': 'اهتزاز',
   'Silent (Do Not Disturb)': 'صامت (عدم الإزعاج)',
@@ -122,7 +131,8 @@ const Map<String, String> arStrings = {
   'Imsak – Suhoor ends': 'الإمساك – انتهاء السحور',
   '{0} time': 'وقت {0}',
   'Open Azan Time to keep alerts on': 'افتح وقت الأذان لاستمرار التنبيهات',
-  'Scheduled alerts end in a day. Tap to schedule the next days.': 'تنتهي التنبيهات المجدولة خلال يوم. اضغط لجدولة الأيام التالية.',
+  'Scheduled alerts end in a day. Tap to schedule the next days.':
+      'تنتهي التنبيهات المجدولة خلال يوم. اضغط لجدولة الأيام التالية.',
   'Reminders': 'التذكيرات',
   'For times that match your mosque exactly, import its yearly chart (for example a Samastha calendar) as a CSV file. Dates the table does not cover are calculated.': 'لأوقات تطابق مسجدك تمامًا، استورد جدوله السنوي كملف CSV. الأيام التي لا يغطيها الجدول تُحسب.',
   'Import CSV file': 'استيراد ملف CSV',
@@ -142,7 +152,8 @@ const Map<String, String> arStrings = {
   's': 'ث',
   'near {0}': 'قرب {0}',
   'World places': 'أماكن حول العالم',
-  'Type a town or city name to search 35,000 places worldwide.': 'اكتب اسم مدينة أو بلدة للبحث في 35,000 مكان حول العالم.',
+  'Type a town or city name to search 35,000 places worldwide.':
+      'اكتب اسم مدينة أو بلدة للبحث في 35,000 مكان حول العالم.',
   'Place data: GeoNames (CC BY 4.0)': 'بيانات الأماكن: GeoNames (CC BY 4.0)',
   'Azan sound': 'صوت الأذان',
   'Fajr Azan sound': 'صوت أذان الفجر',
@@ -153,20 +164,24 @@ const Map<String, String> arStrings = {
   'Deep bell': 'جرس عميق',
   'Audio file (e.g. Azan MP3)': 'ملف صوتي (مثل أذان MP3)',
   'Repeats until you dismiss it': 'يتكرر حتى توقفه',
-  'Pick a recorded Azan saved on your phone': 'اختر تسجيل أذان محفوظاً في هاتفك',
+  'Pick a recorded Azan saved on your phone':
+      'اختر تسجيل أذان محفوظاً في هاتفك',
   'Could not use this audio file': 'تعذّر استخدام هذا الملف الصوتي',
   'Play': 'تشغيل',
   'Stop': 'إيقاف',
   'Play even when the phone is silent': 'التشغيل حتى لو كان الهاتف صامتاً',
-  'Off: on silent or vibrate the Azan only shows and vibrates.': 'عند الإيقاف: في الوضع الصامت أو الاهتزاز يظهر الأذان ويهتز فقط.',
+  'Off: on silent or vibrate the Azan only shows and vibrates.':
+      'عند الإيقاف: في الوضع الصامت أو الاهتزاز يظهر الأذان ويهتز فقط.',
   'Ramadan and Eid': 'رمضان والعيد',
   'Taraweeh': 'التراويح',
   'Eid al-Fitr prayer': 'صلاة عيد الفطر',
   'Eid al-Adha prayer': 'صلاة عيد الأضحى',
-  'Alert on Ramadan nights after the Isha Iqama': 'تنبيه في ليالي رمضان بعد إقامة العشاء',
+  'Alert on Ramadan nights after the Isha Iqama':
+      'تنبيه في ليالي رمضان بعد إقامة العشاء',
   'Minutes after Isha Iqama': 'دقائق بعد إقامة العشاء',
   'Eid prayer alert': 'تنبيه صلاة العيد',
-  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)': 'يذكّرك قبل صلاة العيد بـ 30 دقيقة (حسب التاريخ الهجري)',
+  'Reminds you 30 minutes before the Eid prayer (by the Hijri date)':
+      'يذكّرك قبل صلاة العيد بـ 30 دقيقة (حسب التاريخ الهجري)',
   'Eid prayer at {0}': 'صلاة العيد الساعة {0}',
   '1 page': 'صفحة واحدة',
   '{0} pages, rotating': '{0} صفحات بالتناوب',
@@ -174,7 +189,8 @@ const Map<String, String> arStrings = {
   'Mosque name': 'اسم المسجد',
   'Shown at the top of the display': 'يظهر أعلى الشاشة',
   'Next prayer page': 'صفحة الصلاة القادمة',
-  'Big countdown; stays on from 5 minutes before Azan until Iqama': 'عدّ تنازلي كبير؛ يبقى من 5 دقائق قبل الأذان حتى الإقامة',
+  'Big countdown; stays on from 5 minutes before Azan until Iqama':
+      'عدّ تنازلي كبير؛ يبقى من 5 دقائق قبل الأذان حتى الإقامة',
   'Seconds per page': 'ثوانٍ لكل صفحة',
   'Announcements': 'الإعلانات',
   'Add announcement': 'إضافة إعلان',
@@ -182,12 +198,15 @@ const Map<String, String> arStrings = {
   'Delete': 'حذف',
   'The display shows up to 7 pages: prayer times, the next prayer and 5 announcements. Tap and hold the display to exit.': 'تعرض الشاشة حتى 7 صفحات: أوقات الصلاة والصلاة القادمة و5 إعلانات. اضغط مطولاً على الشاشة للخروج.',
   'Full-screen Azan': 'أذان بملء الشاشة',
-  'Shows the Azan over the lock screen with a big Stop button': 'يعرض الأذان فوق شاشة القفل مع زر إيقاف كبير',
-  'Allow full-screen alerts for Azan Time': 'اسمح لـ وقت الأذان الأذان بالتنبيهات بملء الشاشة',
+  'Shows the Azan over the lock screen with a big Stop button':
+      'يعرض الأذان فوق شاشة القفل مع زر إيقاف كبير',
+  'Allow full-screen alerts for Azan Time':
+      'اسمح لـ وقت الأذان الأذان بالتنبيهات بملء الشاشة',
   'Prayer tracker': 'متتبع الصلاة',
   '{0} of {1} prayed today': 'صليت {0} من {1} اليوم',
   '{0}-day streak': '{0} أيام متتالية',
-  'Tap a prayer\'s icon to mark it as prayed': 'اضغط على أيقونة الصلاة لتسجيلها كمؤداة',
+  'Tap a prayer\'s icon to mark it as prayed':
+      'اضغط على أيقونة الصلاة لتسجيلها كمؤداة',
   'Mark as prayed': 'تسجيل كمؤداة',
   'Day streak': 'أيام متتالية',
   'Last 7 days': 'آخر 7 أيام',
@@ -196,7 +215,8 @@ const Map<String, String> arStrings = {
   'Previous week': 'الأسبوع السابق',
   'Next week': 'الأسبوع التالي',
   'Excused today': 'معذور اليوم',
-  'Pause the tracker for the day (e.g. illness or menstruation); your streak is kept.': 'أوقف المتتبع لهذا اليوم (مثل المرض أو الحيض)؛ تبقى سلسلتك محفوظة.',
+  'Pause the tracker for the day (e.g. illness or menstruation); your streak is kept.':
+      'أوقف المتتبع لهذا اليوم (مثل المرض أو الحيض)؛ تبقى سلسلتك محفوظة.',
   'Your tracker stays on this phone only.': 'يبقى متتبعك على هذا الهاتف فقط.',
   'Tasbih': 'التسبيح',
   'After-prayer tasbih': 'تسبيح بعد الصلاة',
@@ -244,11 +264,14 @@ const Map<String, String> arStrings = {
   'Update location automatically': 'تحديث الموقع تلقائياً',
   'When you open Azan Time, the place follows your phone (GPS), with the local time zone.': 'عند فتح وقت الأذان الأذان يتبع المكان هاتفك (GPS) مع المنطقة الزمنية المحلية.',
   'Location updated: {0}': 'تم تحديث الموقع: {0}',
-  'Set the phone\'s date & time to automatic': 'اجعل تاريخ ووقت الهاتف تلقائياً',
-  'Your phone\'s clock is {0} min off': 'ساعة هاتفك متأخرة أو متقدمة بـ {0} دقيقة',
+  'Set the phone\'s date & time to automatic':
+      'اجعل تاريخ ووقت الهاتف تلقائياً',
+  'Your phone\'s clock is {0} min off':
+      'ساعة هاتفك متأخرة أو متقدمة بـ {0} دقيقة',
   'Alerts follow the phone\'s clock; a wrong clock or time zone makes every time wrong.': 'التنبيهات تتبع ساعة الهاتف؛ الساعة أو المنطقة الزمنية الخاطئة تجعل كل الأوقات خاطئة.',
   'Mosques': 'المساجد',
-  'Save the Iqama times of each mosque you pray at and switch between them on the Today screen.': 'احفظ أوقات الإقامة لكل مسجد تصلي فيه وبدّل بينها من شاشة اليوم.',
+  'Save the Iqama times of each mosque you pray at and switch between them on the Today screen.':
+      'احفظ أوقات الإقامة لكل مسجد تصلي فيه وبدّل بينها من شاشة اليوم.',
   'Masjid {0}': 'مسجد {0}',
   '{0} saved': '{0} محفوظة',
   'No description': 'بلا وصف',
@@ -266,13 +289,15 @@ const Map<String, String> arStrings = {
   '{0} Azan at {1}': 'أذان {0} الساعة {1}',
   '{0} Iqama at {1}': 'إقامة {0} الساعة {1}',
   'Next prayer in notification bar': 'الصلاة القادمة في شريط الإشعارات',
-  'A permanent notification with the next Azan (with countdown) and Iqama': 'إشعار دائم بالأذان القادم (مع العد التنازلي) والإقامة',
+  'A permanent notification with the next Azan (with countdown) and Iqama':
+      'إشعار دائم بالأذان القادم (مع العد التنازلي) والإقامة',
   '{0} Iqama was at {1}': 'كانت إقامة {0} الساعة {1}',
   'Keep the screen on until I stop': 'أبقِ الشاشة مضاءة حتى أوقفها',
   'Off: the phone\'s screen timeout applies. The display also works on the lock screen: open it, then press the power button twice.': 'عند الإيقاف تُطبَّق مهلة شاشة الهاتف. تعمل الشاشة أيضاً على شاشة القفل: افتحها ثم اضغط زر التشغيل مرتين.',
   'Adjust this time (± minutes)': 'تعديل هذا الوقت (± دقائق)',
   'Sunrise alert (Fajr time ends)': 'تنبيه الشروق (انتهاء وقت الفجر)',
-  '{0} min to sunrise – Fajr time ends': '{0} دقيقة على الشروق – ينتهي وقت الفجر',
+  '{0} min to sunrise – Fajr time ends':
+      '{0} دقيقة على الشروق – ينتهي وقت الفجر',
   'Minutes before sunrise': 'دقائق قبل الشروق',
   'Ishraq / Duha alert': 'تنبيه الإشراق / الضحى',
   'Iqama sound': 'صوت الإقامة',
@@ -284,11 +309,14 @@ const Map<String, String> arStrings = {
   'Pressing a volume button stops the Azan.': 'الضغط على زر الصوت يوقف الأذان.',
   'Silence during': 'الصمت أثناء',
   'Ramadan Niyyah reminder': 'تذكير نية رمضان',
-  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?': 'كل ليلة من رمضان بعد العشاء: هل نويت صيام الغد؟',
+  'Every Ramadan night after Isha: did you make the intention for tomorrow\'s fast?':
+      'كل ليلة من رمضان بعد العشاء: هل نويت صيام الغد؟',
   'Did you make the Niyyah for tomorrow\'s fast?': 'هل نويت صيام الغد؟',
-  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”': '«نويت صوم غد عن أداء فرض رمضان لله تعالى.»',
+  '“I intend to keep tomorrow\'s obligatory fast of Ramadan for the sake of Allah.”':
+      '«نويت صوم غد عن أداء فرض رمضان لله تعالى.»',
   'Friday night reminder': 'تذكير ليلة الجمعة',
-  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah': 'الخميس بعد المغرب: الصلاة على النبي، سورة الكهف، والاستعداد للجمعة',
+  'Thursday after Maghrib: Salawat, Surah Al-Kahf and getting ready for Jumu\'ah':
+      'الخميس بعد المغرب: الصلاة على النبي، سورة الكهف، والاستعداد للجمعة',
   'Tonight is Friday night': 'الليلة ليلة الجمعة',
   'Send abundant Salawat upon the Prophet ﷺ. Read Surah Al-Kahf and get ready for Jumu\'ah: bath, clean clothes, go early.': 'أكثروا من الصلاة على النبي ﷺ. اقرأ سورة الكهف واستعد للجمعة: الغسل، الثياب النظيفة، التبكير.',
   'I did': 'نويت',
@@ -299,11 +327,13 @@ const Map<String, String> arStrings = {
   'Location settings': 'إعدادات الموقع',
   '{0}: place and time source': '{0}: المكان ومصدر الأوقات',
   'Automatic (GPS)': 'تلقائي (GPS)',
-  'Finds your place and sets the usual method': 'يحدد مكانك ويضبط الطريقة المعتادة',
+  'Finds your place and sets the usual method':
+      'يحدد مكانك ويضبط الطريقة المعتادة',
   'Time source': 'مصدر الأوقات',
   'Calculated for this place': 'محسوبة لهذا المكان',
   'Mosque\'s yearly chart': 'جدول المسجد السنوي',
-  'Exact times from your mosque\'s printed calendar (import once)': 'أوقات دقيقة من تقويم مسجدك المطبوع (استيراد مرة واحدة)',
+  'Exact times from your mosque\'s printed calendar (import once)':
+      'أوقات دقيقة من تقويم مسجدك المطبوع (استيراد مرة واحدة)',
   'How do you find your place?': 'كيف تجد مكانك؟',
   'Browse': 'تصفح',
   'Search': 'بحث',
@@ -314,7 +344,8 @@ const Map<String, String> arStrings = {
   'All': 'الكل',
   'Azan Time Charts': 'جداول أوقات الأذان',
   'Exact yearly charts of {0} places': 'جداول سنوية دقيقة لـ {0} مكاناً',
-  'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)': 'أوقات أخرى (الشروق، الجمعة، التراويح، التهجد، الإمساك، العيد)',
+  'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)':
+      'أوقات أخرى (الشروق، الجمعة، التراويح، التهجد، الإمساك، العيد)',
 };
 
 const List<String> arHijriMonths = [

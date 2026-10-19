@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:waqt/app/chart_data.dart';
 import 'package:waqt/app/city_data.dart';
+import 'package:waqt/app/location.dart';
 import 'package:waqt/app/scope.dart';
 import 'package:waqt/app/settings.dart';
 import 'package:waqt/app/strings.dart';
@@ -346,6 +349,19 @@ void main() {
     tester.view.physicalSize = const Size(360 * 3, 720 * 3);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
+    // A phone with location off: the automatic try finds nothing.
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('com.maheshrai.waqt/native'),
+      (call) async => call.method == 'getLocation'
+          ? throw PlatformException(code: 'disabled')
+          : null,
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        const MethodChannel('com.maheshrai.waqt/native'),
+        null,
+      ),
+    );
     final settings = AppSettings.memory()..onboarded = false;
     await _pumpApp(tester, settings);
     expect(find.text('Assalamu alaikum!'), findsOneWidget);
@@ -375,5 +391,29 @@ void main() {
     expect(settings.onboarded, isTrue);
     expect(find.byType(TodayScreen), findsOneWidget);
     await _dispose(tester);
+  });
+
+  testWidgets('first location picks the chart of the place', (tester) async {
+    // A phone at Kannur town.
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('com.maheshrai.waqt/native'),
+      (call) async => call.method == 'getLocation'
+          ? {'latitude': 11.8745, 'longitude': 75.3704}
+          : null,
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        const MethodChannel('com.maheshrai.waqt/native'),
+        null,
+      ),
+    );
+    debugResetCities();
+    debugResetCharts();
+    final settings = AppSettings.memory();
+    final err = await tester.runAsync(() => useMyLocation(settings));
+    expect(err, isNull);
+    expect(settings.placeChosen, isTrue);
+    expect(settings.usesChart, isTrue);
+    expect(settings.place.name, 'Kannur');
   });
 }

@@ -357,8 +357,40 @@ class _GpsButtonState extends State<_GpsButton> {
   bool _busy = false;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    // First start: find the place by itself; the user can change it after.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && Native.supported && !context.settings.placeChosen) {
+        _locate(quiet: true);
+      }
+    });
+  }
+
+  /// Locates the phone; [quiet] skips the error message (automatic try).
+  Future<void> _locate({bool quiet = false}) async {
     final settings = context.settings, s = context.s;
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() => _busy = true);
+    final err = await useMyLocation(settings);
+    if (!mounted) return;
+    setState(() => _busy = false);
+    if (err != null && !quiet) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(switch (err) {
+            LocationError.denied => s.locationDenied,
+            LocationError.disabled => s.locationDisabled,
+            LocationError.unavailable => s.locationUnavailable,
+          }),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = context.s;
     return FilledButton.icon(
       icon: _busy
           ? const SizedBox(
@@ -368,26 +400,7 @@ class _GpsButtonState extends State<_GpsButton> {
             )
           : const Icon(Icons.my_location),
       label: Text(_busy ? s.locating : s.useMyLocation),
-      onPressed: _busy
-          ? null
-          : () async {
-              final messenger = ScaffoldMessenger.of(context);
-              setState(() => _busy = true);
-              final err = await useMyLocation(settings);
-              if (!mounted) return;
-              setState(() => _busy = false);
-              if (err != null) {
-                messenger.showSnackBar(
-                  SnackBar(
-                    content: Text(switch (err) {
-                      LocationError.denied => s.locationDenied,
-                      LocationError.disabled => s.locationDisabled,
-                      LocationError.unavailable => s.locationUnavailable,
-                    }),
-                  ),
-                );
-              }
-            },
+      onPressed: _busy ? null : _locate,
     );
   }
 }

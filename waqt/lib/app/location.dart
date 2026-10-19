@@ -4,8 +4,10 @@ library;
 
 import 'dart:math' as math;
 
+import '../core/charts.dart';
 import '../core/cities.dart';
 import '../core/place.dart';
+import 'chart_data.dart';
 import 'city_data.dart';
 import 'native.dart';
 import 'settings.dart';
@@ -58,8 +60,11 @@ Future<Place> gpsPlace(
   );
 }
 
-/// Locates the phone and switches to it ([prompt]: may ask for permission).
-/// Returns the error, or null when the place was set.
+/// Locates the phone and switches to it ([prompt]: may ask for permission):
+/// to the Azan Time Chart of the place when there is one (the district's
+/// calendar, else a chart within 20 km), otherwise to the calculated times
+/// with the usual method there (on first use). Returns the error, or null
+/// when the place was set.
 Future<LocationError?> useMyLocation(
   AppSettings settings, {
   bool prompt = true,
@@ -72,7 +77,21 @@ Future<LocationError?> useMyLocation(
     r.latitude!,
     r.longitude!,
   );
-  await settings.choosePlace(p, applySuggestions: false);
+  await settings.choosePlace(p, applySuggestions: !settings.placeChosen);
+  List<City> cities;
+  try {
+    cities = await loadCities();
+  } catch (_) {
+    cities = const [];
+  }
+  final c = chartFor(
+    await loadCharts(),
+    p.latitude,
+    p.longitude,
+    district: nearestCity(cities, p.latitude, p.longitude, maxKm: 20)?.district,
+    asr: settings.asr,
+  );
+  if (c != null) await settings.useChart(c);
   return null;
 }
 

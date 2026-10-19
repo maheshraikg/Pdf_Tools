@@ -93,15 +93,6 @@ class _PlaceScreenState extends State<PlaceScreen> {
       );
       return;
     }
-    // Like the original: a chart for this place when there is one.
-    final c = chartFor(
-      _charts,
-      settings.place.latitude,
-      settings.place.longitude,
-      district: _districtAt(settings.place.latitude, settings.place.longitude),
-      asr: settings.asr,
-    );
-    if (c != null) await settings.useChart(c);
     if (mounted) Navigator.pop(context);
   }
 

@@ -24,3 +24,6 @@ Future<List<ChartPlace>> loadCharts() => _charts ??= () async {
 
 List<ChartPlace> _parse(Uint8List bytes) =>
     parseCharts(utf8.decode(gzip.decode(bytes)));
+
+/// Forgets the loaded charts (tests load them outside the fake-async zone).
+void debugResetCharts() => _charts = null;
