@@ -87,7 +87,7 @@ class AppSettings extends ChangeNotifier {
 
   CalcMethod method = CalcMethod.kerala;
   AsrMethod asr = AsrMethod.shafii;
-  HighLatitudeRule highLatitude = HighLatitudeRule.angleBased;
+  HighLatitudeRule highLatitude = HighLatitudeRule.automatic;
   Map<Prayer, int> adjustments = {};
   int imsakMinutes = 10;
   int ishraqMinutes = 15;
@@ -292,8 +292,8 @@ class AppSettings extends ChangeNotifier {
     method = CalcMethod.byId(p.getString('method'));
     asr = AsrMethod.values.asNameMap()[p.getString('asr')] ?? AsrMethod.shafii;
     highLatitude =
-        HighLatitudeRule.values.asNameMap()[p.getString('highLat')] ??
-        HighLatitudeRule.angleBased;
+        HighLatitudeRule.values.asNameMap()[p.getString('highLatitude')] ??
+        HighLatitudeRule.automatic;
     final adj = p.getString('adjustments');
     if (adj != null) {
       try {
@@ -378,7 +378,7 @@ class AppSettings extends ChangeNotifier {
     await p.setBool('statusNotification', statusNotification);
     await p.setString('method', method.id);
     await p.setString('asr', asr.name);
-    await p.setString('highLat', highLatitude.name);
+    await p.setString('highLatitude', highLatitude.name);
     await p.setString(
       'adjustments',
       jsonEncode({for (final e in adjustments.entries) e.key.name: e.value}),

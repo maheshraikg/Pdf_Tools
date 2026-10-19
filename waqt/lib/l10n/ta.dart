@@ -346,6 +346,7 @@ const Map<String, String> taStrings = {
   'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)': 'மேலும் நேரங்கள் (சூரிய உதயம், ஜும்ஆ, தராவீஹ், தஹஜ்ஜுத், இம்ஸாக், பெருநாள்)',
   'Share prayer times': 'தொழுகை நேரங்களைப் பகிர்',
   'Azan Timings': 'பாங்கு நேரங்கள்',
+  'Automatic (only where needed)': 'தானியங்கி (தேவைப்படும்போது மட்டும்)',
 };
 
 const List<String> taHijriMonths = [

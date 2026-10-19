@@ -349,6 +349,7 @@ const Map<String, String> knStrings = {
       'ಇನ್ನಷ್ಟು ಸಮಯಗಳು (ಸೂರ್ಯೋದಯ, ಜುಮಾ, ತರಾವೀಹ್, ತಹಜ್ಜುದ್, ಇಮ್ಸಾಕ್, ಈದ್)',
   'Share prayer times': 'ನಮಾಜ್ ಸಮಯ ಹಂಚಿಕೊಳ್ಳಿ',
   'Azan Timings': 'ಅಝಾನ್ ಸಮಯಗಳು',
+  'Automatic (only where needed)': 'ಸ್ವಯಂಚಾಲಿತ (ಅಗತ್ಯವಿದ್ದಾಗ ಮಾತ್ರ)',
 };
 
 const List<String> knHijriMonths = [

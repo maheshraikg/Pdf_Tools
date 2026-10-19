@@ -349,6 +349,7 @@ const Map<String, String> bnStrings = {
       'আরও সময় (সূর্যোদয়, জুমা, তারাবীহ, তাহাজ্জুদ, ইমসাক, ঈদ)',
   'Share prayer times': 'নামাজের সময় শেয়ার করুন',
   'Azan Timings': 'আজানের সময়',
+  'Automatic (only where needed)': 'স্বয়ংক্রিয় (শুধু প্রয়োজনে)',
 };
 
 const List<String> bnHijriMonths = [

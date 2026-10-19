@@ -147,6 +147,7 @@ class S {
       'Angle based (recommended)',
       'കോണ്‍ അടിസ്ഥാനം',
     ),
+    HighLatitudeRule.automatic => highLatAutomatic,
   };
   String get adjustments =>
       _t('Adjust times (minutes)', 'സമയം ക്രമീകരിക്കുക (മിനിറ്റ്)');
@@ -782,4 +783,10 @@ class S {
   String get shareTimes => _t('Share prayer times', 'നമസ്കാര സമയം പങ്കിടുക');
   String get azanTimings => _t('Azan Timings', 'ബാങ്ക് സമയങ്ങൾ');
   String get tomorrow => _t('Tomorrow', 'നാളെ');
+
+  // Calculation as the original app.
+  String get highLatAutomatic => _t(
+    'Automatic (only where needed)',
+    'ഓട്ടോമാറ്റിക് (ആവശ്യമുള്ളപ്പോൾ മാത്രം)',
+  );
 }

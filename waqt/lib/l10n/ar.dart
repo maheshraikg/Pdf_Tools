@@ -348,6 +348,7 @@ const Map<String, String> arStrings = {
       'أوقات أخرى (الشروق، الجمعة، التراويح، التهجد، الإمساك، العيد)',
   'Share prayer times': 'مشاركة أوقات الصلاة',
   'Azan Timings': 'أوقات الأذان',
+  'Automatic (only where needed)': 'تلقائي (عند الحاجة فقط)',
 };
 
 const List<String> arHijriMonths = [

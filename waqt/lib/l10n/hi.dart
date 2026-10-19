@@ -347,6 +347,7 @@ const Map<String, String> hiStrings = {
       'और समय (सूर्योदय, जुमा, तरावीह, तहज्जुद, इम्साक, ईद)',
   'Share prayer times': 'नमाज़ के समय साझा करें',
   'Azan Timings': 'अज़ान का समय',
+  'Automatic (only where needed)': 'स्वचालित (केवल ज़रूरत पर)',
 };
 
 const List<String> hiHijriMonths = [

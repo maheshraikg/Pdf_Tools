@@ -345,6 +345,7 @@ const Map<String, String> idStrings = {
       'Waktu lainnya (terbit, Jumat, Tarawih, Tahajud, Imsak, Id)',
   'Share prayer times': 'Bagikan waktu salat',
   'Azan Timings': 'Waktu Azan',
+  'Automatic (only where needed)': 'Otomatis (hanya bila perlu)',
 };
 
 const List<String> idHijriMonths = [

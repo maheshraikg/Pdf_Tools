@@ -347,6 +347,7 @@ const Map<String, String> urStrings = {
       'مزید اوقات (طلوع، جمعہ، تراویح، تہجد، امساک، عید)',
   'Share prayer times': 'نماز کے اوقات شیئر کریں',
   'Azan Timings': 'اذان کے اوقات',
+  'Automatic (only where needed)': 'خودکار (صرف ضرورت کے وقت)',
 };
 
 const List<String> urHijriMonths = [

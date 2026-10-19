@@ -343,6 +343,7 @@ const Map<String, String> frStrings = {
   'More times (sunrise, Jumu\'ah, Taraweeh, Tahajjud, Imsak, Eid)': 'Autres horaires (lever du soleil, Joumou\'a, tarawih, tahajjud, imsak, Aïd)',
   'Share prayer times': 'Partager les horaires',
   'Azan Timings': 'Horaires de l\'adhan',
+  'Automatic (only where needed)': 'Automatique (seulement si nécessaire)',
 };
 
 const List<String> frHijriMonths = [

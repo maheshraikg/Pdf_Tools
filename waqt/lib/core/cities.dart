@@ -60,46 +60,31 @@ class City {
   }
 }
 
-/// Usual calculation method and Asr school in a country (and for India,
-/// the state; coastal Karnataka west of 75.3° E follows Kerala's charts).
+/// Calculation method and Asr school of a country, as in the original
+/// app's world tables (Muslim World League, Shafi'i elsewhere). Places
+/// with a built-in chart use the chart instead.
 (String, AsrMethod) suggestedMethod(
   String country, [
   String? region,
   double? longitude,
 ]) {
   const hanafi = AsrMethod.hanafi, shafii = AsrMethod.shafii;
-  switch (country) {
-    case 'IN':
-      if (region == 'Kerala' || region == 'Lakshadweep') {
-        return ('kerala', shafii);
-      }
-      if (region == 'Karnataka' && longitude != null && longitude < 75.3) {
-        return ('kerala', shafii);
-      }
-      return ('karachi', hanafi);
-    case 'PK' || 'BD' || 'AF':
-      return ('karachi', hanafi);
-    case 'LK' || 'MV':
-      return ('karachi', shafii);
-    case 'SA' || 'YE' || 'OM' || 'BH':
-      return ('umm_al_qura', shafii);
-    case 'AE':
-      return ('dubai', shafii);
-    case 'QA':
-      return ('qatar', shafii);
-    case 'KW':
-      return ('kuwait', shafii);
-    case 'EG' || 'SD' || 'LY' || 'SY' || 'LB' || 'IQ' || 'JO' || 'PS':
-      return ('egypt', shafii);
-    case 'MY' || 'ID' || 'SG' || 'BN' || 'TH' || 'PH':
-      return ('sea', shafii);
-    case 'TR' || 'AZ' || 'UZ' || 'TJ' || 'KZ' || 'KG' || 'TM':
-      return ('mwl', hanafi);
-    case 'US' || 'CA':
-      return ('isna', shafii);
-    default:
-      return ('mwl', shafii);
-  }
+  return switch (country) {
+    'IN' || 'AF' || 'ID' || 'TN' => ('karachi', shafii),
+    'PK' || 'BD' => ('karachi', hanafi),
+    'SA' ||
+    'AE' ||
+    'KW' ||
+    'BH' ||
+    'YE' ||
+    'SY' ||
+    'MY' ||
+    'FR' => ('umm_al_qura', shafii),
+    'EG' || 'LY' || 'SD' => ('egypt', shafii),
+    'IR' => ('tehran', shafii),
+    'US' || 'CA' || 'GY' => ('isna', shafii),
+    _ => ('mwl', shafii),
+  };
 }
 
 /// Parses the asset text; cities are already sorted by population.

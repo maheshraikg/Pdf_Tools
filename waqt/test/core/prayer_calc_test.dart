@@ -114,19 +114,19 @@ void main() {
     expect(kerala.isha, plain.isha);
   });
 
-  test('Umm al-Qura: Isha 90 min after Maghrib, 120 in Ramadan', () {
-    final t = calc(21.4225, 39.8262, 2026, 3, 1, method: CalcMethod.ummAlQura);
-    expect(t.isha.difference(t.maghrib), const Duration(minutes: 90));
-    final r = calc(
-      21.4225,
-      39.8262,
-      2026,
-      3,
-      1,
-      method: CalcMethod.ummAlQura,
-      ramadan: true,
-    );
-    expect(r.isha.difference(r.maghrib), const Duration(minutes: 120));
+  test('Umm al-Qura: Isha 90 min after Maghrib, in Ramadan too', () {
+    for (final ramadan in [false, true]) {
+      final t = calc(
+        21.4225,
+        39.8262,
+        2026,
+        3,
+        1,
+        method: CalcMethod.ummAlQura,
+        ramadan: ramadan,
+      );
+      expect(t.isha.difference(t.maghrib), const Duration(minutes: 90));
+    }
   });
 
   test('high latitude in summer still gives ordered times', () {

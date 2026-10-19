@@ -37,7 +37,7 @@ void main() {
     expect(london.offsetMinutesAt(DateTime.utc(2026, 7, 15)), 60);
     expect(london.methodId, 'mwl');
     final kochi = searchCities(cities, 'kochi').first.toPlace();
-    expect(kochi.methodId, 'kerala');
+    expect(kochi.methodId, 'karachi');
     expect(kochi.offsetMinutesAt(DateTime.utc(2026, 7, 15)), 330);
     expect(Place.fromJson(london.toJson()), london);
   });

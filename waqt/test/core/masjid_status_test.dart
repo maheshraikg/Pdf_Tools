@@ -76,14 +76,15 @@ void main() {
     });
   });
 
-  test('suggested method follows the Indian state', () {
-    expect(suggestedMethod('IN', 'Kerala').$1, 'kerala');
-    // Mangaluru (coast) follows Kerala; Bengaluru does not.
-    expect(suggestedMethod('IN', 'Karnataka', 74.86).$1, 'kerala');
-    expect(suggestedMethod('IN', 'Karnataka', 77.59), (
-      'karachi',
-      AsrMethod.hanafi,
-    ));
+  test('suggested method follows the original app per country', () {
+    expect(suggestedMethod('IN', 'Kerala'), ('karachi', AsrMethod.shafii));
+    expect(suggestedMethod('PK'), ('karachi', AsrMethod.hanafi));
+    expect(suggestedMethod('SA').$1, 'umm_al_qura');
+    expect(suggestedMethod('AE').$1, 'umm_al_qura');
+    expect(suggestedMethod('IR').$1, 'tehran');
+    expect(suggestedMethod('US').$1, 'isna');
+    expect(suggestedMethod('PR').$1, 'mwl');
+    expect(suggestedMethod('GB'), ('mwl', AsrMethod.shafii));
   });
 
   test('status notification states', () {
