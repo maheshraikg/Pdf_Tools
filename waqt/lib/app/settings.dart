@@ -78,6 +78,10 @@ class AppSettings extends ChangeNotifier {
   /// Follow the phone's GPS position (on when "Use my location" is picked).
   bool autoLocation = false;
 
+  /// The place was checked for a built-in chart (done once for setups
+  /// from before charts were applied by themselves).
+  bool chartsChecked = false;
+
   /// First-run setup done (existing users who picked a place skip it).
   bool onboarded = true;
 
@@ -282,6 +286,7 @@ class AppSettings extends ChangeNotifier {
     }
     placeChosen = p.getBool('placeChosen') ?? false;
     onboarded = p.getBool('onboarded') ?? placeChosen;
+    chartsChecked = p.getBool('chartsChecked') ?? false;
     autoLocation = p.getBool('autoLocation') ?? false;
     statusNotification = p.getBool('statusNotification') ?? true;
     method = CalcMethod.byId(p.getString('method'));
@@ -368,6 +373,7 @@ class AppSettings extends ChangeNotifier {
     await p.setString('place', jsonEncode(place.toJson()));
     await p.setBool('placeChosen', placeChosen);
     await p.setBool('onboarded', onboarded);
+    await p.setBool('chartsChecked', chartsChecked);
     await p.setBool('autoLocation', autoLocation);
     await p.setBool('statusNotification', statusNotification);
     await p.setString('method', method.id);
@@ -434,11 +440,14 @@ class AppSettings extends ChangeNotifier {
     final p = c.place;
     s.place = p;
     s.placeChosen = true;
+    s.chartsChecked = true;
     s.autoLocation = false;
     s.method = CalcMethod.byId(p.methodId);
     s.asr = p.asr;
     s.timetableCsv = c.timetable.toCsv();
     s.timetableEnabled = true;
+    // The chart's times exactly, without minute adjustments.
+    s.adjustments = {};
   });
 
   /// The current place is a built-in chart.
@@ -448,6 +457,7 @@ class AppSettings extends ChangeNotifier {
       update((s) {
         s.place = p;
         s.placeChosen = true;
+        s.chartsChecked = true;
         s.autoLocation = p.id == 'gps';
         if (applySuggestions) {
           s.method = CalcMethod.byId(p.methodId);

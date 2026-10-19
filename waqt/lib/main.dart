@@ -51,6 +51,7 @@ class _WaqtAppState extends State<WaqtApp> with WidgetsBindingObserver {
   /// Automatic location: move the place when the phone has moved.
   Future<void> _followLocation() async {
     if (!widget.background) return;
+    await refreshBuiltInChart(widget.settings);
     final p = await refreshAutoLocation(widget.settings);
     if (p == null) return;
     final s = S(widget.settings.lang);

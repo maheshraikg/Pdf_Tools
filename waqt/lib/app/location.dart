@@ -88,7 +88,7 @@ Future<LocationError?> useMyLocation(
     await loadCharts(),
     p.latitude,
     p.longitude,
-    district: nearestCity(cities, p.latitude, p.longitude, maxKm: 20)?.district,
+    district: nearestCity(cities, p.latitude, p.longitude)?.district,
     asr: settings.asr,
   );
   if (c != null) await settings.useChart(c);
@@ -119,4 +119,52 @@ Future<Place?> refreshAutoLocation(AppSettings settings) async {
   // Same country and state: keep the user's method; new area: its own.
   await settings.choosePlace(p, applySuggestions: p.region != old.region);
   return p;
+}
+
+/// On start: keeps a built-in chart in step with the bundled data (a chart
+/// saved by an older version is replaced), and moves a place set up before
+/// charts were applied by themselves onto its chart, once.
+Future<void> refreshBuiltInChart(AppSettings settings) async {
+  final List<ChartPlace> charts;
+  try {
+    charts = await loadCharts();
+  } catch (_) {
+    return;
+  }
+  if (settings.usesChart) {
+    final name = settings.place.id.substring('chart:'.length);
+    for (final c in charts) {
+      if (c.name == name) {
+        if (settings.timetableCsv != c.timetable.toCsv() ||
+            settings.adjustments.isNotEmpty) {
+          await settings.useChart(c);
+        }
+        return;
+      }
+    }
+    return;
+  }
+  if (settings.chartsChecked) return;
+  if (settings.placeChosen && !settings.timetableEnabled) {
+    final p = settings.place;
+    List<City> cities;
+    try {
+      cities = await loadCities();
+    } catch (_) {
+      cities = const [];
+    }
+    final c = chartFor(
+      charts,
+      p.latitude,
+      p.longitude,
+      district: nearestCity(cities, p.latitude, p.longitude)?.district,
+      maxKm: p.id == 'gps' ? 20 : 10,
+      asr: settings.asr,
+    );
+    if (c != null) {
+      await settings.useChart(c);
+      return;
+    }
+  }
+  await settings.update((s) => s.chartsChecked = true);
 }
