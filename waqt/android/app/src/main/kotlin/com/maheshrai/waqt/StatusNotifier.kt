@@ -5,10 +5,13 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.os.Build
+import android.os.IBinder
 import android.os.SystemClock
 import android.widget.RemoteViews
 import org.json.JSONArray
@@ -19,7 +22,9 @@ import org.json.JSONObject
  * countdown and the next Iqama. The Dart side sends the states for the
  * coming days (each valid from its start time); this shows the current one
  * and keeps one alarm armed for the next change, so it stays right while
- * the app is closed.
+ * the app is closed. Like the original app it is held by a foreground
+ * service, so the phone does not clear it when it stops the app, and it
+ * comes back if swiped away.
  */
 object StatusNotifier {
     private const val PREFS = "waqt_status"
@@ -27,7 +32,7 @@ object StatusNotifier {
     private const val KEY_CHANNEL = "channel"
     const val ACTION_TICK = "com.maheshrai.waqt.STATUS_TICK"
     private const val CHANNEL_ID = "next_prayer"
-    private const val NOTIFICATION_ID = 7100
+    const val NOTIFICATION_ID = 7100
 
     fun save(context: Context, states: JSONArray, channelName: String) {
         prefs(context).edit()
@@ -42,11 +47,22 @@ object StatusNotifier {
         val now = System.currentTimeMillis()
         val states = states(context)
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val current = states.lastOrNull { it.getLong("from") <= now }
-        if (current == null || current.getLong("countdown") <= now) {
+        val service = Intent(context, StatusService::class.java)
+        val n = current(context)
+        if (n == null) {
+            context.stopService(service)
             nm.cancel(NOTIFICATION_ID)
         } else {
-            nm.notify(NOTIFICATION_ID, build(context, current))
+            try {
+                if (Build.VERSION.SDK_INT >= 26) {
+                    context.startForegroundService(service)
+                } else {
+                    context.startService(service)
+                }
+            } catch (e: Exception) {
+                // Not allowed from the background just now: a plain one.
+                nm.notify(NOTIFICATION_ID, n)
+            }
         }
         val next = states.map { it.getLong("from") }.filter { it > now }.minOrNull()
         val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -63,6 +79,18 @@ object StatusNotifier {
         } else {
             am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, next + 500, pi)
         }
+    }
+
+    /**
+     * The notification for now: the latest state already begun (kept even
+     * when an alarm comes late), or null when there is none left.
+     */
+    fun current(context: Context): Notification? {
+        val now = System.currentTimeMillis()
+        val states = states(context)
+        if (states.none { it.getLong("countdown") > now }) return null
+        val s = states.lastOrNull { it.getLong("from") <= now } ?: states.first()
+        return build(context, s)
     }
 
     private fun build(context: Context, s: JSONObject): Notification {
@@ -94,6 +122,15 @@ object StatusNotifier {
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setContentIntent(open)
+            // Swiped away (Android 14 allows it): shown again at once.
+            .setDeleteIntent(
+                PendingIntent.getBroadcast(
+                    context,
+                    6,
+                    Intent(context, StatusReceiver::class.java).setAction(ACTION_TICK),
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                ),
+            )
             .setCategory(Notification.CATEGORY_STATUS)
             .setVisibility(Notification.VISIBILITY_PUBLIC)
             .setShowWhen(true)
@@ -147,4 +184,33 @@ object StatusNotifier {
 /** Fires at each change of the next prayer, and after boot or clock changes. */
 class StatusReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) = StatusNotifier.refresh(context)
+}
+
+/** Holds the next-prayer notification in the foreground, as the original. */
+class StatusService : Service() {
+    override fun onBind(intent: Intent?): IBinder? = null
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val n = StatusNotifier.current(this)
+        if (n == null) {
+            if (Build.VERSION.SDK_INT >= 24) {
+                stopForeground(STOP_FOREGROUND_REMOVE)
+            } else {
+                @Suppress("DEPRECATION")
+                stopForeground(true)
+            }
+            stopSelf()
+            return START_NOT_STICKY
+        }
+        if (Build.VERSION.SDK_INT >= 34) {
+            startForeground(
+                StatusNotifier.NOTIFICATION_ID,
+                n,
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE,
+            )
+        } else {
+            startForeground(StatusNotifier.NOTIFICATION_ID, n)
+        }
+        return START_STICKY
+    }
 }
