@@ -113,6 +113,29 @@ class SettingsScreen extends StatelessWidget {
                   (m) => settings.update((x) => x.method = m),
                 ),
               ),
+              if (settings.method.id == CalcMethod.custom.id) ...[
+                for (final (label, angle, set) in [
+                  (
+                    s.fajrAngle,
+                    settings.customFajr,
+                    (AppSettings x, double v) => x.customFajr = v,
+                  ),
+                  (
+                    s.ishaAngle,
+                    settings.customIsha,
+                    (AppSettings x, double v) => x.customIsha = v,
+                  ),
+                ])
+                  _Stepper(
+                    label: label,
+                    // Half degrees.
+                    value: (angle * 2).round(),
+                    min: 20,
+                    max: 44,
+                    unit: '${angle.toStringAsFixed(1)}°',
+                    onChanged: (v) => settings.update((x) => set(x, v / 2)),
+                  ),
+              ],
               ListTile(
                 leading: const IconBadge(Icons.wb_sunny_outlined),
                 title: Text(s.asrMethod),
@@ -138,6 +161,22 @@ class SettingsScreen extends StatelessWidget {
                   s.highLatName,
                   (r) => settings.update((x) => x.highLatitude = r),
                 ),
+              ),
+              ExpansionTile(
+                leading: const IconBadge(Icons.edit_calendar_outlined),
+                title: Text(s.ownTimes),
+                subtitle: Text(s.ownTimesHelp),
+                children: [
+                  for (final p in const [
+                    Prayer.fajr,
+                    Prayer.sunrise,
+                    Prayer.dhuhr,
+                    Prayer.asr,
+                    Prayer.maghrib,
+                    Prayer.isha,
+                  ])
+                    _OwnTime(prayer: p),
+                ],
               ),
               ExpansionTile(
                 leading: const IconBadge(Icons.tune),
@@ -423,6 +462,58 @@ class MinutesStepper extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// One prayer's own Azan time: tap to pick a clock time, clear to go back
+/// to the calculated one.
+class _OwnTime extends StatelessWidget {
+  const _OwnTime({required this.prayer});
+
+  final Prayer prayer;
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = context.settings, s = context.s;
+    final fixed = settings.fixedTimes[prayer];
+    String clock(int minutes) {
+      final h = minutes ~/ 60, m = (minutes % 60).toString().padLeft(2, '0');
+      if (settings.use24h) return '${h.toString().padLeft(2, '0')}:$m';
+      return '${h % 12 == 0 ? 12 : h % 12}:$m ${amPm(settings.lang, h)}';
+    }
+
+    return ListTile(
+      title: Text(s.prayer(prayer)),
+      subtitle: Text(fixed == null ? s.asCalculated : clock(fixed)),
+      trailing: fixed == null
+          ? const Icon(Icons.schedule)
+          : IconButton(
+              tooltip: s.useCalculatedTime,
+              icon: const Icon(Icons.close),
+              onPressed: () => settings.update(
+                (x) => x.fixedTimes = {...x.fixedTimes}..remove(prayer),
+              ),
+            ),
+      onTap: () async {
+        final today = settings.calculator.day(
+          settings.today.year,
+          settings.today.month,
+          settings.today.day,
+        );
+        final w = settings.wall(today[prayer]);
+        final t = await showTimePicker(
+          context: context,
+          initialTime: fixed == null
+              ? TimeOfDay(hour: w.hour, minute: w.minute)
+              : TimeOfDay(hour: fixed ~/ 60, minute: fixed % 60),
+        );
+        if (t == null) return;
+        await settings.update(
+          (x) =>
+              x.fixedTimes = {...x.fixedTimes, prayer: t.hour * 60 + t.minute},
+        );
+      },
     );
   }
 }

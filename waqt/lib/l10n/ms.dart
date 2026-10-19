@@ -347,6 +347,13 @@ const Map<String, String> msStrings = {
   'Share prayer times': 'Kongsi waktu solat',
   'Azan Timings': 'Waktu Azan',
   'Automatic (only where needed)': 'Automatik (hanya bila perlu)',
+  'Your own Azan times': 'Waktu azan anda sendiri',
+  'Tap a prayer to set its Azan at a fixed time':
+      'Ketik solat untuk menetapkan azannya pada masa tetap',
+  'As calculated': 'Seperti dikira',
+  'Use the calculated time': 'Guna waktu yang dikira',
+  'Fajr angle': 'Sudut Subuh',
+  'Isha angle': 'Sudut Isyak',
 };
 
 const List<String> msHijriMonths = [

@@ -789,4 +789,16 @@ class S {
     'Automatic (only where needed)',
     'ഓട്ടോമാറ്റിക് (ആവശ്യമുള്ളപ്പോൾ മാത്രം)',
   );
+
+  // Own times.
+  String get ownTimes => _t('Your own Azan times', 'സ്വന്തം ബാങ്ക് സമയങ്ങൾ');
+  String get ownTimesHelp => _t(
+    'Tap a prayer to set its Azan at a fixed time',
+    'ഒരു നമസ്കാരത്തിന്റെ ബാങ്ക് നിശ്ചിത സമയത്താക്കാൻ അതിൽ തൊടുക',
+  );
+  String get asCalculated => _t('As calculated', 'കണക്കാക്കിയത് പോലെ');
+  String get useCalculatedTime =>
+      _t('Use the calculated time', 'കണക്കാക്കിയ സമയം ഉപയോഗിക്കുക');
+  String get fajrAngle => _t('Fajr angle', 'സുബ്ഹ് കോൺ');
+  String get ishaAngle => _t('Isha angle', 'ഇശാ കോൺ');
 }

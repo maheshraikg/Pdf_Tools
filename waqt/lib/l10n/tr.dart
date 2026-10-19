@@ -349,6 +349,13 @@ const Map<String, String> trStrings = {
   'Share prayer times': 'Namaz vakitlerini paylaş',
   'Azan Timings': 'Ezan Vakitleri',
   'Automatic (only where needed)': 'Otomatik (yalnızca gerektiğinde)',
+  'Your own Azan times': 'Kendi ezan vakitleriniz',
+  'Tap a prayer to set its Azan at a fixed time':
+      'Bir namazın ezanını sabit saate almak için ona dokunun',
+  'As calculated': 'Hesaplandığı gibi',
+  'Use the calculated time': 'Hesaplanan vakti kullan',
+  'Fajr angle': 'Sabah açısı',
+  'Isha angle': 'Yatsı açısı',
 };
 
 const List<String> trHijriMonths = [

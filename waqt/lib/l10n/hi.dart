@@ -348,6 +348,13 @@ const Map<String, String> hiStrings = {
   'Share prayer times': 'नमाज़ के समय साझा करें',
   'Azan Timings': 'अज़ान का समय',
   'Automatic (only where needed)': 'स्वचालित (केवल ज़रूरत पर)',
+  'Your own Azan times': 'आपके अपने अज़ान समय',
+  'Tap a prayer to set its Azan at a fixed time':
+      'किसी नमाज़ की अज़ान का तय समय रखने के लिए उस पर टैप करें',
+  'As calculated': 'गणना के अनुसार',
+  'Use the calculated time': 'गणना वाला समय इस्तेमाल करें',
+  'Fajr angle': 'फ़ज्र कोण',
+  'Isha angle': 'इशा कोण',
 };
 
 const List<String> hiHijriMonths = [

@@ -91,6 +91,12 @@ class AppSettings extends ChangeNotifier {
   Map<Prayer, int> adjustments = {};
   int imsakMinutes = 10;
   int ishraqMinutes = 15;
+
+  /// Angles of the Custom Method.
+  double customFajr = 18, customIsha = 17;
+
+  /// The user's own Azan times (local minutes after midnight).
+  Map<Prayer, int> fixedTimes = {};
   int hijriAdjust = 0;
 
   AlertConfig alerts = const AlertConfig();
@@ -202,7 +208,15 @@ class AppSettings extends ChangeNotifier {
   }
 
   CalcParams get params => CalcParams(
-    method: method,
+    method: method.id == CalcMethod.custom.id
+        ? CalcMethod(
+            id: CalcMethod.custom.id,
+            name: CalcMethod.custom.name,
+            fajrAngle: customFajr,
+            ishaAngle: customIsha,
+          )
+        : method,
+    fixedTimes: fixedTimes,
     asr: asr,
     highLatitude: highLatitude,
     adjustments: _withCalibration(),
@@ -236,6 +250,9 @@ class AppSettings extends ChangeNotifier {
       jsonEncode({for (final e in adjustments.entries) e.key.name: e.value}),
       imsakMinutes,
       ishraqMinutes,
+      customFajr,
+      customIsha,
+      jsonEncode({for (final e in fixedTimes.entries) e.key.name: e.value}),
       hijriAdjust,
       timetableEnabled,
       timetableCsv,
@@ -307,6 +324,19 @@ class AppSettings extends ChangeNotifier {
     }
     imsakMinutes = p.getInt('imsak') ?? 10;
     ishraqMinutes = p.getInt('ishraq') ?? 15;
+    customFajr = p.getDouble('customFajr') ?? 18;
+    customIsha = p.getDouble('customIsha') ?? 17;
+    final fixed = p.getString('fixedTimes');
+    if (fixed != null) {
+      try {
+        final m = (jsonDecode(fixed) as Map).cast<String, dynamic>();
+        fixedTimes = {
+          for (final e in m.entries)
+            if (Prayer.values.asNameMap()[e.key] != null)
+              Prayer.values.asNameMap()[e.key]!: e.value as int,
+        };
+      } catch (_) {}
+    }
     hijriAdjust = p.getInt('hijriAdjust') ?? 0;
     final al = p.getString('alerts');
     if (al != null) {
@@ -385,6 +415,12 @@ class AppSettings extends ChangeNotifier {
     );
     await p.setInt('imsak', imsakMinutes);
     await p.setInt('ishraq', ishraqMinutes);
+    await p.setDouble('customFajr', customFajr);
+    await p.setDouble('customIsha', customIsha);
+    await p.setString(
+      'fixedTimes',
+      jsonEncode({for (final e in fixedTimes.entries) e.key.name: e.value}),
+    );
     await p.setInt('hijriAdjust', hijriAdjust);
     await p.setString('alerts', jsonEncode(alerts.toJson()));
     await p.setString(

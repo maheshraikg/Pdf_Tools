@@ -347,6 +347,13 @@ const Map<String, String> taStrings = {
   'Share prayer times': 'தொழுகை நேரங்களைப் பகிர்',
   'Azan Timings': 'பாங்கு நேரங்கள்',
   'Automatic (only where needed)': 'தானியங்கி (தேவைப்படும்போது மட்டும்)',
+  'Your own Azan times': 'உங்கள் சொந்த பாங்கு நேரங்கள்',
+  'Tap a prayer to set its Azan at a fixed time':
+      'ஒரு தொழுகையின் பாங்கை நிலையான நேரத்தில் அமைக்க அதைத் தட்டவும்',
+  'As calculated': 'கணக்கிட்டபடி',
+  'Use the calculated time': 'கணக்கிட்ட நேரத்தைப் பயன்படுத்து',
+  'Fajr angle': 'ஃபஜ்ர் கோணம்',
+  'Isha angle': 'இஷா கோணம்',
 };
 
 const List<String> taHijriMonths = [

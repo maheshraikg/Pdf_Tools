@@ -350,6 +350,13 @@ const Map<String, String> bnStrings = {
   'Share prayer times': 'নামাজের সময় শেয়ার করুন',
   'Azan Timings': 'আজানের সময়',
   'Automatic (only where needed)': 'স্বয়ংক্রিয় (শুধু প্রয়োজনে)',
+  'Your own Azan times': 'আপনার নিজের আজানের সময়',
+  'Tap a prayer to set its Azan at a fixed time':
+      'কোনো নামাজের আজান নির্দিষ্ট সময়ে রাখতে সেটিতে চাপুন',
+  'As calculated': 'হিসাব অনুযায়ী',
+  'Use the calculated time': 'হিসাবের সময় ব্যবহার করুন',
+  'Fajr angle': 'ফজর কোণ',
+  'Isha angle': 'ইশা কোণ',
 };
 
 const List<String> bnHijriMonths = [

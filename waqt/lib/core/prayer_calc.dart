@@ -181,6 +181,15 @@ class CalcMethod {
     maghribAngle: 4,
   );
 
+  /// Own Fajr and Isha angles (the angles here are only the defaults; the
+  /// settings hold the user's).
+  static const custom = CalcMethod(
+    id: 'custom',
+    name: 'Custom Method',
+    fajrAngle: 18,
+    ishaAngle: 17,
+  );
+
   /// The original app's methods in its order, then the regional ones.
   static const List<CalcMethod> all = [
     ummAlQura,
@@ -190,6 +199,7 @@ class CalcMethod {
     mwl,
     egypt,
     tehran,
+    custom,
     kerala,
     dubai,
     qatar,
@@ -210,6 +220,7 @@ class CalcParams {
     this.adjustments = const {},
     this.imsakMinutesBeforeFajr = 10,
     this.ishraqMinutesAfterSunrise = 15,
+    this.fixedTimes = const {},
   });
 
   final CalcMethod method;
@@ -221,6 +232,10 @@ class CalcParams {
   final int imsakMinutesBeforeFajr;
   final int ishraqMinutesAfterSunrise;
 
+  /// The user's own Azan times: local minutes after midnight, used instead
+  /// of the calculated (or timetable) time.
+  final Map<Prayer, int> fixedTimes;
+
   CalcParams copyWith({
     CalcMethod? method,
     AsrMethod? asr,
@@ -228,6 +243,7 @@ class CalcParams {
     Map<Prayer, int>? adjustments,
     int? imsakMinutesBeforeFajr,
     int? ishraqMinutesAfterSunrise,
+    Map<Prayer, int>? fixedTimes,
   }) => CalcParams(
     method: method ?? this.method,
     asr: asr ?? this.asr,
@@ -237,6 +253,7 @@ class CalcParams {
         imsakMinutesBeforeFajr ?? this.imsakMinutesBeforeFajr,
     ishraqMinutesAfterSunrise:
         ishraqMinutesAfterSunrise ?? this.ishraqMinutesAfterSunrise,
+    fixedTimes: fixedTimes ?? this.fixedTimes,
   );
 }
 

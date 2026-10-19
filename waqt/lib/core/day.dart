@@ -101,8 +101,18 @@ class DayCalculator {
     final next = DateTime.utc(year, month, day + 1);
     final (nextSix, _) = _sixFor(next.year, next.month, next.day);
     final adj = params.adjustments;
-    DateTime a(Prayer p, DateTime t) =>
-        _roundToMinute(t.add(Duration(minutes: adj[p] ?? 0)));
+    final offset = place.offsetMinutesAt(DateTime.utc(year, month, day, 12));
+    DateTime a(Prayer p, DateTime t) {
+      final fixed = params.fixedTimes[p];
+      if (fixed != null) {
+        return DateTime.utc(
+          year,
+          month,
+          day,
+        ).add(Duration(minutes: fixed - offset));
+      }
+      return _roundToMinute(t.add(Duration(minutes: adj[p] ?? 0)));
+    }
 
     final fajr = a(Prayer.fajr, six[0]);
     final sunrise = a(Prayer.sunrise, six[1]);
@@ -119,9 +129,7 @@ class DayCalculator {
       month: month,
       day: day,
       source: source,
-      utcOffsetMinutes: place.offsetMinutesAt(
-        DateTime.utc(year, month, day, 12),
-      ),
+      utcOffsetMinutes: offset,
       hijri: HijriDate.fromGregorian(
         year,
         month,

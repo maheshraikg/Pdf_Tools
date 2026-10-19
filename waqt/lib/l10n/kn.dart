@@ -350,6 +350,13 @@ const Map<String, String> knStrings = {
   'Share prayer times': 'ನಮಾಜ್ ಸಮಯ ಹಂಚಿಕೊಳ್ಳಿ',
   'Azan Timings': 'ಅಝಾನ್ ಸಮಯಗಳು',
   'Automatic (only where needed)': 'ಸ್ವಯಂಚಾಲಿತ (ಅಗತ್ಯವಿದ್ದಾಗ ಮಾತ್ರ)',
+  'Your own Azan times': 'ನಿಮ್ಮ ಸ್ವಂತ ಅಝಾನ್ ಸಮಯಗಳು',
+  'Tap a prayer to set its Azan at a fixed time':
+      'ಒಂದು ನಮಾಜ್‌ನ ಅಝಾನ್ ಅನ್ನು ನಿಗದಿತ ಸಮಯಕ್ಕೆ ಇಡಲು ಅದನ್ನು ಒತ್ತಿ',
+  'As calculated': 'ಲೆಕ್ಕಾಚಾರದಂತೆ',
+  'Use the calculated time': 'ಲೆಕ್ಕಾಚಾರದ ಸಮಯ ಬಳಸಿ',
+  'Fajr angle': 'ಫಜ್ರ್ ಕೋನ',
+  'Isha angle': 'ಇಶಾ ಕೋನ',
 };
 
 const List<String> knHijriMonths = [

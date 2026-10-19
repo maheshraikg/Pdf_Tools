@@ -344,6 +344,13 @@ const Map<String, String> frStrings = {
   'Share prayer times': 'Partager les horaires',
   'Azan Timings': 'Horaires de l\'adhan',
   'Automatic (only where needed)': 'Automatique (seulement si nécessaire)',
+  'Your own Azan times': 'Vos propres horaires d\'adhan',
+  'Tap a prayer to set its Azan at a fixed time':
+      'Touchez une prière pour fixer l\'heure de son adhan',
+  'As calculated': 'Comme calculé',
+  'Use the calculated time': 'Utiliser l\'heure calculée',
+  'Fajr angle': 'Angle du Fajr',
+  'Isha angle': 'Angle du Isha',
 };
 
 const List<String> frHijriMonths = [
