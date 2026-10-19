@@ -342,6 +342,7 @@ const Map<String, String> urStrings = {
   'All': 'سب',
   'Azan Time Charts': 'اذان ٹائم چارٹس',
   'Exact yearly charts of {0} places': '{0} مقامات کے درست سالانہ چارٹ',
+  'Azan Time Charts: yearly prayer calendars of local mosques, as collected in the Niskara Samayam app (mifthi.com).': 'اذان ٹائم چارٹس: مقامی مساجد کے سالانہ نماز کیلنڈر، جیسا کہ Niskara Samayam ایپ (mifthi.com) میں جمع کیے گئے۔',
 };
 
 const List<String> urHijriMonths = [

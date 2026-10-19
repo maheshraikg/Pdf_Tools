@@ -98,6 +98,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
       _charts,
       settings.place.latitude,
       settings.place.longitude,
+      asr: settings.asr,
     );
     if (c != null) await settings.useChart(c);
     if (mounted) Navigator.pop(context);
@@ -212,6 +213,15 @@ class _PlaceScreenState extends State<PlaceScreen> {
 
     Future<void> choose(Place p, {bool pop = false}) async {
       await settings.choosePlace(p);
+      // Like the original: a town with an Azan Time Chart uses it.
+      final c = nearestChart(
+        _charts,
+        p.latitude,
+        p.longitude,
+        maxKm: 10,
+        asr: settings.asr,
+      );
+      if (c != null) await settings.useChart(c);
       if (pop && context.mounted) Navigator.pop(context);
     }
 

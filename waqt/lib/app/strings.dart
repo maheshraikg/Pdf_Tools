@@ -771,4 +771,8 @@ class S {
     '{0} സ്ഥലങ്ങളുടെ കൃത്യമായ വാർഷിക ചാർട്ടുകൾ',
     [n],
   );
+  String get chartsCredit => _t(
+    'Azan Time Charts: yearly prayer calendars of local mosques, as collected in the Niskara Samayam app (mifthi.com).',
+    'ബാങ്ക് സമയ ചാർട്ടുകൾ: പ്രാദേശിക പള്ളികളുടെ വാർഷിക നിസ്കാര സമയ കലണ്ടറുകൾ, നിസ്കാര സമയം ആപ്പിൽ (mifthi.com) ശേഖരിച്ചത്.',
+  );
 }

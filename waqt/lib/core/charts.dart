@@ -84,12 +84,14 @@ List<ChartPlace> parseCharts(String text) {
 }
 
 /// The chart nearest to a point within [maxKm], preferring the plain chart
-/// of a town over its Hanafi / Salafi / LAC variants.
+/// of a town (or its variant for the Asr school [asr]) over its other
+/// Hanafi / Shafi / Salafi / LAC variants.
 ChartPlace? nearestChart(
   List<ChartPlace> charts,
   double lat,
   double lng, {
   double maxKm = 20,
+  AsrMethod? asr,
 }) {
   ChartPlace? best;
   var bestScore = double.infinity;
@@ -98,7 +100,12 @@ ChartPlace? nearestChart(
     final dx = (c.longitude - lng) * 111.2 * math.cos(lat * math.pi / 180);
     final d = math.sqrt(dx * dx + dy * dy);
     if (d > maxKm) continue;
-    final variant = c.name.contains('(') || c.name.contains('LAC') ? 5 : 0;
+    final school = asr == AsrMethod.hanafi
+        ? c.name.contains('Hanafi') || c.name.contains('Hanfi')
+        : c.name.contains('(Shafi)');
+    final variant = (c.name.contains('(') && !school) || c.name.contains('LAC')
+        ? 5
+        : 0;
     if (d + variant < bestScore) {
       bestScore = d + variant;
       best = c;

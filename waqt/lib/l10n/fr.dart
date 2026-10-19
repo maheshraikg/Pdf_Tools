@@ -339,6 +339,7 @@ const Map<String, String> frStrings = {
   'Azan Time Charts': 'Calendriers des horaires d\'adhan',
   'Exact yearly charts of {0} places':
       'Calendriers annuels exacts de {0} lieux',
+  'Azan Time Charts: yearly prayer calendars of local mosques, as collected in the Niskara Samayam app (mifthi.com).': 'Calendriers des horaires d\'adhan : calendriers annuels de prière des mosquées locales, tels que réunis dans l\'application Niskara Samayam (mifthi.com).',
 };
 
 const List<String> frHijriMonths = [

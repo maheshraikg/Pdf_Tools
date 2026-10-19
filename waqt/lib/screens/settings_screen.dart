@@ -259,7 +259,11 @@ class SettingsScreen extends StatelessWidget {
                 icon: const IconBadge(Icons.info_outline),
                 applicationName: s.appTitle,
                 applicationVersion: '1.0.0',
-                aboutBoxChildren: [Text(s.privacyNote)],
+                aboutBoxChildren: [
+                  Text(s.privacyNote),
+                  const SizedBox(height: 12),
+                  Text(s.chartsCredit),
+                ],
                 child: Text(s.about),
               ),
             ],

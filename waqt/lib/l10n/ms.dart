@@ -341,6 +341,7 @@ const Map<String, String> msStrings = {
   'All': 'Semua',
   'Azan Time Charts': 'Jadual Waktu Azan',
   'Exact yearly charts of {0} places': 'Jadual tahunan tepat untuk {0} tempat',
+  'Azan Time Charts: yearly prayer calendars of local mosques, as collected in the Niskara Samayam app (mifthi.com).': 'Jadual Waktu Azan: kalendar solat tahunan masjid tempatan, seperti yang dikumpul dalam aplikasi Niskara Samayam (mifthi.com).',
 };
 
 const List<String> msHijriMonths = [

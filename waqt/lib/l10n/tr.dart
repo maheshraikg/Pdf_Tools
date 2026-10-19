@@ -343,6 +343,7 @@ const Map<String, String> trStrings = {
   'All': 'Tümü',
   'Azan Time Charts': 'Ezan Vakti Çizelgeleri',
   'Exact yearly charts of {0} places': '{0} yer için kesin yıllık çizelgeler',
+  'Azan Time Charts: yearly prayer calendars of local mosques, as collected in the Niskara Samayam app (mifthi.com).': 'Ezan Vakti Çizelgeleri: Niskara Samayam uygulamasında (mifthi.com) toplanan yerel camilerin yıllık namaz takvimleri.',
 };
 
 const List<String> trHijriMonths = [
