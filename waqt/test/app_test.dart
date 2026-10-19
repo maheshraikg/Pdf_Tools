@@ -438,9 +438,32 @@ void main() {
       tomorrow.month,
       tomorrow.day,
     );
-    final text = posterText(settings, S(settings.lang), day);
+    final text = posterText(settings, settings.lang, day);
     expect(text, contains('Azan Timings'));
     expect(text, contains(hm(settings, day[Prayer.maghrib])));
+    // Poster in another language, the app stays English.
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('poster-kn')),
+      120,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const Key('poster-languages')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tester.ensureVisible(find.byKey(const ValueKey('poster-kn')));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.byKey(const ValueKey('poster-kn')));
+    await tester.pump(const Duration(milliseconds: 400));
+    final kn = S(Lang.kn);
+    expect(find.text(kn.prayer(Prayer.maghrib)), findsOneWidget);
+    expect(find.text(kn.azanTimings.toUpperCase()), findsOneWidget);
+    expect(settings.lang, Lang.en);
+    expect(
+      posterText(settings, Lang.kn, day),
+      contains(kn.prayer(Prayer.isha)),
+    );
     await _dispose(tester);
   });
 }

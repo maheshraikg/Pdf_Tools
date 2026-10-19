@@ -296,6 +296,31 @@ void main() {
       ),
     );
     await shot(tester, key, 'en_12_share');
+    for (final l in [Lang.kn, Lang.ml, Lang.ar]) {
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: AppScope(
+            settings: settings,
+            child: MaterialApp(
+              theme: buildTheme(Brightness.light),
+              home: Scaffold(
+                body: Center(
+                  child: SizedBox(
+                    width: 360,
+                    child: PrayerPoster(
+                      day: settings.calculator.day(2026, 10, 23),
+                      lang: l,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await shot(tester, key, 'share_poster_${l.code}');
+    }
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 1));
   });
