@@ -85,7 +85,7 @@ List<ChartPlace> parseCharts(String text) {
 
 /// The chart nearest to a point within [maxKm], preferring the plain chart
 /// of a town (or its variant for the Asr school [asr]) over its other
-/// Hanafi / Shafi / Salafi / LAC variants.
+/// Hanafi / Shafi / Salafi / LAC / MDK variants.
 ChartPlace? nearestChart(
   List<ChartPlace> charts,
   double lat,
@@ -103,7 +103,10 @@ ChartPlace? nearestChart(
     final school = asr == AsrMethod.hanafi
         ? c.name.contains('Hanafi') || c.name.contains('Hanfi')
         : c.name.contains('(Shafi)');
-    final variant = (c.name.contains('(') && !school) || c.name.contains('LAC')
+    final variant =
+        (c.name.contains('(') && !school) ||
+            c.name.contains('LAC') ||
+            c.name.contains('MDK')
         ? 5
         : 0;
     if (d + variant < bestScore) {
@@ -112,4 +115,30 @@ ChartPlace? nearestChart(
     }
   }
   return best;
+}
+
+/// Districts whose mosques follow one calendar for the whole district
+/// (e.g. the Dakshina Kannada calendar, "applicable to D K district only").
+const Map<String, String> districtCharts = {'Dakshina Kannada': 'Mangalore'};
+
+/// The chart for a place: its district's calendar when the district has
+/// one, otherwise the nearest chart (see [nearestChart]).
+ChartPlace? chartFor(
+  List<ChartPlace> charts,
+  double lat,
+  double lng, {
+  String? district,
+  double maxKm = 20,
+  AsrMethod? asr,
+}) {
+  final name = districtCharts[district];
+  if (name != null) {
+    final wanted = asr == AsrMethod.hanafi ? '$name (Hanafi)' : name;
+    for (final n in [wanted, name]) {
+      for (final c in charts) {
+        if (c.name == n) return c;
+      }
+    }
+  }
+  return nearestChart(charts, lat, lng, maxKm: maxKm, asr: asr);
 }

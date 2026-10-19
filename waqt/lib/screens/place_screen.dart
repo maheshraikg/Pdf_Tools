@@ -94,14 +94,22 @@ class _PlaceScreenState extends State<PlaceScreen> {
       return;
     }
     // Like the original: a chart for this place when there is one.
-    final c = nearestChart(
+    final c = chartFor(
       _charts,
       settings.place.latitude,
       settings.place.longitude,
+      district: _districtAt(settings.place.latitude, settings.place.longitude),
       asr: settings.asr,
     );
     if (c != null) await settings.useChart(c);
     if (mounted) Navigator.pop(context);
+  }
+
+  /// District of the listed town at a point (India), if known.
+  String? _districtAt(double lat, double lng) {
+    final cities = _cities;
+    if (cities == null) return null;
+    return nearestCity(cities, lat, lng, maxKm: 20)?.district;
   }
 
   /// Picks one of the built-in charts (closest ones first).
@@ -214,10 +222,11 @@ class _PlaceScreenState extends State<PlaceScreen> {
     Future<void> choose(Place p, {bool pop = false}) async {
       await settings.choosePlace(p);
       // Like the original: a town with an Azan Time Chart uses it.
-      final c = nearestChart(
+      final c = chartFor(
         _charts,
         p.latitude,
         p.longitude,
+        district: _districtAt(p.latitude, p.longitude),
         maxKm: 10,
         asr: settings.asr,
       );

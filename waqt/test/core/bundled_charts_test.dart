@@ -45,4 +45,28 @@ void main() {
       'Chennai 1 (Shafi)',
     );
   });
+
+  test('all of Dakshina Kannada follows the DK calendar', () {
+    // Belthangady, Puttur, Sullia: the district chart, not the town's.
+    for (final (lat, lng) in [
+      (12.9795, 75.2699),
+      (12.7620, 75.0930),
+      (12.5610, 75.2870),
+    ]) {
+      final c = chartFor(charts, lat, lng, district: 'Dakshina Kannada')!;
+      expect(c.name, 'Mangalore');
+      // 17 October in the DK calendar: 5:05 6:20 12:20 3:41 6:16 7:26.
+      expect(c.rows['10-17'], [305, 380, 740, 941, 1096, 1166]);
+    }
+    expect(
+      chartFor(
+        charts,
+        12.9795,
+        75.2699,
+        district: 'Dakshina Kannada',
+        asr: AsrMethod.hanafi,
+      )!.name,
+      'Mangalore (Hanafi)',
+    );
+  });
 }
