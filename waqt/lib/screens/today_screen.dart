@@ -154,12 +154,14 @@ class _TodayScreenState extends State<TodayScreen> with WidgetsBindingObserver {
                   Appear(
                     key: ValueKey('${day.date}-$p'),
                     index: i,
-                    child: _PrayerCard(
-                      day: day,
-                      prayer: p,
-                      isNext: isNext(p),
-                      isPast: day[p].isBefore(now) && !isNext(p),
-                      started: !day[p].isAfter(now),
+                    child: PressScale(
+                      child: _PrayerCard(
+                        day: day,
+                        prayer: p,
+                        isNext: isNext(p),
+                        isPast: day[p].isBefore(now) && !isNext(p),
+                        started: !day[p].isAfter(now),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -578,13 +580,19 @@ class _Hero extends StatelessWidget {
                   ..._occasionChips(context, dim),
                   if (n != null) ...[
                     const SizedBox(height: 22),
-                    Text(
-                      s.next.toUpperCase(),
-                      style: t.labelMedium?.copyWith(
-                        color: dim,
-                        letterSpacing: 1.4,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          s.next.toUpperCase(),
+                          style: t.labelMedium?.copyWith(
+                            color: dim,
+                            letterSpacing: 1.4,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        const LivePulse(color: kGold, size: 7),
+                      ],
                     ),
                     Padding(
                       padding: const EdgeInsetsDirectional.only(end: 8),
@@ -632,12 +640,16 @@ class _Hero extends StatelessWidget {
                     // Digits always left-to-right, also in Arabic/Urdu.
                     Directionality(
                       textDirection: TextDirection.ltr,
-                      child: Text(
-                        clockCountdown(n.at.difference(now), withHours: true),
-                        style: t.displayMedium?.copyWith(
-                          color: white,
-                          fontWeight: FontWeight.w300,
-                          fontFeatures: const [FontFeature.tabularFigures()],
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: AlignmentDirectional.centerStart,
+                        child: RollingText(
+                          clockCountdown(n.at.difference(now), withHours: true),
+                          style: t.displayMedium?.copyWith(
+                            color: white,
+                            fontWeight: FontWeight.w300,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
                         ),
                       ),
                     ),

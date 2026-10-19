@@ -245,7 +245,11 @@ class PrayerTable extends StatelessWidget {
                     endIndent: 14,
                   ),
                 ),
-              Appear(key: ValueKey('${day.date}-$i'), index: i, child: rows[i]),
+              Appear(
+                key: ValueKey('${day.date}-$i'),
+                index: i,
+                child: PressScale(child: rows[i]),
+              ),
             ],
           ],
         ),

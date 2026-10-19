@@ -154,3 +154,141 @@ class Appear extends StatelessWidget {
     );
   }
 }
+
+/// Text whose characters roll up when they change (a flip-clock countdown).
+class RollingText extends StatelessWidget {
+  const RollingText(this.text, {super.key, this.style});
+
+  final String text;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) {
+      return Text(text, style: style);
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 0; i < text.length; i++)
+          ClipRect(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 380),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              transitionBuilder: (child, a) {
+                final incoming = child.key == ValueKey('$i${text[i]}');
+                return SlideTransition(
+                  position: Tween(
+                    begin: Offset(0, incoming ? 0.9 : -0.9),
+                    end: Offset.zero,
+                  ).animate(a),
+                  child: FadeTransition(opacity: a, child: child),
+                );
+              },
+              child: Text(text[i], key: ValueKey('$i${text[i]}'), style: style),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// A small dot that pulses a few times (marks the live next prayer).
+class LivePulse extends StatefulWidget {
+  const LivePulse({super.key, required this.color, this.size = 8});
+
+  final Color color;
+  final double size;
+
+  @override
+  State<LivePulse> createState() => _LivePulseState();
+}
+
+class _LivePulseState extends State<LivePulse>
+    with SingleTickerProviderStateMixin {
+  late final _c = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!(MediaQuery.maybeDisableAnimationsOf(context) ?? false) &&
+        !_c.isAnimating) {
+      // A few beats, then it rests (no endless animation draining power).
+      _c.repeat(reverse: true, count: 8);
+    }
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = widget.size;
+    return SizedBox(
+      width: s * 2.4,
+      height: s * 2.4,
+      child: AnimatedBuilder(
+        animation: _c,
+        builder: (context, _) => Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              width: s * (1 + 1.4 * _c.value),
+              height: s * (1 + 1.4 * _c.value),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: widget.color.withValues(alpha: 0.35 * (1 - _c.value)),
+              ),
+            ),
+            Container(
+              width: s,
+              height: s,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: widget.color,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Shrinks [child] a little while it is pressed.
+class PressScale extends StatefulWidget {
+  const PressScale({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  State<PressScale> createState() => _PressScaleState();
+}
+
+class _PressScaleState extends State<PressScale> {
+  bool _down = false;
+
+  void _set(bool v) {
+    if (_down != v) setState(() => _down = v);
+  }
+
+  @override
+  Widget build(BuildContext context) => Listener(
+    onPointerDown: (_) => _set(true),
+    onPointerUp: (_) => _set(false),
+    onPointerCancel: (_) => _set(false),
+    child: AnimatedScale(
+      scale: _down ? 0.97 : 1,
+      duration: const Duration(milliseconds: 140),
+      curve: Curves.easeOut,
+      child: widget.child,
+    ),
+  );
+}

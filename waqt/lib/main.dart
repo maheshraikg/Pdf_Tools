@@ -127,11 +127,25 @@ class _HomeShellState extends State<HomeShell> {
       body: IndexedStack(
         index: _tab,
         children: [
-          const TodayScreen(),
-          const MonthScreen(),
-          QiblaScreen(active: _tab == 2),
-          const TasbihScreen(),
-          const SettingsScreen(),
+          for (final (i, tab) in [
+            const TodayScreen(),
+            const MonthScreen(),
+            QiblaScreen(active: _tab == 2),
+            const TasbihScreen(),
+            const SettingsScreen(),
+          ].indexed)
+            // The chosen tab fades and rises in (state is kept).
+            AnimatedOpacity(
+              opacity: _tab == i ? 1 : 0,
+              duration: const Duration(milliseconds: 260),
+              curve: Curves.easeOut,
+              child: AnimatedSlide(
+                offset: _tab == i ? Offset.zero : const Offset(0, 0.03),
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOutCubic,
+                child: tab,
+              ),
+            ),
         ],
       ),
       bottomNavigationBar: NavigationBar(
