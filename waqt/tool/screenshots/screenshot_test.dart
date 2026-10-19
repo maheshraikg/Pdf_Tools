@@ -20,6 +20,7 @@ import 'package:waqt/screens/alerts_screen.dart';
 import 'package:waqt/screens/display_screen.dart';
 import 'package:waqt/screens/place_screen.dart';
 import 'package:waqt/screens/share_screen.dart';
+import 'package:waqt/ui/sky_scene.dart';
 import 'package:waqt/screens/tracker_screen.dart';
 import 'package:waqt/screens/onboarding_screen.dart';
 import 'package:waqt/core/tracker.dart';
@@ -352,5 +353,26 @@ void main() {
     }
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 1));
+  });
+
+  testWidgets('sky phases', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 1300));
+    final key = GlobalKey();
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: key,
+        child: Column(
+          children: [
+            for (final p in SkyPhase.values)
+              SizedBox(
+                height: 260,
+                width: 400,
+                child: SkyScene(phase: p, child: const SizedBox.expand()),
+              ),
+          ],
+        ),
+      ),
+    );
+    await shot(tester, key, 'sky_phases');
   });
 }

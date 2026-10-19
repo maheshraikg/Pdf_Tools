@@ -10,6 +10,7 @@ import '../core/alerts.dart';
 import '../core/day.dart';
 import '../core/events.dart';
 import '../core/prayer_calc.dart';
+import '../ui/sky_scene.dart';
 import '../ui/theme.dart';
 import '../ui/widgets.dart';
 import 'alerts_screen.dart';
@@ -508,7 +509,6 @@ class _Hero extends StatelessWidget {
   Widget build(BuildContext context) {
     final settings = context.settings, s = context.s, lang = settings.lang;
     final t = Theme.of(context).textTheme;
-    final b = Theme.of(context).brightness;
     const white = Colors.white;
     final dim = Colors.white.withValues(alpha: 0.75);
 
@@ -533,11 +533,22 @@ class _Hero extends StatelessWidget {
       }
     }
     const radius = BorderRadius.vertical(bottom: Radius.circular(32));
+    // The sky follows the day's prayers.
+    final phase =
+        now.isBefore(today[Prayer.fajr]) || !now.isBefore(today[Prayer.isha])
+        ? SkyPhase.night
+        : now.isBefore(today[Prayer.sunrise])
+        ? SkyPhase.dawn
+        : now.isBefore(today[Prayer.asr])
+        ? SkyPhase.day
+        : now.isBefore(today[Prayer.maghrib])
+        ? SkyPhase.afternoon
+        : SkyPhase.dusk;
 
     return ClipRRect(
       borderRadius: radius,
-      child: DecoratedBox(
-        decoration: BoxDecoration(gradient: heroGradient(b)),
+      child: SkyScene(
+        phase: phase,
         child: CustomPaint(
           painter: IslamicPatternPainter(
             color: Colors.white.withValues(alpha: 0.06),
