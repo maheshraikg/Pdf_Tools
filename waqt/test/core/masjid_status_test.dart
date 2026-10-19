@@ -1,0 +1,117 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:waqt/app/background.dart';
+import 'package:waqt/app/settings.dart';
+import 'package:waqt/core/cities.dart';
+import 'package:waqt/core/masjid.dart';
+import 'package:waqt/core/place.dart';
+import 'package:waqt/core/prayer_calc.dart';
+
+void main() {
+  AppSettings withIqama(AppSettings s, int dhuhr) => s
+    ..alerts = s.alerts.withPrayer(
+      Prayer.dhuhr,
+      s.alerts.of(Prayer.dhuhr).copyWith(iqamaDelay: dhuhr),
+    );
+
+  group('Mosque profiles', () {
+    test('json round trip', () {
+      final s = withIqama(AppSettings.memory(), 22);
+      final m = Masjid.fromAlerts('Town', 'Market road', s.alerts, {
+        Prayer.asr: 2,
+      });
+      final back = Masjid.fromJson(m.toJson());
+      expect(back.name, 'Town');
+      expect(back.description, 'Market road');
+      expect(back.iqama[Prayer.dhuhr]!.delay, 22);
+      expect(back.adjustments, {Prayer.asr: 2});
+    });
+
+    test('switching keeps each mosque\'s Iqama times', () async {
+      final s = withIqama(AppSettings.memory(), 10);
+      s.masjids = [
+        Masjid.fromAlerts('A', '', s.alerts),
+        Masjid.fromAlerts('B', '', withIqama(AppSettings.memory(), 25).alerts),
+      ];
+      s.activeMasjid = 0;
+      // Edits go to the active mosque.
+      await s.update((x) => withIqama(x, 12));
+      await s.selectMasjid(1);
+      expect(s.alerts.of(Prayer.dhuhr).iqamaDelay, 25);
+      await s.selectMasjid(0);
+      expect(s.alerts.of(Prayer.dhuhr).iqamaDelay, 12);
+    });
+
+    test('each mosque keeps its own place and time source', () async {
+      final s = AppSettings.memory();
+      await s.choosePlace(presetPlaces.firstWhere((p) => p.id == 'kannur'));
+      s.masjids = [Masjid.fromAlerts('A', '', s.alerts)];
+      s.activeMasjid = 0;
+      await s.update((x) {
+        x.masjids = [...x.masjids, Masjid.fromAlerts('B', '', x.alerts)];
+      });
+      await s.selectMasjid(1);
+      await s.choosePlace(presetPlaces.firstWhere((p) => p.id == 'dubai'));
+      expect(s.method.id, 'dubai');
+      await s.selectMasjid(0);
+      expect(s.place.id, 'kannur');
+      expect(s.method.id, 'kerala');
+      await s.selectMasjid(1);
+      expect(s.place.id, 'dubai');
+      // Survives saving.
+      final back = Masjid.fromJson(s.masjids[1].toJson());
+      expect(back.source?.place.id, 'dubai');
+    });
+
+    test('deleting the active mosque hands over to the next', () async {
+      final s = withIqama(AppSettings.memory(), 10);
+      s.masjids = [
+        Masjid.fromAlerts('A', '', s.alerts),
+        Masjid.fromAlerts('B', '', withIqama(AppSettings.memory(), 25).alerts),
+      ];
+      await s.removeMasjid(0);
+      expect(s.masjids.single.name, 'B');
+      expect(s.activeMasjid, 0);
+      expect(s.alerts.of(Prayer.dhuhr).iqamaDelay, 25);
+      expect(s.masjids.single.iqama[Prayer.dhuhr]!.delay, 25);
+    });
+  });
+
+  test('suggested method follows the original app per country', () {
+    expect(suggestedMethod('IN', 'Kerala'), ('karachi', AsrMethod.shafii));
+    expect(suggestedMethod('PK'), ('karachi', AsrMethod.hanafi));
+    expect(suggestedMethod('SA').$1, 'umm_al_qura');
+    expect(suggestedMethod('AE').$1, 'umm_al_qura');
+    expect(suggestedMethod('IR').$1, 'tehran');
+    expect(suggestedMethod('US').$1, 'isna');
+    expect(suggestedMethod('PR').$1, 'mwl');
+    expect(suggestedMethod('GB'), ('mwl', AsrMethod.shafii));
+  });
+
+  test('status notification states', () {
+    final s = AppSettings.memory();
+    final days = s.calculator.days(DateTime.utc(2026, 10, 15), 3);
+    final now = days[1][Prayer.fajr].add(const Duration(hours: 1));
+    final states = statusStates(s, days, now);
+    expect(states, isNotEmpty);
+    expect(states.first['from'], now.millisecondsSinceEpoch);
+    // Next Azan after Fajr is Dhuhr.
+    expect(
+      states.first['countdown'],
+      days[1][Prayer.dhuhr].millisecondsSinceEpoch,
+    );
+    // 16 Oct 2026 is a Friday.
+    expect(states.first['title'] as String, contains("Jumu'ah Azan"));
+    expect(states.first['iqama'] as String, endsWith('⌛'));
+    expect(states.first['where'], s.place.label(false));
+    for (var i = 1; i < states.length; i++) {
+      expect(
+        (states[i]['from'] as int) > (states[i - 1]['from'] as int),
+        isTrue,
+      );
+      expect(
+        (states[i]['countdown'] as int) > (states[i]['from'] as int),
+        isTrue,
+      );
+    }
+  });
+}

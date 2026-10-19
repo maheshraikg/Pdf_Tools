@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Expanded next-prayer notification (StatusNotifier.kt), like the
+     original app: icon, next Azan, mosque and place, countdown, next Iqama. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="10dp">
+
+    <ImageView
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginBottom="6dp"
+        android:src="@mipmap/ic_launcher"
+        android:contentDescription="@null" />
+
+    <TextView
+        android:id="@+id/status_azan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="@android:style/TextAppearance.Material.Notification.Title"
+        android:textSize="17sp"
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:id="@+id/status_where_azan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="@android:style/TextAppearance.Material.Notification"
+        android:textSize="13sp"
+        android:textStyle="italic" />
+
+    <Chronometer
+        android:id="@+id/status_countdown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:textAppearance="@android:style/TextAppearance.Material.Notification.Title"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/status_iqama"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:textAppearance="@android:style/TextAppearance.Material.Notification.Title"
+        android:textSize="16sp"
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:id="@+id/status_where_iqama"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="@android:style/TextAppearance.Material.Notification"
+        android:textSize="13sp"
+        android:textStyle="italic" />
+</LinearLayout>

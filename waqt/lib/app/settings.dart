@@ -1,0 +1,503 @@
+import 'dart:convert';
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../core/alerts.dart';
+import '../core/calibration.dart';
+import '../core/charts.dart';
+import '../core/day.dart';
+import '../core/masjid.dart';
+import '../core/place.dart';
+import '../core/prayer_calc.dart';
+import '../core/tasbih.dart';
+import '../core/timetable.dart';
+import '../core/tracker.dart';
+
+enum Lang {
+  en('English'),
+  ml('മലയാളം'),
+  ar('العربية', rtl: true),
+  ur('اردو', rtl: true),
+  hi('हिन्दी'),
+  ta('தமிழ்'),
+  kn('ಕನ್ನಡ'),
+  bn('বাংলা'),
+  id('Bahasa Indonesia'),
+  ms('Bahasa Melayu'),
+  tr('Türkçe'),
+  fr('Français');
+
+  const Lang(this.nativeName, {this.rtl = false});
+
+  /// Name of the language in itself (for the picker).
+  final String nativeName;
+
+  /// Right-to-left script.
+  final bool rtl;
+
+  /// ISO 639-1 code (also the Flutter locale).
+  String get code => name;
+
+  static Lang? tryCode(String? c) => values.asNameMap()[c];
+
+  static Lang fromCode(String? c) => tryCode(c) ?? en;
+}
+
+/// User preferences, persisted with shared_preferences.
+class AppSettings extends ChangeNotifier {
+  AppSettings._(this._prefs);
+
+  final SharedPreferences? _prefs;
+
+  /// In-memory settings (tests).
+  AppSettings.memory() : _prefs = null;
+
+  static Future<AppSettings> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    return AppSettings._(prefs).._read();
+  }
+
+  Lang lang = Lang.en;
+  ThemeMode themeMode = ThemeMode.system;
+  bool use24h = false;
+  bool showExtras = false;
+
+  /// Today as one chart (like the original app) instead of cards.
+  bool todayTable = true;
+
+  Place place = presetPlaces.firstWhere((p) => p.id == 'kozhikode');
+
+  /// True once the user has picked a place (first-run prompt).
+  bool placeChosen = false;
+
+  /// Permanent notification with the next Azan and Iqama.
+  bool statusNotification = true;
+
+  /// Follow the phone's GPS position (on when "Use my location" is picked).
+  bool autoLocation = false;
+
+  /// The place was checked for a built-in chart (done once for setups
+  /// from before charts were applied by themselves).
+  bool chartsChecked = false;
+
+  /// First-run setup done (existing users who picked a place skip it).
+  bool onboarded = true;
+
+  CalcMethod method = CalcMethod.kerala;
+  AsrMethod asr = AsrMethod.shafii;
+  HighLatitudeRule highLatitude = HighLatitudeRule.automatic;
+  Map<Prayer, int> adjustments = {};
+  int imsakMinutes = 10;
+  int ishraqMinutes = 15;
+
+  /// Angles of the Custom Method.
+  double customFajr = 18, customIsha = 17;
+
+  /// The user's own Azan times (local minutes after midnight).
+  Map<Prayer, int> fixedTimes = {};
+  int hijriAdjust = 0;
+
+  AlertConfig alerts = const AlertConfig();
+
+  /// Mosque profiles (empty: just the Iqama settings in [alerts]).
+  List<Masjid> masjids = [];
+  int activeMasjid = 0;
+  static const int maxMasjids = 8;
+
+  Masjid? get masjid => masjids.isEmpty
+      ? null
+      : masjids[activeMasjid.clamp(0, masjids.length - 1)];
+
+  /// Switches to mosque [i]: its Iqama times become the active ones.
+  Future<void> selectMasjid(int i) => update((s) {
+    s._syncMasjid();
+    s.activeMasjid = i.clamp(0, s.masjids.length - 1);
+    s._applyMasjid(s.masjids[s.activeMasjid]);
+  });
+
+  /// Takes over a profile's Iqama times, adjustments and time source.
+  void _applyMasjid(Masjid m) {
+    alerts = m.applyTo(alerts);
+    if (m.adjustments != null) adjustments = Map.of(m.adjustments!);
+    final src = m.source;
+    if (src != null) {
+      place = src.place;
+      method = CalcMethod.byId(src.methodId);
+      asr = src.asr;
+      timetableCsv = src.timetableCsv;
+      timetableEnabled = src.timetableEnabled && src.timetableCsv != null;
+      if (src.place.id != 'gps') autoLocation = false;
+    }
+  }
+
+  /// Deletes profile [i]; if it was active, the next one takes over.
+  Future<void> removeMasjid(int i) => update((s) {
+    s._syncMasjid();
+    final wasActive = i == s.activeMasjid;
+    s.masjids = [...s.masjids]..removeAt(i);
+    if (s.activeMasjid > i || s.activeMasjid >= s.masjids.length) {
+      s.activeMasjid--;
+    }
+    if (s.masjids.isEmpty) {
+      s.activeMasjid = 0;
+    } else if (wasActive) {
+      s._applyMasjid(s.masjids[s.activeMasjid]);
+    }
+  });
+
+  /// Keeps the active profile in step with the Iqama settings.
+  void _syncMasjid() {
+    if (masjids.isEmpty) return;
+    activeMasjid = activeMasjid.clamp(0, masjids.length - 1);
+    masjids = [...masjids]
+      ..[activeMasjid] = masjids[activeMasjid].withIqamaFrom(
+        alerts,
+        adjustments,
+        MasjidSource(
+          place: place,
+          methodId: method.id,
+          asr: asr,
+          timetableCsv: timetableCsv,
+          timetableEnabled: timetableEnabled,
+        ),
+      );
+  }
+
+  /// Prayer tracker (saved with the other settings).
+  PrayerLog log = PrayerLog();
+
+  TasbihState tasbih = TasbihState();
+
+  /// Mosque display: optional name, the big next-prayer page, seconds per
+  /// page and up to [maxAnnouncements] announcement pages.
+  String mosqueName = '';
+  bool displayNextPage = true;
+  int displaySeconds = 12;
+
+  /// Keep the screen on while the display is open (else the phone's
+  /// screen timeout applies).
+  bool displayKeepOn = true;
+  List<String> announcements = [];
+  static const int maxAnnouncements = 5;
+
+  /// Pages the mosque display rotates through.
+  int get displayPageCount =>
+      1 + (displayNextPage ? 1 : 0) + announcements.length;
+
+  /// Imported timetable CSV and whether it is used.
+  String? timetableCsv;
+  bool timetableEnabled = false;
+
+  Timetable? _timetable;
+  String? _timetableParsedFrom;
+
+  /// The active timetable, or null.
+  Timetable? get timetable {
+    if (!timetableEnabled || timetableCsv == null) return null;
+    if (_timetableParsedFrom != timetableCsv) {
+      _timetableParsedFrom = timetableCsv;
+      try {
+        _timetable = Timetable.parse(timetableCsv!);
+      } on TimetableFormatException {
+        _timetable = null;
+      }
+    }
+    return _timetable;
+  }
+
+  CalcParams get params => CalcParams(
+    method: method.id == CalcMethod.custom.id
+        ? CalcMethod(
+            id: CalcMethod.custom.id,
+            name: CalcMethod.custom.name,
+            fajrAngle: customFajr,
+            ishaAngle: customIsha,
+          )
+        : method,
+    fixedTimes: fixedTimes,
+    asr: asr,
+    highLatitude: highLatitude,
+    adjustments: _withCalibration(),
+    imsakMinutesBeforeFajr: imsakMinutes,
+    ishraqMinutesAfterSunrise: ishraqMinutes,
+  );
+
+  /// The user's adjustments plus, for calculated Kerala-method times, the
+  /// local calendar correction of the place.
+  Map<Prayer, int> _withCalibration() {
+    // A timetable's times are used as printed.
+    if (method.id != 'kerala' || timetableEnabled) return adjustments;
+    final cal = localCalibration(place.latitude, place.longitude);
+    if (cal.isEmpty) return adjustments;
+    return {
+      for (final p in {...adjustments.keys, ...cal.keys})
+        p: (adjustments[p] ?? 0) + (cal[p] ?? 0),
+    };
+  }
+
+  DayCalculator? _calc;
+  Object? _calcKey;
+
+  /// Calculator for the current settings (cached until they change).
+  DayCalculator get calculator {
+    final key = Object.hashAll([
+      place,
+      method.id,
+      asr,
+      highLatitude,
+      jsonEncode({for (final e in adjustments.entries) e.key.name: e.value}),
+      imsakMinutes,
+      ishraqMinutes,
+      customFajr,
+      customIsha,
+      jsonEncode({for (final e in fixedTimes.entries) e.key.name: e.value}),
+      hijriAdjust,
+      timetableEnabled,
+      timetableCsv,
+    ]);
+    if (_calc == null || _calcKey != key) {
+      _calcKey = key;
+      _calc = DayCalculator(
+        place: place,
+        params: params,
+        timetable: timetable,
+        hijriAdjustDays: hijriAdjust,
+      );
+    }
+    return _calc!;
+  }
+
+  /// Minutes east of UTC used to show times (the place's zone, else the
+  /// phone's).
+  int get displayOffsetMinutes => place.offsetMinutesAt(DateTime.now().toUtc());
+
+  /// Wall-clock time at the place for a UTC instant (as a UTC DateTime whose
+  /// fields are the local clock).
+  DateTime wall(DateTime utc) =>
+      utc.toUtc().add(Duration(minutes: place.offsetMinutesAt(utc.toUtc())));
+
+  /// Today's civil date at the place.
+  DateTime get today {
+    final w = wall(DateTime.now());
+    return DateTime.utc(w.year, w.month, w.day);
+  }
+
+  void _read() {
+    final p = _prefs!;
+    // First run: the phone's language when we have it, else English.
+    lang =
+        Lang.tryCode(p.getString('lang')) ??
+        Lang.fromCode(ui.PlatformDispatcher.instance.locale.languageCode);
+    themeMode =
+        ThemeMode.values.asNameMap()[p.getString('theme')] ?? ThemeMode.system;
+    use24h = p.getBool('use24h') ?? false;
+    showExtras = p.getBool('showMoreTimes') ?? false;
+    todayTable = p.getBool('todayTable') ?? true;
+    final placeJson = p.getString('place');
+    if (placeJson != null) {
+      try {
+        place = Place.fromJson(jsonDecode(placeJson) as Map<String, dynamic>);
+      } catch (_) {}
+    }
+    placeChosen = p.getBool('placeChosen') ?? false;
+    onboarded = p.getBool('onboarded') ?? placeChosen;
+    chartsChecked = p.getBool('autoChecked') ?? false;
+    autoLocation = p.getBool('autoLocation') ?? false;
+    statusNotification = p.getBool('statusNotification') ?? true;
+    method = CalcMethod.byId(p.getString('method'));
+    asr = AsrMethod.values.asNameMap()[p.getString('asr')] ?? AsrMethod.shafii;
+    highLatitude =
+        HighLatitudeRule.values.asNameMap()[p.getString('highLatitude')] ??
+        HighLatitudeRule.automatic;
+    final adj = p.getString('adjustments');
+    if (adj != null) {
+      try {
+        final m = (jsonDecode(adj) as Map).cast<String, dynamic>();
+        adjustments = {
+          for (final e in m.entries)
+            if (Prayer.values.asNameMap()[e.key] != null)
+              Prayer.values.asNameMap()[e.key]!: e.value as int,
+        };
+      } catch (_) {}
+    }
+    imsakMinutes = p.getInt('imsak') ?? 10;
+    ishraqMinutes = p.getInt('ishraq') ?? 15;
+    customFajr = p.getDouble('customFajr') ?? 18;
+    customIsha = p.getDouble('customIsha') ?? 17;
+    final fixed = p.getString('fixedTimes');
+    if (fixed != null) {
+      try {
+        final m = (jsonDecode(fixed) as Map).cast<String, dynamic>();
+        fixedTimes = {
+          for (final e in m.entries)
+            if (Prayer.values.asNameMap()[e.key] != null)
+              Prayer.values.asNameMap()[e.key]!: e.value as int,
+        };
+      } catch (_) {}
+    }
+    hijriAdjust = p.getInt('hijriAdjust') ?? 0;
+    final al = p.getString('alerts');
+    if (al != null) {
+      try {
+        alerts = AlertConfig.fromJson(
+          (jsonDecode(al) as Map).cast<String, dynamic>(),
+        );
+      } catch (_) {}
+    }
+    final mj = p.getString('masjids');
+    if (mj != null) {
+      try {
+        masjids = [
+          for (final m in (jsonDecode(mj) as List))
+            Masjid.fromJson((m as Map).cast<String, dynamic>()),
+        ];
+      } catch (_) {}
+    }
+    activeMasjid = p.getInt('activeMasjid') ?? 0;
+    final tr = p.getString('tracker');
+    if (tr != null) {
+      try {
+        log = PrayerLog.fromJson(
+          (jsonDecode(tr) as Map).cast<String, dynamic>(),
+        );
+      } catch (_) {}
+    }
+    final tb = p.getString('tasbih');
+    if (tb != null) {
+      try {
+        tasbih = TasbihState.fromJson(
+          (jsonDecode(tb) as Map).cast<String, dynamic>(),
+        );
+      } catch (_) {}
+    }
+    final disp = p.getString('display');
+    if (disp != null) {
+      try {
+        final j = (jsonDecode(disp) as Map).cast<String, dynamic>();
+        mosqueName = j['name'] as String? ?? '';
+        displayNextPage = j['nextPage'] as bool? ?? true;
+        displaySeconds = j['seconds'] as int? ?? 12;
+        displayKeepOn = j['keepOn'] as bool? ?? true;
+        announcements = [
+          for (final a in (j['announcements'] as List? ?? const []))
+            if (a is String && a.trim().isNotEmpty) a,
+        ].take(maxAnnouncements).toList();
+      } catch (_) {}
+    }
+    timetableCsv = p.getString('timetable');
+    timetableEnabled = p.getBool('timetableEnabled') ?? false;
+  }
+
+  Future<void> _save() async {
+    _syncMasjid();
+    final p = _prefs;
+    notifyListeners();
+    if (p == null) return;
+    await p.setString('lang', lang.name);
+    await p.setString('theme', themeMode.name);
+    await p.setBool('use24h', use24h);
+    await p.setBool('showMoreTimes', showExtras);
+    await p.setBool('todayTable', todayTable);
+    await p.setString('place', jsonEncode(place.toJson()));
+    await p.setBool('placeChosen', placeChosen);
+    await p.setBool('onboarded', onboarded);
+    await p.setBool('autoChecked', chartsChecked);
+    await p.setBool('autoLocation', autoLocation);
+    await p.setBool('statusNotification', statusNotification);
+    await p.setString('method', method.id);
+    await p.setString('asr', asr.name);
+    await p.setString('highLatitude', highLatitude.name);
+    await p.setString(
+      'adjustments',
+      jsonEncode({for (final e in adjustments.entries) e.key.name: e.value}),
+    );
+    await p.setInt('imsak', imsakMinutes);
+    await p.setInt('ishraq', ishraqMinutes);
+    await p.setDouble('customFajr', customFajr);
+    await p.setDouble('customIsha', customIsha);
+    await p.setString(
+      'fixedTimes',
+      jsonEncode({for (final e in fixedTimes.entries) e.key.name: e.value}),
+    );
+    await p.setInt('hijriAdjust', hijriAdjust);
+    await p.setString('alerts', jsonEncode(alerts.toJson()));
+    await p.setString(
+      'masjids',
+      jsonEncode([for (final m in masjids) m.toJson()]),
+    );
+    await p.setInt('activeMasjid', activeMasjid);
+    await p.setString('tracker', jsonEncode(log.toJson(today)));
+    await p.setString('tasbih', jsonEncode(tasbih.toJson()));
+    await p.setString(
+      'display',
+      jsonEncode({
+        'name': mosqueName,
+        'nextPage': displayNextPage,
+        'seconds': displaySeconds,
+        'keepOn': displayKeepOn,
+        'announcements': announcements,
+      }),
+    );
+    if (timetableCsv == null) {
+      await p.remove('timetable');
+    } else {
+      await p.setString('timetable', timetableCsv!);
+    }
+    await p.setBool('timetableEnabled', timetableEnabled);
+  }
+
+  bool _quiet = false;
+
+  /// True (once) when the last change does not affect alarms, so they need
+  /// not be rescheduled (e.g. ticking a prayer in the tracker).
+  bool takeQuietChange() {
+    final q = _quiet;
+    _quiet = false;
+    return q;
+  }
+
+  /// Like [update], for changes that do not affect alerts.
+  Future<void> updateQuietly(void Function(AppSettings s) change) {
+    _quiet = true;
+    return update(change);
+  }
+
+  /// Applies [change] and persists.
+  Future<void> update(void Function(AppSettings s) change) {
+    change(this);
+    return _save();
+  }
+
+  /// Picks [p] and applies its suggested method and Asr school.
+  /// Uses a ready-made Azan Time Chart: its place and its exact times.
+  Future<void> useChart(ChartPlace c) => update((s) {
+    final p = c.place;
+    s.place = p;
+    s.placeChosen = true;
+    s.chartsChecked = true;
+    s.autoLocation = false;
+    s.method = CalcMethod.byId(p.methodId);
+    s.asr = p.asr;
+    s.timetableCsv = c.timetable.toCsv();
+    s.timetableEnabled = true;
+    // The chart's times exactly, without minute adjustments.
+    s.adjustments = {};
+  });
+
+  /// The current place is a built-in chart.
+  bool get usesChart => place.id.startsWith('chart:') && timetableEnabled;
+
+  Future<void> choosePlace(Place p, {bool applySuggestions = true}) =>
+      update((s) {
+        s.place = p;
+        s.placeChosen = true;
+        s.chartsChecked = true;
+        s.autoLocation = p.id == 'gps';
+        if (applySuggestions) {
+          s.method = CalcMethod.byId(p.methodId);
+          s.asr = p.asr;
+        }
+      });
+}
