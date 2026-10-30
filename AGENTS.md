@@ -16,6 +16,17 @@ This project is an Android app with multiple product flavors (Play Store / F-Dro
 - **F-Droid data repo checkout**: `fdroiddata/` (usually gitignored in this app repo)
   - Real CI for F-Droid runs against the `fdroiddata` repository’s metadata.
 
+## Other apps in this repo (Flutter)
+
+- **New apps are built with Flutter (Dart), not Kotlin/Android modules.**
+  Each lives in its own top-level folder with its own CI workflow:
+  `tulu_nighantu/`, `tulu_panchanga/`, `rupeetrack/`.
+- Follow the existing pattern: `lib/app/` (state as a `ChangeNotifier` +
+  `InheritedNotifier` scope, persisted with `shared_preferences`),
+  `lib/screens/`, `lib/widgets/`, plain-Dart logic with unit tests in `test/`,
+  package id `com.kspstadk.<app>`.
+- Before pushing, run `flutter analyze` and `flutter test` in the app folder.
+
 ## Flavor intent and constraints
 
 - **`playstore` flavor**

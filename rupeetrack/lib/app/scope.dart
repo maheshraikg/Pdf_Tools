@@ -1,0 +1,49 @@
+import 'package:flutter/material.dart';
+
+import '../ledger/ledger.dart';
+import '../models/models.dart';
+import 'store.dart';
+
+/// Gives widgets access to the [FinanceStore] and rebuilds them when it
+/// changes.
+class AppScope extends InheritedNotifier<FinanceStore> {
+  const AppScope({super.key, required FinanceStore store, required super.child})
+    : super(notifier: store);
+
+  static FinanceStore storeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<AppScope>()!.notifier!;
+}
+
+extension AppContext on BuildContext {
+  FinanceStore get store => AppScope.storeOf(this);
+  Ledger get ledger => store.ledger;
+}
+
+/// Today's date (overridable in tests).
+DateTime Function() clock = DateTime.now;
+
+DateTime today() => dateOnly(clock());
+
+const _months = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', //
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+const _monthsLong = [
+  'January', 'February', 'March', 'April', 'May', 'June', //
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
+/// "12 Mar 2026".
+String shortDate(DateTime d) => '${d.day} ${_months[d.month - 1]} ${d.year}';
+
+/// "March 2026".
+String monthLabel(DateTime d) => '${_monthsLong[d.month - 1]} ${d.year}';
+
+/// "Today", "Yesterday" or [shortDate].
+String relativeDate(DateTime d) {
+  final diff = today().difference(dateOnly(d)).inDays;
+  if (diff == 0) return 'Today';
+  if (diff == 1) return 'Yesterday';
+  return shortDate(d);
+}

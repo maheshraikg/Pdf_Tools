@@ -1,0 +1,324 @@
+import 'money.dart';
+
+/// Strips the time from [d], as a UTC date so day arithmetic is DST-proof.
+DateTime dateOnly(DateTime d) => DateTime.utc(d.year, d.month, d.day);
+
+String _isoDate(DateTime d) =>
+    '${d.year.toString().padLeft(4, '0')}-'
+    '${d.month.toString().padLeft(2, '0')}-'
+    '${d.day.toString().padLeft(2, '0')}';
+
+DateTime _parseDate(String s) => dateOnly(DateTime.parse(s));
+
+T _enum<T extends Enum>(List<T> values, Object? name, T fallback) =>
+    values.asNameMap()[name] ?? fallback;
+
+enum AccountKind {
+  savings('Savings account'),
+  cash('Cash in hand'),
+  wallet('UPI / wallet');
+
+  const AccountKind(this.label);
+  final String label;
+}
+
+/// A bank account, cash in hand or wallet. Its balance is never stored: it is
+/// always recalculated from [openingBalance] and the recorded transactions.
+class Account {
+  const Account({
+    required this.id,
+    required this.name,
+    required this.kind,
+    required this.openingBalance,
+  });
+
+  final int id;
+  final String name;
+  final AccountKind kind;
+  final Paise openingBalance;
+
+  Map<String, Object?> toJson() => {
+    'id': id,
+    'name': name,
+    'kind': kind.name,
+    'opening': openingBalance,
+  };
+
+  factory Account.fromJson(Map<String, dynamic> j) => Account(
+    id: j['id'] as int,
+    name: j['name'] as String,
+    kind: _enum(AccountKind.values, j['kind'], AccountKind.savings),
+    openingBalance: j['opening'] as int,
+  );
+}
+
+/// A credit card. [statementDay] and [dueDay] are days of the month (1-31);
+/// a day past the end of a short month means its last day.
+class CreditCard {
+  const CreditCard({
+    required this.id,
+    required this.name,
+    required this.lastFour,
+    required this.creditLimit,
+    required this.statementDay,
+    required this.dueDay,
+    this.openingOutstanding = 0,
+  }) : assert(statementDay >= 1 && statementDay <= 31),
+       assert(dueDay >= 1 && dueDay <= 31);
+
+  final int id;
+  final String name;
+  final String lastFour;
+  final Paise creditLimit;
+  final int statementDay;
+  final int dueDay;
+
+  /// Amount already owed when the card was added to the app.
+  final Paise openingOutstanding;
+
+  String get displayName => lastFour.isEmpty ? name : '$name ••$lastFour';
+
+  Map<String, Object?> toJson() => {
+    'id': id,
+    'name': name,
+    'last4': lastFour,
+    'limit': creditLimit,
+    'statementDay': statementDay,
+    'dueDay': dueDay,
+    'opening': openingOutstanding,
+  };
+
+  factory CreditCard.fromJson(Map<String, dynamic> j) => CreditCard(
+    id: j['id'] as int,
+    name: j['name'] as String,
+    lastFour: (j['last4'] as String?) ?? '',
+    creditLimit: j['limit'] as int,
+    statementDay: j['statementDay'] as int,
+    dueDay: j['dueDay'] as int,
+    openingOutstanding: (j['opening'] as int?) ?? 0,
+  );
+}
+
+enum InvestmentType {
+  mutualFund('Mutual fund / SIP'),
+  stock('Stocks'),
+  ppf('PPF'),
+  nsc('NSC'),
+  fixedDeposit('Fixed deposit'),
+  recurringDeposit('Recurring deposit'),
+  postOffice('Post Office scheme'),
+  nps('NPS'),
+  gold('Gold / SGB'),
+  other('Other');
+
+  const InvestmentType(this.label);
+  final String label;
+}
+
+/// An investment holding. [currentValue] is entered by the user; null means
+/// it has not been valued yet, so returns are not shown rather than guessed.
+class Investment {
+  const Investment({
+    required this.id,
+    required this.name,
+    required this.type,
+    this.currentValue,
+    this.valueUpdatedOn,
+  });
+
+  final int id;
+  final String name;
+  final InvestmentType type;
+  final Paise? currentValue;
+  final DateTime? valueUpdatedOn;
+
+  Investment withValue(Paise value, DateTime on) => Investment(
+    id: id,
+    name: name,
+    type: type,
+    currentValue: value,
+    valueUpdatedOn: dateOnly(on),
+  );
+
+  Map<String, Object?> toJson() => {
+    'id': id,
+    'name': name,
+    'type': type.name,
+    'value': currentValue,
+    'valuedOn': valueUpdatedOn == null ? null : _isoDate(valueUpdatedOn!),
+  };
+
+  factory Investment.fromJson(Map<String, dynamic> j) => Investment(
+    id: j['id'] as int,
+    name: j['name'] as String,
+    type: _enum(InvestmentType.values, j['type'], InvestmentType.other),
+    currentValue: j['value'] as int?,
+    valueUpdatedOn: j['valuedOn'] == null
+        ? null
+        : _parseDate(j['valuedOn'] as String),
+  );
+}
+
+enum TxnType {
+  /// Spending from an account or a credit card.
+  expense('Expense'),
+
+  /// Money received into an account (salary, bank interest, ...).
+  income('Income'),
+
+  /// Money moved between two of the user's own accounts. Not income or
+  /// expense.
+  transfer('Transfer'),
+
+  /// Paying a credit card bill from an account: debt repayment, not a second
+  /// expense.
+  cardPayment('Card bill'),
+
+  /// Money returned against an earlier expense, to an account or a card.
+  refund('Refund'),
+
+  /// Contribution to an investment from an account or a card. Never counted
+  /// as spending.
+  invest('Invest'),
+
+  /// Redemption / withdrawal from an investment into an account.
+  investWithdrawal('Withdraw'),
+
+  /// Dividend or interest from an investment. Paid out to an account when
+  /// [Txn.toAccountId] is set, otherwise reinvested (already in the value).
+  investIncome('Dividend / interest');
+
+  const TxnType(this.label);
+  final String label;
+}
+
+/// One ledger entry. Which of the from/to fields are used depends on [type];
+/// see [validate].
+class Txn {
+  const Txn({
+    required this.id,
+    required this.type,
+    required this.amount,
+    required this.date,
+    this.category,
+    this.note,
+    this.fromAccountId,
+    this.fromCardId,
+    this.toAccountId,
+    this.toCardId,
+    this.investmentId,
+  });
+
+  final int id;
+  final TxnType type;
+  final Paise amount;
+  final DateTime date;
+  final String? category;
+  final String? note;
+  final int? fromAccountId;
+  final int? fromCardId;
+  final int? toAccountId;
+  final int? toCardId;
+  final int? investmentId;
+
+  Txn withId(int newId) => Txn(
+    id: newId,
+    type: type,
+    amount: amount,
+    date: date,
+    category: category,
+    note: note,
+    fromAccountId: fromAccountId,
+    fromCardId: fromCardId,
+    toAccountId: toAccountId,
+    toCardId: toCardId,
+    investmentId: investmentId,
+  );
+
+  Map<String, Object?> toJson() => {
+    'id': id,
+    'type': type.name,
+    'amount': amount,
+    'date': _isoDate(date),
+    if (category != null) 'category': category,
+    if (note != null) 'note': note,
+    if (fromAccountId != null) 'fromAccount': fromAccountId,
+    if (fromCardId != null) 'fromCard': fromCardId,
+    if (toAccountId != null) 'toAccount': toAccountId,
+    if (toCardId != null) 'toCard': toCardId,
+    if (investmentId != null) 'investment': investmentId,
+  };
+
+  factory Txn.fromJson(Map<String, dynamic> j) => Txn(
+    id: j['id'] as int,
+    type: _enum(TxnType.values, j['type'], TxnType.expense),
+    amount: j['amount'] as int,
+    date: _parseDate(j['date'] as String),
+    category: j['category'] as String?,
+    note: j['note'] as String?,
+    fromAccountId: j['fromAccount'] as int?,
+    fromCardId: j['fromCard'] as int?,
+    toAccountId: j['toAccount'] as int?,
+    toCardId: j['toCard'] as int?,
+    investmentId: j['investment'] as int?,
+  );
+}
+
+/// Problems that stop [t] from being saved; empty when it is valid.
+List<String> validate(Txn t) {
+  final errors = <String>[];
+  if (t.amount <= 0) errors.add('Enter an amount greater than zero');
+  final oneSource = (t.fromAccountId != null) != (t.fromCardId != null);
+  switch (t.type) {
+    case TxnType.expense:
+      if (!oneSource) errors.add('Choose the account or card you paid from');
+    case TxnType.invest:
+      if (!oneSource) errors.add('Choose the account or card you paid from');
+      if (t.investmentId == null) errors.add('Choose an investment');
+    case TxnType.income:
+      if (t.toAccountId == null) {
+        errors.add('Choose the account that received the money');
+      }
+    case TxnType.transfer:
+      if (t.fromAccountId == null || t.toAccountId == null) {
+        errors.add('Choose both accounts');
+      } else if (t.fromAccountId == t.toAccountId) {
+        errors.add('Choose two different accounts');
+      }
+    case TxnType.cardPayment:
+      if (t.fromAccountId == null) {
+        errors.add('Choose the account the bill was paid from');
+      }
+      if (t.toCardId == null) errors.add('Choose the card that was paid');
+    case TxnType.refund:
+      if ((t.toAccountId != null) == (t.toCardId != null)) {
+        errors.add('Choose the account or card that got the refund');
+      }
+    case TxnType.investWithdrawal:
+      if (t.investmentId == null) errors.add('Choose an investment');
+      if (t.toAccountId == null) {
+        errors.add('Choose the account that received the money');
+      }
+    case TxnType.investIncome:
+      if (t.investmentId == null) errors.add('Choose an investment');
+  }
+  return errors;
+}
+
+/// Built-in spending categories; users can type their own as well.
+const expenseCategories = [
+  'Food',
+  'Groceries',
+  'Transport',
+  'Fuel',
+  'Shopping',
+  'Bills',
+  'Rent',
+  'Health',
+  'Entertainment',
+  'Travel',
+  'Education',
+  'Other',
+];
+
+const incomeCategories = ['Salary', 'Interest', 'Business', 'Gift', 'Other'];
