@@ -8,6 +8,13 @@ on:
     paths: [ 'rupeetrack/**', '.github/workflows/rupeetrack.yml' ]
   workflow_dispatch:
 
+# A fixed tag gives a permanent direct link to the newest APK:
+#   https://github.com/<owner>/<repo>/releases/download/rupeetrack-keep/RupeeTrack.apk
+# "keep" protects it from manage-releases.yml pruning; it is a pre-release so
+# it never becomes the PDF Toolkit's "Latest" release.
+env:
+  APK_TAG: rupeetrack-keep
+
 jobs:
   build:
     name: Analyze, test and build release APK
@@ -47,3 +54,34 @@ jobs:
         with:
           name: rupeetrack-release-apk
           path: rupeetrack/build/app/outputs/flutter-apk/app-release.apk
+
+  publish:
+    name: Publish APK download link
+    needs: build
+    # Not for pull requests from forks (no write access there).
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: rupeetrack-release-apk
+
+      - name: Upload to the rupeetrack-keep release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          mv app-release.apk RupeeTrack.apk
+          if gh release view "$APK_TAG" >/dev/null 2>&1; then
+            # Point the tag at the commit this APK was built from.
+            gh api -X PATCH "repos/$GH_REPO/git/refs/tags/$APK_TAG" -f sha="$SHA" -F force=true
+          else
+            gh release create "$APK_TAG" --target "$SHA" --prerelease --latest=false \
+              --title "RupeeTrack (latest build)" \
+              --notes "Newest RupeeTrack APK, rebuilt automatically. Direct link: https://github.com/$GH_REPO/releases/download/$APK_TAG/RupeeTrack.apk"
+          fi
+          gh release upload "$APK_TAG" RupeeTrack.apk --clobber
+          echo "Direct download: https://github.com/$GH_REPO/releases/download/$APK_TAG/RupeeTrack.apk" >> "$GITHUB_STEP_SUMMARY"

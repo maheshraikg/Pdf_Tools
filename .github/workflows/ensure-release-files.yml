@@ -46,6 +46,11 @@ jobs:
           RELEASES=$(gh release list --limit 100 --json tagName,createdAt --jq 'sort_by(.createdAt) | reverse | .[].tagName')
           
           for TAG in $RELEASES; do
+            # Only PDF Toolkit releases (vX.Y.Z); other apps publish their own.
+            case "$TAG" in
+              v[0-9]*) ;;
+              *) echo "Skipping non-PDF Toolkit release: $TAG"; continue ;;
+            esac
             echo "Checking release: $TAG"
             
             # Check what files exist in the release
