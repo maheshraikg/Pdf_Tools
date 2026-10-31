@@ -220,7 +220,8 @@ String guessCategory(String description) {
   return 'Other';
 }
 
-String _incomeCategory(String description) {
+/// Best-guess income category for a statement description.
+String guessIncomeCategory(String description) {
   final d = description.toLowerCase();
   if (d.contains('salary') || d.contains('sal ')) return 'Salary';
   if (d.contains('interest') || d.contains('int.pd') || d.contains('int pd')) {
@@ -375,7 +376,7 @@ StatementImport importStatement(
           type: TxnType.income,
           amount: value,
           date: d,
-          category: _incomeCategory(description),
+          category: guessIncomeCategory(description),
           note: note,
           toAccountId: accountId,
         ),

@@ -58,3 +58,23 @@ Paise? parseRupees(String input) {
   final paise = (match.group(2) ?? '').padRight(2, '0');
   return int.parse(whole) * 100 + int.parse(paise);
 }
+
+/// Like [parseRupees] but also accepts a leading minus (e.g. an overdrawn
+/// balance).
+Paise? parseSignedRupees(String input) {
+  final s = input.trim();
+  if (s.startsWith('-')) {
+    final v = parseRupees(s.substring(1));
+    return v == null ? null : -v;
+  }
+  return parseRupees(s);
+}
+
+/// Paise as plain text for an input field: "1250", "99.50", "-40".
+String amountText(Paise p) {
+  final sign = p < 0 ? '-' : '';
+  final a = p.abs();
+  return a % 100 == 0
+      ? '$sign${a ~/ 100}'
+      : '$sign${a ~/ 100}.${(a % 100).toString().padLeft(2, '0')}';
+}

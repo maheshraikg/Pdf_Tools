@@ -169,38 +169,46 @@ class FinanceStore extends ChangeNotifier {
 
   // ---- Accounts, cards, investments --------------------------------------
 
-  Future<void> addAccount(String name, AccountKind kind, int openingBalance) {
-    _accounts.add(
-      Account(
-        id: _newId(),
-        name: name,
-        kind: kind,
-        openingBalance: openingBalance,
-      ),
+  Future<Account> addAccount(
+    String name,
+    AccountKind kind,
+    int openingBalance, {
+    String lastFour = '',
+  }) async {
+    final a = Account(
+      id: _newId(),
+      name: name,
+      kind: kind,
+      openingBalance: openingBalance,
+      lastFour: lastFour,
+      since: dateOnly(DateTime.now()),
     );
-    return _save();
+    _accounts.add(a);
+    await _save();
+    return a;
   }
 
-  Future<void> addCard({
+  Future<CreditCard> addCard({
     required String name,
     required String lastFour,
     required int creditLimit,
     required int statementDay,
     required int dueDay,
     int openingOutstanding = 0,
-  }) {
-    _cards.add(
-      CreditCard(
-        id: _newId(),
-        name: name,
-        lastFour: lastFour,
-        creditLimit: creditLimit,
-        statementDay: statementDay,
-        dueDay: dueDay,
-        openingOutstanding: openingOutstanding,
-      ),
+  }) async {
+    final c = CreditCard(
+      id: _newId(),
+      name: name,
+      lastFour: lastFour,
+      creditLimit: creditLimit,
+      statementDay: statementDay,
+      dueDay: dueDay,
+      openingOutstanding: openingOutstanding,
+      since: dateOnly(DateTime.now()),
     );
-    return _save();
+    _cards.add(c);
+    await _save();
+    return c;
   }
 
   Future<Investment> addInvestment(String name, InvestmentType type) async {
@@ -255,15 +263,108 @@ class FinanceStore extends ChangeNotifier {
     return updated;
   }
 
-  /// Deletes an account, card or investment that has no transactions.
-  Future<bool> deleteHolding({int? accountId, int? cardId, int? investmentId}) {
-    if (isInUse(
+  /// Edits an account. [currentBalance] is today's balance as the user sees
+  /// it; the opening balance is shifted so that the transactions add up to it.
+  Future<void> updateAccount(
+    Account a, {
+    required String name,
+    required AccountKind kind,
+    required String lastFour,
+    required Paise currentBalance,
+  }) {
+    final shift = currentBalance - ledger.accountBalance(a.id);
+    _upsert(
+      _accounts,
+      a.copyWith(
+        name: name,
+        kind: kind,
+        lastFour: lastFour,
+        openingBalance: a.openingBalance + shift,
+      ),
+      (e) => e.id,
+    );
+    return _save();
+  }
+
+  /// Edits a card; [currentOutstanding] works like the account balance.
+  Future<void> updateCard(
+    CreditCard c, {
+    required String name,
+    required String lastFour,
+    required Paise creditLimit,
+    required int statementDay,
+    required int dueDay,
+    required Paise currentOutstanding,
+  }) {
+    final shift = currentOutstanding - ledger.cardOutstanding(c.id);
+    _upsert(
+      _cards,
+      c.copyWith(
+        name: name,
+        lastFour: lastFour,
+        creditLimit: creditLimit,
+        statementDay: statementDay,
+        dueDay: dueDay,
+        openingOutstanding: c.openingOutstanding + shift,
+      ),
+      (e) => e.id,
+    );
+    return _save();
+  }
+
+  Future<void> updateInvestment(
+    Investment inv,
+    String name,
+    InvestmentType type,
+  ) {
+    _upsert(_investments, inv.renamed(name, type), (e) => e.id);
+    return _save();
+  }
+
+  /// Number of transactions and recurring rules that use the holding.
+  int usageCount({int? accountId, int? cardId, int? investmentId}) =>
+      [..._txns, for (final r in _recurring) r.template]
+          .where(
+            (t) => _touches(
+              t,
+              accountId: accountId,
+              cardId: cardId,
+              investmentId: investmentId,
+            ),
+          )
+          .length;
+
+  static bool _touches(
+    Txn t, {
+    int? accountId,
+    int? cardId,
+    int? investmentId,
+  }) =>
+      (accountId != null &&
+          (t.fromAccountId == accountId || t.toAccountId == accountId)) ||
+      (cardId != null && (t.fromCardId == cardId || t.toCardId == cardId)) ||
+      (investmentId != null && t.investmentId == investmentId);
+
+  /// Deletes an account, card or investment together with every transaction
+  /// and recurring rule that uses it. Returns the receipt photos of the
+  /// deleted transactions so the caller can remove the files.
+  Future<List<String>> deleteHolding({
+    int? accountId,
+    int? cardId,
+    int? investmentId,
+  }) async {
+    bool uses(Txn t) => _touches(
+      t,
       accountId: accountId,
       cardId: cardId,
       investmentId: investmentId,
-    )) {
-      return Future.value(false);
-    }
+    );
+    final receipts = [
+      for (final t in _txns)
+        if (uses(t) && t.receiptPath != null) t.receiptPath!,
+    ];
+    _txns.removeWhere(uses);
+    _recurring.removeWhere((r) => uses(r.template));
     _accounts.removeWhere((a) => a.id == accountId);
     _cards.removeWhere((c) => c.id == cardId);
     _investments.removeWhere((i) => i.id == investmentId);
@@ -271,7 +372,8 @@ class FinanceStore extends ChangeNotifier {
         lastSource == Source.card(cardId ?? -1)) {
       lastSource = null;
     }
-    return _save().then((_) => true);
+    await _save();
+    return receipts;
   }
 
   // ---- Transactions -------------------------------------------------------
@@ -288,7 +390,11 @@ class FinanceStore extends ChangeNotifier {
     if (repeat != null && t.recurringId == null) {
       final rule = Recurring(
         id: _newId(),
-        template: Txn.fromJson({...t.toJson(), 'id': 0}..remove('receipt')),
+        template: Txn.fromJson(
+          {...t.toJson(), 'id': 0}
+            ..remove('receipt')
+            ..remove('src'),
+        ),
         frequency: repeat,
         nextDate: dateOnly(t.date),
       );

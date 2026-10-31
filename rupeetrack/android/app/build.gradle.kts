@@ -31,8 +31,10 @@ android {
     }
 
     // Release signing: android/key.properties (storeFile, storePassword,
-    // keyAlias, keyPassword) when present; otherwise the debug key, so that
-    // `flutter build apk --release` always produces an installable APK.
+    // keyAlias, keyPassword) when present. Otherwise a shared dev key that is
+    // committed to the repo, so every test build has the same signature: new
+    // APKs install over old ones (keeping data) and Google sign-in sees a
+    // stable SHA-1. The dev key is public: never use it for the Play Store.
     val keyProps = Properties().apply {
         val f = rootProject.file("key.properties")
         if (f.exists()) f.inputStream().use { load(it) }
@@ -46,12 +48,21 @@ android {
                 keyPassword = keyProps.getProperty("keyPassword")
             }
         }
+        create("dev") {
+            storeFile = file("dev-keystore.jks")
+            storePassword = "rupeetrack-dev"
+            keyAlias = "dev"
+            keyPassword = "rupeetrack-dev"
+        }
     }
 
     buildTypes {
         release {
             signingConfig = signingConfigs.findByName("release")
-                ?: signingConfigs.getByName("debug")
+                ?: signingConfigs.getByName("dev")
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("dev")
         }
     }
 }

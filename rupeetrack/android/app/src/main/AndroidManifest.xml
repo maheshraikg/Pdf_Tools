@@ -3,6 +3,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Bank SMS are read on the phone to detect card and account activity. -->
+    <uses-permission android:name="android.permission.READ_SMS" />
     <application
         android:label="RupeeTrack"
         android:name="${applicationName}"
@@ -54,6 +56,14 @@
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
+        <!-- Payment apps offered by "Pay bill" (Android 11+ package visibility). -->
+        <package android:name="com.dreamplug.androidapp" />
+        <package android:name="com.phonepe.app" />
+        <package android:name="com.google.android.apps.nbu.paisa.user" />
+        <package android:name="net.one97.paytm" />
+        <package android:name="in.amazon.mShop.android.shopping" />
+        <package android:name="in.org.npci.upiapp" />
+        <package android:name="com.mobikwik_new" />
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

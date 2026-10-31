@@ -40,13 +40,31 @@ Future<String?> promptText(
 Future<void> showAddAccountDialog(BuildContext context) =>
     showDialog<void>(context: context, builder: (_) => const _AccountForm());
 
+Future<void> showEditAccountDialog(BuildContext context, Account a) =>
+    showDialog<void>(
+      context: context,
+      builder: (_) => _AccountForm(edit: a),
+    );
+
 Future<void> showAddCardDialog(BuildContext context) =>
     showDialog<void>(context: context, builder: (_) => const _CardForm());
+
+Future<void> showEditCardDialog(BuildContext context, CreditCard c) =>
+    showDialog<void>(
+      context: context,
+      builder: (_) => _CardForm(edit: c),
+    );
 
 Future<Investment?> showAddInvestmentDialog(BuildContext context) =>
     showDialog<Investment>(
       context: context,
       builder: (_) => const _InvestmentForm(),
+    );
+
+Future<void> showEditInvestmentDialog(BuildContext context, Investment inv) =>
+    showDialog<void>(
+      context: context,
+      builder: (_) => _InvestmentForm(edit: inv),
     );
 
 Future<void> showUpdateValueDialog(BuildContext context, Investment inv) =>
@@ -102,7 +120,8 @@ Paise? _optionalAmount(String text) =>
     text.trim().isEmpty ? 0 : parseRupees(text);
 
 class _AccountForm extends StatefulWidget {
-  const _AccountForm();
+  const _AccountForm({this.edit});
+  final Account? edit;
 
   @override
   State<_AccountForm> createState() => _AccountFormState();
@@ -111,31 +130,70 @@ class _AccountForm extends StatefulWidget {
 class _AccountFormState extends State<_AccountForm> {
   final _name = TextEditingController();
   final _opening = TextEditingController();
+  final _last4 = TextEditingController();
   AccountKind _kind = AccountKind.savings;
   String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    final a = widget.edit;
+    if (a != null) {
+      _name.text = a.name;
+      _kind = a.kind;
+      _last4.text = a.lastFour;
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final a = widget.edit;
+    if (a != null && _opening.text.isEmpty) {
+      _opening.text = amountText(context.ledger.accountBalance(a.id));
+    }
+  }
 
   @override
   void dispose() {
     _name.dispose();
     _opening.dispose();
+    _last4.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
     final name = _name.text.trim();
-    final opening = _optionalAmount(_opening.text);
+    final last4 = _last4.text.trim();
+    final balance = _opening.text.trim().isEmpty
+        ? 0
+        : parseSignedRupees(_opening.text);
     if (name.isEmpty) return setState(() => _error = 'Enter a name');
-    if (opening == null) {
+    if (balance == null) {
       return setState(() => _error = 'Enter a valid balance');
     }
-    await context.store.addAccount(name, _kind, opening);
+    if (last4.isNotEmpty && !RegExp(r'^\d{3,6}$').hasMatch(last4)) {
+      return setState(() => _error = 'Account digits must be 3 to 6 numbers');
+    }
+    final a = widget.edit;
+    if (a == null) {
+      await context.store.addAccount(name, _kind, balance, lastFour: last4);
+    } else {
+      await context.store.updateAccount(
+        a,
+        name: name,
+        kind: _kind,
+        lastFour: last4,
+        currentBalance: balance,
+      );
+    }
     if (mounted) Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return _DialogFrame(
-      title: 'Add account',
+      title: widget.edit == null ? 'Add account' : 'Edit account',
       error: _error,
       onSave: _save,
       children: [
@@ -170,13 +228,31 @@ class _AccountFormState extends State<_AccountForm> {
           ),
         ),
         AmountField(controller: _opening, label: 'Current balance'),
+        if (_kind == AccountKind.savings)
+          TextField(
+            controller: _last4,
+            keyboardType: TextInputType.number,
+            maxLength: 6,
+            decoration: const InputDecoration(
+              labelText: 'Last 4 digits of account (optional)',
+              helperText: 'Lets RupeeTrack match bank SMS to this account',
+              counterText: '',
+            ),
+          ),
+        if (widget.edit != null)
+          Text(
+            'Changing the balance keeps all transactions; the starting '
+            'balance is adjusted so the total matches.',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
       ],
     );
   }
 }
 
 class _CardForm extends StatefulWidget {
-  const _CardForm();
+  const _CardForm({this.edit});
+  final CreditCard? edit;
 
   @override
   State<_CardForm> createState() => _CardFormState();
@@ -190,6 +266,28 @@ class _CardFormState extends State<_CardForm> {
   int _statementDay = 15;
   int _dueDay = 5;
   String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    final c = widget.edit;
+    if (c != null) {
+      _name.text = c.name;
+      _last4.text = c.lastFour;
+      _limit.text = amountText(c.creditLimit);
+      _statementDay = c.statementDay;
+      _dueDay = c.dueDay;
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final c = widget.edit;
+    if (c != null && _outstanding.text.isEmpty) {
+      _outstanding.text = amountText(context.ledger.cardOutstanding(c.id));
+    }
+  }
 
   @override
   void dispose() {
@@ -214,14 +312,27 @@ class _CardFormState extends State<_CardForm> {
     if (outstanding == null) {
       return setState(() => _error = 'Enter a valid outstanding amount');
     }
-    await context.store.addCard(
-      name: name,
-      lastFour: last4,
-      creditLimit: limit,
-      statementDay: _statementDay,
-      dueDay: _dueDay,
-      openingOutstanding: outstanding,
-    );
+    final c = widget.edit;
+    if (c == null) {
+      await context.store.addCard(
+        name: name,
+        lastFour: last4,
+        creditLimit: limit,
+        statementDay: _statementDay,
+        dueDay: _dueDay,
+        openingOutstanding: outstanding,
+      );
+    } else {
+      await context.store.updateCard(
+        c,
+        name: name,
+        lastFour: last4,
+        creditLimit: limit,
+        statementDay: _statementDay,
+        dueDay: _dueDay,
+        currentOutstanding: outstanding,
+      );
+    }
     if (mounted) Navigator.pop(context);
   }
 
@@ -240,7 +351,7 @@ class _CardFormState extends State<_CardForm> {
   @override
   Widget build(BuildContext context) {
     return _DialogFrame(
-      title: 'Add credit card',
+      title: widget.edit == null ? 'Add credit card' : 'Edit card',
       error: _error,
       onSave: _save,
       children: [
@@ -278,7 +389,9 @@ class _CardFormState extends State<_CardForm> {
         ),
         AmountField(
           controller: _outstanding,
-          label: 'Amount owed now (optional)',
+          label: widget.edit == null
+              ? 'Amount owed now (optional)'
+              : 'Amount owed now',
         ),
       ],
     );
@@ -286,7 +399,8 @@ class _CardFormState extends State<_CardForm> {
 }
 
 class _InvestmentForm extends StatefulWidget {
-  const _InvestmentForm();
+  const _InvestmentForm({this.edit});
+  final Investment? edit;
 
   @override
   State<_InvestmentForm> createState() => _InvestmentFormState();
@@ -298,6 +412,16 @@ class _InvestmentFormState extends State<_InvestmentForm> {
   String? _error;
 
   @override
+  void initState() {
+    super.initState();
+    final inv = widget.edit;
+    if (inv != null) {
+      _name.text = inv.name;
+      _type = inv.type;
+    }
+  }
+
+  @override
   void dispose() {
     _name.dispose();
     super.dispose();
@@ -306,6 +430,12 @@ class _InvestmentFormState extends State<_InvestmentForm> {
   Future<void> _save() async {
     final name = _name.text.trim();
     if (name.isEmpty) return setState(() => _error = 'Enter a name');
+    final edit = widget.edit;
+    if (edit != null) {
+      await context.store.updateInvestment(edit, name, _type);
+      if (mounted) Navigator.pop(context);
+      return;
+    }
     final inv = await context.store.addInvestment(name, _type);
     if (mounted) Navigator.pop(context, inv);
   }
@@ -313,7 +443,7 @@ class _InvestmentFormState extends State<_InvestmentForm> {
   @override
   Widget build(BuildContext context) {
     return _DialogFrame(
-      title: 'Add investment',
+      title: widget.edit == null ? 'Add investment' : 'Edit investment',
       error: _error,
       onSave: _save,
       children: [

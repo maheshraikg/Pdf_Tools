@@ -324,6 +324,72 @@ Example Mutual Fund
       expect(plan.last.title, contains('Rent'));
     });
   });
+
+  group('edit, delete and statement view', () {
+    test('editing the balance keeps entries and shifts the opening', () async {
+      final store = FinanceStore.memory();
+      final a = await store.addAccount('SBI', AccountKind.savings, 1000000);
+      await store.saveTxn(
+        expense(250, d(2026, 10, 3)).copyWith().withFrom(a.id),
+      );
+      expect(store.ledger.accountBalance(a.id), 975000);
+      await store.updateAccount(
+        store.ledger.account(a.id)!,
+        name: 'SBI Salary',
+        kind: AccountKind.savings,
+        lastFour: '1234',
+        currentBalance: 1200000,
+      );
+      final edited = store.ledger.account(a.id)!;
+      expect(edited.name, 'SBI Salary');
+      expect(edited.lastFour, '1234');
+      expect(store.ledger.accountBalance(a.id), 1200000);
+      expect(store.ledger.txns, hasLength(1));
+    });
+
+    test('deleting an account removes its entries and rules', () async {
+      final store = FinanceStore.memory();
+      final a = await store.addAccount('SBI', AccountKind.savings, 0);
+      final b = await store.addAccount('Cash', AccountKind.cash, 0);
+      await store.saveTxn(
+        expense(100, d(2026, 10, 3)).withFrom(a.id),
+        repeat: Frequency.monthly,
+      );
+      await store.saveTxn(expense(50, d(2026, 10, 4)).withFrom(b.id));
+      expect(store.usageCount(accountId: a.id), 2); // entry + rule
+      await store.deleteHolding(accountId: a.id);
+      expect(store.ledger.accounts.map((x) => x.id), [b.id]);
+      expect(store.ledger.txns.single.fromAccountId, b.id);
+      expect(store.ledger.recurring, isEmpty);
+    });
+
+    test('running balance after each entry, like a bank statement', () {
+      final l = Ledger(
+        accounts: [sbi],
+        txns: [
+          expense(100, d(2026, 10, 1)).copyWith(id: 1),
+          Txn(
+            id: 2,
+            type: TxnType.income,
+            amount: 500000,
+            date: d(2026, 10, 2),
+            toAccountId: 1,
+          ),
+          expense(250, d(2026, 10, 2)).copyWith(id: 3),
+        ],
+      );
+      expect(l.runningBalances(accountId: 1), {
+        1: 990000,
+        2: 1490000,
+        3: 1465000,
+      });
+    });
+  });
+}
+
+extension on Txn {
+  Txn withFrom(int accountId) =>
+      Txn.fromJson({...toJson(), 'fromAccount': accountId});
 }
 
 Txn withNote(Txn t, {String? note}) =>

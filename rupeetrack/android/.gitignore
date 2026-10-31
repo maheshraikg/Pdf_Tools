@@ -12,3 +12,7 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+
+# Shared key for test builds only (password is public); real releases use
+# key.properties with a private upload key.
+!app/dev-keystore.jks

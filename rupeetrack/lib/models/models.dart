@@ -30,18 +30,45 @@ class Account {
     required this.name,
     required this.kind,
     required this.openingBalance,
+    this.lastFour = '',
+    this.since,
   });
 
   final int id;
   final String name;
   final AccountKind kind;
+
+  /// Balance on [since] (or before any transaction when [since] is null).
   final Paise openingBalance;
+
+  /// Last digits of the account number, used to match bank SMS and emails.
+  final String lastFour;
+
+  /// Day the opening balance applies to. Older entries (e.g. imported
+  /// history) appear in reports but do not change the balance.
+  final DateTime? since;
+
+  Account copyWith({
+    String? name,
+    AccountKind? kind,
+    Paise? openingBalance,
+    String? lastFour,
+  }) => Account(
+    id: id,
+    name: name ?? this.name,
+    kind: kind ?? this.kind,
+    openingBalance: openingBalance ?? this.openingBalance,
+    lastFour: lastFour ?? this.lastFour,
+    since: since,
+  );
 
   Map<String, Object?> toJson() => {
     'id': id,
     'name': name,
     'kind': kind.name,
     'opening': openingBalance,
+    if (lastFour.isNotEmpty) 'last4': lastFour,
+    if (since != null) 'since': isoDate(since!),
   };
 
   factory Account.fromJson(Map<String, dynamic> j) => Account(
@@ -49,6 +76,44 @@ class Account {
     name: j['name'] as String,
     kind: _enum(AccountKind.values, j['kind'], AccountKind.savings),
     openingBalance: j['opening'] as int,
+    lastFour: (j['last4'] as String?) ?? '',
+    since: j['since'] == null ? null : parseIsoDate(j['since'] as String),
+  );
+}
+
+/// A bill as reported by the bank (statement SMS, email or PDF). When
+/// present it is shown instead of the bill the app works out itself.
+class BankBill {
+  const BankBill({
+    required this.totalDue,
+    required this.dueDate,
+    this.minDue,
+    this.statementDate,
+    required this.source,
+  });
+
+  final Paise totalDue;
+  final Paise? minDue;
+  final DateTime dueDate;
+  final DateTime? statementDate;
+
+  /// "SMS", "email" or "statement PDF".
+  final String source;
+
+  Map<String, Object?> toJson() => {
+    'total': totalDue,
+    if (minDue != null) 'min': minDue,
+    'due': isoDate(dueDate),
+    if (statementDate != null) 'stmt': isoDate(statementDate!),
+    'source': source,
+  };
+
+  factory BankBill.fromJson(Map<String, dynamic> j) => BankBill(
+    totalDue: j['total'] as int,
+    minDue: j['min'] as int?,
+    dueDate: parseIsoDate(j['due'] as String),
+    statementDate: j['stmt'] == null ? null : parseIsoDate(j['stmt'] as String),
+    source: (j['source'] as String?) ?? 'SMS',
   );
 }
 
@@ -63,6 +128,8 @@ class CreditCard {
     required this.statementDay,
     required this.dueDay,
     this.openingOutstanding = 0,
+    this.since,
+    this.bill,
   }) : assert(statementDay >= 1 && statementDay <= 31),
        assert(dueDay >= 1 && dueDay <= 31);
 
@@ -73,10 +140,36 @@ class CreditCard {
   final int statementDay;
   final int dueDay;
 
-  /// Amount already owed when the card was added to the app.
+  /// Amount owed on [since] (or before any transaction when null).
   final Paise openingOutstanding;
 
+  /// Day [openingOutstanding] applies to; older entries are history only.
+  final DateTime? since;
+
+  /// Latest bill reported by the bank, if any.
+  final BankBill? bill;
+
   String get displayName => lastFour.isEmpty ? name : '$name ••$lastFour';
+
+  CreditCard copyWith({
+    String? name,
+    String? lastFour,
+    BankBill? bill,
+    int? statementDay,
+    int? dueDay,
+    Paise? creditLimit,
+    Paise? openingOutstanding,
+  }) => CreditCard(
+    id: id,
+    name: name ?? this.name,
+    lastFour: lastFour ?? this.lastFour,
+    creditLimit: creditLimit ?? this.creditLimit,
+    statementDay: statementDay ?? this.statementDay,
+    dueDay: dueDay ?? this.dueDay,
+    openingOutstanding: openingOutstanding ?? this.openingOutstanding,
+    since: since,
+    bill: bill ?? this.bill,
+  );
 
   Map<String, Object?> toJson() => {
     'id': id,
@@ -86,6 +179,8 @@ class CreditCard {
     'statementDay': statementDay,
     'dueDay': dueDay,
     'opening': openingOutstanding,
+    if (since != null) 'since': isoDate(since!),
+    if (bill != null) 'bill': bill!.toJson(),
   };
 
   factory CreditCard.fromJson(Map<String, dynamic> j) => CreditCard(
@@ -96,6 +191,10 @@ class CreditCard {
     statementDay: j['statementDay'] as int,
     dueDay: j['dueDay'] as int,
     openingOutstanding: (j['opening'] as int?) ?? 0,
+    since: j['since'] == null ? null : parseIsoDate(j['since'] as String),
+    bill: j['bill'] == null
+        ? null
+        : BankBill.fromJson(j['bill'] as Map<String, dynamic>),
   );
 }
 
@@ -160,6 +259,17 @@ class Investment {
         schemeCode: schemeCode,
         units: units,
       );
+
+  Investment renamed(String newName, InvestmentType newType) => Investment(
+    id: id,
+    name: newName,
+    type: newType,
+    currentValue: currentValue,
+    valueUpdatedOn: valueUpdatedOn,
+    valueSource: valueSource,
+    schemeCode: schemeCode,
+    units: units,
+  );
 
   /// Links (or with nulls, unlinks) this holding to an AMFI scheme.
   Investment withScheme(String? code, double? heldUnits) => Investment(
@@ -248,6 +358,7 @@ class Txn {
     this.investmentId,
     this.receiptPath,
     this.recurringId,
+    this.sourceKey,
   });
 
   final int id;
@@ -268,6 +379,18 @@ class Txn {
   /// The [Recurring] rule that created this entry, if any.
   final int? recurringId;
 
+  /// Set on entries read from an SMS, email or statement ("sms:…"), so the
+  /// same message is never imported twice.
+  final String? sourceKey;
+
+  /// Where an automatically detected entry came from, for display.
+  String? get sourceLabel => switch (sourceKey?.split(':').first) {
+    'sms' => 'SMS',
+    'mail' => 'Email',
+    'pdf' => 'Statement',
+    _ => null,
+  };
+
   Txn copyWith({int? id, DateTime? date, int? recurringId}) => Txn(
     id: id ?? this.id,
     type: type,
@@ -282,6 +405,7 @@ class Txn {
     investmentId: investmentId,
     receiptPath: receiptPath,
     recurringId: recurringId ?? this.recurringId,
+    sourceKey: sourceKey,
   );
 
   Map<String, Object?> toJson() => {
@@ -298,6 +422,7 @@ class Txn {
     if (investmentId != null) 'investment': investmentId,
     if (receiptPath != null) 'receipt': receiptPath,
     if (recurringId != null) 'recurring': recurringId,
+    if (sourceKey != null) 'src': sourceKey,
   };
 
   factory Txn.fromJson(Map<String, dynamic> j) => Txn(
@@ -314,6 +439,7 @@ class Txn {
     investmentId: j['investment'] as int?,
     receiptPath: j['receipt'] as String?,
     recurringId: j['recurring'] as int?,
+    sourceKey: j['src'] as String?,
   );
 }
 
@@ -339,9 +465,8 @@ List<String> validate(Txn t) {
         errors.add('Choose two different accounts');
       }
     case TxnType.cardPayment:
-      if (t.fromAccountId == null) {
-        errors.add('Choose the account the bill was paid from');
-      }
+      // The paying account is optional: a payment detected from the card's
+      // SMS may have come from an account that is not tracked here.
       if (t.toCardId == null) errors.add('Choose the card that was paid');
     case TxnType.refund:
       if ((t.toAccountId != null) == (t.toCardId != null)) {

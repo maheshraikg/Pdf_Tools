@@ -15,9 +15,18 @@ class CardStatus {
     required this.amountDue,
     required this.dueDate,
     required this.overdue,
+    this.minDue,
+    this.fromBank = false,
   });
 
   final CreditCard card;
+
+  /// Minimum amount due still unpaid, when the bank reported one.
+  final Paise? minDue;
+
+  /// True when the bill figures come from the bank (SMS, email or PDF)
+  /// rather than being worked out from the entries in the app.
+  final bool fromBank;
 
   /// Everything currently owed, including purchases after the statement.
   final Paise outstanding;
@@ -142,16 +151,52 @@ class Ledger {
   // ---- Accounts -----------------------------------------------------------
 
   Paise accountBalance(int accountId, {DateTime? asOf}) {
-    var balance = account(accountId)?.openingBalance ?? 0;
+    final a = account(accountId);
+    var balance = a?.openingBalance ?? 0;
+    final since = a?.since;
     for (final t in _upTo(asOf)) {
+      if (_isHistory(t, since)) continue;
       if (t.fromAccountId == accountId) balance -= t.amount;
       if (t.toAccountId == accountId) balance += t.amount;
     }
     return balance;
   }
 
+  /// Imported entries dated before an account's or card's opening balance
+  /// are already part of that balance: shown in history, not counted again.
+  /// Entries typed in by hand always count.
+  static bool _isHistory(Txn t, DateTime? since) =>
+      since != null && t.sourceKey != null && t.date.isBefore(since);
+
   Paise get totalCash =>
       accounts.fold(0, (sum, a) => sum + accountBalance(a.id));
+
+  /// Balance of an account ([accountId]) or amount owed on a card
+  /// ([cardId]) right after each of its entries, keyed by transaction id,
+  /// like the balance column of a bank statement. History entries (see
+  /// [Account.since]) have no balance.
+  Map<int, Paise> runningBalances({int? accountId, int? cardId}) {
+    final a = account(accountId);
+    final c = card(cardId);
+    var balance = a?.openingBalance ?? c?.openingOutstanding ?? 0;
+    final since = a?.since ?? c?.since;
+    final result = <int, Paise>{};
+    for (final t in txns.reversed) {
+      if (_isHistory(t, since)) continue;
+      var delta = 0;
+      if (accountId != null) {
+        if (t.fromAccountId == accountId) delta -= t.amount;
+        if (t.toAccountId == accountId) delta += t.amount;
+      } else {
+        if (t.fromCardId == cardId) delta += t.amount;
+        if (t.toCardId == cardId) delta -= t.amount;
+      }
+      if (delta == 0) continue;
+      balance += delta;
+      result[t.id] = balance;
+    }
+    return result;
+  }
 
   /// Transactions touching [accountId], newest first.
   List<Txn> accountTxns(int accountId) => txns
@@ -161,8 +206,11 @@ class Ledger {
   // ---- Credit cards -------------------------------------------------------
 
   Paise cardOutstanding(int cardId, {DateTime? asOf}) {
-    var owed = card(cardId)?.openingOutstanding ?? 0;
+    final c = card(cardId);
+    var owed = c?.openingOutstanding ?? 0;
+    final since = c?.since;
     for (final t in _upTo(asOf)) {
+      if (_isHistory(t, since)) continue;
       // A card purchase (expense or investment) adds to what is owed; a bill
       // payment or a refund to the card reduces it.
       if (t.fromCardId == cardId) owed += t.amount;
@@ -214,6 +262,9 @@ class Ledger {
       overdue = false;
     }
 
+    final fromBank = _bankBillStatus(c, t, cycleSpend);
+    if (fromBank != null) return fromBank;
+
     return CardStatus(
       card: c,
       outstanding: cardOutstanding(c.id),
@@ -223,6 +274,40 @@ class Ledger {
       amountDue: amountDue,
       dueDate: dueDate,
       overdue: overdue,
+    );
+  }
+
+  /// The bank's own bill for [c], while it is current: not yet due, or due
+  /// within the last 60 days and still unpaid.
+  CardStatus? _bankBillStatus(CreditCard c, DateTime t, Paise cycleSpend) {
+    final bill = c.bill;
+    if (bill == null) return null;
+    final from =
+        bill.statementDate ?? bill.dueDate.subtract(const Duration(days: 20));
+    var paid = 0;
+    for (final x in txns) {
+      if (x.toCardId == c.id && x.date.isAfter(from) && !x.date.isAfter(t)) {
+        paid += x.amount;
+      }
+    }
+    final remaining = bill.totalDue - paid;
+    final amountDue = remaining > 0 ? remaining : 0;
+    final pastDue = bill.dueDate.isBefore(t);
+    if (pastDue && (amountDue == 0 || t.difference(bill.dueDate).inDays > 60)) {
+      return null;
+    }
+    final minLeft = bill.minDue == null ? null : bill.minDue! - paid;
+    return CardStatus(
+      card: c,
+      outstanding: cardOutstanding(c.id),
+      cycleSpend: cycleSpend,
+      lastStatementDate: bill.statementDate ?? from,
+      statementBalance: bill.totalDue,
+      amountDue: amountDue,
+      dueDate: bill.dueDate,
+      overdue: pastDue && amountDue > 0,
+      minDue: minLeft == null || minLeft <= 0 ? null : minLeft,
+      fromBank: true,
     );
   }
 

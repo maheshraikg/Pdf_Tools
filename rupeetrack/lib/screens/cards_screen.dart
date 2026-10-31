@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../app/scope.dart';
 import '../ledger/ledger.dart';
-import '../models/models.dart';
 import '../models/money.dart';
 import '../widgets/common.dart';
 import '../widgets/design.dart';
 import 'forms.dart';
 import 'holding_detail_screen.dart';
-import 'quick_add_sheet.dart';
+import 'pay_bill_sheet.dart';
 
 /// Gradients for the card faces, picked by card id so each keeps its look.
 const _cardFaces = [
@@ -202,6 +201,7 @@ class _CardBlock extends StatelessWidget {
           ),
           Panel(
             margin: const EdgeInsets.only(top: 12),
+            onTap: open,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -256,12 +256,7 @@ class _CardBlock extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     FilledButton(
-                      onPressed: () => showQuickAdd(
-                        context,
-                        type: TxnType.cardPayment,
-                        toCardId: s.card.id,
-                        amount: s.amountDue > 0 ? s.amountDue : null,
-                      ),
+                      onPressed: () => showPayBillSheet(context, s.card),
                       child: const Text('Pay bill'),
                     ),
                   ],

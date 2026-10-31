@@ -8,6 +8,7 @@ import '../widgets/common.dart';
 import '../widgets/design.dart';
 import 'budgets_screen.dart';
 import 'forms.dart';
+import 'pay_bill_sheet.dart';
 import 'quick_add_sheet.dart';
 import 'settings_screen.dart';
 
@@ -351,11 +352,7 @@ class _AlertBanner extends StatelessWidget {
           Expanded(child: Text(alert.message)),
           if (payable)
             TextButton(
-              onPressed: () => showQuickAdd(
-                context,
-                type: TxnType.cardPayment,
-                toCardId: card.id,
-              ),
+              onPressed: () => showPayBillSheet(context, card),
               child: const Text('Pay'),
             ),
         ],

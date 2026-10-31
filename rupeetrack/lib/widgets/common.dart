@@ -104,11 +104,22 @@ int txnDirection(Txn t) => switch (t.type) {
 };
 
 class TxnTile extends StatelessWidget {
-  const TxnTile(this.txn, {super.key, this.onTap, this.showDate = true});
+  const TxnTile(
+    this.txn, {
+    super.key,
+    this.onTap,
+    this.showDate = true,
+    this.balanceAfter,
+    this.balanceLabel = 'Bal',
+  });
 
   final Txn txn;
   final VoidCallback? onTap;
   final bool showDate;
+
+  /// Running balance after this entry, shown under the amount.
+  final Paise? balanceAfter;
+  final String balanceLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -155,10 +166,23 @@ class TxnTile extends StatelessWidget {
       subtitle: subtitle.isEmpty
           ? null
           : Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis),
-      trailing: Text(
-        '$sign${formatRupees(txn.amount)}',
-        style: Theme.of(context).textTheme.titleSmall
-            ?.copyWith(color: color, fontWeight: FontWeight.w600),
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '$sign${formatRupees(txn.amount)}',
+            style: Theme.of(context).textTheme.titleSmall
+                ?.copyWith(color: color, fontWeight: FontWeight.w600),
+          ),
+          if (balanceAfter != null)
+            Text(
+              '$balanceLabel ${formatRupees(balanceAfter!)}',
+              style: Theme.of(context).textTheme.labelSmall
+                  ?.copyWith(color: scheme.onSurfaceVariant),
+            ),
+        ],
       ),
     );
   }

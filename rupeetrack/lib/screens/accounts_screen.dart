@@ -97,6 +97,7 @@ class AccountsScreen extends StatelessWidget {
                             style: Theme.of(context).textTheme.titleMedium
                                 ?.copyWith(fontWeight: FontWeight.w600),
                           ),
+                          onLongPress: () => showEditAccountDialog(context, a),
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute<void>(
