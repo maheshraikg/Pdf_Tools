@@ -37,6 +37,9 @@ const _monthsLong = [
 /// "12 Mar 2026".
 String shortDate(DateTime d) => '${d.day} ${_months[d.month - 1]} ${d.year}';
 
+/// "12 Mar".
+String dayMonth(DateTime d) => '${d.day} ${_months[d.month - 1]}';
+
 /// "March 2026".
 String monthLabel(DateTime d) => '${_monthsLong[d.month - 1]} ${d.year}';
 

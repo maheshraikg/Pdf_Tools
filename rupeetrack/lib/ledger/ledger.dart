@@ -1,5 +1,6 @@
 import '../models/models.dart';
 import '../models/money.dart';
+import '../models/planning.dart';
 import 'billing_cycle.dart';
 import 'returns.dart';
 
@@ -65,13 +66,29 @@ class NetWorth {
   Paise get total => cash + investments - liabilities;
 }
 
-enum AlertKind { overdue, dueSoon, highUtilisation }
+enum AlertKind { overdue, dueSoon, overBudget, highUtilisation, nearBudget }
 
 class FinanceAlert {
-  const FinanceAlert(this.kind, this.card, this.message);
+  const FinanceAlert(this.kind, this.message, {this.card, this.category});
   final AlertKind kind;
-  final CreditCard card;
   final String message;
+
+  /// The card a due-date or utilisation alert is about.
+  final CreditCard? card;
+
+  /// The category a budget alert is about.
+  final String? category;
+}
+
+/// How a category is doing against its monthly [Budget].
+class BudgetStatus {
+  const BudgetStatus(this.budget, this.spent);
+  final Budget budget;
+  final Paise spent;
+
+  Paise get remaining => budget.monthlyLimit - spent;
+  double get percent =>
+      budget.monthlyLimit <= 0 ? 0 : spent * 100 / budget.monthlyLimit;
 }
 
 /// Read-only view over all accounts, cards, investments and transactions that
@@ -82,6 +99,8 @@ class Ledger {
     this.accounts = const [],
     this.cards = const [],
     this.investments = const [],
+    this.budgets = const [],
+    this.recurring = const [],
     List<Txn> txns = const [],
   }) : txns = List.unmodifiable(
          [...txns]..sort((a, b) {
@@ -93,6 +112,8 @@ class Ledger {
   final List<Account> accounts;
   final List<CreditCard> cards;
   final List<Investment> investments;
+  final List<Budget> budgets;
+  final List<Recurring> recurring;
 
   /// Newest first.
   final List<Txn> txns;
@@ -205,12 +226,14 @@ class Ledger {
     );
   }
 
-  /// Due-date reminders ([reminderDays] before the due date) and utilisation
-  /// warnings (highest of [utilisationThresholds] crossed).
+  /// Due-date reminders ([reminderDays] before the due date), utilisation
+  /// warnings (highest of [utilisationThresholds] crossed) and budgets that
+  /// are over or past [nearBudgetPercent] this month. Most urgent first.
   List<FinanceAlert> alerts(
     DateTime today, {
     int reminderDays = 7,
     List<int> utilisationThresholds = const [30, 50, 75],
+    double nearBudgetPercent = 80,
   }) {
     final t = dateOnly(today);
     final result = <FinanceAlert>[];
@@ -221,7 +244,7 @@ class Ledger {
         result.add(
           FinanceAlert(
             AlertKind.overdue,
-            c,
+            card: c,
             '${c.displayName}: ${formatRupees(s.amountDue)} was due '
             '${_daysText(-daysLeft)} ago',
           ),
@@ -230,7 +253,7 @@ class Ledger {
         result.add(
           FinanceAlert(
             AlertKind.dueSoon,
-            c,
+            card: c,
             daysLeft == 0
                 ? '${c.displayName}: ${formatRupees(s.amountDue)} is due today'
                 : '${c.displayName}: ${formatRupees(s.amountDue)} due in '
@@ -247,18 +270,35 @@ class Ledger {
         result.add(
           FinanceAlert(
             AlertKind.highUtilisation,
-            c,
+            card: c,
             '${c.displayName}: ${s.utilisationPercent.toStringAsFixed(0)}% of '
             'the limit used (over $hit%)',
           ),
         );
       }
     }
-    const order = [
-      AlertKind.overdue,
-      AlertKind.dueSoon,
-      AlertKind.highUtilisation,
-    ];
+    for (final b in budgetStatuses(t)) {
+      if (b.percent >= 100) {
+        result.add(
+          FinanceAlert(
+            AlertKind.overBudget,
+            category: b.budget.category,
+            '${b.budget.category}: ${formatRupees(-b.remaining)} over the '
+            '${formatRupees(b.budget.monthlyLimit)} budget',
+          ),
+        );
+      } else if (b.percent >= nearBudgetPercent) {
+        result.add(
+          FinanceAlert(
+            AlertKind.nearBudget,
+            category: b.budget.category,
+            '${b.budget.category}: ${b.percent.toStringAsFixed(0)}% of the '
+            'budget used, ${formatRupees(b.remaining)} left',
+          ),
+        );
+      }
+    }
+    final order = AlertKind.values;
     result.sort(
       (a, b) => order.indexOf(a.kind).compareTo(order.indexOf(b.kind)),
     );
@@ -306,6 +346,13 @@ class Ledger {
     final earned = income(from, to);
     if (earned <= 0) return null;
     return (earned - spending(from, to)) * 100 / earned;
+  }
+
+  /// Spending against each budget in the month containing [day].
+  List<BudgetStatus> budgetStatuses(DateTime day) {
+    if (budgets.isEmpty) return const [];
+    final spent = spendingByCategory(monthStart(day), monthEnd(day));
+    return [for (final b in budgets) BudgetStatus(b, spent[b.category] ?? 0)];
   }
 
   // ---- Investments --------------------------------------------------------

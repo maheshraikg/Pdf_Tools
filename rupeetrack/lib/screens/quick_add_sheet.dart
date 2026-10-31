@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
+import '../app/files.dart';
 import '../app/scope.dart';
 import '../app/store.dart';
 import '../models/models.dart';
 import '../models/money.dart';
+import '../models/planning.dart';
 import '../widgets/common.dart';
 import 'forms.dart';
 
@@ -65,6 +69,8 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
   late DateTime _date;
   List<String> _errors = const [];
   bool _initialised = false;
+  String? _receipt;
+  Frequency? _repeat;
 
   bool get _editing => widget.initial != null;
 
@@ -84,6 +90,7 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
       _to = _sourceOf(t.toAccountId, t.toCardId);
       _investmentId = t.investmentId;
       _date = t.date;
+      _receipt = t.receiptPath;
     } else {
       _type = widget.type ?? TxnType.expense;
       if (widget.amount != null) {
@@ -213,12 +220,19 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
       toAccountId: _to?.accountId,
       toCardId: _to?.cardId,
       investmentId: _usesInvestment ? _investmentId : null,
+      receiptPath: _receipt,
+      recurringId: widget.initial?.recurringId,
     );
-    final errors = await context.store.saveTxn(txn);
+    final previousReceipt = widget.initial?.receiptPath;
+    final errors = await context.store.saveTxn(txn, repeat: _repeat);
     if (!mounted) return;
     if (errors.isNotEmpty) {
       setState(() => _errors = errors);
       return;
+    }
+    // The old photo is no longer referenced once a new one replaced it.
+    if (previousReceipt != null && previousReceipt != _receipt) {
+      deleteReceipt(previousReceipt);
     }
     final messenger = ScaffoldMessenger.of(context);
     Navigator.pop(context);
@@ -227,10 +241,44 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
         content: Text(
           _editing
               ? 'Updated'
+              : _repeat != null
+              ? '${_type.label} of ${formatRupees(amount)} saved · '
+                    '${_repeat!.label.toLowerCase()}'
               : '${_type.label} of ${formatRupees(amount)} saved',
         ),
       ),
     );
+  }
+
+  Future<void> _addReceipt() async {
+    final camera = await showModalBottomSheet<bool>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_camera_outlined),
+              title: const Text('Take photo'),
+              onTap: () => Navigator.pop(context, true),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Choose from gallery'),
+              onTap: () => Navigator.pop(context, false),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (camera == null) return;
+    try {
+      final path = await captureReceipt(camera: camera);
+      if (path != null && mounted) setState(() => _receipt = path);
+    } catch (e) {
+      if (mounted) setState(() => _errors = ['Could not attach the photo: $e']);
+    }
   }
 
   Future<void> _pickDate() async {
@@ -337,6 +385,7 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                       children: [
                         for (final c in categories)
                           ChoiceChip(
+                            showCheckmark: false,
                             avatar: Icon(
                               categoryIcons[c] ?? Icons.category,
                               size: 18,
@@ -421,10 +470,71 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                           decoration: const InputDecoration(
                             hintText: 'Note (optional), e.g. Lunch',
                             isDense: true,
-                            border: OutlineInputBorder(),
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 6,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      if (_receipt == null)
+                        ActionChip(
+                          avatar: const Icon(Icons.receipt_long, size: 18),
+                          label: const Text('Add receipt'),
+                          onPressed: _addReceipt,
+                        )
+                      else
+                        InputChip(
+                          avatar: ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: Image.file(
+                              File(_receipt!),
+                              width: 24,
+                              height: 24,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, _, _) =>
+                                  const Icon(Icons.broken_image, size: 18),
+                            ),
+                          ),
+                          label: const Text('Receipt'),
+                          onPressed: () => showReceipt(context, _receipt!),
+                          onDeleted: () => setState(() => _receipt = null),
+                        ),
+                      if (widget.initial?.recurringId == null && !_editing)
+                        PopupMenuButton<Frequency?>(
+                          tooltip: 'Repeat',
+                          initialValue: _repeat,
+                          onSelected: (f) => setState(() => _repeat = f),
+                          itemBuilder: (_) => [
+                            const PopupMenuItem(
+                              value: null,
+                              child: Text('Does not repeat'),
+                            ),
+                            for (final f in Frequency.values)
+                              PopupMenuItem(value: f, child: Text(f.label)),
+                          ],
+                          child: Chip(
+                            avatar: Icon(
+                              _repeat == null
+                                  ? Icons.repeat
+                                  : Icons.event_repeat,
+                              size: 18,
+                            ),
+                            label: Text(_repeat?.label ?? 'Repeat'),
+                            backgroundColor: _repeat == null
+                                ? null
+                                : scheme.secondaryContainer,
+                          ),
+                        ),
+                      if (widget.initial?.recurringId != null)
+                        const Chip(
+                          avatar: Icon(Icons.event_repeat, size: 18),
+                          label: Text('Recurring entry'),
+                        ),
                     ],
                   ),
                 ],
@@ -492,6 +602,7 @@ class _SourceChips extends StatelessWidget {
         for (final a in l.accounts)
           if (Source.account(a.id) != exclude)
             ChoiceChip(
+              showCheckmark: false,
               avatar: Icon(iconForAccount(a.kind), size: 18),
               label: Text(a.name),
               selected: selected == Source.account(a.id),
@@ -500,6 +611,7 @@ class _SourceChips extends StatelessWidget {
       if (includeCards)
         for (final c in l.cards)
           ChoiceChip(
+            showCheckmark: false,
             avatar: const Icon(Icons.credit_card, size: 18),
             label: Text(c.displayName),
             selected: selected == Source.card(c.id),
@@ -514,4 +626,34 @@ class _SourceChips extends StatelessWidget {
     }
     return Wrap(spacing: 8, runSpacing: 4, children: chips);
   }
+}
+
+/// Full-screen, zoomable view of a receipt photo.
+void showReceipt(BuildContext context, String path) {
+  Navigator.push(
+    context,
+    MaterialPageRoute<void>(
+      fullscreenDialog: true,
+      builder: (context) => Scaffold(
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          title: const Text('Receipt', style: TextStyle(color: Colors.white)),
+        ),
+        body: InteractiveViewer(
+          maxScale: 5,
+          child: Center(
+            child: Image.file(
+              File(path),
+              errorBuilder: (_, _, _) => const Text(
+                'The photo is no longer on this phone.',
+                style: TextStyle(color: Colors.white70),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }

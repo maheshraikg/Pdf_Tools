@@ -77,13 +77,33 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     for (final t in items) {
       if (t.date != day) {
         day = t.date;
+        final sameDay = items.where((x) => x.date == t.date);
+        final spent = sameDay.fold(
+          0,
+          (s, x) => s + (txnDirection(x) < 0 ? x.amount : 0),
+        );
+        final scheme = Theme.of(context).colorScheme;
         children.add(
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-            child: Text(
-              relativeDate(t.date),
-              style: Theme.of(context).textTheme.labelLarge
-                  ?.copyWith(color: Theme.of(context).colorScheme.primary),
+            padding: const EdgeInsets.fromLTRB(20, 18, 20, 6),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    relativeDate(t.date),
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: scheme.primary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                if (spent > 0)
+                  Text(
+                    'Spent ${formatRupees(spent)}',
+                    style: Theme.of(context).textTheme.labelMedium
+                        ?.copyWith(color: scheme.onSurfaceVariant),
+                  ),
+              ],
             ),
           ),
         );
@@ -122,7 +142,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Transactions')),
+      appBar: AppBar(title: const Text('Activity')),
       body: Column(
         children: [
           Padding(
@@ -130,6 +150,10 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             child: SearchBar(
               controller: _search,
               hintText: 'Search: petrol, 250, SBI…',
+              elevation: const WidgetStatePropertyAll(0),
+              backgroundColor: WidgetStatePropertyAll(
+                Theme.of(context).colorScheme.surfaceContainerHigh,
+              ),
               leading: const Icon(Icons.search),
               trailing: [
                 if (q.isNotEmpty)

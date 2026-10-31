@@ -5,6 +5,7 @@ import '../ledger/ledger.dart';
 import '../models/models.dart';
 import '../models/money.dart';
 import '../widgets/common.dart';
+import '../widgets/design.dart';
 import 'forms.dart';
 import 'holding_detail_screen.dart';
 import 'quick_add_sheet.dart';
@@ -49,41 +50,63 @@ class AccountsScreen extends StatelessWidget {
           : ListView(
               padding: const EdgeInsets.only(bottom: 96),
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
+                HeroPanel(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Figure(
-                          'Total balance',
-                          formatRupees(l.totalCash),
-                          large: true,
-                        ),
+                      HeroFigure(
+                        'Total balance',
+                        formatRupees(l.totalCash),
+                        big: true,
                       ),
-                      if (rate != null)
-                        Figure(
-                          'Saved this month',
-                          '${rate.toStringAsFixed(0)}%',
+                      const SizedBox(height: 14),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: HeroFigure(
+                              'Accounts',
+                              '${l.accounts.length}',
+                            ),
+                          ),
+                          if (rate != null)
+                            Expanded(
+                              child: HeroFigure(
+                                'Saved this month',
+                                '${rate.toStringAsFixed(0)}%',
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Panel(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Column(
+                    children: [
+                      for (final a in l.accounts)
+                        ListTile(
+                          leading: IconBadge(
+                            iconForAccount(a.kind),
+                            color: chartColor(a.id),
+                          ),
+                          title: Text(a.name),
+                          subtitle: Text(a.kind.label),
+                          trailing: Text(
+                            formatRupees(l.accountBalance(a.id)),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (_) => HoldingDetailScreen.account(a.id),
+                            ),
+                          ),
                         ),
                     ],
                   ),
                 ),
-                for (final a in l.accounts)
-                  ListTile(
-                    leading: CircleAvatar(child: Icon(iconForAccount(a.kind))),
-                    title: Text(a.name),
-                    subtitle: Text(a.kind.label),
-                    trailing: Text(
-                      formatRupees(l.accountBalance(a.id)),
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (_) => HoldingDetailScreen.account(a.id),
-                      ),
-                    ),
-                  ),
               ],
             ),
     );

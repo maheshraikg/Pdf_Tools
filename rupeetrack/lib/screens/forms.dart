@@ -167,7 +167,6 @@ class _AccountFormState extends State<_AccountForm> {
               AccountKind.cash => 'e.g. Cash',
               AccountKind.wallet => 'e.g. Paytm wallet',
             },
-            border: const OutlineInputBorder(),
           ),
         ),
         AmountField(controller: _opening, label: 'Current balance'),
@@ -229,10 +228,7 @@ class _CardFormState extends State<_CardForm> {
   Widget _dayPicker(String label, int value, ValueChanged<int> onChanged) {
     return DropdownButtonFormField<int>(
       initialValue: value,
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-      ),
+      decoration: InputDecoration(labelText: label),
       items: [
         for (var d = 1; d <= 31; d++)
           DropdownMenuItem(value: d, child: Text(d == 31 ? '31 / last' : '$d')),
@@ -255,7 +251,6 @@ class _CardFormState extends State<_CardForm> {
           decoration: const InputDecoration(
             labelText: 'Card name',
             hintText: 'e.g. HDFC Millennia',
-            border: OutlineInputBorder(),
           ),
         ),
         TextField(
@@ -264,7 +259,6 @@ class _CardFormState extends State<_CardForm> {
           maxLength: 4,
           decoration: const InputDecoration(
             labelText: 'Last 4 digits (optional)',
-            border: OutlineInputBorder(),
             counterText: '',
           ),
         ),
@@ -325,10 +319,7 @@ class _InvestmentFormState extends State<_InvestmentForm> {
       children: [
         DropdownButtonFormField<InvestmentType>(
           initialValue: _type,
-          decoration: const InputDecoration(
-            labelText: 'Type',
-            border: OutlineInputBorder(),
-          ),
+          decoration: const InputDecoration(labelText: 'Type'),
           items: [
             for (final t in InvestmentType.values)
               DropdownMenuItem(value: t, child: Text(t.label)),
@@ -342,7 +333,6 @@ class _InvestmentFormState extends State<_InvestmentForm> {
           decoration: const InputDecoration(
             labelText: 'Name',
             hintText: 'e.g. Nifty 50 index fund',
-            border: OutlineInputBorder(),
           ),
         ),
         Text(

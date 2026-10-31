@@ -5,6 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../ledger/ledger.dart';
 import '../models/models.dart';
+import '../data/amfi.dart';
+import '../models/money.dart';
+import '../models/planning.dart';
 
 /// Where the quick-add form takes money from: an account or a card.
 class Source {
@@ -56,9 +59,14 @@ class FinanceStore extends ChangeNotifier {
   final List<CreditCard> _cards = [];
   final List<Investment> _investments = [];
   final List<Txn> _txns = [];
+  final List<Budget> _budgets = [];
+  final List<Recurring> _recurring = [];
   int _nextId = 1;
 
   ThemeMode themeMode = ThemeMode.system;
+
+  /// Card due-date and recurring-entry reminders.
+  bool notifications = true;
 
   /// Remembered so that the next quick entry is one tap shorter.
   String lastCategory = expenseCategories.first;
@@ -73,23 +81,48 @@ class FinanceStore extends ChangeNotifier {
     final raw = _prefs!.getString(_dataKey);
     if (raw == null) return;
     try {
-      final j = jsonDecode(raw) as Map<String, dynamic>;
-      List<T> list<T>(String key, T Function(Map<String, dynamic>) f) =>
-          ((j[key] as List?) ?? const [])
-              .map((e) => f(e as Map<String, dynamic>))
-              .toList();
-      _accounts.addAll(list('accounts', Account.fromJson));
-      _cards.addAll(list('cards', CreditCard.fromJson));
-      _investments.addAll(list('investments', Investment.fromJson));
-      _txns.addAll(list('txns', Txn.fromJson));
-      _nextId = (j['nextId'] as int?) ?? 1;
-      themeMode = ThemeMode.values.asNameMap()[j['theme']] ?? ThemeMode.system;
-      lastCategory = (j['lastCategory'] as String?) ?? lastCategory;
-      lastSource = Source.parse(j['lastSource'] as String?);
+      _loadJson(jsonDecode(raw) as Map<String, dynamic>);
     } catch (e) {
       debugPrint('RupeeTrack: could not read saved data: $e');
     }
     _rebuild();
+  }
+
+  void _loadJson(Map<String, dynamic> j) {
+    List<T> list<T>(String key, T Function(Map<String, dynamic>) f) =>
+        ((j[key] as List?) ?? const [])
+            .map((e) => f(e as Map<String, dynamic>))
+            .toList();
+    // Parse everything first so that a bad file leaves the data untouched.
+    final accounts = list('accounts', Account.fromJson);
+    final cards = list('cards', CreditCard.fromJson);
+    final investments = list('investments', Investment.fromJson);
+    final txns = list('txns', Txn.fromJson);
+    final budgets = list('budgets', Budget.fromJson);
+    final recurring = list('recurring', Recurring.fromJson);
+    _accounts
+      ..clear()
+      ..addAll(accounts);
+    _cards
+      ..clear()
+      ..addAll(cards);
+    _investments
+      ..clear()
+      ..addAll(investments);
+    _txns
+      ..clear()
+      ..addAll(txns);
+    _budgets
+      ..clear()
+      ..addAll(budgets);
+    _recurring
+      ..clear()
+      ..addAll(recurring);
+    _nextId = (j['nextId'] as int?) ?? 1;
+    themeMode = ThemeMode.values.asNameMap()[j['theme']] ?? ThemeMode.system;
+    notifications = (j['notifications'] as bool?) ?? true;
+    lastCategory = (j['lastCategory'] as String?) ?? expenseCategories.first;
+    lastSource = Source.parse(j['lastSource'] as String?);
   }
 
   Map<String, Object?> toJson() => {
@@ -97,8 +130,11 @@ class FinanceStore extends ChangeNotifier {
     'cards': _cards.map((e) => e.toJson()).toList(),
     'investments': _investments.map((e) => e.toJson()).toList(),
     'txns': _txns.map((e) => e.toJson()).toList(),
+    'budgets': _budgets.map((e) => e.toJson()).toList(),
+    'recurring': _recurring.map((e) => e.toJson()).toList(),
     'nextId': _nextId,
     'theme': themeMode.name,
+    'notifications': notifications,
     'lastCategory': lastCategory,
     'lastSource': lastSource?.key,
   };
@@ -108,6 +144,8 @@ class FinanceStore extends ChangeNotifier {
       accounts: List.unmodifiable(_accounts),
       cards: List.unmodifiable(_cards),
       investments: List.unmodifiable(_investments),
+      budgets: List.unmodifiable(_budgets),
+      recurring: List.unmodifiable(_recurring),
       txns: _txns,
     );
   }
@@ -177,13 +215,45 @@ class FinanceStore extends ChangeNotifier {
     return _save();
   }
 
-  bool isInUse({int? accountId, int? cardId, int? investmentId}) => _txns.any(
-    (t) =>
-        (accountId != null &&
-            (t.fromAccountId == accountId || t.toAccountId == accountId)) ||
-        (cardId != null && (t.fromCardId == cardId || t.toCardId == cardId)) ||
-        (investmentId != null && t.investmentId == investmentId),
-  );
+  bool isInUse({int? accountId, int? cardId, int? investmentId}) =>
+      [..._txns, for (final r in _recurring) r.template].any(
+        (t) =>
+            (accountId != null &&
+                (t.fromAccountId == accountId || t.toAccountId == accountId)) ||
+            (cardId != null &&
+                (t.fromCardId == cardId || t.toCardId == cardId)) ||
+            (investmentId != null && t.investmentId == investmentId),
+      );
+
+  /// Links a mutual fund to an AMFI scheme and the units held; null code
+  /// unlinks it.
+  Future<void> linkScheme(Investment inv, String? code, double? units) {
+    _upsert(_investments, inv.withScheme(code, units), (e) => e.id);
+    return _save();
+  }
+
+  /// Revalues every linked fund from [navs] (scheme code -> quote). Returns
+  /// how many holdings were updated.
+  Future<int> applyNavs(Map<String, NavQuote> navs) async {
+    var updated = 0;
+    for (final inv in [..._investments]) {
+      final quote = navs[inv.schemeCode];
+      if (!inv.isLinked || quote == null) continue;
+      final value = (inv.units! * quote.nav * 100).round();
+      _upsert(
+        _investments,
+        inv.withValue(
+          value,
+          quote.date,
+          source: 'AMFI NAV ${formatRupees((quote.nav * 100).round())}',
+        ),
+        (e) => e.id,
+      );
+      updated++;
+    }
+    if (updated > 0) await _save();
+    return updated;
+  }
 
   /// Deletes an account, card or investment that has no transactions.
   Future<bool> deleteHolding({int? accountId, int? cardId, int? investmentId}) {
@@ -208,10 +278,23 @@ class FinanceStore extends ChangeNotifier {
 
   /// Saves [t] (a new one when its id is 0). Returns validation errors, or an
   /// empty list on success.
-  Future<List<String>> saveTxn(Txn t) async {
+  ///
+  /// With [repeat], a new entry also becomes a [Recurring] rule whose later
+  /// copies are posted automatically.
+  Future<List<String>> saveTxn(Txn t, {Frequency? repeat}) async {
     final errors = validate(t);
     if (errors.isNotEmpty) return errors;
-    final saved = t.id == 0 ? t.withId(_newId()) : t;
+    var saved = t.id == 0 ? t.copyWith(id: _newId()) : t;
+    if (repeat != null && t.recurringId == null) {
+      final rule = Recurring(
+        id: _newId(),
+        template: Txn.fromJson({...t.toJson(), 'id': 0}..remove('receipt')),
+        frequency: repeat,
+        nextDate: dateOnly(t.date),
+      );
+      _recurring.add(rule.copyWith(nextDate: rule.after(t.date)));
+      saved = saved.copyWith(recurringId: rule.id);
+    }
     _upsert(_txns, saved, (e) => e.id);
     if (t.type == TxnType.expense) {
       lastCategory = t.category ?? lastCategory;
@@ -231,6 +314,123 @@ class FinanceStore extends ChangeNotifier {
   /// Adds [t] back after an undo.
   Future<void> restoreTxn(Txn t) {
     _upsert(_txns, t, (e) => e.id);
+    return _save();
+  }
+
+  // ---- Recurring entries -------------------------------------------------
+
+  /// Posts every recurring entry that has fallen due up to [today]. Rules
+  /// whose account, card or investment no longer exists are paused. Returns
+  /// the number of entries posted.
+  Future<int> postDueRecurring(DateTime today) async {
+    var posted = 0;
+    var changed = false;
+    for (var i = 0; i < _recurring.length; i++) {
+      final r = _recurring[i];
+      final dates = r.dueDates(today);
+      if (dates.isEmpty) continue;
+      changed = true;
+      final t = r.template;
+      final valid =
+          validate(t).isEmpty &&
+          (t.fromAccountId == null ||
+              ledger.account(t.fromAccountId) != null) &&
+          (t.toAccountId == null || ledger.account(t.toAccountId) != null) &&
+          (t.fromCardId == null || ledger.card(t.fromCardId) != null) &&
+          (t.toCardId == null || ledger.card(t.toCardId) != null) &&
+          (t.investmentId == null || ledger.investment(t.investmentId) != null);
+      if (!valid) {
+        _recurring[i] = r.copyWith(active: false);
+        continue;
+      }
+      for (final d in dates) {
+        _txns.add(t.copyWith(id: _newId(), date: d, recurringId: r.id));
+        posted++;
+      }
+      _recurring[i] = r.copyWith(nextDate: r.after(dates.last));
+    }
+    if (changed) await _save();
+    return posted;
+  }
+
+  Future<void> setRecurringActive(Recurring r, bool active) {
+    _upsert(
+      _recurring,
+      r.copyWith(
+        active: active,
+        // Resuming starts from the next date after today, not the backlog.
+        nextDate: active && r.nextDate.isBefore(dateOnly(DateTime.now()))
+            ? _nextFrom(r, dateOnly(DateTime.now()))
+            : null,
+      ),
+      (e) => e.id,
+    );
+    return _save();
+  }
+
+  static DateTime _nextFrom(Recurring r, DateTime day) {
+    var d = r.nextDate;
+    while (d.isBefore(day)) {
+      d = r.after(d);
+    }
+    return d;
+  }
+
+  /// Deletes the rule; entries it already posted stay.
+  Future<void> deleteRecurring(int id) {
+    _recurring.removeWhere((r) => r.id == id);
+    return _save();
+  }
+
+  // ---- Budgets ------------------------------------------------------------
+
+  /// Sets the monthly budget for [category]; zero removes it.
+  Future<void> setBudget(String category, Paise monthlyLimit) {
+    _budgets.removeWhere((b) => b.category == category);
+    if (monthlyLimit > 0) {
+      _budgets.add(Budget(category: category, monthlyLimit: monthlyLimit));
+    }
+    return _save();
+  }
+
+  // ---- Import / backup ----------------------------------------------------
+
+  /// Adds already-validated imported entries (ids are assigned here).
+  Future<void> addImported(List<Txn> txns) {
+    for (final t in txns) {
+      _txns.add(t.copyWith(id: _newId()));
+    }
+    return _save();
+  }
+
+  /// Full backup of all data as JSON.
+  String backupJson() =>
+      const JsonEncoder.withIndent(' ')
+          .convert({'app': 'rupeetrack', 'version': 1, ...toJson()});
+
+  /// Replaces all data with a backup made by [backupJson]. Throws
+  /// [FormatException] if the file is not a RupeeTrack backup; the current
+  /// data is kept in that case.
+  Future<void> restoreBackup(String json) async {
+    final Object? decoded;
+    try {
+      decoded = jsonDecode(json);
+    } on FormatException {
+      throw const FormatException('This file is not a RupeeTrack backup');
+    }
+    if (decoded is! Map<String, dynamic> || decoded['app'] != 'rupeetrack') {
+      throw const FormatException('This file is not a RupeeTrack backup');
+    }
+    try {
+      _loadJson(decoded);
+    } catch (_) {
+      throw const FormatException('The backup file is damaged');
+    }
+    await _save();
+  }
+
+  Future<void> setNotifications(bool on) {
+    notifications = on;
     return _save();
   }
 

@@ -5,9 +5,19 @@ import '../ledger/ledger.dart';
 import '../models/models.dart';
 import '../models/money.dart';
 import '../widgets/common.dart';
+import '../widgets/design.dart';
 import 'forms.dart';
 import 'holding_detail_screen.dart';
 import 'quick_add_sheet.dart';
+
+/// Gradients for the card faces, picked by card id so each keeps its look.
+const _cardFaces = [
+  [Color(0xFF1F2A44), Color(0xFF3B4C7A)],
+  [Color(0xFF004D40), Color(0xFF00897B)],
+  [Color(0xFF4A148C), Color(0xFF7B4BC4)],
+  [Color(0xFF8E2C2C), Color(0xFFD06A4C)],
+  [Color(0xFF263238), Color(0xFF546E7A)],
+];
 
 /// Every credit card with its limit, usage, bill and due date.
 class CardsScreen extends StatelessWidget {
@@ -20,6 +30,7 @@ class CardsScreen extends StatelessWidget {
     final statuses = [for (final c in l.cards) l.cardStatus(c, now)];
     final totalLimit = l.cards.fold(0, (s, c) => s + c.creditLimit);
     final totalOwed = l.totalCardOutstanding;
+    final totalDue = statuses.fold(0, (s, x) => s + x.amountDue);
 
     return Scaffold(
       appBar: AppBar(
@@ -37,7 +48,7 @@ class CardsScreen extends StatelessWidget {
               icon: Icons.credit_card,
               message:
                   'Add your credit cards to track spending, limits and '
-                  'payment due dates.',
+                  'payment due dates, with reminders before every bill.',
               actionLabel: 'Add card',
               onAction: () => showAddCardDialog(context),
             )
@@ -45,24 +56,18 @@ class CardsScreen extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 96),
               children: [
                 if (statuses.length > 1)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  Panel(
                     child: Row(
                       children: [
                         Expanded(
                           child: Figure('Total owed', formatRupees(totalOwed)),
                         ),
                         Expanded(
-                          child: Figure(
-                            'Total available',
-                            formatRupees(
-                              statuses.fold(0, (s, x) => s + x.availableCredit),
-                            ),
-                          ),
+                          child: Figure('Bills due', formatRupees(totalDue)),
                         ),
                         Expanded(
                           child: Figure(
-                            'Utilisation',
+                            'Used',
                             totalLimit == 0
                                 ? '–'
                                 : '${(totalOwed * 100 / totalLimit).toStringAsFixed(0)}%',
@@ -71,137 +76,200 @@ class CardsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                for (final s in statuses) _CardTile(status: s),
+                for (final s in statuses) _CardBlock(status: s),
               ],
             ),
     );
   }
 }
 
-class _CardTile extends StatelessWidget {
-  const _CardTile({required this.status});
+class _CardBlock extends StatelessWidget {
+  const _CardBlock({required this.status});
   final CardStatus status;
 
   @override
   Widget build(BuildContext context) {
     final s = status;
     final scheme = Theme.of(context).colorScheme;
+    final t = Theme.of(context).textTheme;
     final util = s.utilisationPercent;
     final utilColor = util >= 75
         ? scheme.error
         : util >= 30
-        ? Colors.orange
+        ? const Color(0xFFE08A00)
         : scheme.moneyIn;
     final daysLeft = s.dueDate.difference(today()).inDays;
-    final dueText = s.overdue
-        ? 'Overdue since ${shortDate(s.dueDate)}'
+    final (dueText, dueColor) = s.overdue
+        ? ('Overdue since ${dayMonth(s.dueDate)}', scheme.error)
         : s.amountDue > 0
-        ? 'Due ${shortDate(s.dueDate)} · ${daysLeft == 0 ? 'today' : 'in $daysLeft days'}'
-        : 'Next due ${shortDate(s.dueDate)}';
+        ? (
+            daysLeft == 0
+                ? 'Due today'
+                : 'Due ${dayMonth(s.dueDate)} · $daysLeft days',
+            daysLeft <= 7 ? const Color(0xFFE08A00) : scheme.onSurfaceVariant,
+          )
+        : ('Next due ${dayMonth(s.dueDate)}', scheme.moneyIn);
 
-    return Card(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute<void>(
-            builder: (_) => HoldingDetailScreen.card(s.card.id),
+    void open() => Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (_) => HoldingDetailScreen.card(s.card.id),
+      ),
+    );
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          GestureDetector(
+            onTap: open,
+            child: AspectRatio(
+              aspectRatio: 1.75,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(22),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: _cardFaces[s.card.id % _cardFaces.length],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.18),
+                      blurRadius: 16,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(20),
+                child: DefaultTextStyle.merge(
+                  style: const TextStyle(color: Colors.white),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              s.card.name,
+                              style: t.titleMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          const Icon(Icons.contactless, color: Colors.white70),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        width: 38,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFE6C77A), Color(0xFFB8913C)],
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      HeroFigure('Outstanding', formatRupees(s.outstanding)),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Text(
+                            s.card.lastFour.isEmpty
+                                ? '•••• ••••'
+                                : '•••• ${s.card.lastFour}',
+                            style: const TextStyle(
+                              letterSpacing: 2,
+                              color: Colors.white70,
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            'Limit ${formatRupeesCompact(s.card.creditLimit)}',
+                            style: const TextStyle(color: Colors.white70),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.credit_card),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      s.card.displayName,
-                      style: Theme.of(context).textTheme.titleMedium,
+          Panel(
+            margin: const EdgeInsets.only(top: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${util.toStringAsFixed(0)}% of limit used',
+                        style: t.labelLarge,
+                      ),
                     ),
-                  ),
-                  Text(
-                    '${util.toStringAsFixed(0)}% used',
-                    style: TextStyle(
-                      color: utilColor,
-                      fontWeight: FontWeight.w600,
+                    Text(
+                      '${formatRupees(s.availableCredit)} available',
+                      style: t.labelLarge?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              LinearProgressIndicator(
-                value: (util / 100).clamp(0, 1),
-                color: utilColor,
-                minHeight: 8,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: Figure('Outstanding', formatRupees(s.outstanding)),
-                  ),
-                  Expanded(
-                    child: Figure('Available', formatRupees(s.availableCredit)),
-                  ),
-                  Expanded(
-                    child: Figure(
-                      'Limit',
-                      formatRupeesCompact(s.card.creditLimit),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Meter(value: util / 100, color: utilColor),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Figure(
+                        'Bill to pay',
+                        formatRupees(s.amountDue),
+                        color: s.overdue ? scheme.error : null,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: Figure('This cycle', formatRupees(s.cycleSpend)),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Figure(
-                      'Bill to pay',
-                      formatRupees(s.amountDue),
-                      color: s.overdue ? scheme.error : null,
+                    Expanded(
+                      child: Figure(
+                        'Spent this cycle',
+                        formatRupees(s.cycleSpend),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Icon(
-                    s.overdue ? Icons.error : Icons.event,
-                    size: 18,
-                    color: s.overdue ? scheme.error : scheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      dueText,
-                      style: TextStyle(color: s.overdue ? scheme.error : null),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Pill(
+                          dueText,
+                          color: dueColor,
+                          icon: s.overdue ? Icons.error_outline : Icons.event,
+                        ),
+                      ),
                     ),
-                  ),
-                  FilledButton.tonal(
-                    onPressed: () => showQuickAdd(
-                      context,
-                      type: TxnType.cardPayment,
-                      toCardId: s.card.id,
-                      amount: s.amountDue > 0 ? s.amountDue : null,
+                    const SizedBox(width: 8),
+                    FilledButton(
+                      onPressed: () => showQuickAdd(
+                        context,
+                        type: TxnType.cardPayment,
+                        toCardId: s.card.id,
+                        amount: s.amountDue > 0 ? s.amountDue : null,
+                      ),
+                      child: const Text('Pay bill'),
                     ),
-                    child: const Text('Pay bill'),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

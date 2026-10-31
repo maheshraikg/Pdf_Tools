@@ -3,12 +3,12 @@ import 'money.dart';
 /// Strips the time from [d], as a UTC date so day arithmetic is DST-proof.
 DateTime dateOnly(DateTime d) => DateTime.utc(d.year, d.month, d.day);
 
-String _isoDate(DateTime d) =>
+String isoDate(DateTime d) =>
     '${d.year.toString().padLeft(4, '0')}-'
     '${d.month.toString().padLeft(2, '0')}-'
     '${d.day.toString().padLeft(2, '0')}';
 
-DateTime _parseDate(String s) => dateOnly(DateTime.parse(s));
+DateTime parseIsoDate(String s) => dateOnly(DateTime.parse(s));
 
 T _enum<T extends Enum>(List<T> values, Object? name, T fallback) =>
     values.asNameMap()[name] ?? fallback;
@@ -115,8 +115,10 @@ enum InvestmentType {
   final String label;
 }
 
-/// An investment holding. [currentValue] is entered by the user; null means
-/// it has not been valued yet, so returns are not shown rather than guessed.
+/// An investment holding. [currentValue] is either entered by the user or,
+/// for a mutual fund linked to an AMFI [schemeCode], units × the latest NAV.
+/// Null means it has not been valued yet, so returns are not shown rather
+/// than guessed.
 class Investment {
   const Investment({
     required this.id,
@@ -124,6 +126,9 @@ class Investment {
     required this.type,
     this.currentValue,
     this.valueUpdatedOn,
+    this.valueSource,
+    this.schemeCode,
+    this.units,
   });
 
   final int id;
@@ -132,12 +137,40 @@ class Investment {
   final Paise? currentValue;
   final DateTime? valueUpdatedOn;
 
-  Investment withValue(Paise value, DateTime on) => Investment(
+  /// Where [currentValue] came from, e.g. "AMFI NAV ₹123.45"; null when the
+  /// user typed it.
+  final String? valueSource;
+
+  /// AMFI scheme code for automatic NAV updates (mutual funds only).
+  final String? schemeCode;
+
+  /// Units held, used with [schemeCode].
+  final double? units;
+
+  bool get isLinked => schemeCode != null && units != null;
+
+  Investment withValue(Paise value, DateTime on, {String? source}) =>
+      Investment(
+        id: id,
+        name: name,
+        type: type,
+        currentValue: value,
+        valueUpdatedOn: dateOnly(on),
+        valueSource: source,
+        schemeCode: schemeCode,
+        units: units,
+      );
+
+  /// Links (or with nulls, unlinks) this holding to an AMFI scheme.
+  Investment withScheme(String? code, double? heldUnits) => Investment(
     id: id,
     name: name,
     type: type,
-    currentValue: value,
-    valueUpdatedOn: dateOnly(on),
+    currentValue: currentValue,
+    valueUpdatedOn: valueUpdatedOn,
+    valueSource: valueSource,
+    schemeCode: code,
+    units: heldUnits,
   );
 
   Map<String, Object?> toJson() => {
@@ -145,7 +178,10 @@ class Investment {
     'name': name,
     'type': type.name,
     'value': currentValue,
-    'valuedOn': valueUpdatedOn == null ? null : _isoDate(valueUpdatedOn!),
+    'valuedOn': valueUpdatedOn == null ? null : isoDate(valueUpdatedOn!),
+    if (valueSource != null) 'valueSource': valueSource,
+    if (schemeCode != null) 'scheme': schemeCode,
+    if (units != null) 'units': units,
   };
 
   factory Investment.fromJson(Map<String, dynamic> j) => Investment(
@@ -155,7 +191,10 @@ class Investment {
     currentValue: j['value'] as int?,
     valueUpdatedOn: j['valuedOn'] == null
         ? null
-        : _parseDate(j['valuedOn'] as String),
+        : parseIsoDate(j['valuedOn'] as String),
+    valueSource: j['valueSource'] as String?,
+    schemeCode: j['scheme'] as String?,
+    units: (j['units'] as num?)?.toDouble(),
   );
 }
 
@@ -207,6 +246,8 @@ class Txn {
     this.toAccountId,
     this.toCardId,
     this.investmentId,
+    this.receiptPath,
+    this.recurringId,
   });
 
   final int id;
@@ -221,11 +262,17 @@ class Txn {
   final int? toCardId;
   final int? investmentId;
 
-  Txn withId(int newId) => Txn(
-    id: newId,
+  /// Photo of the receipt, stored in the app's documents folder.
+  final String? receiptPath;
+
+  /// The [Recurring] rule that created this entry, if any.
+  final int? recurringId;
+
+  Txn copyWith({int? id, DateTime? date, int? recurringId}) => Txn(
+    id: id ?? this.id,
     type: type,
     amount: amount,
-    date: date,
+    date: date ?? this.date,
     category: category,
     note: note,
     fromAccountId: fromAccountId,
@@ -233,13 +280,15 @@ class Txn {
     toAccountId: toAccountId,
     toCardId: toCardId,
     investmentId: investmentId,
+    receiptPath: receiptPath,
+    recurringId: recurringId ?? this.recurringId,
   );
 
   Map<String, Object?> toJson() => {
     'id': id,
     'type': type.name,
     'amount': amount,
-    'date': _isoDate(date),
+    'date': isoDate(date),
     if (category != null) 'category': category,
     if (note != null) 'note': note,
     if (fromAccountId != null) 'fromAccount': fromAccountId,
@@ -247,13 +296,15 @@ class Txn {
     if (toAccountId != null) 'toAccount': toAccountId,
     if (toCardId != null) 'toCard': toCardId,
     if (investmentId != null) 'investment': investmentId,
+    if (receiptPath != null) 'receipt': receiptPath,
+    if (recurringId != null) 'recurring': recurringId,
   };
 
   factory Txn.fromJson(Map<String, dynamic> j) => Txn(
     id: j['id'] as int,
     type: _enum(TxnType.values, j['type'], TxnType.expense),
     amount: j['amount'] as int,
-    date: _parseDate(j['date'] as String),
+    date: parseIsoDate(j['date'] as String),
     category: j['category'] as String?,
     note: j['note'] as String?,
     fromAccountId: j['fromAccount'] as int?,
@@ -261,6 +312,8 @@ class Txn {
     toAccountId: j['toAccount'] as int?,
     toCardId: j['toCard'] as int?,
     investmentId: j['investment'] as int?,
+    receiptPath: j['receipt'] as String?,
+    recurringId: j['recurring'] as int?,
   );
 }
 

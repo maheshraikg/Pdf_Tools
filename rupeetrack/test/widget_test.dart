@@ -12,15 +12,17 @@ void main() {
   setUp(() => clock = () => DateTime(2026, 10, 30));
 
   testWidgets('welcome screen when there is no data', (tester) async {
-    await tester.pumpWidget(RupeeTrackApp(store: FinanceStore.memory()));
-    expect(find.text('Welcome to RupeeTrack'), findsOneWidget);
+    await tester.pumpWidget(
+      RupeeTrackApp(store: FinanceStore.memory(), background: false),
+    );
+    expect(find.text('All your money,\none simple view.'), findsOneWidget);
     expect(find.byType(FloatingActionButton), findsNothing);
   });
 
   testWidgets('quick add: amount, category, source, save', (tester) async {
     final store = FinanceStore.memory();
     await store.addAccount('SBI Savings', AccountKind.savings, 1000000);
-    await tester.pumpWidget(RupeeTrackApp(store: store));
+    await tester.pumpWidget(RupeeTrackApp(store: store, background: false));
     expect(find.text('₹10,000'), findsOneWidget); // net worth
 
     await tester.tap(find.byType(FloatingActionButton));
@@ -44,7 +46,7 @@ void main() {
   testWidgets('quick add rejects an empty amount', (tester) async {
     final store = FinanceStore.memory();
     await store.addAccount('Cash', AccountKind.cash, 0);
-    await tester.pumpWidget(RupeeTrackApp(store: store));
+    await tester.pumpWidget(RupeeTrackApp(store: store, background: false));
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Save'));
@@ -78,14 +80,8 @@ void main() {
         investmentId: inv.id,
       ),
     );
-    await tester.pumpWidget(RupeeTrackApp(store: store));
-    for (final tab in [
-      'Transactions',
-      'Cards',
-      'Investments',
-      'Accounts',
-      'Home',
-    ]) {
+    await tester.pumpWidget(RupeeTrackApp(store: store, background: false));
+    for (final tab in ['Activity', 'Cards', 'Invest', 'Accounts', 'Home']) {
       await tester.tap(
         find.descendant(
           of: find.byType(NavigationBar),
@@ -102,7 +98,8 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('HDFC ••1234'), findsOneWidget);
+    expect(find.text('HDFC'), findsOneWidget);
+    expect(find.text('•••• 1234'), findsOneWidget);
     expect(find.text('Pay bill'), findsOneWidget);
   });
 

@@ -4,6 +4,7 @@ import '../app/scope.dart';
 import '../ledger/ledger.dart';
 import '../models/models.dart';
 import '../models/money.dart';
+import 'design.dart';
 
 /// Colours used for money direction, tuned for both themes.
 extension MoneyColors on ColorScheme {
@@ -46,6 +47,22 @@ IconData iconForAccount(AccountKind k) => switch (k) {
   AccountKind.cash => Icons.payments,
   AccountKind.wallet => Icons.qr_code_2,
 };
+
+/// Accent colour for a transaction's icon: by category for spending, by
+/// kind for everything else.
+Color colorForTxn(Txn t) {
+  switch (t.type) {
+    case TxnType.expense || TxnType.refund:
+      final i = expenseCategories.indexOf(t.category ?? 'Other');
+      return chartColor(i < 0 ? expenseCategories.length : i);
+    case TxnType.income || TxnType.investIncome:
+      return const Color(0xFF2E9D57);
+    case TxnType.invest || TxnType.investWithdrawal:
+      return chartColor(1);
+    case TxnType.transfer || TxnType.cardPayment:
+      return const Color(0xFF607D8B);
+  }
+}
 
 /// Title shown for a transaction in lists.
 String txnTitle(Txn t, Ledger l) {
@@ -115,15 +132,25 @@ class TxnTile extends StatelessWidget {
     ].join(' · ');
     return ListTile(
       onTap: onTap,
-      leading: CircleAvatar(
-        backgroundColor: scheme.secondaryContainer,
-        foregroundColor: scheme.onSecondaryContainer,
-        child: Icon(iconForTxn(txn), size: 20),
-      ),
-      title: Text(
-        txnTitle(txn, l),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+      leading: IconBadge(iconForTxn(txn), color: colorForTxn(txn)),
+      title: Row(
+        children: [
+          Flexible(
+            child: Text(
+              txnTitle(txn, l),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          if (txn.recurringId != null) ...[
+            const SizedBox(width: 6),
+            Icon(Icons.event_repeat, size: 14, color: scheme.outline),
+          ],
+          if (txn.receiptPath != null) ...[
+            const SizedBox(width: 6),
+            Icon(Icons.receipt_long, size: 14, color: scheme.outline),
+          ],
+        ],
       ),
       subtitle: subtitle.isEmpty
           ? null
@@ -276,7 +303,6 @@ class AmountField extends StatelessWidget {
         labelText: label,
         prefixText: '₹ ',
         prefixStyle: style,
-        border: const OutlineInputBorder(),
       ),
     );
   }
