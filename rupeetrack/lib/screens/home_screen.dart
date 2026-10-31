@@ -6,6 +6,7 @@ import '../models/models.dart';
 import '../models/money.dart';
 import '../widgets/common.dart';
 import '../widgets/design.dart';
+import 'auto_detect_screen.dart';
 import 'budgets_screen.dart';
 import 'forms.dart';
 import 'pay_bill_sheet.dart';
@@ -79,6 +80,32 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   _NetWorthHero(worth: l.netWorth(now)),
                   _QuickActions(onOpenTab: onOpenTab),
+                  if (store.detected.isNotEmpty)
+                    Panel(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      padding: const EdgeInsets.fromLTRB(14, 10, 8, 10),
+                      margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (_) => const AutoDetectScreen(),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.auto_awesome),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'Found ${store.detected.values.map((h) => h.label).join(', ')} '
+                              'in your bank messages',
+                            ),
+                          ),
+                          const Text('Add'),
+                          const Icon(Icons.chevron_right),
+                        ],
+                      ),
+                    ),
                   for (final a in l.alerts(now))
                     _AlertBanner(alert: a, onOpenTab: onOpenTab),
                   _MonthPanel(now: now),

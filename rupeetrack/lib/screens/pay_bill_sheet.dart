@@ -135,6 +135,7 @@ class _PayBillSheetState extends State<_PayBillSheet> {
           Panel(
             margin: EdgeInsets.zero,
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: _Amount(

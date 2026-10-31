@@ -157,6 +157,21 @@ class TxnTile extends StatelessWidget {
             const SizedBox(width: 6),
             Icon(Icons.event_repeat, size: 14, color: scheme.outline),
           ],
+          if (txn.sourceKey != null) ...[
+            const SizedBox(width: 6),
+            Tooltip(
+              message: 'From ${txn.sourceLabel}',
+              child: Icon(
+                txn.sourceKey!.startsWith('sms')
+                    ? Icons.sms_outlined
+                    : txn.sourceKey!.startsWith('mail')
+                    ? Icons.mail_outline
+                    : Icons.description_outlined,
+                size: 14,
+                color: scheme.outline,
+              ),
+            ),
+          ],
           if (txn.receiptPath != null) ...[
             const SizedBox(width: 6),
             Icon(Icons.receipt_long, size: 14, color: scheme.outline),
@@ -262,12 +277,16 @@ class EmptyState extends StatelessWidget {
     required this.message,
     this.actionLabel,
     this.onAction,
+    this.secondaryLabel,
+    this.onSecondary,
   });
 
   final IconData icon;
   final String message;
   final String? actionLabel;
   final VoidCallback? onAction;
+  final String? secondaryLabel;
+  final VoidCallback? onSecondary;
 
   @override
   Widget build(BuildContext context) {
@@ -287,6 +306,14 @@ class EmptyState extends StatelessWidget {
           if (actionLabel != null) ...[
             const SizedBox(height: 16),
             FilledButton.tonal(onPressed: onAction, child: Text(actionLabel!)),
+          ],
+          if (secondaryLabel != null) ...[
+            const SizedBox(height: 8),
+            TextButton.icon(
+              onPressed: onSecondary,
+              icon: const Icon(Icons.auto_awesome, size: 18),
+              label: Text(secondaryLabel!),
+            ),
           ],
         ],
       ),

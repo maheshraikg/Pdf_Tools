@@ -5,6 +5,7 @@ import '../ledger/ledger.dart';
 import '../models/money.dart';
 import '../widgets/common.dart';
 import '../widgets/design.dart';
+import 'auto_detect_screen.dart';
 import 'forms.dart';
 import 'holding_detail_screen.dart';
 import 'pay_bill_sheet.dart';
@@ -50,6 +51,13 @@ class CardsScreen extends StatelessWidget {
                   'payment due dates, with reminders before every bill.',
               actionLabel: 'Add card',
               onAction: () => showAddCardDialog(context),
+              secondaryLabel: 'Find my cards from SMS',
+              onSecondary: () => Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (_) => const AutoDetectScreen(),
+                ),
+              ),
             )
           : ListView(
               padding: const EdgeInsets.only(bottom: 96),

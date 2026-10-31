@@ -37,8 +37,16 @@ Future<String?> promptText(
   ).whenComplete(controller.dispose);
 }
 
-Future<void> showAddAccountDialog(BuildContext context) =>
-    showDialog<void>(context: context, builder: (_) => const _AccountForm());
+Future<void> showAddAccountDialog(
+  BuildContext context, {
+  String? name,
+  String? lastFour,
+  Paise? balance,
+}) => showDialog<void>(
+  context: context,
+  builder: (_) =>
+      _AccountForm(name: name, lastFour: lastFour, balance: balance),
+);
 
 Future<void> showEditAccountDialog(BuildContext context, Account a) =>
     showDialog<void>(
@@ -46,8 +54,18 @@ Future<void> showEditAccountDialog(BuildContext context, Account a) =>
       builder: (_) => _AccountForm(edit: a),
     );
 
-Future<void> showAddCardDialog(BuildContext context) =>
-    showDialog<void>(context: context, builder: (_) => const _CardForm());
+/// [availableLimit] (from a bank message) lets the form work out the amount
+/// owed once the user enters the credit limit.
+Future<void> showAddCardDialog(
+  BuildContext context, {
+  String? name,
+  String? lastFour,
+  Paise? availableLimit,
+}) => showDialog<void>(
+  context: context,
+  builder: (_) =>
+      _CardForm(name: name, lastFour: lastFour, availableLimit: availableLimit),
+);
 
 Future<void> showEditCardDialog(BuildContext context, CreditCard c) =>
     showDialog<void>(
@@ -120,8 +138,11 @@ Paise? _optionalAmount(String text) =>
     text.trim().isEmpty ? 0 : parseRupees(text);
 
 class _AccountForm extends StatefulWidget {
-  const _AccountForm({this.edit});
+  const _AccountForm({this.edit, this.name, this.lastFour, this.balance});
   final Account? edit;
+  final String? name;
+  final String? lastFour;
+  final Paise? balance;
 
   @override
   State<_AccountForm> createState() => _AccountFormState();
@@ -142,6 +163,10 @@ class _AccountFormState extends State<_AccountForm> {
       _name.text = a.name;
       _kind = a.kind;
       _last4.text = a.lastFour;
+    } else {
+      _name.text = widget.name ?? '';
+      _last4.text = widget.lastFour ?? '';
+      if (widget.balance != null) _opening.text = amountText(widget.balance!);
     }
   }
 
@@ -251,8 +276,11 @@ class _AccountFormState extends State<_AccountForm> {
 }
 
 class _CardForm extends StatefulWidget {
-  const _CardForm({this.edit});
+  const _CardForm({this.edit, this.name, this.lastFour, this.availableLimit});
   final CreditCard? edit;
+  final String? name;
+  final String? lastFour;
+  final Paise? availableLimit;
 
   @override
   State<_CardForm> createState() => _CardFormState();
@@ -277,6 +305,9 @@ class _CardFormState extends State<_CardForm> {
       _limit.text = amountText(c.creditLimit);
       _statementDay = c.statementDay;
       _dueDay = c.dueDay;
+    } else {
+      _name.text = widget.name ?? '';
+      _last4.text = widget.lastFour ?? '';
     }
   }
 
@@ -301,7 +332,12 @@ class _CardFormState extends State<_CardForm> {
     final name = _name.text.trim();
     final last4 = _last4.text.trim();
     final limit = parseRupees(_limit.text);
-    final outstanding = _optionalAmount(_outstanding.text);
+    var outstanding = _optionalAmount(_outstanding.text);
+    // Owed = limit − what the bank says is still available.
+    final avl = widget.availableLimit;
+    if (_outstanding.text.trim().isEmpty && avl != null && limit != null) {
+      outstanding = limit > avl ? limit - avl : 0;
+    }
     if (name.isEmpty) return setState(() => _error = 'Enter the card name');
     if (last4.isNotEmpty && !RegExp(r'^\d{4}$').hasMatch(last4)) {
       return setState(() => _error = 'Last four digits must be 4 numbers');
@@ -393,6 +429,13 @@ class _CardFormState extends State<_CardForm> {
               ? 'Amount owed now (optional)'
               : 'Amount owed now',
         ),
+        if (widget.availableLimit != null)
+          Text(
+            'Your bank last reported ${formatRupees(widget.availableLimit!)} '
+            'available. Leave "amount owed" empty and it is worked out from '
+            'the limit.',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
       ],
     );
   }

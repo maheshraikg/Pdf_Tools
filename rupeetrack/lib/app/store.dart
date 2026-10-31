@@ -8,6 +8,7 @@ import '../models/models.dart';
 import '../data/amfi.dart';
 import '../models/money.dart';
 import '../models/planning.dart';
+import '../sync/sync.dart';
 
 /// Where the quick-add form takes money from: an account or a card.
 class Source {
@@ -68,6 +69,19 @@ class FinanceStore extends ChangeNotifier {
   /// Card due-date and recurring-entry reminders.
   bool notifications = true;
 
+  /// Read bank SMS to detect transactions (Android permission also needed).
+  bool smsSync = false;
+  DateTime? lastSync;
+
+  /// Imported entries the user deleted; never imported again.
+  final Set<String> _ignoredKeys = {};
+  Set<String> get ignoredKeys => Set.unmodifiable(_ignoredKeys);
+
+  /// Cards and accounts found in messages that are not in the app yet, and
+  /// the latest bank balance per account, from the last sync.
+  Map<String, DetectedHolding> detected = const {};
+  Map<int, BalanceHint> balanceHints = const {};
+
   /// Remembered so that the next quick entry is one tap shorter.
   String lastCategory = expenseCategories.first;
   Source? lastSource;
@@ -121,6 +135,13 @@ class FinanceStore extends ChangeNotifier {
     _nextId = (j['nextId'] as int?) ?? 1;
     themeMode = ThemeMode.values.asNameMap()[j['theme']] ?? ThemeMode.system;
     notifications = (j['notifications'] as bool?) ?? true;
+    smsSync = (j['smsSync'] as bool?) ?? false;
+    lastSync = j['lastSync'] == null
+        ? null
+        : DateTime.tryParse(j['lastSync'] as String);
+    _ignoredKeys
+      ..clear()
+      ..addAll(((j['ignored'] as List?) ?? const []).cast<String>());
     lastCategory = (j['lastCategory'] as String?) ?? expenseCategories.first;
     lastSource = Source.parse(j['lastSource'] as String?);
   }
@@ -135,6 +156,9 @@ class FinanceStore extends ChangeNotifier {
     'nextId': _nextId,
     'theme': themeMode.name,
     'notifications': notifications,
+    'smsSync': smsSync,
+    if (lastSync != null) 'lastSync': lastSync!.toIso8601String(),
+    'ignored': _ignoredKeys.toList(),
     'lastCategory': lastCategory,
     'lastSource': lastSource?.key,
   };
@@ -413,13 +437,96 @@ class FinanceStore extends ChangeNotifier {
   }
 
   Future<void> deleteTxn(int id) {
+    for (final t in _txns.where((t) => t.id == id)) {
+      // Deleting an imported entry means "not this one": keep it out.
+      if (t.sourceKey != null) _ignoredKeys.add(t.sourceKey!);
+    }
     _txns.removeWhere((t) => t.id == id);
     return _save();
   }
 
   /// Adds [t] back after an undo.
   Future<void> restoreTxn(Txn t) {
+    if (t.sourceKey != null) _ignoredKeys.remove(t.sourceKey);
     _upsert(_txns, t, (e) => e.id);
+    return _save();
+  }
+
+  // ---- Bank message sync ---------------------------------------------------
+
+  /// Plans a sync of [events] against the current data (nothing is saved).
+  SyncResult planEvents(List<SourcedEvent> events, {String source = 'SMS'}) =>
+      planSync(events, ledger, ignoredKeys: _ignoredKeys, sourceLabel: source);
+
+  /// Saves a planned sync: new and linked entries, bank bills (which also
+  /// set the card's due day), and the detected cards/accounts and balances
+  /// for the UI.
+  Future<void> applySync(SyncResult r, {bool remember = true}) async {
+    for (final t in r.added) {
+      _txns.add(t.copyWith(id: _newId()));
+    }
+    for (final t in r.updated) {
+      _upsert(_txns, t, (e) => e.id);
+    }
+    for (final MapEntry(key: cardId, value: bill) in r.bills.entries) {
+      final c = ledger.card(cardId);
+      if (c == null) continue;
+      _upsert(
+        _cards,
+        c.copyWith(
+          bill: bill,
+          dueDay: bill.dueDate.day,
+          statementDay: bill.statementDate?.day,
+        ),
+        (e) => e.id,
+      );
+    }
+    if (remember) {
+      detected = {
+        for (final e in r.unknown.entries)
+          if (!_isTracked(e.value)) e.key: e.value,
+      };
+      balanceHints = r.balances;
+      lastSync = DateTime.now();
+    }
+    await _save();
+  }
+
+  bool _isTracked(DetectedHolding h) => h.isCard
+      ? ledger.cards.any((c) => c.lastFour == h.digits)
+      : ledger.accounts.any((a) => a.lastFour == h.digits);
+
+  /// Adds cards/accounts found in a statement to [detected].
+  void mergeDetected(Map<String, DetectedHolding> found) {
+    if (found.isEmpty) return;
+    detected = {...detected, ...found};
+    notifyListeners();
+  }
+
+  /// Forgets a detected card/account (e.g. after adding it, or dismissing).
+  void dismissDetected(String key) {
+    detected = {...detected}..remove(key);
+    notifyListeners();
+  }
+
+  /// Sets the account's balance to what the bank reported.
+  Future<void> acceptBankBalance(int accountId) async {
+    final hint = balanceHints[accountId];
+    final a = ledger.account(accountId);
+    if (hint == null || a == null) return;
+    final shift =
+        hint.balance - ledger.accountBalance(accountId, asOf: hint.date);
+    _upsert(
+      _accounts,
+      a.copyWith(openingBalance: a.openingBalance + shift),
+      (e) => e.id,
+    );
+    balanceHints = {...balanceHints}..remove(accountId);
+    await _save();
+  }
+
+  Future<void> setSmsSync(bool on) {
+    smsSync = on;
     return _save();
   }
 

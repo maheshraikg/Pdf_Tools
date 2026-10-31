@@ -6,6 +6,7 @@ import '../app/scope.dart';
 import '../data/csv.dart';
 import '../models/models.dart';
 import '../widgets/design.dart';
+import 'auto_detect_screen.dart';
 import 'budgets_screen.dart';
 import 'import_screen.dart';
 import 'investments_screen.dart' show refreshFundPrices;
@@ -116,6 +117,16 @@ class SettingsScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.only(bottom: 32),
         children: [
+          group('Automatic', [
+            tile(
+              Icons.auto_awesome,
+              'Auto-detect from SMS, statements & Gmail',
+              store.smsSync
+                  ? 'Bank SMS on${store.detected.isEmpty ? '' : ' · ${store.detected.length} new found'}'
+                  : 'Fill cards and accounts from bank messages',
+              () => push(const AutoDetectScreen()),
+            ),
+          ]),
           group('Planning', [
             tile(
               Icons.pie_chart_outline,

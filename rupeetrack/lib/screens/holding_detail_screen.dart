@@ -281,6 +281,31 @@ class HoldingDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 32),
         children: [
           header,
+          if (account != null)
+            if (context.store.balanceHints[account.id] case final hint?)
+              if (hint.balance != l.accountBalance(account.id, asOf: hint.date))
+                Panel(
+                  color: Theme.of(context).colorScheme.tertiaryContainer,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Your bank said the balance was '
+                        '${formatRupees(hint.balance)} on ${shortDate(hint.date)}; '
+                        'RupeeTrack shows '
+                        '${formatRupees(l.accountBalance(account.id, asOf: hint.date))}.',
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () =>
+                              context.store.acceptBankBalance(account.id),
+                          child: const Text('Use bank balance'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
           if (txns.isEmpty)
             const EmptyState(
               icon: Icons.receipt_long,

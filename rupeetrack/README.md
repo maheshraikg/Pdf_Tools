@@ -36,6 +36,24 @@ sign-up and no bank login.
   everything as a JSON file and restore it later; **import bank or card
   statements** (CSV), with column detection, category guessing and
   duplicate skipping.
+- **Auto-detect** (Settings › Automatic): reads bank SMS on the phone and
+  fills in card spends, refunds, payments, the bank's bill (total, minimum,
+  due date) and bank account debits/credits for HDFC, SBI / SBI Card, ICICI,
+  Axis, Kotak, AU, IDFC FIRST, Amex, OneCard, RBL, IndusInd, Yes, HSBC,
+  Standard Chartered, Canara, Bank of Baroda, PNB, Union Bank and more.
+  Cards and accounts found in messages can be added with one tap. Entries
+  you already typed in, or that arrive by both SMS and email, are counted
+  once; deleted imports never come back. New SMS are read whenever the app
+  opens.
+- **Statement PDFs**: choose one, or share/open it with RupeeTrack from
+  Gmail, WhatsApp or Files. Password-protected statements are unlocked on
+  the phone.
+- **Gmail (optional)**: read-only access to bank alert emails and
+  statement PDFs, straight from the phone to Google (see setup below).
+- **Pay bill**: open CRED, PhonePe, Google Pay, Paytm, Amazon Pay, BHIM or
+  MobiKwik to pay, then record the full, minimum or a custom amount.
+- Account, card and investment screens read like a bank statement: entries
+  by date with the balance after each one; edit or delete anything.
 - Light and dark themes and a custom launcher icon. Works fully offline; the
   internet is used only when you choose to update fund NAVs.
 
@@ -65,6 +83,8 @@ Amounts are stored as whole paise, so totals never pick up rounding errors.
 - `lib/ledger/`: balances, card billing cycle, alerts, budgets, returns and
   XIRR (plain Dart, unit-tested)
 - `lib/data/`: CSV export, statement import and the AMFI NAV parser
+- `lib/sync/`: bank SMS/email parser, statement PDF text parser, the sync
+  engine (matching and de-duplication), SMS and Gmail sources
 - `lib/app/`: `FinanceStore` (shared_preferences JSON), `AppScope`,
   reminders, file sharing and receipts
 - `lib/screens/`, `lib/widgets/`: UI (`widgets/design.dart` holds the theme
@@ -81,7 +101,37 @@ flutter build apk --release
 
 Release signing reads `android/key.properties` (`storeFile`,
 `storePassword`, `keyAlias`, `keyPassword`) when it exists. Without it, the
-debug key is used so that the release APK is still installable.
+committed dev key `android/app/dev-keystore.jks` (password
+`rupeetrack-dev`) is used, so every test build has the same signature and
+installs over the previous one. It is public: use your own key for the Play
+Store.
+
+Dev key fingerprints (for Google Cloud):
+
+- SHA-1 `69:D6:00:FA:B9:D1:38:67:36:72:B5:93:68:E2:7C:F0:6D:A4:DE:C5`
+
+## Gmail setup (optional)
+
+Google allows reading Gmail only for registered apps. For personal use (up
+to 100 test users) it is free:
+
+1. In console.cloud.google.com create a project and enable the **Gmail
+   API**.
+2. **OAuth consent screen**: External; add the scope
+   `https://www.googleapis.com/auth/gmail.readonly`; add your Gmail
+   address(es) as **test users**.
+3. **Credentials**: create an **Android** OAuth client (package
+   `com.kspstadk.rupeetrack`, the SHA-1 above) and a **Web application**
+   client.
+4. In the GitHub repository add an Actions **variable**
+   `GMAIL_WEB_CLIENT_ID` with the web client id; the next CI build turns the
+   Gmail option on. Locally: `flutter build apk
+   --dart-define=GMAIL_WEB_CLIENT_ID=…`.
+
+Publishing to everyone on the Play Store additionally needs Google's
+verification and a yearly security assessment for this scope. Reading SMS
+on the Play Store needs the SMS permission declaration ("SMS-based money
+management").
 
 ## Notes
 

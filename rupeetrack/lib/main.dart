@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 import 'app/notifications.dart';
 import 'app/scope.dart';
 import 'app/store.dart';
 import 'screens/accounts_screen.dart';
+import 'screens/auto_detect_screen.dart';
 import 'screens/cards_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/investments_screen.dart';
@@ -18,6 +20,8 @@ Future<void> main() async {
   final store = await FinanceStore.load();
   await store.postDueRecurring(today());
   runApp(RupeeTrackApp(store: store));
+  // New bank SMS since the last visit (when turned on).
+  backgroundSmsSync(store);
 }
 
 class RupeeTrackApp extends StatefulWidget {
@@ -34,6 +38,8 @@ class RupeeTrackApp extends StatefulWidget {
 class _RupeeTrackAppState extends State<RupeeTrackApp>
     with WidgetsBindingObserver {
   Timer? _debounce;
+  StreamSubscription<List<SharedMediaFile>>? _shares;
+  final _navigator = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -41,6 +47,35 @@ class _RupeeTrackAppState extends State<RupeeTrackApp>
     WidgetsBinding.instance.addObserver(this);
     widget.store.addListener(_onChange);
     _refreshReminders();
+    if (widget.background) _listenForShares();
+  }
+
+  /// Statement PDFs shared to (or opened with) RupeeTrack.
+  void _listenForShares() {
+    final sharing = ReceiveSharingIntent.instance;
+    void open(List<SharedMediaFile> files) {
+      final pdf = files
+          .where(
+            (f) =>
+                f.mimeType == 'application/pdf' ||
+                f.path.toLowerCase().endsWith('.pdf'),
+          )
+          .firstOrNull;
+      final ctx = _navigator.currentContext;
+      if (pdf == null || ctx == null) return;
+      handleSharedPdf(ctx, pdf.path);
+    }
+
+    try {
+      _shares = sharing.getMediaStream().listen(open);
+      sharing.getInitialMedia().then((files) {
+        // Wait for the first frame so a dialog can be shown.
+        WidgetsBinding.instance.addPostFrameCallback((_) => open(files));
+        sharing.reset();
+      });
+    } catch (_) {
+      // No sharing support on this platform.
+    }
   }
 
   @override
@@ -48,6 +83,7 @@ class _RupeeTrackAppState extends State<RupeeTrackApp>
     WidgetsBinding.instance.removeObserver(this);
     widget.store.removeListener(_onChange);
     _debounce?.cancel();
+    _shares?.cancel();
     super.dispose();
   }
 
@@ -56,6 +92,7 @@ class _RupeeTrackAppState extends State<RupeeTrackApp>
     if (state == AppLifecycleState.resumed) {
       // A new day may have made recurring entries due.
       widget.store.postDueRecurring(today());
+      if (widget.background) backgroundSmsSync(widget.store);
       _refreshReminders();
     }
   }
@@ -77,6 +114,7 @@ class _RupeeTrackAppState extends State<RupeeTrackApp>
       child: ListenableBuilder(
         listenable: store,
         builder: (context, _) => MaterialApp(
+          navigatorKey: _navigator,
           title: 'RupeeTrack',
           debugShowCheckedModeBanner: false,
           theme: buildAppTheme(Brightness.light),
