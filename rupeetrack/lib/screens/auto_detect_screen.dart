@@ -49,9 +49,9 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
   Future<void> _scanSms() => _run(() async {
     final store = context.store;
     if (!await SmsSync.hasPermission()) {
-      final granted = await SmsSync.requestPermission();
-      if (!granted) {
-        if (await SmsSync.isPermanentlyDenied()) {
+      final state = await SmsSync.requestPermission();
+      if (state != 'granted') {
+        if (state == 'blocked') {
           await SmsSync.openSettings();
           return 'Allow "SMS" for RupeeTrack in the settings that opened, '
               'then tap Scan again.';

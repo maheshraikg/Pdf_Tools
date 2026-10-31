@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
+import 'app/native.dart';
 import 'app/notifications.dart';
 import 'app/scope.dart';
 import 'app/store.dart';
@@ -38,7 +38,6 @@ class RupeeTrackApp extends StatefulWidget {
 class _RupeeTrackAppState extends State<RupeeTrackApp>
     with WidgetsBindingObserver {
   Timer? _debounce;
-  StreamSubscription<List<SharedMediaFile>>? _shares;
   final _navigator = GlobalKey<NavigatorState>();
 
   @override
@@ -52,30 +51,17 @@ class _RupeeTrackAppState extends State<RupeeTrackApp>
 
   /// Statement PDFs shared to (or opened with) RupeeTrack.
   void _listenForShares() {
-    final sharing = ReceiveSharingIntent.instance;
-    void open(List<SharedMediaFile> files) {
-      final pdf = files
-          .where(
-            (f) =>
-                f.mimeType == 'application/pdf' ||
-                f.path.toLowerCase().endsWith('.pdf'),
-          )
-          .firstOrNull;
+    void open(String? path) {
       final ctx = _navigator.currentContext;
-      if (pdf == null || ctx == null) return;
-      handleSharedPdf(ctx, pdf.path);
+      if (path == null || ctx == null) return;
+      handleSharedPdf(ctx, path);
     }
 
-    try {
-      _shares = sharing.getMediaStream().listen(open);
-      sharing.getInitialMedia().then((files) {
-        // Wait for the first frame so a dialog can be shown.
-        WidgetsBinding.instance.addPostFrameCallback((_) => open(files));
-        sharing.reset();
-      });
-    } catch (_) {
-      // No sharing support on this platform.
-    }
+    Native.listenForSharedPdfs(open);
+    // Started by a share: wait for the first frame so a dialog can show.
+    Native.takeSharedPdf().then(
+      (path) => WidgetsBinding.instance.addPostFrameCallback((_) => open(path)),
+    );
   }
 
   @override
@@ -83,7 +69,6 @@ class _RupeeTrackAppState extends State<RupeeTrackApp>
     WidgetsBinding.instance.removeObserver(this);
     widget.store.removeListener(_onChange);
     _debounce?.cancel();
-    _shares?.cancel();
     super.dispose();
   }
 

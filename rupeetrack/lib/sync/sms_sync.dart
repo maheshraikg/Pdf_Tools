@@ -1,5 +1,3 @@
-import 'package:permission_handler/permission_handler.dart';
-
 import '../app/native.dart';
 import '../app/store.dart';
 import 'bank_messages.dart';
@@ -11,26 +9,14 @@ class SmsSync {
   /// How far back a scan looks.
   static const historyDays = 180;
 
-  static Future<bool> hasPermission() async {
-    if (!Native.supported) return false;
-    try {
-      return await Permission.sms.isGranted;
-    } on Exception {
-      return false;
-    }
-  }
+  static Future<bool> hasPermission() async =>
+      await Native.smsPermission() == 'granted';
 
-  /// Asks for SMS access. Returns false if refused; when refused for good
-  /// the user has to allow it in system settings ([openSettings]).
-  static Future<bool> requestPermission() async {
-    if (!Native.supported) return false;
-    return (await Permission.sms.request()).isGranted;
-  }
+  /// Asks for SMS access: "granted", "denied", or "blocked" (refused for
+  /// good; the user has to allow it in system settings, [openSettings]).
+  static Future<String> requestPermission() => Native.requestSmsPermission();
 
-  static Future<bool> isPermanentlyDenied() async =>
-      Native.supported && await Permission.sms.isPermanentlyDenied;
-
-  static Future<void> openSettings() => openAppSettings();
+  static Future<void> openSettings() => Native.openAppSettings();
 
   /// Bank alerts come from alphanumeric sender ids ("AD-HDFCBK"), never from
   /// personal numbers; ignoring the latter also avoids forwarded or fake

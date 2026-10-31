@@ -29,6 +29,48 @@ class Native {
     }
   }
 
+  /// "granted", "denied", or "blocked" (refused for good: only the system
+  /// settings can allow it).
+  static Future<String> smsPermission() async {
+    if (!supported) return 'denied';
+    try {
+      return await _channel.invokeMethod<String>('smsPermission') ?? 'denied';
+    } on Exception {
+      return 'denied';
+    }
+  }
+
+  static Future<String> requestSmsPermission() async {
+    if (!supported) return 'denied';
+    return await _channel.invokeMethod<String>('requestSmsPermission') ??
+        'denied';
+  }
+
+  static Future<void> openAppSettings() async {
+    if (supported) await _channel.invokeMethod<void>('openAppSettings');
+  }
+
+  /// A statement PDF the app was started with (Share / Open with), copied
+  /// to the cache folder; null when there is none.
+  static Future<String?> takeSharedPdf() async {
+    if (!supported) return null;
+    try {
+      return await _channel.invokeMethod<String>('takeSharedPdf');
+    } on Exception {
+      return null;
+    }
+  }
+
+  /// Calls [onPdf] for PDFs shared while the app is already open.
+  static void listenForSharedPdfs(void Function(String path) onPdf) {
+    if (!supported) return;
+    _channel.setMethodCallHandler((call) async {
+      if (call.method == 'sharedPdf' && call.arguments is String) {
+        onPdf(call.arguments as String);
+      }
+    });
+  }
+
   /// Inbox SMS newer than [since], newest first. Throws [PlatformException]
   /// with code "permission" when SMS access has not been granted.
   static Future<List<SmsMessage>> readSms({
