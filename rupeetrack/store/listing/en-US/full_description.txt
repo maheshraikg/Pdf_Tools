@@ -41,7 +41,7 @@ STATEMENTS
 • Import CSV statements from net banking, with duplicates skipped
 
 YOUR DATA, YOUR PHONE
-• No sign-up, no bank login, no ads, no tracking
+• No sign-up, no bank login
 • Everything stays on your phone
 • Excel and PDF reports, CSV export, and backup & restore
 

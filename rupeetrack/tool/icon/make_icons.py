@@ -5,7 +5,6 @@ The source is separated into clean white and green layers (removing the
 noise of the generated image), recentred, and drawn again at each size:
 
   store/icon-512.png            Google Play icon (full-bleed square)
-  store/feature-graphic.png     Play banner, 1024 x 500
   android .../mipmap-*/         legacy launcher icon, adaptive foreground,
                                 background and monochrome (themed) layers
   android .../drawable-*/       white status-bar notification icon
@@ -14,7 +13,7 @@ Run from the rupeetrack folder:  python3 tool/icon/make_icons.py
 """
 import pathlib
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 RES = ROOT / 'android/app/src/main/res'
@@ -80,28 +79,12 @@ def place(g, size, width_frac, bg=None, radius=0.0):
     return canvas
 
 
-def feature_graphic(g):
-    w, h = 1024, 500
-    im = Image.new('RGBA', (w, h), BG + (255,))
-    icon = g.resize((250, round(g.height * 250 / g.width)), Image.LANCZOS)
-    im.alpha_composite(icon, (120, (h - icon.height) // 2))
-    d = ImageDraw.Draw(im)
-    fonts = ROOT / 'assets/fonts'
-    big = ImageFont.truetype(str(fonts / 'Inter-ExtraBold.otf'), 132)
-    small = ImageFont.truetype(str(fonts / 'Inter-Medium.otf'), 40)
-    x = 440
-    d.text((x, 150), 'Rupio', font=big, fill=WHITE)
-    d.text((x + 6, 318), 'Expense & EMI Tracker', font=small, fill=(158, 158, 158))
-    return im.convert('RGB')
-
-
 def main():
     aw, ag = layers()
     g = glyph(aw, ag)
     mono = glyph(aw, ag, mono=True)
     (ROOT / 'store').mkdir(exist_ok=True)
     place(g, 512, 0.60, bg=BG).convert('RGB').save(ROOT / 'store/icon-512.png')
-    feature_graphic(g).save(ROOT / 'store/feature-graphic.png')
     densities = {'mdpi': 1, 'hdpi': 1.5, 'xhdpi': 2, 'xxhdpi': 3, 'xxxhdpi': 4}
     for name, k in densities.items():
         mip = RES / f'mipmap-{name}'

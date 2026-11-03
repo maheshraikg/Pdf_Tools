@@ -12,10 +12,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   setUp(() => clock = () => DateTime(2026, 10, 30));
 
-  testWidgets('welcome screen when there is no data', (tester) async {
-    await tester.pumpWidget(
-      RupeeTrackApp(store: FinanceStore.memory(), background: false),
-    );
+  testWidgets('first open: feature tour, then welcome', (tester) async {
+    final store = FinanceStore.memory();
+    await tester.pumpWidget(RupeeTrackApp(store: store, background: false));
+    expect(find.text('Skip'), findsOneWidget);
+    // Swipe through two pages, then skip the rest.
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.tap(find.text('Skip'));
+    await tester.pumpAndSettle();
+    expect(store.onboarded, isTrue);
     expect(
       find.textContaining('rupee goes.', findRichText: true),
       findsOneWidget,

@@ -15,6 +15,7 @@ import 'goals_screen.dart';
 import 'insights_screen.dart';
 import 'investments_screen.dart';
 import 'loans_screen.dart';
+import 'onboarding_screen.dart';
 import 'pay_bill_sheet.dart';
 import 'quick_add_sheet.dart';
 import 'settings_screen.dart';
@@ -57,6 +58,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final store = context.store;
     if (store.isEmpty) {
+      if (!store.onboarded) {
+        return OnboardingScreen(onDone: store.finishOnboarding);
+      }
       return const Scaffold(body: SafeArea(child: _Welcome()));
     }
     final l = store.ledger;

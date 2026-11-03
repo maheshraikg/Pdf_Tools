@@ -74,6 +74,9 @@ class FinanceStore extends ChangeNotifier {
   /// Interface language code ('en', 'hi', 'kn', …).
   String language = 'en';
 
+  /// The first-run feature tour has been seen (or skipped).
+  bool onboarded = false;
+
   /// Black theme by default.
   ThemeMode themeMode = ThemeMode.dark;
 
@@ -158,6 +161,9 @@ class FinanceStore extends ChangeNotifier {
       ..clear()
       ..addAll(goals);
     language = (j['language'] as String?) ?? language;
+    // People who already use the app never see the tour.
+    onboarded =
+        (j['onboarded'] as bool?) ?? (accounts.isNotEmpty || cards.isNotEmpty);
     setCurrentLanguage(language);
     _nextId = (j['nextId'] as int?) ?? 1;
     // Before v2 the theme was never chosen explicitly ('system' was the
@@ -188,6 +194,7 @@ class FinanceStore extends ChangeNotifier {
     'loans': _loans.map((e) => e.toJson()).toList(),
     'goals': _goals.map((e) => e.toJson()).toList(),
     'language': language,
+    'onboarded': onboarded,
     'nextId': _nextId,
     'theme': themeMode.name,
     'themeV2': true,
@@ -709,6 +716,11 @@ class FinanceStore extends ChangeNotifier {
 
   Future<void> setThemeMode(ThemeMode mode) {
     themeMode = mode;
+    return _save();
+  }
+
+  Future<void> finishOnboarding() {
+    onboarded = true;
     return _save();
   }
 

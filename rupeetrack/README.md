@@ -33,6 +33,7 @@ sign-up and no bank login.
 - **Loans payoff graph**: what is left to pay month by month (or year by
   year) and the "debt-free by" month; each loan shows % paid.
 - **Home screen widget**: this month's spending with a bar per day.
+- **First-run tour**: four pages showing the main features, with Skip.
 - **Languages**: English, हिन्दी (Hindi), ಕನ್ನಡ (Kannada), മലയാളം
   (Malayalam), தமிழ் (Tamil) and తెలుగు (Telugu);
   chosen from Settings or More › Language (the phone's language is used on
@@ -176,7 +177,9 @@ answers for every Play Console form. `store/` holds the icon, feature
 graphic, screenshots and the listing text in six languages; `PRIVACY.md`
 is the privacy policy. The Play build (`--flavor play`) has no SMS
 permission; CI builds a signed `.aab` once the `RUPIO_UPLOAD_*` secrets are
-set.
+set. `python3 tool/store/make_store_graphics.py` redraws the feature
+graphic, the framed Play screenshots and the first-run tour images from
+the raw screenshots in `store/screenshots/raw/`.
 
 ## Icons
 

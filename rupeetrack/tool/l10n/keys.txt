@@ -560,3 +560,17 @@
 560|Auto-detect from statement PDFs
 561|Fill cards and accounts from bank statements
 562|{0} new found
+563|Know where every
+564|rupee goes
+565|Your month in one number and one clear graph. Red for spending, green for income.
+566|Never miss a
+567|card bill
+568|Bills, due dates and reminders for every credit card.
+569|Every EMI and goal,
+570|tracked
+571|See the EMIs left, the month you become debt-free and how much to save.
+572|Private, offline,
+573|in your language
+574|No sign-up and no bank login. Your data stays on your phone.
+575|Skip
+576|Get started

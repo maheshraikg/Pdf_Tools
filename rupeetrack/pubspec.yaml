@@ -79,6 +79,7 @@ flutter:
     - assets/fonts/Carlito-OFL.txt
     - assets/fonts/Inter-OFL.txt
     - assets/brand/icon.png
+    - assets/onboarding/
 
   fonts:
     # Inter (SIL OFL 1.1), the app's UI font.

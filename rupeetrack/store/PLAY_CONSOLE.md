@@ -67,7 +67,8 @@ Play Console → **Create app**:
   (after this branch is merged; until then use the branch name instead of
   `master`). Replace `CONTACT_EMAIL` in it with your support email first.
 - **App access:** All functionality is available without special access.
-- **Ads:** No, the app does not contain ads.
+- **Ads:** No, the app does not contain ads (if ads are added later, answer
+  Yes and update the privacy policy and Data safety form).
 - **Content rating:** start the questionnaire, category **Utility,
   productivity, communication or other**; answer **No** to every question
   (no violence, no sexual content, no gambling, no user-generated content

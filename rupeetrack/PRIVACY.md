@@ -9,7 +9,7 @@ tracker. It is built to keep your money data **on your phone only**.
 
 - No account, no sign-up, no login to any bank.
 - Everything you enter is stored only on your device.
-- No ads, no analytics, no tracking, no data sold or shared.
+- No analytics, no tracking, no data sold or shared.
 - The developer runs no server and never receives your data.
 
 ## What the app stores
