@@ -1,7 +1,8 @@
 # Rupio – Expense Tracker
 
-_Formerly RupeeTrack. The Android package id stays `com.kspstadk.rupeetrack`, so
-updates install over earlier builds and keep their data._
+_Formerly RupeeTrack. The Android package id is `com.rupio.app` (test builds
+before November 2026 used `com.kspstadk.rupeetrack`; move data across with
+Settings › Back up and Restore)._
 
 A personal finance tracker in Indian rupees for Android, built with Flutter.
 It tracks savings accounts, credit cards and investments, and recording an
@@ -158,7 +159,7 @@ to 100 test users) it is free:
    `https://www.googleapis.com/auth/gmail.readonly`; add your Gmail
    address(es) as **test users**.
 3. **Credentials**: create an **Android** OAuth client (package
-   `com.kspstadk.rupeetrack`, the SHA-1 above) and a **Web application**
+   `com.rupio.app`, the SHA-1 above) and a **Web application**
    client.
 4. In the GitHub repository add an Actions **variable**
    `GMAIL_WEB_CLIENT_ID` with the web client id; the next CI build turns the

@@ -19,7 +19,9 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.kspstadk.rupeetrack"
+        // The id on Google Play; it can never change after the first upload.
+        // (The Kotlin code keeps its original package, `namespace` above.)
+        applicationId = "com.rupio.app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION

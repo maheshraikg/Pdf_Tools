@@ -76,7 +76,7 @@
 78|డిస్‌కనెక్ట్ చేయి
 79|సెటప్ ఎలా చేయాలి
 80|Gmail యాక్సెస్ సెటప్ చేయండి
-81|డెవలపర్ రిజిస్టర్ చేసిన తర్వాతే Google యాప్‌లను Gmail చదవనిస్తుంది. వ్యక్తిగత వాడకానికి ఇది ఉచితం:\n\n1. console.cloud.google.com లో ఒక ప్రాజెక్ట్ సృష్టించి Gmail API ఆన్ చేయండి.\n2. OAuth consent screen: External ఎంచుకుని, gmail.readonly scope జోడించి, మీ Gmail చిరునామాను (100 మంది వరకు) test users గా జోడించండి.\n3. Credentials: com.kspstadk.rupeetrack ప్యాకేజీ మరియు యాప్ SHA-1 (README చూడండి) తో ఒక "Android" OAuth client, ఒక "Web application" client సృష్టించండి.\n4. వెబ్ client id తో యాప్ బిల్డ్ చేయండి: GitHub రిపాజిటరీలో Actions variable GMAIL_WEB_CLIENT_ID జోడించండి.\n\nఅప్పటి వరకు, స్టేట్‌మెంట్ PDF లను Gmail యాప్ నుండి Rupio కు షేర్ చేయవచ్చు.
+81|డెవలపర్ రిజిస్టర్ చేసిన తర్వాతే Google యాప్‌లను Gmail చదవనిస్తుంది. వ్యక్తిగత వాడకానికి ఇది ఉచితం:\n\n1. console.cloud.google.com లో ఒక ప్రాజెక్ట్ సృష్టించి Gmail API ఆన్ చేయండి.\n2. OAuth consent screen: External ఎంచుకుని, gmail.readonly scope జోడించి, మీ Gmail చిరునామాను (100 మంది వరకు) test users గా జోడించండి.\n3. Credentials: com.rupio.app ప్యాకేజీ మరియు యాప్ SHA-1 (README చూడండి) తో ఒక "Android" OAuth client, ఒక "Web application" client సృష్టించండి.\n4. వెబ్ client id తో యాప్ బిల్డ్ చేయండి: GitHub రిపాజిటరీలో Actions variable GMAIL_WEB_CLIENT_ID జోడించండి.\n\nఅప్పటి వరకు, స్టేట్‌మెంట్ PDF లను Gmail యాప్ నుండి Rupio కు షేర్ చేయవచ్చు.
 82|సరే
 83|ఈ PDF బ్యాంక్ లేదా కార్డ్ స్టేట్‌మెంట్‌లా కనిపించడం లేదు
 84|స్టేట్‌మెంట్ PDF

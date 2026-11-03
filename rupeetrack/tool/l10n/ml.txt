@@ -76,7 +76,7 @@
 78|വിച്ഛേദിക്കുക
 79|സജ്ജീകരിക്കുന്ന വിധം
 80|Gmail ആക്‌സസ് സജ്ജീകരിക്കുക
-81|ഡെവലപ്പർ രജിസ്റ്റർ ചെയ്താൽ മാത്രമേ Google ആപ്പുകളെ Gmail വായിക്കാൻ അനുവദിക്കൂ. വ്യക്തിഗത ഉപയോഗത്തിന് ഇത് സൗജന്യമാണ്:\n\n1. console.cloud.google.com ൽ ഒരു പ്രോജക്റ്റ് സൃഷ്ടിച്ച് Gmail API ഓണാക്കുക.\n2. OAuth consent screen: External തിരഞ്ഞെടുക്കുക, gmail.readonly scope ചേർക്കുക, നിങ്ങളുടെ Gmail വിലാസം (100 പേർ വരെ) test users ആയി ചേർക്കുക.\n3. Credentials: com.kspstadk.rupeetrack പാക്കേജും ആപ്പിന്റെ SHA-1 ഉം (README കാണുക) ഉപയോഗിച്ച് ഒരു "Android" OAuth client, ഒരു "Web application" client എന്നിവ സൃഷ്ടിക്കുക.\n4. വെബ് client id ഉപയോഗിച്ച് ആപ്പ് ബിൽഡ് ചെയ്യുക: GitHub റിപ്പോസിറ്ററിയിൽ Actions variable GMAIL_WEB_CLIENT_ID ചേർക്കുക.\n\nഅതുവരെ, സ്റ്റേറ്റ്‌മെന്റ് PDF കൾ Gmail ആപ്പിൽ നിന്ന് Rupio ലേക്ക് ഷെയർ ചെയ്യാം.
+81|ഡെവലപ്പർ രജിസ്റ്റർ ചെയ്താൽ മാത്രമേ Google ആപ്പുകളെ Gmail വായിക്കാൻ അനുവദിക്കൂ. വ്യക്തിഗത ഉപയോഗത്തിന് ഇത് സൗജന്യമാണ്:\n\n1. console.cloud.google.com ൽ ഒരു പ്രോജക്റ്റ് സൃഷ്ടിച്ച് Gmail API ഓണാക്കുക.\n2. OAuth consent screen: External തിരഞ്ഞെടുക്കുക, gmail.readonly scope ചേർക്കുക, നിങ്ങളുടെ Gmail വിലാസം (100 പേർ വരെ) test users ആയി ചേർക്കുക.\n3. Credentials: com.rupio.app പാക്കേജും ആപ്പിന്റെ SHA-1 ഉം (README കാണുക) ഉപയോഗിച്ച് ഒരു "Android" OAuth client, ഒരു "Web application" client എന്നിവ സൃഷ്ടിക്കുക.\n4. വെബ് client id ഉപയോഗിച്ച് ആപ്പ് ബിൽഡ് ചെയ്യുക: GitHub റിപ്പോസിറ്ററിയിൽ Actions variable GMAIL_WEB_CLIENT_ID ചേർക്കുക.\n\nഅതുവരെ, സ്റ്റേറ്റ്‌മെന്റ് PDF കൾ Gmail ആപ്പിൽ നിന്ന് Rupio ലേക്ക് ഷെയർ ചെയ്യാം.
 82|ശരി
 83|ഈ PDF ഒരു ബാങ്ക് അല്ലെങ്കിൽ കാർഡ് സ്റ്റേറ്റ്‌മെന്റ് പോലെ തോന്നുന്നില്ല
 84|സ്റ്റേറ്റ്‌മെന്റ് PDF

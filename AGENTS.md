@@ -24,7 +24,8 @@ This project is an Android app with multiple product flavors (Play Store / F-Dro
 - Follow the existing pattern: `lib/app/` (state as a `ChangeNotifier` +
   `InheritedNotifier` scope, persisted with `shared_preferences`),
   `lib/screens/`, `lib/widgets/`, plain-Dart logic with unit tests in `test/`,
-  package id `com.kspstadk.<app>`.
+  package id `com.kspstadk.<app>` (exception: `rupeetrack/` is published on
+  Google Play as Rupio with the package id `com.rupio.app`).
 - Before pushing, run `flutter analyze` and `flutter test` in the app folder.
 
 ## Flavor intent and constraints

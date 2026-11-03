@@ -76,7 +76,7 @@
 78|डिस्कनेक्ट करें
 79|सेटअप कैसे करें
 80|Gmail एक्सेस सेट करें
-81|Google ऐप्स को Gmail तभी पढ़ने देता है जब डेवलपर उन्हें रजिस्टर करे। निजी इस्तेमाल के लिए यह मुफ़्त है:\n\n1. console.cloud.google.com में एक प्रोजेक्ट बनाएँ और Gmail API चालू करें।\n2. OAuth consent screen: External चुनें, gmail.readonly scope जोड़ें और अपना Gmail पता (100 लोगों तक) test users में जोड़ें।\n3. Credentials: पैकेज com.kspstadk.rupeetrack और ऐप के SHA-1 (README देखें) के साथ एक "Android" OAuth client, और एक "Web application" client बनाएँ।\n4. वेब client id के साथ ऐप बनाएँ: GitHub रिपॉज़िटरी में Actions variable GMAIL_WEB_CLIENT_ID जोड़ें।\n\nतब तक, स्टेटमेंट PDF को Gmail ऐप से Rupio पर शेयर कर सकते हैं।
+81|Google ऐप्स को Gmail तभी पढ़ने देता है जब डेवलपर उन्हें रजिस्टर करे। निजी इस्तेमाल के लिए यह मुफ़्त है:\n\n1. console.cloud.google.com में एक प्रोजेक्ट बनाएँ और Gmail API चालू करें।\n2. OAuth consent screen: External चुनें, gmail.readonly scope जोड़ें और अपना Gmail पता (100 लोगों तक) test users में जोड़ें।\n3. Credentials: पैकेज com.rupio.app और ऐप के SHA-1 (README देखें) के साथ एक "Android" OAuth client, और एक "Web application" client बनाएँ।\n4. वेब client id के साथ ऐप बनाएँ: GitHub रिपॉज़िटरी में Actions variable GMAIL_WEB_CLIENT_ID जोड़ें।\n\nतब तक, स्टेटमेंट PDF को Gmail ऐप से Rupio पर शेयर कर सकते हैं।
 82|ठीक है
 83|यह PDF बैंक या कार्ड स्टेटमेंट जैसा नहीं लगता
 84|स्टेटमेंट PDF

@@ -76,7 +76,7 @@
 78|துண்டி
 79|அமைப்பது எப்படி
 80|Gmail அணுகலை அமைக்கவும்
-81|டெவலப்பர் பதிவுசெய்த பிறகுதான் Google ஆப்களை Gmail படிக்க அனுமதிக்கும். தனிப்பட்ட பயன்பாட்டுக்கு இது இலவசம்:\n\n1. console.cloud.google.com இல் ஒரு ப்ராஜெக்ட் உருவாக்கி Gmail API ஐ இயக்கவும்.\n2. OAuth consent screen: External தேர்ந்தெடுத்து, gmail.readonly scope சேர்த்து, உங்கள் Gmail முகவரியை (100 பேர் வரை) test users ஆகச் சேர்க்கவும்.\n3. Credentials: com.kspstadk.rupeetrack தொகுப்பு மற்றும் ஆப்பின் SHA-1 (README பார்க்கவும்) உடன் ஒரு "Android" OAuth client, ஒரு "Web application" client உருவாக்கவும்.\n4. வெப் client id உடன் ஆப்பை உருவாக்கவும்: GitHub ரெப்பாசிட்டரியில் Actions variable GMAIL_WEB_CLIENT_ID சேர்க்கவும்.\n\nஅதுவரை, ஸ்டேட்மென்ட் PDF களை Gmail ஆப்பிலிருந்து Rupio க்குப் பகிரலாம்.
+81|டெவலப்பர் பதிவுசெய்த பிறகுதான் Google ஆப்களை Gmail படிக்க அனுமதிக்கும். தனிப்பட்ட பயன்பாட்டுக்கு இது இலவசம்:\n\n1. console.cloud.google.com இல் ஒரு ப்ராஜெக்ட் உருவாக்கி Gmail API ஐ இயக்கவும்.\n2. OAuth consent screen: External தேர்ந்தெடுத்து, gmail.readonly scope சேர்த்து, உங்கள் Gmail முகவரியை (100 பேர் வரை) test users ஆகச் சேர்க்கவும்.\n3. Credentials: com.rupio.app தொகுப்பு மற்றும் ஆப்பின் SHA-1 (README பார்க்கவும்) உடன் ஒரு "Android" OAuth client, ஒரு "Web application" client உருவாக்கவும்.\n4. வெப் client id உடன் ஆப்பை உருவாக்கவும்: GitHub ரெப்பாசிட்டரியில் Actions variable GMAIL_WEB_CLIENT_ID சேர்க்கவும்.\n\nஅதுவரை, ஸ்டேட்மென்ட் PDF களை Gmail ஆப்பிலிருந்து Rupio க்குப் பகிரலாம்.
 82|சரி
 83|இந்த PDF வங்கி அல்லது கார்டு ஸ்டேட்மென்ட் போலத் தெரியவில்லை
 84|ஸ்டேட்மென்ட் PDF

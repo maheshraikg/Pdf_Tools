@@ -366,7 +366,7 @@ void _showGmailSetup(BuildContext context) {
       scrollable: true,
       content: Text(
         tr(
-          'Google only lets apps read Gmail after the developer registers them. For personal use this is free:\n\n1. In console.cloud.google.com create a project and enable the Gmail API.\n2. OAuth consent screen: External, add the gmail.readonly scope and add your Gmail address (up to 100 people) as test users.\n3. Credentials: create an "Android" OAuth client with package com.kspstadk.rupeetrack and the app\'s SHA-1 (see the README), and a "Web application" client.\n4. Build the app with the web client id: in the GitHub repository add an Actions variable GMAIL_WEB_CLIENT_ID.\n\nUntil then, statement PDFs can be shared to Rupio from the Gmail app.',
+          'Google only lets apps read Gmail after the developer registers them. For personal use this is free:\n\n1. In console.cloud.google.com create a project and enable the Gmail API.\n2. OAuth consent screen: External, add the gmail.readonly scope and add your Gmail address (up to 100 people) as test users.\n3. Credentials: create an "Android" OAuth client with package com.rupio.app and the app\'s SHA-1 (see the README), and a "Web application" client.\n4. Build the app with the web client id: in the GitHub repository add an Actions variable GMAIL_WEB_CLIENT_ID.\n\nUntil then, statement PDFs can be shared to Rupio from the Gmail app.',
         ),
       ),
       actions: [

@@ -76,7 +76,7 @@
 78|ಸಂಪರ್ಕ ತೆಗೆಯಿರಿ
 79|ಸೆಟಪ್ ಮಾಡುವುದು ಹೇಗೆ
 80|Gmail ಪ್ರವೇಶ ಹೊಂದಿಸಿ
-81|ಡೆವಲಪರ್ ನೋಂದಾಯಿಸಿದ ನಂತರವೇ Google ಆಪ್‌ಗಳಿಗೆ Gmail ಓದಲು ಬಿಡುತ್ತದೆ. ವೈಯಕ್ತಿಕ ಬಳಕೆಗೆ ಇದು ಉಚಿತ:\n\n1. console.cloud.google.com ನಲ್ಲಿ ಪ್ರಾಜೆಕ್ಟ್ ರಚಿಸಿ ಮತ್ತು Gmail API ಸಕ್ರಿಯಗೊಳಿಸಿ.\n2. OAuth consent screen: External ಆಯ್ಕೆಮಾಡಿ, gmail.readonly scope ಸೇರಿಸಿ ಮತ್ತು ನಿಮ್ಮ Gmail ವಿಳಾಸವನ್ನು (100 ಜನರವರೆಗೆ) test users ಆಗಿ ಸೇರಿಸಿ.\n3. Credentials: com.kspstadk.rupeetrack ಪ್ಯಾಕೇಜ್ ಮತ್ತು ಆಪ್‌ನ SHA-1 (README ನೋಡಿ) ಜೊತೆ "Android" OAuth client ಹಾಗೂ ಒಂದು "Web application" client ರಚಿಸಿ.\n4. ವೆಬ್ client id ಜೊತೆ ಆಪ್ ಬಿಲ್ಡ್ ಮಾಡಿ: GitHub ರೆಪೊಸಿಟರಿಯಲ್ಲಿ Actions variable GMAIL_WEB_CLIENT_ID ಸೇರಿಸಿ.\n\nಅಲ್ಲಿಯವರೆಗೆ, ಸ್ಟೇಟ್‌ಮೆಂಟ್ PDF ಗಳನ್ನು Gmail ಆಪ್‌ನಿಂದ Rupio ಗೆ ಶೇರ್ ಮಾಡಬಹುದು.
+81|ಡೆವಲಪರ್ ನೋಂದಾಯಿಸಿದ ನಂತರವೇ Google ಆಪ್‌ಗಳಿಗೆ Gmail ಓದಲು ಬಿಡುತ್ತದೆ. ವೈಯಕ್ತಿಕ ಬಳಕೆಗೆ ಇದು ಉಚಿತ:\n\n1. console.cloud.google.com ನಲ್ಲಿ ಪ್ರಾಜೆಕ್ಟ್ ರಚಿಸಿ ಮತ್ತು Gmail API ಸಕ್ರಿಯಗೊಳಿಸಿ.\n2. OAuth consent screen: External ಆಯ್ಕೆಮಾಡಿ, gmail.readonly scope ಸೇರಿಸಿ ಮತ್ತು ನಿಮ್ಮ Gmail ವಿಳಾಸವನ್ನು (100 ಜನರವರೆಗೆ) test users ಆಗಿ ಸೇರಿಸಿ.\n3. Credentials: com.rupio.app ಪ್ಯಾಕೇಜ್ ಮತ್ತು ಆಪ್‌ನ SHA-1 (README ನೋಡಿ) ಜೊತೆ "Android" OAuth client ಹಾಗೂ ಒಂದು "Web application" client ರಚಿಸಿ.\n4. ವೆಬ್ client id ಜೊತೆ ಆಪ್ ಬಿಲ್ಡ್ ಮಾಡಿ: GitHub ರೆಪೊಸಿಟರಿಯಲ್ಲಿ Actions variable GMAIL_WEB_CLIENT_ID ಸೇರಿಸಿ.\n\nಅಲ್ಲಿಯವರೆಗೆ, ಸ್ಟೇಟ್‌ಮೆಂಟ್ PDF ಗಳನ್ನು Gmail ಆಪ್‌ನಿಂದ Rupio ಗೆ ಶೇರ್ ಮಾಡಬಹುದು.
 82|ಸರಿ
 83|ಈ PDF ಬ್ಯಾಂಕ್ ಅಥವಾ ಕಾರ್ಡ್ ಸ್ಟೇಟ್‌ಮೆಂಟ್‌ನಂತೆ ಕಾಣುತ್ತಿಲ್ಲ
 84|ಸ್ಟೇಟ್‌ಮೆಂಟ್ PDF
