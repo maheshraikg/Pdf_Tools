@@ -109,8 +109,12 @@ jobs:
         run: |
           mv app-release.apk Rupio.apk
           if gh release view "$APK_TAG" >/dev/null 2>&1; then
-            # Point the tag at the commit this APK was built from.
-            gh api -X PATCH "repos/$GH_REPO/git/refs/tags/$APK_TAG" -f sha="$SHA" -F force=true
+            # Point the tag at the commit this APK was built from. GitHub
+            # refuses this (HTTP 403) for a commit that changes a workflow
+            # file, because GITHUB_TOKEN has no "workflows" permission; the
+            # tag is only bookkeeping, so the APK is published anyway.
+            gh api -X PATCH "repos/$GH_REPO/git/refs/tags/$APK_TAG" -f sha="$SHA" -F force=true \
+              || echo "::warning::Could not move $APK_TAG to $SHA (it changes a workflow file); the APK is still updated."
             gh release edit "$APK_TAG" --title "Rupio (latest build)" \
               --notes "Newest Rupio APK, rebuilt automatically. Direct link: https://github.com/$GH_REPO/releases/download/$APK_TAG/Rupio.apk"
             # The app was called RupeeTrack before; drop the old file name.
