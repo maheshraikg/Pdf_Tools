@@ -9,7 +9,7 @@ mentioned are in this `store/` folder.
 |---|---|
 | App icon 512 × 512 | `icon-512.png` |
 | Feature graphic 1024 × 500 | `feature-graphic.png` |
-| Phone screenshots 1080 × 1920 (8) | `screenshots/phone/*.png` |
+| Phone screenshots 1080 × 1920 (6) | `screenshots/phone/*.png` |
 | Title, short and full description (6 languages) | `listing/<language>/` |
 | Privacy policy | `../PRIVACY.md` (see step 4) |
 | App bundle (.aab) | built by GitHub Actions, see step 2 |

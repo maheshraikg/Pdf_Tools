@@ -112,16 +112,15 @@ def feature_graphic():
     im.convert('RGB').save(ROOT / 'store/feature-graphic.png')
 
 
-# Play screenshots: (raw file, headline, highlighted part, subline)
+# Play screenshots: (raw file, headline, highlighted part). Kept short:
+# one headline and the top of one screen, large enough to read.
 SHOTS = [
-    ('1-home', 'Know where every ', 'rupee goes', 'Your month in one number and one clear graph'),
-    ('2-year', 'Your year, ', 'month by month', 'Tap any month to see its days'),
-    ('3-income', 'Income in green, ', 'spending in red', 'See what is left after spending'),
-    ('4-insights', 'Where your income ', 'really goes', 'EMIs, spending and savings in one bar'),
-    ('5-loans', 'Every EMI, ', 'tracked', 'Know the month you become debt-free'),
-    ('6-goals', 'Save first, ', 'then buy', 'How much to put aside every month'),
-    ('7-cards', 'Never miss a ', 'card bill', 'Reminders before every due date'),
-    ('8-add', 'Add a spend ', 'in seconds', 'Amount, category, account. Done.'),
+    ('1-home', 'Know where every ', 'rupee goes'),
+    ('2-year', 'Your year ', 'at a glance'),
+    ('4-insights', 'See where your ', 'income goes'),
+    ('5-loans', 'Every EMI, ', 'tracked'),
+    ('6-goals', 'Reach every ', 'savings goal'),
+    ('7-cards', 'Never miss a ', 'card bill'),
 ]
 
 
@@ -147,24 +146,24 @@ def wrap_headline(d, lead, accent, fnt, max_w):
     return lines
 
 
-def store_screenshot(name, lead, accent, sub):
+def store_screenshot(name, lead, accent):
     w, h = 1080, 1920
-    im = background(w, h, (-200, 1000, 1280, 2300))
+    im = background(w, h, (-200, 900, 1280, 2300))
     d = ImageDraw.Draw(im)
-    big = font('ExtraBold', 84)
-    lines = wrap_headline(d, lead, accent, big, w - 160)
-    y = 150
+    big = font('ExtraBold', 92)
+    lines = wrap_headline(d, lead, accent, big, w - 140)
+    y = 170
     for line in lines:
         text = ' '.join(x for x, _ in line)
         x = (w - d.textlength(text, font=big)) / 2
         for word, color in line:
             d.text((x, y), word, font=big, fill=color)
             x += d.textlength(word + ' ', font=big)
-        y += 100
-    small = font('Medium', 38)
-    d.text(((w - d.textlength(sub, font=small)) / 2, y + 26), sub, font=small, fill=GREY)
-    ph = phone(RAW / f'{name}.png', 760)
-    place(im, ph, (w - ph.width) // 2, y + 130, blur=30)
+        y += 112
+    # A large phone that runs off the bottom edge: only the top of the
+    # screen shows, big enough to read.
+    ph = phone(RAW / f'{name}.png', 900)
+    place(im, ph, (w - ph.width) // 2, y + 90, blur=34)
     return im.convert('RGB')
 
 
@@ -172,8 +171,10 @@ def main():
     feature_graphic()
     out = ROOT / 'store/screenshots/phone'
     out.mkdir(parents=True, exist_ok=True)
-    for name, lead, accent, sub in SHOTS:
-        store_screenshot(name, lead, accent, sub).save(out / f'{name}.png')
+    for old in out.glob('*.png'):
+        old.unlink()
+    for i, (name, lead, accent) in enumerate(SHOTS, 1):
+        store_screenshot(name, lead, accent).save(out / f'{i}-{name.split("-", 1)[1]}.png')
     onb = ROOT / 'assets/onboarding'
     onb.mkdir(parents=True, exist_ok=True)
     for name in ['1-home', '4-insights', '5-loans', '7-cards']:
