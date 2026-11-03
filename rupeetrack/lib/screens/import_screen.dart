@@ -7,6 +7,7 @@ import '../data/csv.dart';
 import '../models/money.dart';
 import '../widgets/common.dart';
 import '../widgets/design.dart';
+import '../l10n/strings.dart';
 
 /// Import a bank or credit card statement (CSV): choose where it belongs,
 /// pick the file, review what will be added, confirm.
@@ -44,7 +45,7 @@ class _ImportScreenState extends State<ImportScreen> {
     } on FormatException catch (e) {
       setState(() => _error = e.message);
     } catch (e) {
-      setState(() => _error = 'Could not read the file: $e');
+      setState(() => _error = tr('Could not read the file: {0}', [e]));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -56,7 +57,7 @@ class _ImportScreenState extends State<ImportScreen> {
     if (!mounted) return;
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Imported ${r.txns.length} transactions')),
+      SnackBar(content: Text(tr('Imported {0} transactions', [r.txns.length]))),
     );
   }
 
@@ -69,7 +70,7 @@ class _ImportScreenState extends State<ImportScreen> {
     final inn = result?.txns.where((x) => txnDirection(x) > 0) ?? const [];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Import statement')),
+      appBar: AppBar(title: Text(tr('Import statement'))),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 32),
         children: [
@@ -78,7 +79,7 @@ class _ImportScreenState extends State<ImportScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '1. Which account or card is it for?',
+                  tr('1. Which account or card is it for?'),
                   style: t.titleSmall,
                 ),
                 const SizedBox(height: 10),
@@ -111,12 +112,12 @@ class _ImportScreenState extends State<ImportScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Text('2. Choose the CSV file', style: t.titleSmall),
+                Text(tr('2. Choose the CSV file'), style: t.titleSmall),
                 const SizedBox(height: 4),
                 Text(
-                  'Download the statement as CSV (or Excel saved as CSV) from '
-                  'your net banking. Debit/Credit or Amount columns are '
-                  'detected automatically.',
+                  tr(
+                    'Download the statement as CSV (or Excel saved as CSV) from your net banking. Debit/Credit or Amount columns are detected automatically.',
+                  ),
                   style: t.bodySmall,
                 ),
                 const SizedBox(height: 12),
@@ -129,7 +130,7 @@ class _ImportScreenState extends State<ImportScreen> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.upload_file),
-                  label: const Text('Choose file'),
+                  label: Text(tr('Choose file')),
                 ),
               ],
             ),
@@ -144,32 +145,44 @@ class _ImportScreenState extends State<ImportScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('3. Review', style: t.titleSmall),
+                  Text(tr('3. Review'), style: t.titleSmall),
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      Expanded(child: Figure('New', '${result.txns.length}')),
                       Expanded(
-                        child: Figure('Already in app', '${result.duplicates}'),
+                        child: Figure(tr('New'), '${result.txns.length}'),
                       ),
-                      Expanded(child: Figure('Skipped', '${result.skipped}')),
+                      Expanded(
+                        child: Figure(
+                          tr('Already in app'),
+                          '${result.duplicates}',
+                        ),
+                      ),
+                      Expanded(
+                        child: Figure(tr('Skipped'), '${result.skipped}'),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Money out ${formatRupees(out.fold(0, (s, x) => s + x.amount))}'
-                    ' · money in ${formatRupees(inn.fold(0, (s, x) => s + x.amount))}',
+                    tr('Money out {0} · money in {1}', [
+                      formatRupees(out.fold(0, (s, x) => s + x.amount)),
+                      formatRupees(inn.fold(0, (s, x) => s + x.amount)),
+                    ]),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Categories are guessed from the description; tap any '
-                    'entry later to change it.',
+                    tr(
+                      'Categories are guessed from the description; tap any entry later to change it.',
+                    ),
                     style: t.bodySmall,
                   ),
                   const SizedBox(height: 12),
                   FilledButton(
                     onPressed: result.txns.isEmpty ? null : _confirm,
-                    child: Text('Import ${result.txns.length} transactions'),
+                    child: Text(
+                      tr('Import {0} transactions', [result.txns.length]),
+                    ),
                   ),
                 ],
               ),
@@ -183,7 +196,9 @@ class _ImportScreenState extends State<ImportScreen> {
                     if (result.txns.length > 30)
                       Padding(
                         padding: const EdgeInsets.all(12),
-                        child: Text('…and ${result.txns.length - 30} more'),
+                        child: Text(
+                          tr('…and {0} more', [result.txns.length - 30]),
+                        ),
                       ),
                   ],
                 ),

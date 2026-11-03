@@ -6,6 +6,7 @@ import '../models/models.dart';
 import '../models/money.dart';
 import '../widgets/common.dart';
 import 'quick_add_sheet.dart';
+import '../l10n/strings.dart';
 
 enum _Filter {
   all('All'),
@@ -99,7 +100,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 ),
                 if (spent > 0)
                   Text(
-                    'Spent ${formatRupees(spent)}',
+                    tr('Spent {0}', [formatRupees(spent)]),
                     style: Theme.of(context).textTheme.labelMedium
                         ?.copyWith(color: scheme.onSurfaceVariant),
                   ),
@@ -124,9 +125,9 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               ..clearSnackBars()
               ..showSnackBar(
                 SnackBar(
-                  content: Text('Deleted ${formatRupees(t.amount)}'),
+                  content: Text(tr('Deleted {0}', [formatRupees(t.amount)])),
                   action: SnackBarAction(
-                    label: 'Undo',
+                    label: tr('Undo'),
                     onPressed: () => store.restoreTxn(t),
                   ),
                 ),
@@ -142,14 +143,14 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Activity')),
+      appBar: AppBar(title: Text(tr('Activity'))),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: SearchBar(
               controller: _search,
-              hintText: 'Search: petrol, 250, SBI…',
+              hintText: tr('Search: petrol, 250, SBI…'),
               elevation: const WidgetStatePropertyAll(0),
               backgroundColor: WidgetStatePropertyAll(
                 Theme.of(context).colorScheme.surfaceContainerHigh,
@@ -159,7 +160,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 if (q.isNotEmpty)
                   IconButton(
                     icon: const Icon(Icons.clear),
-                    tooltip: 'Clear',
+                    tooltip: tr('Clear'),
                     onPressed: () => setState(_search.clear),
                   ),
               ],
@@ -188,8 +189,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 ? EmptyState(
                     icon: Icons.search_off,
                     message: l.txns.isEmpty
-                        ? 'No transactions yet. Tap + to add one.'
-                        : 'Nothing matches.',
+                        ? tr('No transactions yet. Tap + to add one.')
+                        : tr('Nothing matches.'),
                   )
                 : ListView(
                     padding: const EdgeInsets.only(bottom: 96),

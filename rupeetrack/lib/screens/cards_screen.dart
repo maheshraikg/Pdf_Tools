@@ -9,6 +9,7 @@ import 'auto_detect_screen.dart';
 import 'forms.dart';
 import 'holding_detail_screen.dart';
 import 'pay_bill_sheet.dart';
+import '../l10n/strings.dart';
 
 /// Gradients for the card faces, picked by card id so each keeps its look.
 const _cardFaces = [
@@ -34,11 +35,11 @@ class CardsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Credit cards'),
+        title: Text(tr('Credit cards')),
         actions: [
           IconButton(
             icon: const Icon(Icons.add_card),
-            tooltip: 'Add card',
+            tooltip: tr('Add card'),
             onPressed: () => showAddCardDialog(context),
           ),
         ],
@@ -46,12 +47,12 @@ class CardsScreen extends StatelessWidget {
       body: statuses.isEmpty
           ? EmptyState(
               icon: Icons.credit_card,
-              message:
-                  'Add your credit cards to track spending, limits and '
-                  'payment due dates, with reminders before every bill.',
-              actionLabel: 'Add card',
+              message: tr(
+                'Add your credit cards to track spending, limits and payment due dates, with reminders before every bill.',
+              ),
+              actionLabel: tr('Add card'),
               onAction: () => showAddCardDialog(context),
-              secondaryLabel: 'Find my cards from SMS',
+              secondaryLabel: tr('Find my cards from SMS'),
               onSecondary: () => Navigator.push(
                 context,
                 MaterialPageRoute<void>(
@@ -67,14 +68,20 @@ class CardsScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         Expanded(
-                          child: Figure('Total owed', formatRupees(totalOwed)),
-                        ),
-                        Expanded(
-                          child: Figure('Bills due', formatRupees(totalDue)),
+                          child: Figure(
+                            tr('Total owed'),
+                            formatRupees(totalOwed),
+                          ),
                         ),
                         Expanded(
                           child: Figure(
-                            'Used',
+                            tr('Bills due'),
+                            formatRupees(totalDue),
+                          ),
+                        ),
+                        Expanded(
+                          child: Figure(
+                            tr('Used'),
                             totalLimit == 0
                                 ? '–'
                                 : '${(totalOwed * 100 / totalLimit).toStringAsFixed(0)}%',
@@ -111,15 +118,15 @@ class _CardBlock extends StatelessWidget {
         : scheme.moneyIn;
     final daysLeft = s.dueDate.difference(today()).inDays;
     final (dueText, dueColor) = s.overdue
-        ? ('Overdue since ${dayMonth(s.dueDate)}', scheme.error)
+        ? (tr('Overdue since {0}', [dayMonth(s.dueDate)]), scheme.error)
         : s.amountDue > 0
         ? (
             daysLeft == 0
-                ? 'Due today'
-                : 'Due ${dayMonth(s.dueDate)} · $daysLeft days',
+                ? tr('Due today')
+                : tr('Due {0} · {1} days', [dayMonth(s.dueDate), daysLeft]),
             daysLeft <= 7 ? kOrange : scheme.onSurfaceVariant,
           )
-        : ('Next due ${dayMonth(s.dueDate)}', scheme.moneyIn);
+        : (tr('Next due {0}', [dayMonth(s.dueDate)]), scheme.moneyIn);
 
     void open() => Navigator.push(
       context,
@@ -185,7 +192,10 @@ class _CardBlock extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      HeroFigure('Outstanding', formatRupees(s.outstanding)),
+                      HeroFigure(
+                        tr('Outstanding'),
+                        formatRupees(s.outstanding),
+                      ),
                       const SizedBox(height: 8),
                       Row(
                         children: [
@@ -200,7 +210,9 @@ class _CardBlock extends StatelessWidget {
                           ),
                           const Spacer(),
                           Text(
-                            'Limit ${formatRupeesCompact(s.card.creditLimit)}',
+                            tr('Limit {0}', [
+                              formatRupeesCompact(s.card.creditLimit),
+                            ]),
                             style: const TextStyle(color: Colors.white70),
                           ),
                         ],
@@ -221,12 +233,12 @@ class _CardBlock extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        '${util.toStringAsFixed(0)}% of limit used',
+                        tr('{0}% of limit used', [util.toStringAsFixed(0)]),
                         style: t.labelLarge,
                       ),
                     ),
                     Text(
-                      '${formatRupees(s.availableCredit)} available',
+                      tr('{0} available', [formatRupees(s.availableCredit)]),
                       style: t.labelLarge?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
@@ -240,14 +252,14 @@ class _CardBlock extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Figure(
-                        'Bill to pay',
+                        tr('Bill to pay'),
                         formatRupees(s.amountDue),
                         color: s.overdue ? scheme.error : null,
                       ),
                     ),
                     Expanded(
                       child: Figure(
-                        'Spent this cycle',
+                        tr('Spent this cycle'),
                         formatRupees(s.cycleSpend),
                       ),
                     ),
@@ -272,7 +284,7 @@ class _CardBlock extends StatelessWidget {
                       child: GradientButton(
                         height: 46,
                         onPressed: () => showPayBillSheet(context, s.card),
-                        label: 'Pay bill',
+                        label: tr('Pay bill'),
                       ),
                     ),
                   ],

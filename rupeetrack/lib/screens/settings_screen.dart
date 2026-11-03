@@ -13,6 +13,7 @@ import 'budgets_screen.dart';
 import 'import_screen.dart';
 import 'investments_screen.dart' show refreshFundPrices;
 import 'recurring_screen.dart';
+import '../l10n/strings.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -30,7 +31,7 @@ class SettingsScreen extends StatelessWidget {
       messenger.showSnackBar(SnackBar(content: Text(e.message)));
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Something went wrong: $e')),
+        SnackBar(content: Text(tr('Something went wrong: {0}', [e]))),
       );
     }
   }
@@ -40,19 +41,20 @@ class SettingsScreen extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Restore from backup?'),
-        content: const Text(
-          'Everything currently in the app will be replaced by the backup. '
-          'Make a backup first if you are not sure.',
+        title: Text(tr('Restore from backup?')),
+        content: Text(
+          tr(
+            'Everything currently in the app will be replaced by the backup. Make a backup first if you are not sure.',
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(tr('Cancel')),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Choose backup file'),
+            child: Text(tr('Choose backup file')),
           ),
         ],
       ),
@@ -62,7 +64,7 @@ class SettingsScreen extends StatelessWidget {
       final text = await pickTextFile();
       if (text == null) return;
       await store.restoreBackup(text);
-    }, done: 'Backup restored');
+    }, done: tr('Backup restored'));
   }
 
   @override
@@ -115,48 +117,63 @@ class SettingsScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(tr('Settings'))),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 32),
         children: [
-          group('Automatic', [
+          group(tr('Language'), [
+            tile(
+              Icons.translate,
+              currentLanguageName(),
+              tr('Change the app language'),
+              () => showLanguagePicker(context),
+            ),
+          ]),
+          group(tr('Automatic'), [
             tile(
               Icons.auto_awesome,
-              'Auto-detect from SMS, statements & Gmail',
+              tr('Auto-detect from SMS, statements & Gmail'),
               store.smsSync
-                  ? 'Bank SMS on${store.detected.isEmpty ? '' : ' · ${store.detected.length} new found'}'
-                  : 'Fill cards and accounts from bank messages',
+                  ? tr('Bank SMS on{0}', [
+                      store.detected.isEmpty
+                          ? ''
+                          : ' · ${store.detected.length} new found',
+                    ])
+                  : tr('Fill cards and accounts from bank messages'),
               () => push(const AutoDetectScreen()),
             ),
           ]),
-          group('Planning', [
+          group(tr('Planning'), [
             tile(
               Icons.pie_chart_outline,
-              'Budgets',
+              tr('Budgets'),
               l.budgets.isEmpty
-                  ? 'Monthly limits per category'
-                  : '${l.budgets.length} categories',
+                  ? tr('Monthly limits per category')
+                  : tr('{0} categories', [l.budgets.length]),
               () => push(const BudgetsScreen()),
             ),
             tile(
               Icons.event_repeat,
-              'Recurring entries',
+              tr('Recurring entries'),
               l.recurring.isEmpty
-                  ? 'Rent, SIPs, subscriptions, salary'
-                  : '${l.recurring.where((r) => r.active).length} active',
+                  ? tr('Rent, SIPs, subscriptions, salary')
+                  : tr('{0} active', [
+                      l.recurring.where((r) => r.active).length,
+                    ]),
               () => push(const RecurringScreen()),
             ),
           ]),
-          group('Reminders', [
+          group(tr('Reminders'), [
             SwitchListTile(
               secondary: const IconBadge(
                 Icons.notifications_active_outlined,
                 size: 36,
               ),
-              title: const Text('Bill and payment reminders'),
-              subtitle: const Text(
-                'Card dues 7 and 3 days before and on the day; recurring '
-                'entries on their date (9 AM)',
+              title: Text(tr('Bill and payment reminders')),
+              subtitle: Text(
+                tr(
+                  'Card dues 7 and 3 days before and on the day; recurring entries on their date (9 AM)',
+                ),
               ),
               value: store.notifications,
               onChanged: (on) async {
@@ -165,25 +182,25 @@ class SettingsScreen extends StatelessWidget {
               },
             ),
           ]),
-          group('Appearance', [
+          group(tr('Appearance'), [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: SegmentedButton<ThemeMode>(
-                segments: const [
+                segments: [
                   ButtonSegment(
                     value: ThemeMode.system,
                     icon: Icon(Icons.brightness_auto),
-                    label: Text('Auto'),
+                    label: Text(tr('Auto')),
                   ),
                   ButtonSegment(
                     value: ThemeMode.light,
                     icon: Icon(Icons.light_mode),
-                    label: Text('Light'),
+                    label: Text(tr('Light')),
                   ),
                   ButtonSegment(
                     value: ThemeMode.dark,
                     icon: Icon(Icons.dark_mode),
-                    label: Text('Dark'),
+                    label: Text(tr('Dark')),
                   ),
                 ],
                 selected: {store.themeMode},
@@ -191,21 +208,21 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
           ]),
-          group('Investments', [
+          group(tr('Investments'), [
             tile(
               Icons.sync,
-              'Update mutual fund prices',
-              'Latest NAV from AMFI for linked funds (needs internet)',
+              tr('Update mutual fund prices'),
+              tr('Latest NAV from AMFI for linked funds (needs internet)'),
               l.investments.any((i) => i.isLinked)
                   ? () => refreshFundPrices(context)
                   : null,
             ),
           ]),
-          group('Your data', [
+          group(tr('Your data'), [
             tile(
               Icons.table_view_outlined,
-              'Export transactions (CSV)',
-              'Open in Excel or Google Sheets',
+              tr('Export transactions (CSV)'),
+              tr('Open in Excel or Google Sheets'),
               l.txns.isEmpty
                   ? null
                   : () => _run(
@@ -219,8 +236,8 @@ class SettingsScreen extends StatelessWidget {
             ),
             tile(
               Icons.summarize_outlined,
-              'Monthly summary (CSV)',
-              'This month by category, with budgets',
+              tr('Monthly summary (CSV)'),
+              tr('This month by category, with budgets'),
               l.txns.isEmpty
                   ? null
                   : () => _run(
@@ -234,16 +251,16 @@ class SettingsScreen extends StatelessWidget {
             ),
             tile(
               Icons.upload_file_outlined,
-              'Import bank statement',
-              'CSV from net banking; duplicates are skipped',
+              tr('Import bank statement'),
+              tr('CSV from net banking; duplicates are skipped'),
               l.accounts.isEmpty && l.cards.isEmpty
                   ? null
                   : () => push(const ImportScreen()),
             ),
             tile(
               Icons.grid_on_outlined,
-              'Excel report (.xlsx)',
-              'Transactions, accounts, cards, investments and budgets',
+              tr('Excel report (.xlsx)'),
+              tr('Transactions, accounts, cards, investments and budgets'),
               () => _run(
                 context,
                 () => shareBytesFile(
@@ -255,8 +272,8 @@ class SettingsScreen extends StatelessWidget {
             ),
             tile(
               Icons.picture_as_pdf_outlined,
-              'PDF report',
-              'A printable summary with every transaction',
+              tr('PDF report'),
+              tr('A printable summary with every transaction'),
               () => _run(context, () async {
                 final regular = await rootBundle.load(
                   'assets/fonts/Carlito-Regular.ttf',
@@ -278,8 +295,8 @@ class SettingsScreen extends StatelessWidget {
             ),
             tile(
               Icons.cloud_upload_outlined,
-              'Back up',
-              'Everything, to restore later (Drive, email or a file)',
+              tr('Back up'),
+              tr('Everything, to restore later (Drive, email or a file)'),
               () => _run(
                 context,
                 () => shareTextFile(
@@ -291,18 +308,18 @@ class SettingsScreen extends StatelessWidget {
             ),
             tile(
               Icons.settings_backup_restore,
-              'Restore from backup',
-              'Replace the data in this app',
+              tr('Restore from backup'),
+              tr('Replace the data in this app'),
               () => _restore(context),
             ),
           ]),
-          group('About', [
+          group(tr('About'), [
             tile(
               Icons.lock_outline,
-              'Private by design',
-              'Your data stays on this phone. Nothing is sent anywhere '
-                  'unless you share or back it up yourself. Receipt photos '
-                  'are not included in backups.',
+              tr('Private by design'),
+              tr(
+                'Your data stays on this phone. Nothing is sent anywhere unless you share or back it up yourself. Receipt photos are not included in backups.',
+              ),
               null,
               info: true,
             ),
@@ -312,3 +329,41 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 }
+
+String currentLanguageName() => appLanguages
+    .firstWhere(
+      (l) => l.code == currentLanguage,
+      orElse: () => appLanguages.first,
+    )
+    .nativeName;
+
+/// Bottom sheet listing every language in its own script.
+Future<void> showLanguagePicker(BuildContext context) =>
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (sheetContext) => SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.only(bottom: 16),
+          children: [
+            for (final l in availableLanguages)
+              ListTile(
+                title: Text(l.nativeName),
+                subtitle: l.code == 'en' ? null : Text(l.englishName),
+                trailing: l.code == currentLanguage
+                    ? Icon(
+                        Icons.check_rounded,
+                        color: Theme.of(sheetContext).colorScheme.primary,
+                      )
+                    : null,
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  context.store.setLanguage(l.code);
+                },
+              ),
+          ],
+        ),
+      ),
+    );

@@ -6,6 +6,7 @@ import '../models/models.dart';
 import '../models/money.dart';
 import '../widgets/design.dart';
 import 'quick_add_sheet.dart';
+import '../l10n/strings.dart';
 
 class PaymentApp {
   const PaymentApp(this.name, this.package, this.icon, this.color);
@@ -130,7 +131,7 @@ class _PayBillSheetState extends State<_PayBillSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Pay ${card.displayName}', style: t.titleLarge),
+          Text(tr('Pay {0}', [card.displayName]), style: t.titleLarge),
           const SizedBox(height: 12),
           Panel(
             margin: EdgeInsets.zero,
@@ -139,23 +140,25 @@ class _PayBillSheetState extends State<_PayBillSheet> {
               children: [
                 Expanded(
                   child: _Amount(
-                    'Bill to pay',
+                    tr('Bill to pay'),
                     formatRupees(s.amountDue),
-                    sub: s.amountDue > 0 ? 'Due ${dayMonth(s.dueDate)}' : null,
+                    sub: s.amountDue > 0
+                        ? tr('Due {0}', [dayMonth(s.dueDate)])
+                        : null,
                   ),
                 ),
                 if (s.minDue != null)
                   Expanded(
-                    child: _Amount('Minimum due', formatRupees(s.minDue!)),
+                    child: _Amount(tr('Minimum due'), formatRupees(s.minDue!)),
                   ),
                 Expanded(
-                  child: _Amount('Total owed', formatRupees(s.outstanding)),
+                  child: _Amount(tr('Total owed'), formatRupees(s.outstanding)),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 20),
-          Text('Pay using', style: t.titleSmall),
+          Text(tr('Pay using'), style: t.titleSmall),
           const SizedBox(height: 10),
           GridView.count(
             crossAxisCount: 4,
@@ -181,7 +184,7 @@ class _PayBillSheetState extends State<_PayBillSheet> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        _installed.contains(app.package) ? '' : 'Get app',
+                        _installed.contains(app.package) ? '' : tr('Get app'),
                         style: t.labelSmall?.copyWith(color: scheme.outline),
                       ),
                     ],
@@ -195,8 +198,10 @@ class _PayBillSheetState extends State<_PayBillSheet> {
               margin: const EdgeInsets.only(bottom: 12),
               color: scheme.primaryContainer,
               child: Text(
-                'Paid in ${_opened!.name}? Record the payment so your card '
-                'balance stays correct.',
+                tr(
+                  'Paid in {0}? Record the payment so your card balance stays correct.',
+                  [_opened!.name],
+                ),
               ),
             ),
           FilledButton.icon(
@@ -204,21 +209,21 @@ class _PayBillSheetState extends State<_PayBillSheet> {
             icon: const Icon(Icons.check),
             label: Text(
               s.amountDue > 0
-                  ? 'Record ${formatRupees(s.amountDue)} payment'
-                  : 'Record a payment',
+                  ? tr('Record {0} payment', [formatRupees(s.amountDue)])
+                  : tr('Record a payment'),
             ),
           ),
           if (s.minDue != null) ...[
             const SizedBox(height: 8),
             OutlinedButton(
               onPressed: () => _record(s.minDue),
-              child: Text('Record minimum ${formatRupees(s.minDue!)}'),
+              child: Text(tr('Record minimum {0}', [formatRupees(s.minDue!)])),
             ),
           ],
           const SizedBox(height: 8),
           TextButton(
             onPressed: () => _record(null),
-            child: const Text('Record a different amount'),
+            child: Text(tr('Record a different amount')),
           ),
         ],
       ),

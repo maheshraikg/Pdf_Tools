@@ -91,6 +91,16 @@ class Native {
         ),
     ];
   }
+
+  /// Sends new figures to the home screen widget (no-op elsewhere).
+  static Future<void> updateWidget(String json) async {
+    if (!supported) return;
+    try {
+      await _channel.invokeMethod<void>('updateWidget', {'json': json});
+    } on Exception {
+      // No widget support on this build; nothing to update.
+    }
+  }
 }
 
 class SmsMessage {

@@ -5,8 +5,10 @@ import '../ledger/ledger.dart';
 import '../models/goals.dart';
 import '../models/models.dart';
 import '../models/money.dart';
+import '../widgets/charts.dart';
 import '../widgets/common.dart';
 import '../widgets/design.dart';
+import '../l10n/strings.dart';
 
 /// Home, car, personal and other loans paid back in EMIs.
 class LoansScreen extends StatelessWidget {
@@ -23,27 +25,27 @@ class LoansScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Loans & EMIs'),
+        title: Text(tr('Loans & EMIs')),
         actions: [
           if (statuses.isNotEmpty)
             IconButton(
               icon: const Icon(Icons.add),
-              tooltip: 'Add loan',
+              tooltip: tr('Add loan'),
               onPressed: () => showLoanForm(context),
             ),
         ],
       ),
       body: statuses.isEmpty
           ? IntroState(
-              title: 'Every EMI,',
-              accent: 'tracked.',
+              title: tr('Every EMI,'),
+              accent: tr('tracked.'),
               accentColor: kCoral,
-              points: const [
-                'See what you pay in EMIs each month',
-                'Know how many EMIs are left',
-                'Get a reminder before each due date',
+              points: [
+                tr('See what you pay in EMIs each month'),
+                tr('Know how many EMIs are left'),
+                tr('Get a reminder before each due date'),
               ],
-              actionLabel: 'Add a loan',
+              actionLabel: tr('Add a loan'),
               onAction: () => showLoanForm(context),
             )
           : ListView(
@@ -52,7 +54,7 @@ class LoansScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 Center(
                   child: Text(
-                    'EMIs per month',
+                    tr('EMIs per month'),
                     style: t.titleMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
                       fontWeight: FontWeight.w500,
@@ -70,13 +72,16 @@ class LoansScreen extends StatelessWidget {
                 ),
                 Center(
                   child: Text(
-                    '${formatRupees(l.loansRemaining(now))} left to pay',
+                    tr('{0} left to pay', [
+                      formatRupees(l.loansRemaining(now)),
+                    ]),
                     style: t.bodyMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
+                _PayoffPanel(now: now),
                 for (final s in statuses) _LoanCard(status: s),
               ],
             ),
@@ -85,11 +90,11 @@ class LoansScreen extends StatelessWidget {
 }
 
 String monthYear(DateTime d) {
-  const m = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', //
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  final m = [
+    tr('Jan'), tr('Feb'), tr('Mar'), tr('Apr'), tr('May'), tr('Jun'), //
+    tr('Jul'), tr('Aug'), tr('Sep'), tr('Oct'), tr('Nov'), tr('Dec'),
   ];
-  return '${m[d.month - 1]} ${d.year}';
+  return '${tr(m[d.month - 1])} ${d.year}';
 }
 
 class _LoanCard extends StatelessWidget {
@@ -136,40 +141,45 @@ class _LoanCard extends StatelessWidget {
                     case 'delete':
                       final ok = await confirmDelete(
                         context,
-                        'Delete ${loan.name}?',
-                        'EMIs already recorded stay in your expenses.',
+                        tr('Delete {0}?', [loan.name]),
+                        tr('EMIs already recorded stay in your expenses.'),
                       );
                       if (ok) await store.deleteLoan(loan.id);
                   }
                 },
                 itemBuilder: (_) => [
-                  const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                  PopupMenuItem(value: 'edit', child: Text(tr('Edit'))),
                   PopupMenuItem(
                     value: 'close',
-                    child: Text(loan.closed ? 'Reopen' : 'Mark as closed'),
+                    child: Text(
+                      loan.closed ? tr('Reopen') : tr('Mark as closed'),
+                    ),
                   ),
-                  const PopupMenuItem(value: 'delete', child: Text('Delete')),
+                  PopupMenuItem(value: 'delete', child: Text(tr('Delete'))),
                 ],
               ),
             ],
           ),
           const SizedBox(height: 12),
-          Meter(
-            value: s.progress,
-            color: s.finished ? scheme.moneyIn : kCoral,
-            height: 8,
-          ),
+          Meter(value: s.progress, color: scheme.moneyIn, height: 8),
           const SizedBox(height: 8),
           Row(
             children: [
+              Text(
+                tr('{0}% paid', [(s.progress * 100).round()]),
+                style: muted?.copyWith(color: scheme.moneyIn),
+              ),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  '${s.emisPaid} of ${loan.tenureMonths} EMIs paid',
+                  tr('{0} of {1} EMIs paid', [s.emisPaid, loan.tenureMonths]),
                   style: muted,
                 ),
               ),
               Text(
-                s.finished ? 'Closed' : 'Ends ${monthYear(loan.lastEmiDate)}',
+                s.finished
+                    ? tr('Closed')
+                    : tr('Ends {0}', [monthYear(loan.lastEmiDate)]),
                 style: muted,
               ),
             ],
@@ -182,10 +192,10 @@ class _LoanCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Next EMI', style: muted),
+                      Text(tr('Next EMI'), style: muted),
                       Text(
                         s.paidThisMonth
-                            ? '${shortDate(next)} · paid this month'
+                            ? tr('{0} · paid this month', [shortDate(next)])
                             : shortDate(next),
                         style: t.titleSmall,
                       ),
@@ -194,7 +204,7 @@ class _LoanCard extends StatelessWidget {
                 ),
                 FilledButton.tonal(
                   onPressed: () => showPayEmi(context, loan),
-                  child: const Text('Pay EMI'),
+                  child: Text(tr('Pay EMI')),
                 ),
               ],
             ),
@@ -218,11 +228,11 @@ Future<bool> confirmDelete(
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(tr('Cancel')),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
+            child: Text(tr('Delete')),
           ),
         ],
       ),
@@ -273,10 +283,10 @@ class _PayEmiDialogState extends State<_PayEmiDialog> {
   Future<void> _save() async {
     final amount = parseRupees(_amount.text);
     if (amount == null || amount <= 0) {
-      return setState(() => _error = 'Enter a valid amount');
+      return setState(() => _error = tr('Enter a valid amount'));
     }
     if (_account == null) {
-      return setState(() => _error = 'Add a bank account first');
+      return setState(() => _error = tr('Add a bank account first'));
     }
     final errors = await context.store.payEmi(
       widget.loan,
@@ -292,17 +302,17 @@ class _PayEmiDialogState extends State<_PayEmiDialog> {
   Widget build(BuildContext context) {
     final accounts = context.ledger.accounts;
     return AlertDialog(
-      title: Text('Pay EMI · ${widget.loan.name}'),
+      title: Text(tr('Pay EMI · {0}', [widget.loan.name])),
       scrollable: true,
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AmountField(controller: _amount, label: 'Amount'),
+          AmountField(controller: _amount, label: tr('Amount')),
           const SizedBox(height: 12),
           DropdownButtonFormField<int>(
             initialValue: _account,
-            decoration: const InputDecoration(labelText: 'Paid from'),
+            decoration: InputDecoration(labelText: tr('Paid from')),
             items: [
               for (final a in accounts)
                 DropdownMenuItem(value: a.id, child: Text(a.name)),
@@ -311,7 +321,7 @@ class _PayEmiDialogState extends State<_PayEmiDialog> {
           ),
           const SizedBox(height: 12),
           DateButton(
-            label: 'Date',
+            label: tr('Date'),
             date: _date,
             onChanged: (d) => setState(() => _date = d),
           ),
@@ -327,9 +337,9 @@ class _PayEmiDialogState extends State<_PayEmiDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(tr('Cancel')),
         ),
-        FilledButton(onPressed: _save, child: const Text('Record')),
+        FilledButton(onPressed: _save, child: Text(tr('Record'))),
       ],
     );
   }
@@ -368,7 +378,9 @@ class DateButton extends StatelessWidget {
           labelText: label,
           suffixIcon: const Icon(Icons.calendar_today_outlined, size: 18),
         ),
-        child: Text(date == null ? (optional ? 'None' : '') : shortDate(date!)),
+        child: Text(
+          date == null ? (optional ? tr('None') : '') : shortDate(date!),
+        ),
       ),
     );
   }
@@ -458,18 +470,18 @@ class _LoanFormState extends State<_LoanForm> {
     final rate = _rate.text.trim().isEmpty
         ? null
         : double.tryParse(_rate.text.trim());
-    if (name.isEmpty) return setState(() => _error = 'Enter a name');
+    if (name.isEmpty) return setState(() => _error = tr('Enter a name'));
     if (emi == null || emi <= 0) {
-      return setState(() => _error = 'Enter the EMI amount');
+      return setState(() => _error = tr('Enter the EMI amount'));
     }
     if (tenure == null || tenure <= 0 || tenure > 600) {
-      return setState(() => _error = 'Enter the number of EMIs');
+      return setState(() => _error = tr('Enter the number of EMIs'));
     }
     if (paid == null || paid < 0 || paid > tenure) {
-      return setState(() => _error = 'EMIs already paid is not valid');
+      return setState(() => _error = tr('EMIs already paid is not valid'));
     }
     if (principal == null) {
-      return setState(() => _error = 'Enter a valid loan amount');
+      return setState(() => _error = tr('Enter a valid loan amount'));
     }
     await context.store.saveLoan(
       Loan(
@@ -494,7 +506,7 @@ class _LoanFormState extends State<_LoanForm> {
     final accounts = context.ledger.accounts;
     Widget gap() => const SizedBox(height: 12);
     return AlertDialog(
-      title: Text(widget.edit == null ? 'Add loan' : 'Edit loan'),
+      title: Text(widget.edit == null ? tr('Add loan') : tr('Edit loan')),
       scrollable: true,
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -504,34 +516,34 @@ class _LoanFormState extends State<_LoanForm> {
             controller: _name,
             autofocus: widget.edit == null,
             textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(
-              labelText: 'Name',
-              hintText: 'e.g. Home loan, Bike, Phone EMI',
+            decoration: InputDecoration(
+              labelText: tr('Name'),
+              hintText: tr('e.g. Home loan, Bike, Phone EMI'),
             ),
           ),
           gap(),
           TextField(
             controller: _lender,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              labelText: 'Bank or lender (optional)',
+            decoration: InputDecoration(
+              labelText: tr('Bank or lender (optional)'),
             ),
           ),
           gap(),
-          AmountField(controller: _emi, label: 'EMI per month'),
+          AmountField(controller: _emi, label: tr('EMI per month')),
           gap(),
           TextField(
             controller: _tenure,
             keyboardType: TextInputType.number,
             onChanged: (_) => setState(_suggestPaid),
-            decoration: const InputDecoration(
-              labelText: 'Total number of EMIs',
-              hintText: 'e.g. 36',
+            decoration: InputDecoration(
+              labelText: tr('Total number of EMIs'),
+              hintText: tr('e.g. 36'),
             ),
           ),
           gap(),
           DateButton(
-            label: 'First EMI date',
+            label: tr('First EMI date'),
             date: _first,
             onChanged: (d) => setState(() {
               _first = d;
@@ -543,8 +555,8 @@ class _LoanFormState extends State<_LoanForm> {
             controller: _paid,
             keyboardType: TextInputType.number,
             onChanged: (_) => _paidEdited = true,
-            decoration: const InputDecoration(
-              labelText: 'EMIs already paid',
+            decoration: InputDecoration(
+              labelText: tr('EMIs already paid'),
               hintText: '0',
             ),
           ),
@@ -553,11 +565,11 @@ class _LoanFormState extends State<_LoanForm> {
             initialValue: accounts.any((a) => a.id == _account)
                 ? _account
                 : null,
-            decoration: const InputDecoration(labelText: 'Usually paid from'),
+            decoration: InputDecoration(labelText: tr('Usually paid from')),
             items: [
-              const DropdownMenuItem<int?>(
+              DropdownMenuItem<int?>(
                 value: null,
-                child: Text('Choose later'),
+                child: Text(tr('Choose later')),
               ),
               for (final a in accounts)
                 DropdownMenuItem<int?>(value: a.id, child: Text(a.name)),
@@ -565,13 +577,16 @@ class _LoanFormState extends State<_LoanForm> {
             onChanged: (v) => setState(() => _account = v),
           ),
           gap(),
-          AmountField(controller: _principal, label: 'Loan amount (optional)'),
+          AmountField(
+            controller: _principal,
+            label: tr('Loan amount (optional)'),
+          ),
           gap(),
           TextField(
             controller: _rate,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(
-              labelText: 'Interest rate % (optional)',
+            decoration: InputDecoration(
+              labelText: tr('Interest rate % (optional)'),
             ),
           ),
           if (_error != null) ...[
@@ -586,9 +601,9 @@ class _LoanFormState extends State<_LoanForm> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(tr('Cancel')),
         ),
-        FilledButton(onPressed: _save, child: const Text('Save')),
+        FilledButton(onPressed: _save, child: Text(tr('Save'))),
       ],
     );
   }
@@ -696,6 +711,78 @@ class IntroState extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Bars of what is left to pay, month by month (or year by year for long
+/// loans), ending on the debt-free date.
+class _PayoffPanel extends StatelessWidget {
+  const _PayoffPanel({required this.now});
+  final DateTime now;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.ledger;
+    final t = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+    final payoff = l.loanPayoff(now);
+    final free = l.debtFreeMonth(now);
+    if (payoff.length < 2 || free == null) return const SizedBox.shrink();
+    final yearly = payoff.length > 36;
+    final points = yearly
+        ? [
+            payoff.first,
+            for (final p in payoff.skip(1))
+              if (p.$1.month == 1) p,
+          ]
+        : payoff;
+    final english = currentLanguage == 'en';
+    const letters = [
+      'J',
+      'F',
+      'M',
+      'A',
+      'M',
+      'J',
+      'J',
+      'A',
+      'S',
+      'O',
+      'N',
+      'D',
+    ];
+    return Panel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(tr('Debt-free by {0}', [monthYear(free)]), style: t.titleMedium),
+          const SizedBox(height: 2),
+          Text(
+            yearly
+                ? tr('Each bar is what is left to pay at the start of a year.')
+                : tr(
+                    'Each bar is what is left to pay at the start of a month.',
+                  ),
+            style: t.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+          ),
+          const SizedBox(height: 16),
+          PeriodBars(
+            values: [for (final p in points) p.$2],
+            labels: [
+              for (final p in points)
+                yearly
+                    ? "'${'${p.$1.year}'.substring(2)}"
+                    : (english ? letters[p.$1.month - 1] : '${p.$1.month}'),
+            ],
+            tooltipLabels: [for (final p in points) monthYear(p.$1)],
+            highlight: 0,
+            labelEvery: points.length > 18 ? 3 : (points.length > 8 ? 2 : 1),
+            color: kCoral,
+            height: 150,
+          ),
+        ],
+      ),
     );
   }
 }

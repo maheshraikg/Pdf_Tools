@@ -14,6 +14,7 @@ import '../sync/sync.dart';
 import '../widgets/common.dart';
 import '../widgets/design.dart';
 import 'forms.dart';
+import '../l10n/strings.dart';
 
 /// One place to fill the app automatically: bank SMS, statement PDFs and
 /// (optionally) Gmail. All reading happens on the phone.
@@ -38,9 +39,13 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
       final message = await action();
       if (mounted) setState(() => _status = message);
     } on PlatformException catch (e) {
-      if (mounted) setState(() => _status = 'Could not read: ${e.message}');
+      if (mounted) {
+        setState(() => _status = tr('Could not read: {0}', [e.message]));
+      }
     } catch (e) {
-      if (mounted) setState(() => _status = 'Something went wrong: $e');
+      if (mounted) {
+        setState(() => _status = tr('Something went wrong: {0}', [e]));
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -53,15 +58,16 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
       if (state != 'granted') {
         if (state == 'blocked') {
           await SmsSync.openSettings();
-          return 'Allow "SMS" for RupeeTrack in the settings that opened, '
-              'then tap Scan again.';
+          return tr(
+            'Allow "SMS" for RupeeTrack in the settings that opened, then tap Scan again.',
+          );
         }
-        return 'SMS access was not allowed.';
+        return tr('SMS access was not allowed.');
       }
     }
     await store.setSmsSync(true);
     final r = await SmsSync.run(store);
-    return 'SMS: ${describeSync(r)}';
+    return tr('SMS: {0}', [describeSync(r)]);
   });
 
   Future<void> _addDetected(String key, DetectedHolding h) async {
@@ -87,7 +93,9 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
     store.dismissDetected(key);
     // Import its history now that it is known.
     if (store.smsSync && await SmsSync.hasPermission()) {
-      await _run(() async => 'SMS: ${describeSync(await SmsSync.run(store))}');
+      await _run(
+        () async => tr('SMS: {0}', [describeSync(await SmsSync.run(store))]),
+      );
     }
   }
 
@@ -97,7 +105,7 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
     final bytes = await f.readAsBytes();
     if (!mounted) return null;
     final ok = await importStatementPdf(context, bytes, f.name);
-    return ok == null ? null : 'Statement: $ok';
+    return ok == null ? null : tr('Statement: {0}', [ok]);
   });
 
   Future<void> _scanGmail() => _run(() async {
@@ -106,9 +114,14 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
     final r = store.planEvents(scan.events, source: 'email');
     await store.applySync(r);
     if (mounted) setState(() => _mailStatements = scan.statements);
-    return 'Gmail (${scan.account}): ${scan.scanned} emails checked · '
-        '${describeSync(r)}'
-        '${scan.statements.isEmpty ? '' : ' · ${scan.statements.length} statement PDFs found below'}';
+    return tr('Gmail ({0}): {1} emails checked · {2}{3}', [
+      scan.account,
+      scan.scanned,
+      describeSync(r),
+      scan.statements.isEmpty
+          ? ''
+          : ' · ${scan.statements.length} statement PDFs found below',
+    ]);
   });
 
   @override
@@ -119,7 +132,7 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
     final detected = store.detected.entries.toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Auto-detect')),
+      appBar: AppBar(title: Text(tr('Auto-detect'))),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 32),
         children: [
@@ -130,16 +143,17 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
                 const Icon(Icons.auto_awesome, size: 32),
                 const SizedBox(height: 10),
                 Text(
-                  'Fill cards and accounts from your bank messages',
+                  tr('Fill cards and accounts from your bank messages'),
                   style: t.titleLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 6),
-                const Text(
-                  'Spends, refunds, bill amounts, due dates and payments are '
-                  'read on this phone. Nothing is uploaded.',
+                Text(
+                  tr(
+                    'Spends, refunds, bill amounts, due dates and payments are read on this phone. Nothing is uploaded.',
+                  ),
                   style: TextStyle(color: Colors.white70),
                 ),
               ],
@@ -151,12 +165,16 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
 
           _Section(
             icon: Icons.sms_outlined,
-            title: 'Bank SMS',
+            title: tr('Bank SMS'),
             subtitle: !store.smsSync || store.lastSync == null
-                ? 'Reads the last ${SmsSync.historyDays} days of bank SMS, '
-                      'then new ones each time you open the app.'
-                : 'On · last checked ${relativeDate(store.lastSync!)}. New '
-                      'SMS are read each time you open the app.',
+                ? tr(
+                    'Reads the last {0} days of bank SMS, then new ones each time you open the app.',
+                    [SmsSync.historyDays],
+                  )
+                : tr(
+                    'On · last checked {0}. New SMS are read each time you open the app.',
+                    [relativeDate(store.lastSync!)],
+                  ),
             child: Row(
               children: [
                 Expanded(
@@ -164,7 +182,7 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
                     onPressed: _busy ? null : _scanSms,
                     icon: const Icon(Icons.search),
                     label: Text(
-                      store.smsSync ? 'Scan now' : 'Allow SMS & scan',
+                      store.smsSync ? tr('Scan now') : tr('Allow SMS & scan'),
                     ),
                   ),
                 ),
@@ -172,7 +190,7 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
                   const SizedBox(width: 8),
                   TextButton(
                     onPressed: () => store.setSmsSync(false),
-                    child: const Text('Turn off'),
+                    child: Text(tr('Turn off')),
                   ),
                 ],
               ],
@@ -180,7 +198,7 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
           ),
 
           if (detected.isNotEmpty) ...[
-            const SectionHeader('Found in your messages'),
+            SectionHeader(tr('Found in your messages')),
             Panel(
               padding: const EdgeInsets.symmetric(vertical: 4),
               child: Column(
@@ -193,25 +211,32 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
                       title: Text(h.label),
                       subtitle: Text(
                         [
-                          '${h.count} message${h.count == 1 ? '' : 's'}',
-                          if (h.spent > 0) '${formatRupees(h.spent)} spent',
+                          h.count == 1
+                              ? tr('1 message')
+                              : tr('{0} messages', [h.count]),
+                          if (h.spent > 0)
+                            tr('{0} spent', [formatRupees(h.spent)]),
                           if (h.latestFigure != null)
                             h.isCard
-                                ? '${formatRupees(h.latestFigure!)} available'
-                                : 'balance ${formatRupees(h.latestFigure!)}',
+                                ? tr('{0} available', [
+                                    formatRupees(h.latestFigure!),
+                                  ])
+                                : tr('balance {0}', [
+                                    formatRupees(h.latestFigure!),
+                                  ]),
                         ].join(' · '),
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            tooltip: 'Ignore',
+                            tooltip: tr('Ignore'),
                             icon: const Icon(Icons.close),
                             onPressed: () => store.dismissDetected(key),
                           ),
                           FilledButton.tonal(
                             onPressed: () => _addDetected(key, h),
-                            child: const Text('Add'),
+                            child: Text(tr('Add')),
                           ),
                         ],
                       ),
@@ -223,25 +248,25 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
 
           _Section(
             icon: Icons.picture_as_pdf_outlined,
-            title: 'Statement PDF',
-            subtitle:
-                'Choose a card or bank statement PDF, or share one to '
-                'RupeeTrack from Gmail, WhatsApp or Files. Password-protected '
-                'statements are fine.',
+            title: tr('Statement PDF'),
+            subtitle: tr(
+              'Choose a card or bank statement PDF, or share one to RupeeTrack from Gmail, WhatsApp or Files. Password-protected statements are fine.',
+            ),
             child: OutlinedButton.icon(
               onPressed: _busy ? null : _pickPdf,
               icon: const Icon(Icons.upload_file),
-              label: const Text('Choose statement PDF'),
+              label: Text(tr('Choose statement PDF')),
             ),
           ),
 
           _Section(
             icon: Icons.mail_outline,
-            title: 'Gmail (optional)',
+            title: tr('Gmail (optional)'),
             subtitle: GmailSync.configured
-                ? 'Read-only access to bank alert emails and statement PDFs. '
-                      'Google asks you to allow it.'
-                : 'Needs a one-time Google Cloud setup for this app build.',
+                ? tr(
+                    'Read-only access to bank alert emails and statement PDFs. Google asks you to allow it.',
+                  )
+                : tr('Needs a one-time Google Cloud setup for this app build.'),
             child: GmailSync.configured
                 ? Row(
                     children: [
@@ -251,8 +276,8 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
                           icon: const Icon(Icons.mail),
                           label: Text(
                             GmailSync.connectedEmail == null
-                                ? 'Connect Gmail & scan'
-                                : 'Scan Gmail',
+                                ? tr('Connect Gmail & scan')
+                                : tr('Scan Gmail'),
                           ),
                         ),
                       ),
@@ -262,13 +287,13 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
                             await GmailSync.disconnect();
                             if (mounted) setState(() {});
                           },
-                          child: const Text('Disconnect'),
+                          child: Text(tr('Disconnect')),
                         ),
                     ],
                   )
                 : OutlinedButton(
                     onPressed: () => _showGmailSetup(context),
-                    child: const Text('How to set up'),
+                    child: Text(tr('How to set up')),
                   ),
           ),
           for (final s in _mailStatements)
@@ -286,7 +311,7 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
                     s.fileName,
                     source: 'mail',
                   );
-                  return ok == null ? null : 'Statement: $ok';
+                  return ok == null ? null : tr('Statement: {0}', [ok]);
                 }),
               ),
             ),
@@ -336,27 +361,17 @@ void _showGmailSetup(BuildContext context) {
   showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text('Set up Gmail access'),
+      title: Text(tr('Set up Gmail access')),
       scrollable: true,
-      content: const Text(
-        'Google only lets apps read Gmail after the developer registers them. '
-        'For personal use this is free:\n\n'
-        '1. In console.cloud.google.com create a project and enable the '
-        'Gmail API.\n'
-        '2. OAuth consent screen: External, add the gmail.readonly scope and '
-        'add your Gmail address (up to 100 people) as test users.\n'
-        '3. Credentials: create an "Android" OAuth client with package '
-        'com.kspstadk.rupeetrack and the app\'s SHA-1 (see the README), and a '
-        '"Web application" client.\n'
-        '4. Build the app with the web client id: in the GitHub repository '
-        'add an Actions variable GMAIL_WEB_CLIENT_ID.\n\n'
-        'Until then, statement PDFs can be shared to RupeeTrack from the Gmail '
-        'app.',
+      content: Text(
+        tr(
+          'Google only lets apps read Gmail after the developer registers them. For personal use this is free:\n\n1. In console.cloud.google.com create a project and enable the Gmail API.\n2. OAuth consent screen: External, add the gmail.readonly scope and add your Gmail address (up to 100 people) as test users.\n3. Credentials: create an "Android" OAuth client with package com.kspstadk.rupeetrack and the app\'s SHA-1 (see the README), and a "Web application" client.\n4. Build the app with the web client id: in the GitHub repository add an Actions variable GMAIL_WEB_CLIENT_ID.\n\nUntil then, statement PDFs can be shared to RupeeTrack from the Gmail app.',
+        ),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('OK'),
+          child: Text(tr('OK')),
         ),
       ],
     ),
@@ -388,9 +403,9 @@ Future<String?> importStatementPdf(
   }
   final plan = planStatement(text, source: source);
   if (plan == null) {
-    return 'this PDF does not look like a bank or card statement';
+    return tr('this PDF does not look like a bank or card statement');
   }
-  final result = store.planEvents(plan.events, source: 'statement PDF');
+  final result = store.planEvents(plan.events, source: tr('statement PDF'));
   if (!context.mounted) return null;
   final confirmed = await _confirmImport(context, plan, result);
   if (confirmed != true) return null;
@@ -408,7 +423,7 @@ Future<String?> _askPassword(
   return showDialog<String>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text('Statement password'),
+      title: Text(tr('Statement password')),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -420,11 +435,13 @@ Future<String?> _askPassword(
             autofocus: true,
             obscureText: true,
             decoration: InputDecoration(
-              labelText: 'Password',
-              errorText: wrong ? 'That password did not open the file' : null,
-              helperText:
-                  'Often the first 4 letters of your name + date of birth '
-                  '(e.g. RAHU0105). See your bank\'s email.',
+              labelText: tr('Password'),
+              errorText: wrong
+                  ? tr('That password did not open the file')
+                  : null,
+              helperText: tr(
+                'Often the first 4 letters of your name + date of birth (e.g. RAHU0105). See your bank\'s email.',
+              ),
               helperMaxLines: 3,
             ),
             onSubmitted: (v) => Navigator.pop(context, v),
@@ -434,11 +451,11 @@ Future<String?> _askPassword(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(tr('Cancel')),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(context, controller.text),
-          child: const Text('Open'),
+          child: Text(tr('Open')),
         ),
       ],
     ),
@@ -455,30 +472,39 @@ Future<bool?> _confirmImport(
   return showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text(s.isCard ? 'Card statement' : 'Bank statement'),
+      title: Text(s.isCard ? tr('Card statement') : tr('Bank statement')),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${s.bank ?? 'Bank'}${s.digits == null ? '' : ' ••${s.digits}'} · '
-            '${s.transactionCount} transactions',
+            tr('{0}{1} · {2} transactions', [
+              s.bank ?? tr('Bank'),
+              s.digits == null ? '' : ' ••${s.digits}',
+              s.transactionCount,
+            ]),
           ),
           const SizedBox(height: 12),
           if (unknownHolding != null)
             Text(
-              'This ${unknownHolding.isCard ? 'card' : 'account'} is not in '
-              'RupeeTrack yet. Add it (with its last digits) from '
-              'Auto-detect, then import the statement again.',
+              unknownHolding.isCard
+                  ? tr(
+                      'This card is not in RupeeTrack yet. Add it (with its last digits) from Auto-detect, then import the statement again.',
+                    )
+                  : tr(
+                      'This account is not in RupeeTrack yet. Add it (with its last digits) from Auto-detect, then import the statement again.',
+                    ),
             )
           else ...[
-            Text('${r.added.length} new entries'),
+            Text(tr('{0} new entries', [r.added.length])),
             if (r.duplicates > 0)
-              Text('${r.duplicates} already in the app (skipped)'),
+              Text(tr('{0} already in the app (skipped)', [r.duplicates])),
             if (r.bills.isNotEmpty)
               Text(
-                'Bill: ${formatRupees(r.bills.values.first.totalDue)} due '
-                '${shortDate(r.bills.values.first.dueDate)}',
+                tr('Bill: {0} due {1}', [
+                  formatRupees(r.bills.values.first.totalDue),
+                  shortDate(r.bills.values.first.dueDate),
+                ]),
               ),
           ],
         ],
@@ -486,13 +512,13 @@ Future<bool?> _confirmImport(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
-          child: const Text('Cancel'),
+          child: Text(tr('Cancel')),
         ),
         FilledButton(
           onPressed: unknownHolding != null && r.added.isEmpty
               ? null
               : () => Navigator.pop(context, true),
-          child: const Text('Import'),
+          child: Text(tr('Import')),
         ),
       ],
     ),
@@ -508,7 +534,9 @@ Future<void> handleSharedPdf(BuildContext context, String path) async {
   final messenger = ScaffoldMessenger.of(context);
   final result = await importStatementPdf(context, bytes, path.split('/').last);
   if (result != null) {
-    messenger.showSnackBar(SnackBar(content: Text('Statement: $result')));
+    messenger.showSnackBar(
+      SnackBar(content: Text(tr('Statement: {0}', [result]))),
+    );
   }
 }
 

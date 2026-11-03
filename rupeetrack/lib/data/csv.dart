@@ -68,7 +68,7 @@ String exportTransactionsCsv(Ledger l) {
     for (final t in l.txns.reversed)
       [
         isoDate(t.date),
-        t.type.label,
+        t.type.labelEn,
         plain(t.amount),
         t.category ?? '',
         t.note ?? '',

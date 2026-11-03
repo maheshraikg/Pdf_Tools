@@ -4,6 +4,7 @@ import '../app/scope.dart';
 import '../models/models.dart';
 import '../models/money.dart';
 import '../widgets/common.dart';
+import '../l10n/strings.dart';
 
 /// Asks for a single line of text.
 Future<String?> promptText(
@@ -26,11 +27,11 @@ Future<String?> promptText(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(tr('Cancel')),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(context, controller.text.trim()),
-          child: const Text('Add'),
+          child: Text(tr('Add')),
         ),
       ],
     ),
@@ -125,9 +126,9 @@ class _DialogFrame extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(tr('Cancel')),
         ),
-        FilledButton(onPressed: onSave, child: const Text('Save')),
+        FilledButton(onPressed: onSave, child: Text(tr('Save'))),
       ],
     );
   }
@@ -193,12 +194,14 @@ class _AccountFormState extends State<_AccountForm> {
     final balance = _opening.text.trim().isEmpty
         ? 0
         : parseSignedRupees(_opening.text);
-    if (name.isEmpty) return setState(() => _error = 'Enter a name');
+    if (name.isEmpty) return setState(() => _error = tr('Enter a name'));
     if (balance == null) {
-      return setState(() => _error = 'Enter a valid balance');
+      return setState(() => _error = tr('Enter a valid balance'));
     }
     if (last4.isNotEmpty && !RegExp(r'^\d{3,6}$').hasMatch(last4)) {
-      return setState(() => _error = 'Account digits must be 3 to 6 numbers');
+      return setState(
+        () => _error = tr('Account digits must be 3 to 6 numbers'),
+      );
     }
     final a = widget.edit;
     if (a == null) {
@@ -218,7 +221,7 @@ class _AccountFormState extends State<_AccountForm> {
   @override
   Widget build(BuildContext context) {
     return _DialogFrame(
-      title: widget.edit == null ? 'Add account' : 'Edit account',
+      title: widget.edit == null ? tr('Add account') : tr('Edit account'),
       error: _error,
       onSave: _save,
       children: [
@@ -230,9 +233,9 @@ class _AccountFormState extends State<_AccountForm> {
                 icon: Icon(iconForAccount(k)),
                 tooltip: k.label,
                 label: Text(switch (k) {
-                  AccountKind.savings => 'Bank',
-                  AccountKind.cash => 'Cash',
-                  AccountKind.wallet => 'Wallet',
+                  AccountKind.savings => tr('Bank'),
+                  AccountKind.cash => tr('Cash'),
+                  AccountKind.wallet => tr('Wallet'),
                 }),
               ),
           ],
@@ -244,30 +247,31 @@ class _AccountFormState extends State<_AccountForm> {
           autofocus: true,
           textCapitalization: TextCapitalization.words,
           decoration: InputDecoration(
-            labelText: 'Name',
+            labelText: tr('Name'),
             hintText: switch (_kind) {
-              AccountKind.savings => 'e.g. SBI Savings',
-              AccountKind.cash => 'e.g. Cash',
-              AccountKind.wallet => 'e.g. Paytm wallet',
+              AccountKind.savings => tr('e.g. SBI Savings'),
+              AccountKind.cash => tr('e.g. Cash'),
+              AccountKind.wallet => tr('e.g. Paytm wallet'),
             },
           ),
         ),
-        AmountField(controller: _opening, label: 'Current balance'),
+        AmountField(controller: _opening, label: tr('Current balance')),
         if (_kind == AccountKind.savings)
           TextField(
             controller: _last4,
             keyboardType: TextInputType.number,
             maxLength: 6,
-            decoration: const InputDecoration(
-              labelText: 'Last 4 digits of account (optional)',
-              helperText: 'Lets RupeeTrack match bank SMS to this account',
+            decoration: InputDecoration(
+              labelText: tr('Last 4 digits of account (optional)'),
+              helperText: tr('Lets RupeeTrack match bank SMS to this account'),
               counterText: '',
             ),
           ),
         if (widget.edit != null)
           Text(
-            'Changing the balance keeps all transactions; the starting '
-            'balance is adjusted so the total matches.',
+            tr(
+              'Changing the balance keeps all transactions; the starting balance is adjusted so the total matches.',
+            ),
             style: Theme.of(context).textTheme.bodySmall,
           ),
       ],
@@ -338,15 +342,15 @@ class _CardFormState extends State<_CardForm> {
     if (_outstanding.text.trim().isEmpty && avl != null && limit != null) {
       outstanding = limit > avl ? limit - avl : 0;
     }
-    if (name.isEmpty) return setState(() => _error = 'Enter the card name');
+    if (name.isEmpty) return setState(() => _error = tr('Enter the card name'));
     if (last4.isNotEmpty && !RegExp(r'^\d{4}$').hasMatch(last4)) {
-      return setState(() => _error = 'Last four digits must be 4 numbers');
+      return setState(() => _error = tr('Last four digits must be 4 numbers'));
     }
     if (limit == null || limit <= 0) {
-      return setState(() => _error = 'Enter the credit limit');
+      return setState(() => _error = tr('Enter the credit limit'));
     }
     if (outstanding == null) {
-      return setState(() => _error = 'Enter a valid outstanding amount');
+      return setState(() => _error = tr('Enter a valid outstanding amount'));
     }
     final c = widget.edit;
     if (c == null) {
@@ -378,7 +382,10 @@ class _CardFormState extends State<_CardForm> {
       decoration: InputDecoration(labelText: label),
       items: [
         for (var d = 1; d <= 31; d++)
-          DropdownMenuItem(value: d, child: Text(d == 31 ? '31 / last' : '$d')),
+          DropdownMenuItem(
+            value: d,
+            child: Text(d == 31 ? tr('31 / last') : '$d'),
+          ),
       ],
       onChanged: (v) => setState(() => onChanged(v!)),
     );
@@ -387,7 +394,7 @@ class _CardFormState extends State<_CardForm> {
   @override
   Widget build(BuildContext context) {
     return _DialogFrame(
-      title: widget.edit == null ? 'Add credit card' : 'Edit card',
+      title: widget.edit == null ? tr('Add credit card') : tr('Edit card'),
       error: _error,
       onSave: _save,
       children: [
@@ -395,45 +402,48 @@ class _CardFormState extends State<_CardForm> {
           controller: _name,
           autofocus: true,
           textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(
-            labelText: 'Card name',
-            hintText: 'e.g. HDFC Millennia',
+          decoration: InputDecoration(
+            labelText: tr('Card name'),
+            hintText: tr('e.g. HDFC Millennia'),
           ),
         ),
         TextField(
           controller: _last4,
           keyboardType: TextInputType.number,
           maxLength: 4,
-          decoration: const InputDecoration(
-            labelText: 'Last 4 digits (optional)',
+          decoration: InputDecoration(
+            labelText: tr('Last 4 digits (optional)'),
             counterText: '',
           ),
         ),
-        AmountField(controller: _limit, label: 'Credit limit'),
+        AmountField(controller: _limit, label: tr('Credit limit')),
         Row(
           children: [
             Expanded(
               child: _dayPicker(
-                'Statement day',
+                tr('Statement day'),
                 _statementDay,
                 (v) => _statementDay = v,
               ),
             ),
             const SizedBox(width: 12),
-            Expanded(child: _dayPicker('Due day', _dueDay, (v) => _dueDay = v)),
+            Expanded(
+              child: _dayPicker(tr('Due day'), _dueDay, (v) => _dueDay = v),
+            ),
           ],
         ),
         AmountField(
           controller: _outstanding,
           label: widget.edit == null
-              ? 'Amount owed now (optional)'
-              : 'Amount owed now',
+              ? tr('Amount owed now (optional)')
+              : tr('Amount owed now'),
         ),
         if (widget.availableLimit != null)
           Text(
-            'Your bank last reported ${formatRupees(widget.availableLimit!)} '
-            'available. Leave "amount owed" empty and it is worked out from '
-            'the limit.',
+            tr(
+              'Your bank last reported {0} available. Leave "amount owed" empty and it is worked out from the limit.',
+              [formatRupees(widget.availableLimit!)],
+            ),
             style: Theme.of(context).textTheme.bodySmall,
           ),
       ],
@@ -482,14 +492,14 @@ class _InvestmentFormState extends State<_InvestmentForm> {
 
   Future<void> _save() async {
     final name = _name.text.trim();
-    if (name.isEmpty) return setState(() => _error = 'Enter a name');
+    if (name.isEmpty) return setState(() => _error = tr('Enter a name'));
     final invested = _optionalAmount(_invested.text);
     if (invested == null) {
-      return setState(() => _error = 'Enter a valid amount invested');
+      return setState(() => _error = tr('Enter a valid amount invested'));
     }
     final value = _value.text.trim().isEmpty ? null : parseRupees(_value.text);
     if (_value.text.trim().isNotEmpty && value == null) {
-      return setState(() => _error = 'Enter a valid current value');
+      return setState(() => _error = tr('Enter a valid current value'));
     }
     final edit = widget.edit;
     if (edit != null) {
@@ -515,13 +525,13 @@ class _InvestmentFormState extends State<_InvestmentForm> {
   @override
   Widget build(BuildContext context) {
     return _DialogFrame(
-      title: widget.edit == null ? 'Add investment' : 'Edit investment',
+      title: widget.edit == null ? tr('Add investment') : tr('Edit investment'),
       error: _error,
       onSave: _save,
       children: [
         DropdownButtonFormField<InvestmentType>(
           initialValue: _type,
-          decoration: const InputDecoration(labelText: 'Type'),
+          decoration: InputDecoration(labelText: tr('Type')),
           items: [
             for (final t in InvestmentType.values)
               DropdownMenuItem(value: t, child: Text(t.label)),
@@ -532,23 +542,22 @@ class _InvestmentFormState extends State<_InvestmentForm> {
           controller: _name,
           autofocus: true,
           textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(
-            labelText: 'Name',
-            hintText: 'e.g. Nifty 50 index fund',
+          decoration: InputDecoration(
+            labelText: tr('Name'),
+            hintText: tr('e.g. Nifty 50 index fund'),
           ),
         ),
         AmountField(
           controller: _invested,
           label: widget.edit == null
-              ? 'Amount invested so far (optional)'
-              : 'Invested before adding it here',
+              ? tr('Amount invested so far (optional)')
+              : tr('Invested before adding it here'),
         ),
-        AmountField(controller: _value, label: 'Current value (optional)'),
+        AmountField(controller: _value, label: tr('Current value (optional)')),
         Text(
-          'Already invested? Enter the total you have put in and today\'s '
-          'value (from your passbook, fund statement or app) to see your '
-          'gain straight away. Add new money later with “Invest”; it is kept '
-          'out of your spending.',
+          tr(
+            'Already invested? Enter the total you have put in and today\'s value (from your passbook, fund statement or app) to see your gain straight away. Add new money later with “Invest”; it is kept out of your spending.',
+          ),
           style: Theme.of(context).textTheme.bodySmall,
         ),
       ],
@@ -585,7 +594,9 @@ class _ValueFormState extends State<_ValueForm> {
 
   Future<void> _save() async {
     final value = parseRupees(_value.text);
-    if (value == null) return setState(() => _error = 'Enter a valid value');
+    if (value == null) {
+      return setState(() => _error = tr('Enter a valid value'));
+    }
     await context.store.updateInvestmentValue(
       widget.investment,
       value,
@@ -597,7 +608,7 @@ class _ValueFormState extends State<_ValueForm> {
   @override
   Widget build(BuildContext context) {
     return _DialogFrame(
-      title: 'Current value',
+      title: tr('Current value'),
       error: _error,
       onSave: _save,
       children: [
@@ -605,10 +616,15 @@ class _ValueFormState extends State<_ValueForm> {
           widget.investment.name,
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        AmountField(controller: _value, label: 'Value today', autofocus: true),
+        AmountField(
+          controller: _value,
+          label: tr('Value today'),
+          autofocus: true,
+        ),
         Text(
-          'Check your fund statement, broker app or passbook. This is your '
-          'own figure, not a live market price.',
+          tr(
+            'Check your fund statement, broker app or passbook. This is your own figure, not a live market price.',
+          ),
           style: Theme.of(context).textTheme.bodySmall,
         ),
       ],

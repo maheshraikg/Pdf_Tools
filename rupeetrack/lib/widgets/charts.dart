@@ -11,6 +11,7 @@ import '../ledger/ledger.dart';
 import '../models/money.dart';
 import 'common.dart';
 import 'design.dart';
+import '../l10n/strings.dart';
 
 const _monthsShort = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', //
@@ -145,8 +146,11 @@ class SpendingPaceChart extends StatelessWidget {
               getTooltipItems: (spots) => [
                 for (final s in spots)
                   LineTooltipItem(
-                    '${s.barIndex == 1 ? 'This month' : 'Last month'} · day '
-                    '${s.x.round()}\n${formatRupees((s.y * 100).round())}',
+                    tr('{0} · day {1}\n{2}', [
+                      s.barIndex == 1 ? tr('This month') : tr('Last month'),
+                      s.x.round(),
+                      formatRupees((s.y * 100).round()),
+                    ]),
                     TextStyle(
                       color: scheme.onInverseSurface,
                       fontWeight: FontWeight.w600,
@@ -267,7 +271,7 @@ class IncomeSpendBars extends StatelessWidget {
                   meta: meta,
                   child: _axisLabel(
                     context,
-                    _monthsShort[ms[v.toInt()].month - 1],
+                    tr(_monthsShort[ms[v.toInt()].month - 1]),
                   ),
                 ),
               ),
@@ -278,7 +282,7 @@ class IncomeSpendBars extends StatelessWidget {
               getTooltipColor: (_) => scheme.inverseSurface,
               fitInsideHorizontally: true,
               getTooltipItem: (group, gi, rod, ri) => BarTooltipItem(
-                '${_monthsShort[ms[gi].month - 1]} · ${ri == 0 ? 'Income' : 'Spent'}\n'
+                '${tr(_monthsShort[ms[gi].month - 1])} · ${ri == 0 ? tr('Income') : tr('Spent')}\n'
                 '${formatRupees((rod.toY * 100).round())}',
                 TextStyle(
                   color: scheme.onInverseSurface,
@@ -419,7 +423,7 @@ class _CategoryBreakdownState extends State<CategoryBreakdown> {
                           children: [
                             Expanded(
                               child: Text(
-                                entries[i].key,
+                                tr(entries[i].key),
                                 style: t.bodyMedium?.copyWith(
                                   fontWeight: _touched == i
                                       ? FontWeight.w700
@@ -505,9 +509,10 @@ class PeriodBars extends StatelessWidget {
     final ys = [for (final v in values) v / 100];
     final maxY = _niceMax(ys.fold<double>(0, math.max));
     final strong = color ?? scheme.primary;
-    final soft = scheme.surfaceContainerHighest;
+    // Every bar in full colour: easiest to read and compare.
+    final soft = strong;
     final width = values.length > 20
-        ? 6.0
+        ? 7.0
         : values.length > 8
         ? 12.0
         : 22.0;
@@ -545,6 +550,7 @@ class PeriodBars extends StatelessWidget {
                   final near =
                       labelEvery > 1 &&
                       h != null &&
+                      h % labelEvery != 0 &&
                       i != h &&
                       (i - h).abs() < 3;
                   final show = i == h || (i % labelEvery == 0 && !near);

@@ -12,6 +12,7 @@ import '../ledger/ledger.dart';
 import '../models/models.dart';
 import '../models/money.dart';
 import 'store.dart';
+import '../l10n/strings.dart';
 
 /// Hour of day (local time) at which reminders are shown.
 const int kReminderHour = 9;
@@ -50,10 +51,12 @@ List<PlannedReminder> planReminders(
         PlannedReminder(
           when,
           before == 0
-              ? '${c.displayName} bill due today'
-              : '${c.displayName} bill due in $before days',
-          '${formatRupees(s.amountDue)} to pay by ${_short(s.dueDate)}. '
-          'Tap to record the payment.',
+              ? tr('{0} bill due today', [c.displayName])
+              : tr('{0} bill due in {1} days', [c.displayName, before]),
+          tr('{0} to pay by {1}. Tap to record the payment.', [
+            formatRupees(s.amountDue),
+            _short(s.dueDate),
+          ]),
         ),
       );
     }
@@ -66,13 +69,15 @@ List<PlannedReminder> planReminders(
       final when = at(d);
       if (when.isAfter(now)) {
         final t = r.template;
-        final name = t.note ?? t.category ?? t.type.label;
+        final name =
+            t.note ?? (t.category != null ? tr(t.category!) : t.type.label);
         result.add(
           PlannedReminder(
             when,
             '$name · ${formatRupees(t.amount)}',
-            'This ${t.type.label.toLowerCase()} is recorded automatically '
-                'today.',
+            tr('This {0} is recorded automatically today.', [
+              t.type.label.toLowerCase(),
+            ]),
           ),
         );
       }
@@ -87,7 +92,7 @@ const _months = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', //
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 ];
-String _short(DateTime d) => '${d.day} ${_months[d.month - 1]}';
+String _short(DateTime d) => '${d.day} ${tr(_months[d.month - 1])}';
 
 class Reminders {
   static final _plugin = FlutterLocalNotificationsPlugin();
@@ -125,11 +130,13 @@ class Reminders {
       await init();
       await _plugin.cancelAll();
       if (!store.notifications) return;
-      const details = NotificationDetails(
+      final details = NotificationDetails(
         android: AndroidNotificationDetails(
           'reminders',
-          'Bill and payment reminders',
-          channelDescription: 'Credit card due dates and recurring payments',
+          tr('Bill and payment reminders'),
+          channelDescription: tr(
+            'Credit card due dates and recurring payments',
+          ),
           importance: Importance.high,
           priority: Priority.high,
         ),

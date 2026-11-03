@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../ledger/ledger.dart';
 import '../models/models.dart';
 import 'store.dart';
+import '../l10n/strings.dart';
 
 /// Gives widgets access to the [FinanceStore] and rebuilds them when it
 /// changes.
@@ -35,18 +36,22 @@ const _monthsLong = [
 ];
 
 /// "12 Mar 2026".
-String shortDate(DateTime d) => '${d.day} ${_months[d.month - 1]} ${d.year}';
+String shortDate(DateTime d) =>
+    '${d.day} ${tr(_months[d.month - 1])} ${d.year}';
 
 /// "12 Mar".
-String dayMonth(DateTime d) => '${d.day} ${_months[d.month - 1]}';
+String dayMonth(DateTime d) => '${d.day} ${tr(_months[d.month - 1])}';
 
 /// "March 2026".
-String monthLabel(DateTime d) => '${_monthsLong[d.month - 1]} ${d.year}';
+String monthLabel(DateTime d) => '${tr(_monthsLong[d.month - 1])} ${d.year}';
 
 /// "Today", "Yesterday" or [shortDate].
 String relativeDate(DateTime d) {
   final diff = today().difference(dateOnly(d)).inDays;
-  if (diff == 0) return 'Today';
-  if (diff == 1) return 'Yesterday';
+  if (diff == 0) return tr('Today');
+  if (diff == 1) return tr('Yesterday');
   return shortDate(d);
 }
+
+/// Full month name (1 = January) in the interface language.
+String monthName(int month) => tr(_monthsLong[month - 1]);

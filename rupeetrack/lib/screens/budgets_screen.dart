@@ -7,6 +7,7 @@ import '../models/money.dart';
 import '../widgets/common.dart';
 import '../widgets/design.dart';
 import 'home_screen.dart' show BudgetRow;
+import '../l10n/strings.dart';
 
 /// Monthly limits per spending category, with this month's progress.
 class BudgetsScreen extends StatelessWidget {
@@ -23,18 +24,18 @@ class BudgetsScreen extends StatelessWidget {
     final result = await showDialog<int>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('$category budget'),
+        title: Text(tr('{0} budget', [tr(category)])),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             AmountField(
               controller: controller,
-              label: 'Monthly limit',
+              label: tr('Monthly limit'),
               autofocus: true,
             ),
             const SizedBox(height: 8),
             Text(
-              'You will be warned at 80% and when it is crossed.',
+              tr('You will be warned at 80% and when it is crossed.'),
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
@@ -43,18 +44,18 @@ class BudgetsScreen extends StatelessWidget {
           if (current != null)
             TextButton(
               onPressed: () => Navigator.pop(context, 0),
-              child: const Text('Remove'),
+              child: Text(tr('Remove')),
             ),
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(tr('Cancel')),
           ),
           FilledButton(
             onPressed: () {
               final v = parseRupees(controller.text);
               if (v != null && v > 0) Navigator.pop(context, v);
             },
-            child: const Text('Save'),
+            child: Text(tr('Save')),
           ),
         ],
       ),
@@ -80,7 +81,7 @@ class BudgetsScreen extends StatelessWidget {
     final totalSpent = statuses.fold(0, (s, b) => s + b.spent);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Budgets')),
+      appBar: AppBar(title: Text(tr('Budgets'))),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 32),
         children: [
@@ -90,7 +91,7 @@ class BudgetsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   HeroFigure(
-                    '${monthLabel(now)} · left to spend',
+                    tr('{0} · left to spend', [monthLabel(now)]),
                     formatRupees(totalLimit - totalSpent),
                     big: true,
                   ),
@@ -108,15 +109,17 @@ class BudgetsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '${formatRupees(totalSpent)} of ${formatRupees(totalLimit)} '
-                    'used',
+                    tr('{0} of {1} used', [
+                      formatRupees(totalSpent),
+                      formatRupees(totalLimit),
+                    ]),
                     style: const TextStyle(color: Colors.white70),
                   ),
                 ],
               ),
             ),
           if (statuses.isNotEmpty) ...[
-            const SectionHeader('Your budgets'),
+            SectionHeader(tr('Your budgets')),
             Panel(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Column(
@@ -140,7 +143,9 @@ class BudgetsScreen extends StatelessWidget {
               ),
             ),
           ],
-          SectionHeader(statuses.isEmpty ? 'Pick a category' : 'Add budget'),
+          SectionHeader(
+            statuses.isEmpty ? tr('Pick a category') : tr('Add budget'),
+          ),
           Panel(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Column(
@@ -148,9 +153,9 @@ class BudgetsScreen extends StatelessWidget {
                 for (final c in others)
                   ListTile(
                     leading: IconBadge(iconForCategory(c), size: 40),
-                    title: Text(c),
+                    title: Text(tr(c)),
                     subtitle: (spent[c] ?? 0) > 0
-                        ? Text('${formatRupees(spent[c]!)} this month')
+                        ? Text(tr('{0} this month', [formatRupees(spent[c]!)]))
                         : null,
                     trailing: const Icon(Icons.add),
                     onTap: () => _edit(context, c, null),

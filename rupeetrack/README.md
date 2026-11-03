@@ -19,8 +19,23 @@ sign-up and no bank login.
 - **Savings goals**: a target (and optional date) for an emergency fund,
   phone, bike or trip; add or take out money and see how much to put aside
   each month.
-- **Insights**: no-spend streak, change vs last month, daily average,
-  spending pace, income vs spending by month and a category breakdown.
+- **Graphs that explain themselves**: red bars for spending and green for
+  income, one bar per day (1M), month (1Y) or year (All), with a caption
+  and a tap-to-read amount; arrows to go back through months and years;
+  the 1Y and All views list every month or year, tap one to open it.
+- **Insights**: where your income goes ("31% of your income goes to
+  EMIs", "out of every ₹100, ₹40 is left") as one stacked bar, no-spend
+  streak, change vs last month, daily average, spending pace, income vs
+  spending by month and a category breakdown.
+- **Loans payoff graph**: what is left to pay month by month (or year by
+  year) and the "debt-free by" month; each loan shows % paid.
+- **Home screen widget**: this month's spending with a bar per day.
+- **Languages**: English, हिन्दी (Hindi) and ಕನ್ನಡ (Kannada), more coming;
+  chosen from Settings or More › Language (the phone's language is used on
+  first start). Translations live in `tool/l10n/<code>.txt`; run
+  `python3 tool/l10n/extract.py` after adding text and
+  `python3 tool/l10n/build.py` to regenerate `lib/l10n/translations.dart`.
+  PDF/Excel reports and CSV exports stay in English.
 - **Quick add**: enter the amount, tap a category, tap the account or card,
   then Save. The last category and source are remembered. Also covers income,
   transfers, card bills, refunds and investments. Optional receipt photo

@@ -77,7 +77,7 @@ Uint8List buildExcelReport(Ledger l, DateTime today) {
         for (final t in l.txns)
           [
             _date(t.date),
-            t.type.label,
+            t.type.labelEn,
             Money(t.amount),
             Money(_signed(t)),
             t.category ?? '',
@@ -94,7 +94,7 @@ Uint8List buildExcelReport(Ledger l, DateTime today) {
       [
         ['Name', 'Type', 'Account digits', 'Balance'],
         for (final a in l.accounts)
-          [a.name, a.kind.label, a.lastFour, Money(l.accountBalance(a.id))],
+          [a.name, a.kind.labelEn, a.lastFour, Money(l.accountBalance(a.id))],
       ],
       widths: [24, 18, 16, 16],
     ),
@@ -142,7 +142,7 @@ Uint8List buildExcelReport(Ledger l, DateTime today) {
           if (l.investmentSummary(i, today) case final s)
             [
               i.name,
-              i.type.label,
+              i.type.labelEn,
               Money(s.netInvested),
               s.currentValue == null ? '' : Money(s.currentValue!),
               s.absoluteReturn == null ? '' : Money(s.absoluteReturn!),
@@ -303,7 +303,7 @@ Future<Uint8List> buildPdfReport(
             for (final a in l.accounts)
               [
                 a.lastFour.isEmpty ? a.name : '${a.name} ••${a.lastFour}',
-                a.kind.label,
+                a.kind.labelEn,
                 formatRupees(l.accountBalance(a.id)),
               ],
           ],
@@ -333,7 +333,7 @@ Future<Uint8List> buildPdfReport(
               if (l.investmentSummary(i, today) case final s)
                 [
                   i.name,
-                  i.type.label,
+                  i.type.labelEn,
                   formatRupees(s.netInvested),
                   s.currentValue == null ? '–' : formatRupees(s.currentValue!),
                   s.absoluteReturn == null
@@ -379,7 +379,7 @@ Future<Uint8List> buildPdfReport(
               [
                 _date(t.date),
                 [
-                  t.note ?? t.category ?? t.type.label,
+                  t.note ?? t.category ?? t.type.labelEn,
                   if (t.note != null && t.category != null) t.category!,
                 ].join(' · '),
                 [_from(l, t), _to(l, t)].where((s) => s.isNotEmpty).join(' → '),

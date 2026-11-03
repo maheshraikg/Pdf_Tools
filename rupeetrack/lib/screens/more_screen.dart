@@ -12,6 +12,7 @@ import 'investments_screen.dart';
 import 'loans_screen.dart';
 import 'recurring_screen.dart';
 import 'settings_screen.dart';
+import '../l10n/strings.dart';
 
 /// Every other part of the app, in three short groups.
 class MoreScreen extends StatelessWidget {
@@ -44,45 +45,80 @@ class MoreScreen extends StatelessWidget {
       ],
     );
     return Scaffold(
-      appBar: AppBar(title: const Text('More')),
+      appBar: AppBar(title: Text(tr('More'))),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 120),
         children: [
-          group('Money', [
+          group(tr('Money'), [
             item(
               Icons.account_balance_outlined,
-              'Accounts',
+              tr('Accounts'),
               const AccountsScreen(),
             ),
             item(
               Icons.trending_up_rounded,
-              'Investments',
+              tr('Investments'),
               const InvestmentsScreen(),
             ),
             item(
               Icons.event_repeat_outlined,
-              'Loans & EMIs',
+              tr('Loans & EMIs'),
               const LoansScreen(),
             ),
-            item(Icons.savings_outlined, 'Savings goals', const GoalsScreen()),
+            item(
+              Icons.savings_outlined,
+              tr('Savings goals'),
+              const GoalsScreen(),
+            ),
           ]),
-          group('Plan', [
-            item(Icons.donut_large_outlined, 'Budgets', const BudgetsScreen()),
-            item(Icons.repeat_rounded, 'Recurring', const RecurringScreen()),
-            item(Icons.insights_outlined, 'Insights', const InsightsScreen()),
+          group(tr('Plan'), [
+            item(
+              Icons.donut_large_outlined,
+              tr('Budgets'),
+              const BudgetsScreen(),
+            ),
+            item(
+              Icons.repeat_rounded,
+              tr('Recurring'),
+              const RecurringScreen(),
+            ),
+            item(
+              Icons.insights_outlined,
+              tr('Insights'),
+              const InsightsScreen(),
+            ),
           ]),
-          group('Data', [
+          group(tr('Data'), [
             item(
               Icons.auto_awesome_outlined,
-              'Automatic (SMS, Gmail)',
+              tr('Automatic (SMS, Gmail)'),
               const AutoDetectScreen(),
             ),
             item(
               Icons.upload_file_outlined,
-              'Import statement',
+              tr('Import statement'),
               const ImportScreen(),
             ),
-            item(Icons.settings_outlined, 'Settings', const SettingsScreen()),
+            ListTile(
+              leading: const IconBadge(Icons.translate, size: 38),
+              title: Text(tr('Language')),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    currentLanguageName(),
+                    style: TextStyle(color: scheme.onSurfaceVariant),
+                  ),
+                  Icon(Icons.chevron_right, color: scheme.outline),
+                ],
+              ),
+              onTap: () => showLanguagePicker(context),
+            ),
+            item(
+              Icons.settings_outlined,
+              tr('Settings'),
+              const SettingsScreen(),
+            ),
           ]),
         ],
       ),

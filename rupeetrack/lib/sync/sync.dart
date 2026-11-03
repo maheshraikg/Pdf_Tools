@@ -7,6 +7,7 @@ import '../ledger/ledger.dart';
 import '../models/models.dart';
 import '../models/money.dart';
 import 'bank_messages.dart';
+import '../l10n/strings.dart';
 
 /// A parsed event with a stable key for its source message, e.g.
 /// "sms:3f9a…". The prefix (sms, mail, pdf) names the source.
@@ -368,12 +369,14 @@ SyncResult planSync(
 /// Short summary of a result for a snackbar.
 String describeSync(SyncResult r) {
   final parts = <String>[
-    if (r.added.isNotEmpty) '${r.added.length} new',
-    if (r.updated.isNotEmpty) '${r.updated.length} linked',
+    if (r.added.isNotEmpty) tr('{0} new', [r.added.length]),
+    if (r.updated.isNotEmpty) tr('{0} linked', [r.updated.length]),
     if (r.bills.isNotEmpty)
-      '${r.bills.length} bill${r.bills.length == 1 ? '' : 's'}',
+      r.bills.length == 1 ? tr('1 bill') : tr('{0} bills', [r.bills.length]),
     if (r.unknown.isNotEmpty)
-      '${r.unknown.length} new card/account${r.unknown.length == 1 ? '' : 's'} found',
+      r.unknown.length == 1
+          ? tr('1 new card/account found')
+          : tr('{0} new cards/accounts found', [r.unknown.length]),
   ];
-  return parts.isEmpty ? 'Everything is up to date' : parts.join(' · ');
+  return parts.isEmpty ? tr('Everything is up to date') : parts.join(' · ');
 }

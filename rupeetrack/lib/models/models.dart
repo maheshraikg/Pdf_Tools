@@ -1,4 +1,5 @@
 import 'money.dart';
+import '../l10n/strings.dart';
 
 /// Strips the time from [d], as a UTC date so day arithmetic is DST-proof.
 DateTime dateOnly(DateTime d) => DateTime.utc(d.year, d.month, d.day);
@@ -18,8 +19,13 @@ enum AccountKind {
   cash('Cash in hand'),
   wallet('UPI / wallet');
 
-  const AccountKind(this.label);
-  final String label;
+  const AccountKind(this.labelEn);
+
+  /// English name (exports, reports).
+  final String labelEn;
+
+  /// Name in the interface language.
+  String get label => tr(labelEn);
 }
 
 /// A bank account, cash in hand or wallet. Its balance is never stored: it is
@@ -210,8 +216,13 @@ enum InvestmentType {
   gold('Gold / SGB'),
   other('Other');
 
-  const InvestmentType(this.label);
-  final String label;
+  const InvestmentType(this.labelEn);
+
+  /// English name (exports, reports).
+  final String labelEn;
+
+  /// Name in the interface language.
+  String get label => tr(labelEn);
 }
 
 /// An investment holding. [currentValue] is either entered by the user or,
@@ -360,8 +371,13 @@ enum TxnType {
   /// [Txn.toAccountId] is set, otherwise reinvested (already in the value).
   investIncome('Dividend / interest');
 
-  const TxnType(this.label);
-  final String label;
+  const TxnType(this.labelEn);
+
+  /// English name (exports, reports).
+  final String labelEn;
+
+  /// Name in the interface language.
+  String get label => tr(labelEn);
 }
 
 /// One ledger entry. Which of the from/to fields are used depends on [type];
@@ -412,9 +428,9 @@ class Txn {
 
   /// Where an automatically detected entry came from, for display.
   String? get sourceLabel => switch (sourceKey?.split(':').first) {
-    'sms' => 'SMS',
-    'mail' => 'Email',
-    'pdf' => 'Statement',
+    'sms' => tr('SMS'),
+    'mail' => tr('Email'),
+    'pdf' => tr('Statement'),
     _ => null,
   };
 
@@ -476,39 +492,43 @@ class Txn {
 /// Problems that stop [t] from being saved; empty when it is valid.
 List<String> validate(Txn t) {
   final errors = <String>[];
-  if (t.amount <= 0) errors.add('Enter an amount greater than zero');
+  if (t.amount <= 0) errors.add(tr('Enter an amount greater than zero'));
   final oneSource = (t.fromAccountId != null) != (t.fromCardId != null);
   switch (t.type) {
     case TxnType.expense:
-      if (!oneSource) errors.add('Choose the account or card you paid from');
+      if (!oneSource) {
+        errors.add(tr('Choose the account or card you paid from'));
+      }
     case TxnType.invest:
-      if (!oneSource) errors.add('Choose the account or card you paid from');
-      if (t.investmentId == null) errors.add('Choose an investment');
+      if (!oneSource) {
+        errors.add(tr('Choose the account or card you paid from'));
+      }
+      if (t.investmentId == null) errors.add(tr('Choose an investment'));
     case TxnType.income:
       if (t.toAccountId == null) {
-        errors.add('Choose the account that received the money');
+        errors.add(tr('Choose the account that received the money'));
       }
     case TxnType.transfer:
       if (t.fromAccountId == null || t.toAccountId == null) {
-        errors.add('Choose both accounts');
+        errors.add(tr('Choose both accounts'));
       } else if (t.fromAccountId == t.toAccountId) {
-        errors.add('Choose two different accounts');
+        errors.add(tr('Choose two different accounts'));
       }
     case TxnType.cardPayment:
       // The paying account is optional: a payment detected from the card's
       // SMS may have come from an account that is not tracked here.
-      if (t.toCardId == null) errors.add('Choose the card that was paid');
+      if (t.toCardId == null) errors.add(tr('Choose the card that was paid'));
     case TxnType.refund:
       if ((t.toAccountId != null) == (t.toCardId != null)) {
-        errors.add('Choose the account or card that got the refund');
+        errors.add(tr('Choose the account or card that got the refund'));
       }
     case TxnType.investWithdrawal:
-      if (t.investmentId == null) errors.add('Choose an investment');
+      if (t.investmentId == null) errors.add(tr('Choose an investment'));
       if (t.toAccountId == null) {
-        errors.add('Choose the account that received the money');
+        errors.add(tr('Choose the account that received the money'));
       }
     case TxnType.investIncome:
-      if (t.investmentId == null) errors.add('Choose an investment');
+      if (t.investmentId == null) errors.add(tr('Choose an investment'));
   }
   return errors;
 }

@@ -1,5 +1,6 @@
 import 'models.dart';
 import 'money.dart';
+import '../l10n/strings.dart';
 
 /// A monthly spending limit for one category.
 class Budget {
@@ -24,8 +25,13 @@ enum Frequency {
   monthly('Every month'),
   yearly('Every year');
 
-  const Frequency(this.label);
-  final String label;
+  const Frequency(this.labelEn);
+
+  /// English name (exports, reports).
+  final String labelEn;
+
+  /// Name in the interface language.
+  String get label => tr(labelEn);
 }
 
 /// A repeating entry (rent, SIP, subscription, salary). Copies of [template]

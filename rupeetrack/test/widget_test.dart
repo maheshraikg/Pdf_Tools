@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rupeetrack/app/scope.dart';
 import 'package:rupeetrack/app/store.dart';
+import 'package:rupeetrack/l10n/strings.dart';
 import 'package:rupeetrack/main.dart';
 import 'package:rupeetrack/models/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +16,10 @@ void main() {
     await tester.pumpWidget(
       RupeeTrackApp(store: FinanceStore.memory(), background: false),
     );
-    expect(find.textContaining('rupee goes.', findRichText: true), findsOneWidget);
+    expect(
+      find.textContaining('rupee goes.', findRichText: true),
+      findsOneWidget,
+    );
     expect(find.byType(FloatingActionButton), findsNothing);
   });
 
@@ -101,6 +105,50 @@ void main() {
     expect(find.text('•••• 1234'), findsOneWidget);
     expect(find.text('Pay bill'), findsOneWidget);
   });
+
+  for (final lang in ['kn', 'hi']) {
+    testWidgets('every screen renders in $lang', (tester) async {
+      final store = FinanceStore.memory();
+      await store.addAccount('SBI', AccountKind.savings, 1000000);
+      await store.addCard(
+        name: 'HDFC',
+        lastFour: '1234',
+        creditLimit: 10000000,
+        statementDay: 15,
+        dueDay: 5,
+        openingOutstanding: 500000,
+      );
+      await store.saveTxn(
+        Txn(
+          id: 0,
+          type: TxnType.expense,
+          amount: 25000,
+          date: DateTime.utc(2026, 10, 30),
+          category: 'Food',
+          fromAccountId: store.ledger.accounts.single.id,
+        ),
+      );
+      await store.setLanguage(lang);
+      await tester.pumpWidget(RupeeTrackApp(store: store, background: false));
+      await tester.pumpAndSettle();
+      expect(find.text(tr('Home')), findsOneWidget);
+      expect(tr('Home'), isNot('Home'));
+      for (final tab in ['Activity', 'Cards', 'More', 'Home']) {
+        await tester.tap(find.text(tr(tab)).last);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+      }
+      for (final range in ['1Y', tr('All'), '1M']) {
+        await tester.tap(find.text(range));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+      }
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      await store.setLanguage('en');
+    });
+  }
 
   test('data survives a reload', () async {
     SharedPreferences.setMockInitialValues({});

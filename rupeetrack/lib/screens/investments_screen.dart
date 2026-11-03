@@ -10,6 +10,7 @@ import '../widgets/design.dart';
 import 'forms.dart';
 import 'holding_detail_screen.dart';
 import 'quick_add_sheet.dart';
+import '../l10n/strings.dart';
 
 String _percent(double v) => '${v >= 0 ? '+' : ''}${v.toStringAsFixed(1)}%';
 
@@ -26,7 +27,7 @@ Future<void> refreshFundPrices(BuildContext context) async {
   final store = context.store;
   final messenger = ScaffoldMessenger.of(context);
   messenger.showSnackBar(
-    const SnackBar(content: Text('Fetching latest NAVs from AMFI…')),
+    SnackBar(content: Text(tr('Fetching latest NAVs from AMFI…'))),
   );
   try {
     final n = await store.applyNavs(await _navs(fresh: true));
@@ -35,7 +36,9 @@ Future<void> refreshFundPrices(BuildContext context) async {
       ..showSnackBar(
         SnackBar(
           content: Text(
-            n == 0 ? 'No linked funds to update' : 'Updated $n funds',
+            n == 0
+                ? tr('No linked funds to update')
+                : tr('Updated {0} funds', [n]),
           ),
         ),
       );
@@ -43,8 +46,8 @@ Future<void> refreshFundPrices(BuildContext context) async {
     messenger
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
-          content: Text('Could not reach AMFI. Check your internet.'),
+        SnackBar(
+          content: Text(tr('Could not reach AMFI. Check your internet.')),
         ),
       );
   }
@@ -85,17 +88,17 @@ class InvestmentsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Investments'),
+        title: Text(tr('Investments')),
         actions: [
           if (l.investments.any((i) => i.isLinked))
             IconButton(
               icon: const Icon(Icons.sync),
-              tooltip: 'Update fund prices',
+              tooltip: tr('Update fund prices'),
               onPressed: () => refreshFundPrices(context),
             ),
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'Add investment',
+            tooltip: tr('Add investment'),
             onPressed: () => showAddInvestmentDialog(context),
           ),
         ],
@@ -103,10 +106,10 @@ class InvestmentsScreen extends StatelessWidget {
       body: summaries.isEmpty
           ? EmptyState(
               icon: Icons.insights,
-              message:
-                  'Add your mutual funds, SIPs, stocks, PPF, FDs, NPS, gold '
-                  'and more. Money you invest is kept out of your spending.',
-              actionLabel: 'Add investment',
+              message: tr(
+                'Add your mutual funds, SIPs, stocks, PPF, FDs, NPS, gold and more. Money you invest is kept out of your spending.',
+              ),
+              actionLabel: tr('Add investment'),
               onAction: () => showAddInvestmentDialog(context),
             )
           : ListView(
@@ -122,7 +125,7 @@ class InvestmentsScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: HeroFigure(
-                              'Portfolio value',
+                              tr('Portfolio value'),
                               formatRupees(currentTotal),
                               big: true,
                             ),
@@ -151,13 +154,13 @@ class InvestmentsScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: HeroFigure(
-                              'Invested',
+                              tr('Invested'),
                               formatRupeesCompact(netInvested),
                             ),
                           ),
                           Expanded(
                             child: HeroFigure(
-                              'Total gain',
+                              tr('Total gain'),
                               valued.isEmpty
                                   ? '–'
                                   : '${valuedGain >= 0 ? '+' : ''}'
@@ -168,8 +171,10 @@ class InvestmentsScreen extends StatelessWidget {
                       ),
                       if (valued.length < summaries.length) ...[
                         const SizedBox(height: 10),
-                        const Text(
-                          'Gain includes only holdings with a current value.',
+                        Text(
+                          tr(
+                            'Gain includes only holdings with a current value.',
+                          ),
                           style: TextStyle(color: Colors.white70, fontSize: 12),
                         ),
                       ],
@@ -182,7 +187,7 @@ class InvestmentsScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Allocation',
+                          tr('Allocation'),
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         const SizedBox(height: 12),
@@ -237,13 +242,14 @@ class InvestmentsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                const SectionHeader('Holdings'),
+                SectionHeader(tr('Holdings')),
                 for (final s in summaries) _InvestmentTile(summary: s),
                 Padding(
                   padding: kPagePadding,
                   child: Text(
-                    'Values you type are your own figures. Linked mutual '
-                    'funds use the daily NAV published by AMFI.',
+                    tr(
+                      'Values you type are your own figures. Linked mutual funds use the daily NAV published by AMFI.',
+                    ),
                     style: Theme.of(context).textTheme.bodySmall
                         ?.copyWith(color: scheme.onSurfaceVariant),
                   ),
@@ -271,7 +277,7 @@ class _InvestmentTile extends StatelessWidget {
         ? scheme.moneyIn
         : scheme.danger;
     final valueNote = inv.valueUpdatedOn == null
-        ? 'Add today’s value to see returns'
+        ? tr('Add today’s value to see returns')
         : '${inv.valueSource ?? 'Value you entered'} · '
               '${shortDate(inv.valueUpdatedOn!)}';
 
@@ -296,7 +302,10 @@ class _InvestmentTile extends StatelessWidget {
                     Text(inv.name, style: t.titleMedium),
                     Text(
                       inv.isLinked
-                          ? '${inv.type.label} · ${_units(inv.units!)} units'
+                          ? tr('{0} · {1} units', [
+                              inv.type.label,
+                              _units(inv.units!),
+                            ])
                           : inv.type.label,
                       style: t.bodySmall?.copyWith(
                         color: scheme.onSurfaceVariant,
@@ -312,12 +321,14 @@ class _InvestmentTile extends StatelessWidget {
           const SizedBox(height: 14),
           Row(
             children: [
-              Expanded(child: Figure('Invested', formatRupees(s.netInvested))),
+              Expanded(
+                child: Figure(tr('Invested'), formatRupees(s.netInvested)),
+              ),
               Expanded(
                 child: Figure(
-                  'Current value',
+                  tr('Current value'),
                   s.currentValue == null
-                      ? 'Not set'
+                      ? tr('Not set')
                       : formatRupees(s.currentValue!),
                 ),
               ),
@@ -329,14 +340,14 @@ class _InvestmentTile extends StatelessWidget {
               children: [
                 Expanded(
                   child: Figure(
-                    'Gain',
+                    tr('Gain'),
                     '${gain >= 0 ? '+' : ''}${formatRupees(gain)}',
                     color: gainColor,
                   ),
                 ),
                 Expanded(
                   child: Figure(
-                    'Yearly (XIRR)',
+                    tr('Yearly (XIRR)'),
                     s.xirr == null ? '–' : _percent(s.xirr! * 100),
                   ),
                 ),
@@ -346,7 +357,9 @@ class _InvestmentTile extends StatelessWidget {
           if (s.incomePaidOut > 0) ...[
             const SizedBox(height: 8),
             Text(
-              'Dividends / interest received: ${formatRupees(s.incomePaidOut)}',
+              tr('Dividends / interest received: {0}', [
+                formatRupees(s.incomePaidOut),
+              ]),
               style: t.bodySmall,
             ),
           ],
@@ -359,7 +372,7 @@ class _InvestmentTile extends StatelessWidget {
           Row(
             children: [
               _SmallAction(
-                'Add money',
+                tr('Add money'),
                 () => showQuickAdd(
                   context,
                   type: TxnType.invest,
@@ -367,12 +380,12 @@ class _InvestmentTile extends StatelessWidget {
                 ),
               ),
               _SmallAction(
-                'Update value',
+                tr('Update value'),
                 () => showUpdateValueDialog(context, inv),
               ),
               if (inv.type == InvestmentType.mutualFund)
                 _SmallAction(
-                  inv.isLinked ? 'NAV linked' : 'Link NAV',
+                  inv.isLinked ? tr('NAV linked') : tr('Link NAV'),
                   () => showLinkFundSheet(context, inv),
                 ),
             ],
@@ -461,9 +474,9 @@ class _LinkFundSheetState extends State<_LinkFundSheet> {
     } catch (_) {
       if (mounted) {
         setState(
-          () => _error =
-              'Could not download the fund list from AMFI. '
-              'Check your internet and try again.',
+          () => _error = tr(
+            'Could not download the fund list from AMFI. Check your internet and try again.',
+          ),
         );
       }
     }
@@ -480,7 +493,7 @@ class _LinkFundSheetState extends State<_LinkFundSheet> {
     final picked = _picked;
     final units = double.tryParse(_unitsCtrl.text.replaceAll(',', '').trim());
     if (picked == null || units == null || units <= 0) {
-      setState(() => _error = 'Pick a fund and enter the units you hold');
+      setState(() => _error = tr('Pick a fund and enter the units you hold'));
       return;
     }
     final store = context.store;
@@ -510,19 +523,19 @@ class _LinkFundSheetState extends State<_LinkFundSheet> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Link to daily NAV', style: t.titleLarge),
+              Text(tr('Link to daily NAV'), style: t.titleLarge),
               const SizedBox(height: 4),
               Text(
-                'Value = units × latest NAV published by AMFI.',
+                tr('Value = units × latest NAV published by AMFI.'),
                 style: t.bodySmall,
               ),
               const SizedBox(height: 12),
               if (_picked == null)
                 TextField(
                   controller: _query,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     prefixIcon: Icon(Icons.search),
-                    hintText: 'Fund name or scheme code',
+                    hintText: tr('Fund name or scheme code'),
                   ),
                   onChanged: (_) => setState(() {}),
                 )
@@ -537,8 +550,13 @@ class _LinkFundSheetState extends State<_LinkFundSheet> {
                           children: [
                             Text(_picked!.name, style: t.titleSmall),
                             Text(
-                              'NAV ${formatRupees((_picked!.nav * 100).round(), alwaysShowPaise: true)}'
-                              ' · ${shortDate(_picked!.date)}',
+                              tr('NAV {0} · {1}', [
+                                formatRupees(
+                                  (_picked!.nav * 100).round(),
+                                  alwaysShowPaise: true,
+                                ),
+                                shortDate(_picked!.date),
+                              ]),
                               style: t.bodySmall,
                             ),
                           ],
@@ -546,7 +564,7 @@ class _LinkFundSheetState extends State<_LinkFundSheet> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.close),
-                        tooltip: 'Choose another fund',
+                        tooltip: tr('Choose another fund'),
                         onPressed: () => setState(() => _picked = null),
                       ),
                     ],
@@ -572,7 +590,10 @@ class _LinkFundSheetState extends State<_LinkFundSheet> {
                           dense: true,
                           title: Text(q.name),
                           subtitle: Text(
-                            'Code ${q.code} · NAV ${q.nav.toStringAsFixed(2)}',
+                            tr('Code {0} · NAV {1}', [
+                              q.code,
+                              q.nav.toStringAsFixed(2),
+                            ]),
                           ),
                           onTap: () => setState(() => _picked = q),
                         ),
@@ -586,15 +607,15 @@ class _LinkFundSheetState extends State<_LinkFundSheet> {
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  decoration: const InputDecoration(
-                    labelText: 'Units you hold',
-                    helperText: 'From your fund statement or app',
+                  decoration: InputDecoration(
+                    labelText: tr('Units you hold'),
+                    helperText: tr('From your fund statement or app'),
                   ),
                 ),
                 const Spacer(),
                 if (widget.investment.isLinked)
-                  TextButton(onPressed: _unlink, child: const Text('Unlink')),
-                FilledButton(onPressed: _save, child: const Text('Link fund')),
+                  TextButton(onPressed: _unlink, child: Text(tr('Unlink'))),
+                FilledButton(onPressed: _save, child: Text(tr('Link fund'))),
               ],
             ],
           ),

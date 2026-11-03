@@ -11,6 +11,7 @@ import '../models/planning.dart';
 import '../widgets/common.dart';
 import '../widgets/design.dart';
 import 'forms.dart';
+import '../l10n/strings.dart';
 
 /// Opens the quick entry sheet. Pass [initial] to edit an existing
 /// transaction, or [type] / [toCardId] / [investmentId] to prefill a new one.
@@ -203,9 +204,7 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
   Future<void> _save() async {
     final amount = parseRupees(_amount.text);
     if (amount == null) {
-      setState(
-        () => _errors = const ['Enter a valid amount, e.g. 250 or 99.50'],
-      );
+      setState(() => _errors = [tr('Enter a valid amount, e.g. 250 or 99.50')]);
       return;
     }
     final note = _note.text.trim();
@@ -241,11 +240,14 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
       SnackBar(
         content: Text(
           _editing
-              ? 'Updated'
+              ? tr('Updated')
               : _repeat != null
-              ? '${_type.label} of ${formatRupees(amount)} saved · '
-                    '${_repeat!.label.toLowerCase()}'
-              : '${_type.label} of ${formatRupees(amount)} saved',
+              ? tr('{0} of {1} saved · {2}', [
+                  _type.label,
+                  formatRupees(amount),
+                  _repeat!.label.toLowerCase(),
+                ])
+              : tr('{0} of {1} saved', [_type.label, formatRupees(amount)]),
         ),
       ),
     );
@@ -261,12 +263,12 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_camera_outlined),
-              title: const Text('Take photo'),
+              title: Text(tr('Take photo')),
               onTap: () => Navigator.pop(context, true),
             ),
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Choose from gallery'),
+              title: Text(tr('Choose from gallery')),
               onTap: () => Navigator.pop(context, false),
             ),
           ],
@@ -278,7 +280,13 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
       final path = await captureReceipt(camera: camera);
       if (path != null && mounted) setState(() => _receipt = path);
     } catch (e) {
-      if (mounted) setState(() => _errors = ['Could not attach the photo: $e']);
+      if (mounted) {
+        setState(
+          () => _errors = [
+            tr('Could not attach the photo: {0}', [e]),
+          ],
+        );
+      }
     }
   }
 
@@ -295,8 +303,8 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
   Future<void> _newCategory() async {
     final name = await promptText(
       context,
-      title: 'New category',
-      label: 'Name',
+      title: tr('New category'),
+      label: tr('Name'),
     );
     if (name != null && name.isNotEmpty) setState(() => _category = name);
   }
@@ -314,10 +322,10 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
     if (l.accounts.isEmpty && l.cards.isEmpty) {
       return EmptyState(
         icon: Icons.account_balance,
-        message:
-            'Add a bank account, cash or a credit card first so that '
-            'RupeeTrack knows where the money comes from.',
-        actionLabel: 'Add account',
+        message: tr(
+          'Add a bank account, cash or a credit card first so that RupeeTrack knows where the money comes from.',
+        ),
+        actionLabel: tr('Add account'),
         onAction: () async {
           await showAddAccountDialog(context);
           if (context.mounted) setState(() => _adjustForType());
@@ -348,7 +356,7 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    _editing ? 'Edit transaction' : 'Add transaction',
+                    _editing ? tr('Edit transaction') : tr('Add transaction'),
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 12),
@@ -379,7 +387,7 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                     large: true,
                   ),
                   if (_usesCategory) ...[
-                    _Label('Category'),
+                    _Label(tr('Category')),
                     Wrap(
                       spacing: 8,
                       runSpacing: 4,
@@ -388,21 +396,21 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                           ChoiceChip(
                             showCheckmark: false,
                             avatar: Icon(iconForCategory(c), size: 18),
-                            label: Text(c),
+                            label: Text(tr(c)),
                             selected: _category == c,
                             onSelected: (_) => setState(() => _category = c),
                           ),
                         if (_type != TxnType.income)
                           ActionChip(
                             avatar: const Icon(Icons.add, size: 18),
-                            label: const Text('New'),
+                            label: Text(tr('New')),
                             onPressed: _newCategory,
                           ),
                       ],
                     ),
                   ],
                   if (_usesInvestment) ...[
-                    _Label('Investment'),
+                    _Label(tr('Investment')),
                     Wrap(
                       spacing: 8,
                       runSpacing: 4,
@@ -416,14 +424,16 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                           ),
                         ActionChip(
                           avatar: const Icon(Icons.add, size: 18),
-                          label: const Text('New investment'),
+                          label: Text(tr('New investment')),
                           onPressed: _newInvestment,
                         ),
                       ],
                     ),
                   ],
                   if (_usesFrom) ...[
-                    _Label(_type == TxnType.transfer ? 'From' : 'Paid from'),
+                    _Label(
+                      _type == TxnType.transfer ? tr('From') : tr('Paid from'),
+                    ),
                     _SourceChips(
                       selected: _from,
                       includeCards:
@@ -433,10 +443,11 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                   ],
                   if (_type != TxnType.expense && _type != TxnType.invest) ...[
                     _Label(switch (_type) {
-                      TxnType.cardPayment => 'Card',
-                      TxnType.investIncome =>
+                      TxnType.cardPayment => tr('Card'),
+                      TxnType.investIncome => tr(
                         'Paid into (leave empty if reinvested)',
-                      _ => 'To',
+                      ),
+                      _ => tr('To'),
                     }),
                     _SourceChips(
                       selected: _to,
@@ -465,8 +476,8 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                         child: TextField(
                           controller: _note,
                           textCapitalization: TextCapitalization.sentences,
-                          decoration: const InputDecoration(
-                            hintText: 'Note (optional), e.g. Lunch',
+                          decoration: InputDecoration(
+                            hintText: tr('Note (optional), e.g. Lunch'),
                             isDense: true,
                           ),
                         ),
@@ -482,7 +493,7 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                       if (_receipt == null)
                         ActionChip(
                           avatar: const Icon(Icons.receipt_long, size: 18),
-                          label: const Text('Add receipt'),
+                          label: Text(tr('Add receipt')),
                           onPressed: _addReceipt,
                         )
                       else
@@ -498,19 +509,19 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                                   const Icon(Icons.broken_image, size: 18),
                             ),
                           ),
-                          label: const Text('Receipt'),
+                          label: Text(tr('Receipt')),
                           onPressed: () => showReceipt(context, _receipt!),
                           onDeleted: () => setState(() => _receipt = null),
                         ),
                       if (widget.initial?.recurringId == null && !_editing)
                         PopupMenuButton<Frequency?>(
-                          tooltip: 'Repeat',
+                          tooltip: tr('Repeat'),
                           initialValue: _repeat,
                           onSelected: (f) => setState(() => _repeat = f),
                           itemBuilder: (_) => [
-                            const PopupMenuItem(
+                            PopupMenuItem(
                               value: null,
-                              child: Text('Does not repeat'),
+                              child: Text(tr('Does not repeat')),
                             ),
                             for (final f in Frequency.values)
                               PopupMenuItem(value: f, child: Text(f.label)),
@@ -529,9 +540,9 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                           ),
                         ),
                       if (widget.initial?.recurringId != null)
-                        const Chip(
+                        Chip(
                           avatar: Icon(Icons.event_repeat, size: 18),
-                          label: Text('Recurring entry'),
+                          label: Text(tr('Recurring entry')),
                         ),
                     ],
                   ),
@@ -552,7 +563,7 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                 GradientButton(
                   onPressed: _save,
                   icon: Icons.check_rounded,
-                  label: _editing ? 'Update' : 'Save',
+                  label: _editing ? tr('Update') : tr('Save'),
                 ),
               ],
             ),
@@ -615,7 +626,9 @@ class _SourceChips extends StatelessWidget {
     ];
     if (chips.isEmpty) {
       return Text(
-        includeAccounts ? 'Add an account first.' : 'Add a credit card first.',
+        includeAccounts
+            ? tr('Add an account first.')
+            : tr('Add a credit card first.'),
         style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
       );
     }
@@ -634,15 +647,15 @@ void showReceipt(BuildContext context, String path) {
         appBar: AppBar(
           backgroundColor: Colors.black,
           foregroundColor: Colors.white,
-          title: const Text('Receipt', style: TextStyle(color: Colors.white)),
+          title: Text(tr('Receipt'), style: TextStyle(color: Colors.white)),
         ),
         body: InteractiveViewer(
           maxScale: 5,
           child: Center(
             child: Image.file(
               File(path),
-              errorBuilder: (_, _, _) => const Text(
-                'The photo is no longer on this phone.',
+              errorBuilder: (_, _, _) => Text(
+                tr('The photo is no longer on this phone.'),
                 style: TextStyle(color: Colors.white70),
               ),
             ),

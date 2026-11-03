@@ -10,6 +10,7 @@ import '../widgets/design.dart';
 import 'forms.dart';
 import 'pay_bill_sheet.dart';
 import 'quick_add_sheet.dart';
+import '../l10n/strings.dart';
 
 /// Statement-style view of one account, card or investment: entries grouped
 /// by date with the balance after each one, plus edit and delete.
@@ -41,18 +42,23 @@ class HoldingDetailScreen extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete $title?'),
+        title: Text(tr('Delete {0}?', [title])),
         content: Text(
           count == 0
-              ? 'This cannot be undone.'
-              : 'Its $count ${count == 1 ? 'entry' : 'entries'} will be '
-                    'deleted too, and every total will be recalculated. This '
-                    'cannot be undone.',
+              ? tr('This cannot be undone.')
+              : count == 1
+              ? tr(
+                  'Its 1 entry will be deleted too, and every total will be recalculated. This cannot be undone.',
+                )
+              : tr(
+                  'Its {0} entries will be deleted too, and every total will be recalculated. This cannot be undone.',
+                  [count],
+                ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(tr('Cancel')),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
@@ -60,7 +66,7 @@ class HoldingDetailScreen extends StatelessWidget {
               foregroundColor: Theme.of(context).colorScheme.onError,
             ),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
+            child: Text(tr('Delete')),
           ),
         ],
       ),
@@ -77,7 +83,7 @@ class HoldingDetailScreen extends StatelessWidget {
       deleteReceipt(r);
     }
     navigator.pop();
-    messenger.showSnackBar(SnackBar(content: Text('$title deleted')));
+    messenger.showSnackBar(SnackBar(content: Text(tr('{0} deleted', [title]))));
   }
 
   void _edit(BuildContext context) {
@@ -135,7 +141,7 @@ class HoldingDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             HeroFigure(
-              'Balance',
+              tr('Balance'),
               formatRupees(l.accountBalance(account.id)),
               big: true,
             ),
@@ -143,11 +149,14 @@ class HoldingDetailScreen extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: HeroFigure('In this month', formatRupees(inThisMonth)),
+                  child: HeroFigure(
+                    tr('In this month'),
+                    formatRupees(inThisMonth),
+                  ),
                 ),
                 Expanded(
                   child: HeroFigure(
-                    'Out this month',
+                    tr('Out this month'),
                     formatRupees(outThisMonth),
                   ),
                 ),
@@ -163,19 +172,25 @@ class HoldingDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            HeroFigure('Outstanding', formatRupees(s.outstanding), big: true),
+            HeroFigure(
+              tr('Outstanding'),
+              formatRupees(s.outstanding),
+              big: true,
+            ),
             const SizedBox(height: 14),
             Row(
               children: [
                 Expanded(
                   child: HeroFigure(
-                    'Spent this month',
+                    tr('Spent this month'),
                     formatRupees(outThisMonth),
                   ),
                 ),
                 Expanded(
                   child: HeroFigure(
-                    s.amountDue > 0 ? 'Due ${dayMonth(s.dueDate)}' : 'Bill',
+                    s.amountDue > 0
+                        ? tr('Due {0}', [dayMonth(s.dueDate)])
+                        : tr('Bill'),
                     formatRupees(s.amountDue),
                   ),
                 ),
@@ -188,7 +203,7 @@ class HoldingDetailScreen extends StatelessWidget {
                   child: FilledButton.tonalIcon(
                     onPressed: () => showPayBillSheet(context, card),
                     icon: const Icon(Icons.payments_outlined),
-                    label: const Text('Pay bill'),
+                    label: Text(tr('Pay bill')),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -200,7 +215,7 @@ class HoldingDetailScreen extends StatelessWidget {
                     ),
                     onPressed: () => showQuickAdd(context),
                     icon: const Icon(Icons.add),
-                    label: const Text('Add spend'),
+                    label: Text(tr('Add spend')),
                   ),
                 ),
               ],
@@ -215,13 +230,13 @@ class HoldingDetailScreen extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: HeroFigure('Invested', formatRupees(s.netInvested)),
+              child: HeroFigure(tr('Invested'), formatRupees(s.netInvested)),
             ),
             Expanded(
               child: HeroFigure(
-                'Current value',
+                tr('Current value'),
                 s.currentValue == null
-                    ? 'Not set'
+                    ? tr('Not set')
                     : formatRupees(s.currentValue!),
               ),
             ),
@@ -257,19 +272,19 @@ class HoldingDetailScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_outlined),
-            tooltip: 'Edit',
+            tooltip: tr('Edit'),
             onPressed: () => _edit(context),
           ),
           PopupMenuButton<String>(
             onSelected: (v) {
               if (v == 'delete') _delete(context, title);
             },
-            itemBuilder: (_) => const [
+            itemBuilder: (_) => [
               PopupMenuItem(
                 value: 'delete',
                 child: ListTile(
                   leading: Icon(Icons.delete_outline),
-                  title: Text('Delete'),
+                  title: Text(tr('Delete')),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
@@ -290,26 +305,32 @@ class HoldingDetailScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        'Your bank said the balance was '
-                        '${formatRupees(hint.balance)} on ${shortDate(hint.date)}; '
-                        'RupeeTrack shows '
-                        '${formatRupees(l.accountBalance(account.id, asOf: hint.date))}.',
+                        tr(
+                          'Your bank said the balance was {0} on {1}; RupeeTrack shows {2}.',
+                          [
+                            formatRupees(hint.balance),
+                            shortDate(hint.date),
+                            formatRupees(
+                              l.accountBalance(account.id, asOf: hint.date),
+                            ),
+                          ],
+                        ),
                       ),
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
                           onPressed: () =>
                               context.store.acceptBankBalance(account.id),
-                          child: const Text('Use bank balance'),
+                          child: Text(tr('Use bank balance')),
                         ),
                       ),
                     ],
                   ),
                 ),
           if (txns.isEmpty)
-            const EmptyState(
+            EmptyState(
               icon: Icons.receipt_long,
-              message: 'No transactions yet.',
+              message: tr('No transactions yet.'),
             )
           else
             Panel(
@@ -324,8 +345,8 @@ class HoldingDetailScreen extends StatelessWidget {
                       leading: const Icon(Icons.flag_outlined),
                       title: Text(
                         card != null
-                            ? 'Opening amount owed'
-                            : 'Opening balance',
+                            ? tr('Opening amount owed')
+                            : tr('Opening balance'),
                       ),
                       subtitle: since == null ? null : Text(shortDate(since)),
                       trailing: Text(
@@ -366,4 +387,4 @@ class _DayHeader extends StatelessWidget {
 }
 
 const _weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-String _weekday(DateTime d) => _weekdays[d.weekday - 1];
+String _weekday(DateTime d) => tr(_weekdays[d.weekday - 1]);

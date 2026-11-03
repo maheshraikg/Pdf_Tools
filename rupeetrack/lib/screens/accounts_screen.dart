@@ -9,6 +9,7 @@ import '../widgets/design.dart';
 import 'forms.dart';
 import 'holding_detail_screen.dart';
 import 'quick_add_sheet.dart';
+import '../l10n/strings.dart';
 
 /// Bank accounts, cash and wallets with their balances.
 class AccountsScreen extends StatelessWidget {
@@ -22,18 +23,18 @@ class AccountsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Accounts'),
+        title: Text(tr('Accounts')),
         actions: [
           IconButton(
             icon: const Icon(Icons.swap_horiz),
-            tooltip: 'Transfer between accounts',
+            tooltip: tr('Transfer between accounts'),
             onPressed: l.accounts.length < 2
                 ? null
                 : () => showQuickAdd(context, type: TxnType.transfer),
           ),
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'Add account',
+            tooltip: tr('Add account'),
             onPressed: () => showAddAccountDialog(context),
           ),
         ],
@@ -41,10 +42,10 @@ class AccountsScreen extends StatelessWidget {
       body: l.accounts.isEmpty
           ? EmptyState(
               icon: Icons.account_balance,
-              message:
-                  'Add your savings accounts (SBI, Canara Bank, …), cash '
-                  'in hand and UPI wallets.',
-              actionLabel: 'Add account',
+              message: tr(
+                'Add your savings accounts (SBI, Canara Bank, …), cash in hand and UPI wallets.',
+              ),
+              actionLabel: tr('Add account'),
               onAction: () => showAddAccountDialog(context),
             )
           : ListView(
@@ -55,7 +56,7 @@ class AccountsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       HeroFigure(
-                        'Total balance',
+                        tr('Total balance'),
                         formatRupees(l.totalCash),
                         big: true,
                       ),
@@ -64,14 +65,14 @@ class AccountsScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: HeroFigure(
-                              'Accounts',
+                              tr('Accounts'),
                               '${l.accounts.length}',
                             ),
                           ),
                           if (rate != null)
                             Expanded(
                               child: HeroFigure(
-                                'Saved this month',
+                                tr('Saved this month'),
                                 '${rate.toStringAsFixed(0)}%',
                               ),
                             ),

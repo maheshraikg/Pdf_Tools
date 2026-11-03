@@ -5,6 +5,7 @@ import '../models/money.dart';
 import '../models/planning.dart';
 import '../widgets/common.dart';
 import '../widgets/design.dart';
+import '../l10n/strings.dart';
 
 /// Rent, SIPs, subscriptions and salary that are recorded automatically.
 class RecurringScreen extends StatelessWidget {
@@ -29,21 +30,20 @@ class RecurringScreen extends StatelessWidget {
         .fold(0, (s, r) => s + r.template.amount);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Recurring')),
+      appBar: AppBar(title: Text(tr('Recurring'))),
       body: rules.isEmpty
-          ? const EmptyState(
+          ? EmptyState(
               icon: Icons.event_repeat,
-              message:
-                  'Nothing repeats yet. When you add rent, a SIP, a '
-                  'subscription or salary, turn on "Repeat" and it will be '
-                  'recorded for you on each due date.',
+              message: tr(
+                'Nothing repeats yet. When you add rent, a SIP, a subscription or salary, turn on "Repeat" and it will be recorded for you on each due date.',
+              ),
             )
           : ListView(
               padding: const EdgeInsets.only(bottom: 32),
               children: [
                 HeroPanel(
                   child: HeroFigure(
-                    'Fixed monthly outgoings',
+                    tr('Fixed monthly outgoings'),
                     formatRupees(monthlyOut),
                     big: true,
                   ),
@@ -57,9 +57,9 @@ class RecurringScreen extends StatelessWidget {
                 Padding(
                   padding: kPagePadding,
                   child: Text(
-                    'Entries are added automatically when you open the app on '
-                    'or after the due date. Deleting a rule keeps entries '
-                    'already recorded.',
+                    tr(
+                      'Entries are added automatically when you open the app on or after the due date. Deleting a rule keeps entries already recorded.',
+                    ),
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
@@ -88,8 +88,11 @@ class _RuleTile extends StatelessWidget {
       title: Text(txnTitle(t, l)),
       subtitle: Text(
         rule.active
-            ? '${rule.frequency.label} · next ${shortDate(rule.nextDate)}'
-            : 'Paused',
+            ? tr('{0} · next {1}', [
+                rule.frequency.label,
+                shortDate(rule.nextDate),
+              ])
+            : tr('Paused'),
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -109,9 +112,9 @@ class _RuleTile extends StatelessWidget {
             itemBuilder: (_) => [
               PopupMenuItem(
                 value: 'toggle',
-                child: Text(rule.active ? 'Pause' : 'Resume'),
+                child: Text(rule.active ? tr('Pause') : tr('Resume')),
               ),
-              const PopupMenuItem(value: 'delete', child: Text('Delete')),
+              PopupMenuItem(value: 'delete', child: Text(tr('Delete'))),
             ],
           ),
         ],

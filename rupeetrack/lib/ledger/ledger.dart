@@ -4,6 +4,7 @@ import '../models/money.dart';
 import '../models/planning.dart';
 import 'billing_cycle.dart';
 import 'returns.dart';
+import '../l10n/strings.dart';
 
 /// Where a credit card stands on a given day.
 class CardStatus {
@@ -224,6 +225,43 @@ class Ledger {
 
   Paise get goalsSaved => goals.fold(0, (a, g) => a + g.saved);
 
+  /// What is still to be paid on running loans at the start of each month,
+  /// from this month until the last EMI (the month after it is 0).
+  List<(DateTime, Paise)> loanPayoff(DateTime today) {
+    final t = dateOnly(today);
+    final dates = <(DateTime, Paise)>[]; // every unpaid EMI
+    for (final loan in loans) {
+      final s = loanStatus(loan, t);
+      if (s.finished) continue;
+      for (var n = s.emisPaid; n < loan.tenureMonths; n++) {
+        dates.add((loan.emiDate(n), loan.emi));
+      }
+    }
+    if (dates.isEmpty) return const [];
+    final last = dates.map((d) => d.$1).reduce((a, b) => a.isAfter(b) ? a : b);
+    final result = <(DateTime, Paise)>[];
+    var m = DateTime.utc(t.year, t.month);
+    final end = DateTime.utc(last.year, last.month + 1);
+    while (!m.isAfter(end)) {
+      final left = dates
+          .where((d) => !d.$1.isBefore(m))
+          .fold(0, (a, d) => a + d.$2);
+      // Overdue EMIs still count in the current month.
+      final overdue = result.isEmpty
+          ? dates.where((d) => d.$1.isBefore(m)).fold(0, (a, d) => a + d.$2)
+          : 0;
+      result.add((m, left + overdue));
+      m = DateTime.utc(m.year, m.month + 1);
+    }
+    return result;
+  }
+
+  /// Month of the last EMI on running loans, or null.
+  DateTime? debtFreeMonth(DateTime today) {
+    final p = loanPayoff(today);
+    return p.length < 2 ? null : p[p.length - 2].$1;
+  }
+
   /// Newest first.
   final List<Txn> txns;
 
@@ -430,8 +468,11 @@ class Ledger {
           FinanceAlert(
             AlertKind.overdue,
             card: c,
-            '${c.displayName}: ${formatRupees(s.amountDue)} was due '
-            '${_daysText(-daysLeft)} ago',
+            tr('{0}: {1} was due {2} ago', [
+              c.displayName,
+              formatRupees(s.amountDue),
+              _daysText(-daysLeft),
+            ]),
           ),
         );
       } else if (s.amountDue > 0 && daysLeft <= reminderDays) {
@@ -440,9 +481,15 @@ class Ledger {
             AlertKind.dueSoon,
             card: c,
             daysLeft == 0
-                ? '${c.displayName}: ${formatRupees(s.amountDue)} is due today'
-                : '${c.displayName}: ${formatRupees(s.amountDue)} due in '
-                      '${_daysText(daysLeft)}',
+                ? tr('{0}: {1} is due today', [
+                    c.displayName,
+                    formatRupees(s.amountDue),
+                  ])
+                : tr('{0}: {1} due in {2}', [
+                    c.displayName,
+                    formatRupees(s.amountDue),
+                    _daysText(daysLeft),
+                  ]),
           ),
         );
       }
@@ -456,8 +503,11 @@ class Ledger {
           FinanceAlert(
             AlertKind.highUtilisation,
             card: c,
-            '${c.displayName}: ${s.utilisationPercent.toStringAsFixed(0)}% of '
-            'the limit used (over $hit%)',
+            tr('{0}: {1}% of the limit used (over {2}%)', [
+              c.displayName,
+              s.utilisationPercent.toStringAsFixed(0),
+              hit,
+            ]),
           ),
         );
       }
@@ -472,12 +522,21 @@ class Ledger {
           FinanceAlert(
             AlertKind.emiDue,
             days < 0
-                ? '${l.name}: EMI of ${formatRupees(l.emi)} was due '
-                      '${_daysText(-days)} ago'
+                ? tr('{0}: EMI of {1} was due {2} ago', [
+                    l.name,
+                    formatRupees(l.emi),
+                    _daysText(-days),
+                  ])
                 : days == 0
-                ? '${l.name}: EMI of ${formatRupees(l.emi)} is due today'
-                : '${l.name}: EMI of ${formatRupees(l.emi)} due in '
-                      '${_daysText(days)}',
+                ? tr('{0}: EMI of {1} is due today', [
+                    l.name,
+                    formatRupees(l.emi),
+                  ])
+                : tr('{0}: EMI of {1} due in {2}', [
+                    l.name,
+                    formatRupees(l.emi),
+                    _daysText(days),
+                  ]),
             loan: l,
           ),
         );
@@ -489,8 +548,11 @@ class Ledger {
           FinanceAlert(
             AlertKind.overBudget,
             category: b.budget.category,
-            '${b.budget.category}: ${formatRupees(-b.remaining)} over the '
-            '${formatRupees(b.budget.monthlyLimit)} budget',
+            tr('{0}: {1} over the {2} budget', [
+              tr(b.budget.category),
+              formatRupees(-b.remaining),
+              formatRupees(b.budget.monthlyLimit),
+            ]),
           ),
         );
       } else if (b.percent >= nearBudgetPercent) {
@@ -498,8 +560,11 @@ class Ledger {
           FinanceAlert(
             AlertKind.nearBudget,
             category: b.budget.category,
-            '${b.budget.category}: ${b.percent.toStringAsFixed(0)}% of the '
-            'budget used, ${formatRupees(b.remaining)} left',
+            tr('{0}: {1}% of the budget used, {2} left', [
+              tr(b.budget.category),
+              b.percent.toStringAsFixed(0),
+              formatRupees(b.remaining),
+            ]),
           ),
         );
       }
@@ -511,7 +576,8 @@ class Ledger {
     return result;
   }
 
-  static String _daysText(int days) => days == 1 ? '1 day' : '$days days';
+  static String _daysText(int days) =>
+      days == 1 ? tr('1 day') : tr('{0} days', [days]);
 
   // ---- Spending & income --------------------------------------------------
 

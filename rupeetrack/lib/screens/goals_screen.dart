@@ -6,6 +6,7 @@ import '../models/money.dart';
 import '../widgets/common.dart';
 import '../widgets/design.dart';
 import 'loans_screen.dart';
+import '../l10n/strings.dart';
 
 /// Things to save up for, with progress and how much to put aside monthly.
 class GoalsScreen extends StatelessWidget {
@@ -20,30 +21,30 @@ class GoalsScreen extends StatelessWidget {
       ..sort((a, b) => a.reached == b.reached ? 0 : (a.reached ? 1 : -1));
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Savings goals'),
+        title: Text(tr('Savings goals')),
         actions: [
           if (goals.isNotEmpty)
             IconButton(
               icon: const Icon(Icons.add),
-              tooltip: 'Add goal',
+              tooltip: tr('Add goal'),
               onPressed: () => showGoalForm(context),
             ),
         ],
       ),
       body: goals.isEmpty
           ? IntroState(
-              title: 'Save first,',
-              accent: 'then buy.',
+              title: tr('Save first,'),
+              accent: tr('then buy.'),
               accentColor: scheme.moneyIn,
-              points: const [
-                'Emergency fund',
-                'New phone or laptop',
-                'Bike, trip or wedding',
+              points: [
+                tr('Emergency fund'),
+                tr('New phone or laptop'),
+                tr('Bike, trip or wedding'),
               ],
               note:
                   'Set a target and a date. RupeeTrack tells you how much '
                   'to put aside each month.',
-              actionLabel: 'Add a goal',
+              actionLabel: tr('Add a goal'),
               onAction: () => showGoalForm(context),
             )
           : ListView(
@@ -52,7 +53,7 @@ class GoalsScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 Center(
                   child: Text(
-                    'Saved so far',
+                    tr('Saved so far'),
                     style: t.titleMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
                       fontWeight: FontWeight.w500,
@@ -70,7 +71,9 @@ class GoalsScreen extends StatelessWidget {
                 ),
                 Center(
                   child: Text(
-                    'of ${formatRupees(goals.fold(0, (a, g) => a + g.target))}',
+                    tr('of {0}', [
+                      formatRupees(goals.fold(0, (a, g) => a + g.target)),
+                    ]),
                     style: t.bodyMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),
@@ -117,19 +120,19 @@ class _GoalCard extends StatelessWidget {
                     case 'delete':
                       final ok = await confirmDelete(
                         context,
-                        'Delete ${g.name}?',
-                        'Your accounts are not changed.',
+                        tr('Delete {0}?', [g.name]),
+                        tr('Your accounts are not changed.'),
                       );
                       if (ok) await store.deleteGoal(g.id);
                   }
                 },
-                itemBuilder: (_) => const [
-                  PopupMenuItem(value: 'edit', child: Text('Edit')),
+                itemBuilder: (_) => [
+                  PopupMenuItem(value: 'edit', child: Text(tr('Edit'))),
                   PopupMenuItem(
                     value: 'withdraw',
-                    child: Text('Take money out'),
+                    child: Text(tr('Take money out')),
                   ),
-                  PopupMenuItem(value: 'delete', child: Text('Delete')),
+                  PopupMenuItem(value: 'delete', child: Text(tr('Delete'))),
                 ],
               ),
             ],
@@ -141,12 +144,15 @@ class _GoalCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  '${formatRupees(g.saved)} of ${formatRupees(g.target)}',
+                  tr('{0} of {1}', [
+                    formatRupees(g.saved),
+                    formatRupees(g.target),
+                  ]),
                   style: muted,
                 ),
               ),
               if (g.targetDate != null)
-                Text('By ${monthYear(g.targetDate!)}', style: muted),
+                Text(tr('By {0}', [monthYear(g.targetDate!)]), style: muted),
             ],
           ),
           const SizedBox(height: 14),
@@ -155,20 +161,22 @@ class _GoalCard extends StatelessWidget {
               Expanded(
                 child: g.reached
                     ? Text(
-                        'Goal reached',
+                        tr('Goal reached'),
                         style: t.titleSmall?.copyWith(color: scheme.moneyIn),
                       )
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            monthly == null ? 'Still needed' : 'Put aside',
+                            monthly == null
+                                ? tr('Still needed')
+                                : tr('Put aside'),
                             style: muted,
                           ),
                           Text(
                             monthly == null
                                 ? formatRupees(g.remaining)
-                                : '${formatRupees(monthly)} / month',
+                                : tr('{0} / month', [formatRupees(monthly)]),
                             style: t.titleSmall,
                           ),
                         ],
@@ -177,7 +185,7 @@ class _GoalCard extends StatelessWidget {
               if (!g.reached)
                 FilledButton.tonal(
                   onPressed: () => showGoalMoney(context, g),
-                  child: const Text('Add money'),
+                  child: Text(tr('Add money')),
                 ),
             ],
           ),
@@ -198,7 +206,9 @@ Future<void> showGoalMoney(
     context: context,
     builder: (dialogContext) => StatefulBuilder(
       builder: (context, setState) => AlertDialog(
-        title: Text(withdraw ? 'Take money out' : 'Add to ${goal.name}'),
+        title: Text(
+          withdraw ? tr('Take money out') : tr('Add to {0}', [goal.name]),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -216,21 +226,21 @@ Future<void> showGoalMoney(
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
+            child: Text(tr('Cancel')),
           ),
           FilledButton(
             onPressed: () async {
               final v = parseRupees(c.text);
               if (v == null || v <= 0) {
-                return setState(() => error = 'Enter a valid amount');
+                return setState(() => error = tr('Enter a valid amount'));
               }
               if (withdraw && v > goal.saved) {
-                return setState(() => error = 'More than what is saved');
+                return setState(() => error = tr('More than what is saved'));
               }
               await context.store.addToGoal(goal, withdraw ? -v : v, today());
               if (dialogContext.mounted) Navigator.pop(dialogContext);
             },
-            child: const Text('Save'),
+            child: Text(tr('Save')),
           ),
         ],
       ),
@@ -283,12 +293,12 @@ class _GoalFormState extends State<_GoalForm> {
     final name = _name.text.trim();
     final target = parseRupees(_target.text);
     final saved = _saved.text.trim().isEmpty ? 0 : parseRupees(_saved.text);
-    if (name.isEmpty) return setState(() => _error = 'Enter a name');
+    if (name.isEmpty) return setState(() => _error = tr('Enter a name'));
     if (target == null || target <= 0) {
-      return setState(() => _error = 'Enter the target amount');
+      return setState(() => _error = tr('Enter the target amount'));
     }
     if (saved == null || saved < 0) {
-      return setState(() => _error = 'Enter a valid amount saved');
+      return setState(() => _error = tr('Enter a valid amount saved'));
     }
     final e = widget.edit;
     await context.store.saveGoal(
@@ -313,7 +323,7 @@ class _GoalFormState extends State<_GoalForm> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.edit == null ? 'Add goal' : 'Edit goal'),
+      title: Text(widget.edit == null ? tr('Add goal') : tr('Edit goal')),
       scrollable: true,
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -323,20 +333,23 @@ class _GoalFormState extends State<_GoalForm> {
             controller: _name,
             autofocus: widget.edit == null,
             textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(
-              labelText: 'Goal',
-              hintText: 'e.g. Emergency fund',
+            decoration: InputDecoration(
+              labelText: tr('Goal'),
+              hintText: tr('e.g. Emergency fund'),
             ),
           ),
           const SizedBox(height: 12),
-          AmountField(controller: _target, label: 'Target amount'),
+          AmountField(controller: _target, label: tr('Target amount')),
           if (widget.edit == null) ...[
             const SizedBox(height: 12),
-            AmountField(controller: _saved, label: 'Already saved (optional)'),
+            AmountField(
+              controller: _saved,
+              label: tr('Already saved (optional)'),
+            ),
           ],
           const SizedBox(height: 12),
           DateButton(
-            label: 'Target date (optional)',
+            label: tr('Target date (optional)'),
             date: _date,
             optional: true,
             onChanged: (d) => setState(() => _date = d),
@@ -346,7 +359,7 @@ class _GoalFormState extends State<_GoalForm> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () => setState(() => _date = null),
-                child: const Text('Remove date'),
+                child: Text(tr('Remove date')),
               ),
             ),
           if (_error != null) ...[
@@ -361,9 +374,9 @@ class _GoalFormState extends State<_GoalForm> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(tr('Cancel')),
         ),
-        FilledButton(onPressed: _save, child: const Text('Save')),
+        FilledButton(onPressed: _save, child: Text(tr('Save'))),
       ],
     );
   }

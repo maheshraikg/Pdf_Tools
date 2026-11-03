@@ -20,6 +20,7 @@ import io.flutter.plugin.common.MethodChannel
  *  - readSms: bank messages from the SMS inbox, read on the phone only.
  *  - takeSharedPdf, and "sharedPdf" calls to Dart: statement PDFs shared to
  *    or opened with the app, copied to the cache folder.
+ *  - updateWidget: new figures for the home screen widget.
  */
 class MainActivity : FlutterActivity() {
     private var channel: MethodChannel? = null
@@ -115,6 +116,10 @@ class MainActivity : FlutterActivity() {
                     "takeSharedPdf" -> {
                         result.success(pendingSharedPdf)
                         pendingSharedPdf = null
+                    }
+                    "updateWidget" -> {
+                        SpendWidgetProvider.save(applicationContext, call.argument<String>("json")!!)
+                        result.success(null)
                     }
                     "openApp" -> result.success(openApp(call.argument<String>("package")!!))
                     "isInstalled" -> result.success(

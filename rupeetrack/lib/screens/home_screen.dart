@@ -18,6 +18,7 @@ import 'loans_screen.dart';
 import 'pay_bill_sheet.dart';
 import 'quick_add_sheet.dart';
 import 'settings_screen.dart';
+import '../l10n/strings.dart';
 
 const monthsLong = [
   'January', 'February', 'March', 'April', 'May', 'June', //
@@ -48,6 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _income = false;
   HomeRange _range = HomeRange.month;
 
+  /// Month shown in 1M (null: this month) and year shown in 1Y.
+  DateTime? _month;
+  int? _year;
+
   @override
   Widget build(BuildContext context) {
     final store = context.store;
@@ -63,55 +68,103 @@ class _HomeScreenState extends State<HomeScreen> {
         _income ? l.income(from, to) : l.spending(from, to);
 
     // Period, bars and labels.
+    final month = _month ?? monthStart(now);
+    final year = _year ?? now.year;
+    final firstYear = l.txns.isEmpty ? now.year : l.txns.last.date.year;
     late DateTime from, to;
     late String periodLabel;
+    late String caption;
     final values = <int>[];
     final labels = <String>[];
     final tips = <String>[];
     int? highlight;
     var every = 1;
+    var canPrev = false, canNext = false;
+    VoidCallback? onPrev, onNext;
+    final rows = <(String, Paise, VoidCallback)>[];
     switch (_range) {
       case HomeRange.month:
-        from = monthStart(now);
-        to = monthEnd(now);
-        periodLabel = monthsLong[now.month - 1];
+        from = monthStart(month);
+        to = monthEnd(month);
+        periodLabel = month.year == now.year
+            ? tr(monthsLong[month.month - 1])
+            : '${tr(monthsLong[month.month - 1])} ${month.year}';
         for (var d = 1; d <= to.day; d++) {
-          final day = DateTime.utc(now.year, now.month, d);
+          final day = DateTime.utc(month.year, month.month, d);
           values.add(total(day, day));
           labels.add('$d');
-          tips.add('$d ${monthsLong[now.month - 1].substring(0, 3)}');
+          tips.add(shortDate(day));
         }
-        highlight = now.day - 1;
+        if (from == monthStart(now)) highlight = now.day - 1;
         every = 4;
+        caption = tr('Each bar is one day. Tap a bar to see the amount.');
+        canPrev =
+            month.year > firstYear - 1 &&
+            month.isAfter(DateTime.utc(firstYear - 1, 12));
+        canNext = from.isBefore(monthStart(now));
+        onPrev = () =>
+            setState(() => _month = DateTime.utc(month.year, month.month - 1));
+        onNext = () =>
+            setState(() => _month = DateTime.utc(month.year, month.month + 1));
       case HomeRange.year:
-        from = DateTime.utc(now.year);
-        to = DateTime.utc(now.year, 12, 31);
-        periodLabel = '${now.year}';
+        from = DateTime.utc(year);
+        to = DateTime.utc(year, 12, 31);
+        periodLabel = '$year';
+        final english = currentLanguage == 'en';
         for (var m = 1; m <= 12; m++) {
-          values.add(
-            total(
-              DateTime.utc(now.year, m),
-              monthEnd(DateTime.utc(now.year, m)),
-            ),
-          );
-          labels.add(_monthLetters[m - 1]);
-          tips.add('${monthsLong[m - 1]} ${now.year}');
+          final ms = DateTime.utc(year, m);
+          final v = total(ms, monthEnd(ms));
+          values.add(v);
+          labels.add(english ? _monthLetters[m - 1] : '$m');
+          tips.add('${tr(monthsLong[m - 1])} $year');
+          final inPast = !ms.isAfter(monthStart(now));
+          if (inPast && (v > 0 || ms == monthStart(now))) {
+            rows.add((
+              tr(monthsLong[m - 1]),
+              v,
+              () => setState(() {
+                _range = HomeRange.month;
+                _month = ms;
+              }),
+            ));
+          }
         }
-        highlight = now.month - 1;
+        if (year == now.year) highlight = now.month - 1;
+        caption = tr(
+          'Each bar is one month. Tap a month below to see its days.',
+        );
+        canPrev = year > firstYear;
+        canNext = year < now.year;
+        onPrev = () => setState(() => _year = year - 1);
+        onNext = () => setState(() => _year = year + 1);
       case HomeRange.all:
-        final first = l.txns.isEmpty ? now.year : l.txns.last.date.year;
-        final start = first < now.year - 4 ? first : now.year - 4;
+        final start = firstYear < now.year - 4 ? firstYear : now.year - 4;
         from = DateTime.utc(start);
         to = DateTime.utc(now.year, 12, 31);
-        periodLabel = 'All time';
+        periodLabel = tr('All time');
         for (var y = start; y <= now.year; y++) {
-          values.add(total(DateTime.utc(y), DateTime.utc(y, 12, 31)));
-          labels.add("'${'$y'.substring(2)}");
+          final v = total(DateTime.utc(y), DateTime.utc(y, 12, 31));
+          values.add(v);
+          labels.add('$y');
           tips.add('$y');
+          if (v > 0 || y == now.year) {
+            rows.add((
+              '$y',
+              v,
+              () => setState(() {
+                _range = HomeRange.year;
+                _year = y;
+              }),
+            ));
+          }
         }
         highlight = values.length - 1;
+        caption = tr(
+          'Each bar is one year. Tap a year below to see its months.',
+        );
     }
     final sum = total(from, to);
+    final seriesColor = _income ? scheme.moneyIn : kCoral;
     final entries = l.txns
         .where(
           (x) =>
@@ -121,8 +174,9 @@ class _HomeScreenState extends State<HomeScreen> {
               !x.date.isBefore(from) &&
               !x.date.isAfter(to),
         )
-        .take(40)
+        .take(60)
         .toList();
+    final isCurrentMonth = _range == HomeRange.month && from == monthStart(now);
 
     return Scaffold(
       body: SafeArea(
@@ -136,13 +190,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.insights_outlined),
-                    tooltip: 'Insights',
+                    tooltip: tr('Insights'),
                     onPressed: () => push(context, const InsightsScreen()),
                   ),
                   Expanded(
                     child: Center(
                       child: Toggle(
-                        options: const ['Expense', 'Income'],
+                        options: [tr('Expense'), tr('Income')],
                         selected: _income ? 1 : 0,
                         onChanged: (i) => setState(() => _income = i == 1),
                       ),
@@ -150,23 +204,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.settings_outlined),
-                    tooltip: 'Settings',
+                    tooltip: tr('Settings'),
                     onPressed: () => push(context, const SettingsScreen()),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 28),
-            Center(
-              child: Text(
-                periodLabel,
-                style: t.titleMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w500,
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (onPrev != null)
+                  IconButton(
+                    icon: const Icon(Icons.chevron_left_rounded),
+                    tooltip: tr('Previous'),
+                    onPressed: canPrev ? onPrev : null,
+                  ),
+                Text(
+                  periodLabel,
+                  style: t.titleMedium?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
+                if (onNext != null)
+                  IconButton(
+                    icon: const Icon(Icons.chevron_right_rounded),
+                    tooltip: tr('Next'),
+                    onPressed: canNext ? onNext : null,
+                  ),
+              ],
             ),
-            const SizedBox(height: 4),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: FittedBox(
@@ -180,11 +248,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 6),
             Center(
-              child: _Subline(income: _income, range: _range, now: now),
+              child: Text(
+                _income ? tr('earned') : tr('spent'),
+                style: t.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+              ),
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 6),
+            if (isCurrentMonth)
+              Center(
+                child: _Subline(income: _income, range: _range, now: now),
+              ),
+            const SizedBox(height: 24),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: PeriodBars(
@@ -193,7 +268,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 tooltipLabels: tips,
                 highlight: highlight,
                 labelEvery: every,
-                color: _income ? scheme.moneyIn : scheme.onSurface,
+                color: seriesColor,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
+              child: Text(
+                caption,
+                textAlign: TextAlign.center,
+                style: t.bodySmall?.copyWith(color: scheme.outline),
               ),
             ),
             const SizedBox(height: 14),
@@ -204,59 +287,93 @@ class _HomeScreenState extends State<HomeScreen> {
                   for (final (r, label) in [
                     (HomeRange.month, '1M'),
                     (HomeRange.year, '1Y'),
-                    (HomeRange.all, 'All'),
+                    (HomeRange.all, tr('All')),
                   ])
                     RangeChip(
                       label: label,
                       selected: _range == r,
-                      onTap: () => setState(() => _range = r),
+                      onTap: () => setState(() {
+                        _range = r;
+                        _month = null;
+                        _year = null;
+                      }),
                     ),
                 ],
               ),
             ),
+            if (rows.isNotEmpty)
+              Panel(
+                margin: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Column(
+                  children: [
+                    for (final (label, v, open) in rows.reversed)
+                      ListTile(
+                        onTap: open,
+                        title: Text(label),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              formatRupees(v),
+                              style: t.titleSmall?.copyWith(
+                                color: _income && v > 0 ? scheme.moneyIn : null,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(Icons.chevron_right, color: scheme.outline),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             const SizedBox(height: 24),
             if (store.detected.isNotEmpty)
               _Notice(
                 icon: Icons.auto_awesome_outlined,
                 color: scheme.primary,
-                text:
-                    'Found ${store.detected.values.map((h) => h.label).join(', ')} '
-                    'in your bank messages',
+                text: tr('Found {0} in your bank messages', [
+                  store.detected.values.map((h) => h.label).join(', '),
+                ]),
                 onTap: () => push(context, const AutoDetectScreen()),
               ),
             for (final a in l.alerts(now))
               _AlertNotice(alert: a, onOpenTab: widget.onOpenTab),
             _Overview(now: now, onOpenTab: widget.onOpenTab),
-            SectionHeader(
-              _income ? 'Income' : 'Expenses',
-              action: TextButton(
-                onPressed: () => widget.onOpenTab(1),
-                child: const Text('See all'),
-              ),
-            ),
-            if (entries.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 36),
-                child: Column(
-                  children: [
-                    Text(
-                      _income ? 'No income yet' : 'No expenses yet',
-                      style: t.titleMedium?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Tap + to add one',
-                      style: t.bodyMedium?.copyWith(color: scheme.outline),
-                    ),
-                  ],
+            if (isCurrentMonth) IncomeSplitCard(now: now),
+            if (_range == HomeRange.month) ...[
+              SectionHeader(
+                _income ? tr('Income') : tr('Expenses'),
+                action: TextButton(
+                  onPressed: () => widget.onOpenTab(1),
+                  child: Text(tr('See all')),
                 ),
-              )
-            else
-              for (final group in groupByDay(entries))
-                _DayGroup(day: group.$1, txns: group.$2),
+              ),
+              if (entries.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 36),
+                  child: Column(
+                    children: [
+                      Text(
+                        _income ? tr('No income yet') : tr('No expenses yet'),
+                        style: t.titleMedium?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        tr('Tap + to add one'),
+                        style: t.bodyMedium?.copyWith(color: scheme.outline),
+                      ),
+                    ],
+                  ),
+                )
+              else
+                for (final group in groupByDay(entries))
+                  _DayGroup(day: group.$1, txns: group.$2),
+            ],
           ],
         ),
       ),
@@ -345,8 +462,8 @@ class _Subline extends StatelessWidget {
       final saved = earned - spent;
       return Text(
         saved >= 0
-            ? '${formatRupees(saved)} left after spending'
-            : '${formatRupees(-saved)} more spent than earned',
+            ? tr('{0} left after spending', [formatRupees(saved)])
+            : tr('{0} more spent than earned', [formatRupees(-saved)]),
         style: style,
       );
     }
@@ -357,7 +474,7 @@ class _Subline extends StatelessWidget {
         onTap: () => push(context, const BudgetsScreen()),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          child: Text('Set a budget ›', style: style),
+          child: Text(tr('Set a budget ›'), style: style),
         ),
       );
     }
@@ -371,8 +488,11 @@ class _Subline extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Text(
           left >= 0
-              ? '${formatRupees(left)} left of ${formatRupees(limit)} budget'
-              : '${formatRupees(-left)} over budget',
+              ? tr('{0} left of {1} budget', [
+                  formatRupees(left),
+                  formatRupees(limit),
+                ])
+              : tr('{0} over budget', [formatRupees(-left)]),
           style: style?.copyWith(color: left < 0 ? scheme.error : null),
         ),
       ),
@@ -426,7 +546,7 @@ class _Overview extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Net worth',
+                    tr('Net worth'),
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
@@ -439,34 +559,34 @@ class _Overview extends StatelessWidget {
           ),
           row(
             Icons.account_balance_outlined,
-            'Accounts',
+            tr('Accounts'),
             formatRupees(worth.cash),
             () => push(context, const AccountsScreen()),
           ),
           row(
             Icons.credit_card_outlined,
-            'Cards owed',
+            tr('Cards owed'),
             formatRupees(worth.liabilities),
             () => onOpenTab(2),
             color: worth.liabilities > 0 ? scheme.error : null,
           ),
           row(
             Icons.trending_up_rounded,
-            'Investments',
+            tr('Investments'),
             formatRupees(worth.investments),
             () => push(context, const InvestmentsScreen()),
           ),
           row(
             Icons.event_repeat_outlined,
-            'EMIs per month',
-            l.loans.isEmpty ? 'Add' : formatRupees(emi),
+            tr('EMIs per month'),
+            l.loans.isEmpty ? tr('Add') : formatRupees(emi),
             () => push(context, const LoansScreen()),
             color: l.loans.isEmpty ? scheme.onSurfaceVariant : kCoral,
           ),
           row(
             Icons.savings_outlined,
-            'Savings goals',
-            l.goals.isEmpty ? 'Add' : formatRupees(saved),
+            tr('Savings goals'),
+            l.goals.isEmpty ? tr('Add') : formatRupees(saved),
             () => push(context, const GoalsScreen()),
             color: l.goals.isEmpty ? scheme.onSurfaceVariant : scheme.moneyIn,
           ),
@@ -544,7 +664,7 @@ class _AlertNotice extends StatelessWidget {
       action: payable
           ? TextButton(
               onPressed: () => showPayBillSheet(context, card),
-              child: const Text('Pay'),
+              child: Text(tr('Pay')),
             )
           : null,
     );
@@ -675,13 +795,21 @@ class _Welcome extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              onPressed: () => showLanguagePicker(context),
+              icon: const Icon(Icons.translate, size: 18),
+              label: Text(currentLanguageName()),
+            ),
+          ),
           const Spacer(),
           Text.rich(
             TextSpan(
-              text: 'Know where every\n',
+              text: tr('Know where every\n'),
               children: [
                 TextSpan(
-                  text: 'rupee goes.',
+                  text: tr('rupee goes.'),
                   style: TextStyle(color: scheme.primary),
                 ),
               ],
@@ -698,23 +826,23 @@ class _Welcome extends StatelessWidget {
             ),
             child: Column(
               children: [
-                point('Log a spend in seconds'),
+                point(tr('Log a spend in seconds')),
                 Divider(height: 1, color: scheme.outlineVariant),
-                point('Card bills, EMIs and goals in one place'),
+                point(tr('Card bills, EMIs and goals in one place')),
                 Divider(height: 1, color: scheme.outlineVariant),
-                point('Private and offline. No sign-up'),
+                point(tr('Private and offline. No sign-up')),
               ],
             ),
           ),
           const Spacer(),
           FilledButton(
             onPressed: () => showAddAccountDialog(context),
-            child: const Text('Add bank account or cash'),
+            child: Text(tr('Add bank account or cash')),
           ),
           const SizedBox(height: 10),
           TextButton(
             onPressed: () => showAddCardDialog(context),
-            child: const Text('Add credit card'),
+            child: Text(tr('Add credit card')),
           ),
         ],
       ),
@@ -747,7 +875,7 @@ class BudgetRow extends StatelessWidget {
               color: scheme.onSurfaceVariant,
             ),
             const SizedBox(width: 8),
-            Expanded(child: Text(s.budget.category)),
+            Expanded(child: Text(tr(s.budget.category))),
             Text(
               '${formatRupees(s.spent)} / ${formatRupees(s.budget.monthlyLimit)}',
               style: Theme.of(context).textTheme.labelLarge,

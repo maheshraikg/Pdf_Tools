@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../l10n/strings.dart';
 import '../ledger/ledger.dart';
 import '../models/goals.dart';
 import '../models/models.dart';
@@ -48,7 +50,9 @@ class FinanceStore extends ChangeNotifier {
   final SharedPreferences? _prefs;
 
   /// In-memory store (tests, previews).
-  FinanceStore.memory() : _prefs = null;
+  FinanceStore.memory() : _prefs = null {
+    setCurrentLanguage(language);
+  }
 
   static const _dataKey = 'rupeetrack.data.v1';
 
@@ -100,7 +104,15 @@ class FinanceStore extends ChangeNotifier {
 
   void _read() {
     final raw = _prefs!.getString(_dataKey);
-    if (raw == null) return;
+    if (raw == null) {
+      // First start: use the phone's language when the app has it.
+      final phone = ui.PlatformDispatcher.instance.locale.languageCode;
+      language = availableLanguages.any((l) => l.code == phone)
+          ? phone
+          : 'en';
+      setCurrentLanguage(language);
+      return;
+    }
     try {
       _loadJson(jsonDecode(raw) as Map<String, dynamic>);
     } catch (e) {
@@ -148,6 +160,7 @@ class FinanceStore extends ChangeNotifier {
       ..clear()
       ..addAll(goals);
     language = (j['language'] as String?) ?? language;
+    setCurrentLanguage(language);
     _nextId = (j['nextId'] as int?) ?? 1;
     // Before v2 the theme was never chosen explicitly ('system' was the
     // default); move those users to the black theme once.
@@ -678,15 +691,15 @@ class FinanceStore extends ChangeNotifier {
     try {
       decoded = jsonDecode(json);
     } on FormatException {
-      throw const FormatException('This file is not a RupeeTrack backup');
+      throw FormatException(tr('This file is not a RupeeTrack backup'));
     }
     if (decoded is! Map<String, dynamic> || decoded['app'] != 'rupeetrack') {
-      throw const FormatException('This file is not a RupeeTrack backup');
+      throw FormatException(tr('This file is not a RupeeTrack backup'));
     }
     try {
       _loadJson(decoded);
     } catch (_) {
-      throw const FormatException('The backup file is damaged');
+      throw FormatException(tr('The backup file is damaged'));
     }
     await _save();
   }
@@ -703,6 +716,7 @@ class FinanceStore extends ChangeNotifier {
 
   Future<void> setLanguage(String code) {
     language = code;
+    setCurrentLanguage(code);
     return _save();
   }
 

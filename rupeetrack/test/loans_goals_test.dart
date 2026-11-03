@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rupeetrack/app/widget_data.dart';
 import 'package:rupeetrack/app/store.dart';
 import 'package:rupeetrack/ledger/ledger.dart';
 import 'package:rupeetrack/models/goals.dart';
@@ -40,6 +43,12 @@ void main() {
     expect(store.ledger.accountBalance(acc.id), 9500000);
     expect(store.ledger.spendingByCategory(day, day)['EMI'], 500000);
 
+    // Payoff: 2 EMIs left (Nov 30, Dec 31) at the start of November.
+    final payoff = store.ledger.loanPayoff(day);
+    expect(payoff.first, (DateTime.utc(2026, 10), 1000000 + 0));
+    expect(payoff.map((p) => p.$2), [1000000, 1000000, 500000, 0]);
+    expect(store.ledger.debtFreeMonth(day), DateTime.utc(2026, 12));
+
     // Survives a JSON round trip.
     final copy = FinanceStore.memory();
     await copy.restoreBackup(store.backupJson());
@@ -64,5 +73,25 @@ void main() {
     expect(done.reached, isTrue);
     expect(done.monthlyNeeded(DateTime.utc(2026, 11, 2)), isNull);
     expect(store.ledger.goalsSaved, 6000000);
+  });
+
+  test('home widget data: this month per day', () async {
+    final store = FinanceStore.memory();
+    final acc = await store.addAccount('Cash', AccountKind.cash, 100000);
+    await store.saveTxn(
+      Txn(
+        id: 0,
+        type: TxnType.expense,
+        amount: 25050,
+        date: DateTime.utc(2026, 11, 3),
+        category: 'Food',
+        fromAccountId: acc.id,
+      ),
+    );
+    final j = jsonDecode(widgetJson(store.ledger, DateTime.utc(2026, 11, 20)));
+    expect(j['label'], 'Spent in November');
+    expect(j['total'], '₹250.50');
+    expect((j['values'] as List), hasLength(30));
+    expect((j['values'] as List)[2], 250.5);
   });
 }

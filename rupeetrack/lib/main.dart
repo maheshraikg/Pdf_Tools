@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app/native.dart';
 import 'app/notifications.dart';
 import 'app/scope.dart';
 import 'app/store.dart';
+import 'app/widget_data.dart';
 import 'screens/auto_detect_screen.dart';
 import 'screens/cards_screen.dart';
 import 'screens/home_screen.dart';
@@ -13,6 +15,7 @@ import 'screens/more_screen.dart';
 import 'screens/quick_add_sheet.dart';
 import 'screens/transactions_screen.dart';
 import 'widgets/design.dart';
+import 'l10n/strings.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,7 +40,13 @@ class RupeeTrackApp extends StatefulWidget {
 class _RupeeTrackAppState extends State<RupeeTrackApp>
     with WidgetsBindingObserver {
   Timer? _debounce;
-  final _navigator = GlobalKey<NavigatorState>();
+  // One navigator per language: switching language rebuilds the whole app
+  // so that every label is redrawn in the new language.
+  final _navigators = <String, GlobalKey<NavigatorState>>{};
+  GlobalKey<NavigatorState> get _navigator => _navigators.putIfAbsent(
+    widget.store.language,
+    GlobalKey<NavigatorState>.new,
+  );
 
   @override
   void initState() {
@@ -87,7 +96,9 @@ class _RupeeTrackAppState extends State<RupeeTrackApp>
   }
 
   void _refreshReminders() {
-    if (widget.background) Reminders.refresh(widget.store);
+    if (!widget.background) return;
+    Reminders.refresh(widget.store);
+    updateHomeWidget(widget.store);
   }
 
   @override
@@ -98,8 +109,12 @@ class _RupeeTrackAppState extends State<RupeeTrackApp>
       child: ListenableBuilder(
         listenable: store,
         builder: (context, _) => MaterialApp(
+          key: ValueKey(store.language),
           navigatorKey: _navigator,
-          title: 'RupeeTrack',
+          locale: Locale(store.language),
+          supportedLocales: [for (final l in appLanguages) Locale(l.code)],
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          title: tr('RupeeTrack'),
           debugShowCheckedModeBanner: false,
           theme: buildAppTheme(Brightness.light),
           darkTheme: buildAppTheme(Brightness.dark),
@@ -162,11 +177,18 @@ class _BottomBar extends StatelessWidget {
             children: [
               Icon(on ? active : icon, color: color, size: 24),
               const SizedBox(height: 4),
-              Text(
-                label,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: color,
-                  fontWeight: on ? FontWeight.w700 : FontWeight.w500,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: color,
+                      fontWeight: on ? FontWeight.w700 : FontWeight.w500,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -186,21 +208,26 @@ class _BottomBar extends StatelessWidget {
           height: 68,
           child: Row(
             children: [
-              tab(0, Icons.home_outlined, Icons.home_rounded, 'Home'),
+              tab(0, Icons.home_outlined, Icons.home_rounded, tr('Home')),
               tab(
                 1,
                 Icons.receipt_long_outlined,
                 Icons.receipt_long_rounded,
-                'Activity',
+                tr('Activity'),
               ),
               const Expanded(child: Center(child: _AddButton())),
               tab(
                 2,
                 Icons.credit_card_outlined,
                 Icons.credit_card_rounded,
-                'Cards',
+                tr('Cards'),
               ),
-              tab(3, Icons.grid_view_outlined, Icons.grid_view_rounded, 'More'),
+              tab(
+                3,
+                Icons.grid_view_outlined,
+                Icons.grid_view_rounded,
+                tr('More'),
+              ),
             ],
           ),
         ),
@@ -219,7 +246,7 @@ class _AddButton extends StatelessWidget {
       width: 54,
       height: 54,
       child: FloatingActionButton(
-        tooltip: 'Add entry',
+        tooltip: tr('Add entry'),
         heroTag: null,
         onPressed: () => showQuickAdd(context),
         child: const Icon(Icons.add_rounded, size: 30),

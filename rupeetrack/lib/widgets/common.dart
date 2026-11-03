@@ -5,13 +5,13 @@ import '../ledger/ledger.dart';
 import '../models/models.dart';
 import '../models/money.dart';
 import 'design.dart';
+import '../l10n/strings.dart';
 
 /// Colours used for money direction, tuned for both themes.
 extension MoneyColors on ColorScheme {
   /// Money coming in.
-  Color get moneyIn => brightness == Brightness.light
-      ? const Color(0xFF15803D)
-      : const Color(0xFF4ADE80);
+  Color get moneyIn =>
+      brightness == Brightness.light ? Color(0xFF15803D) : Color(0xFF4ADE80);
 
   /// Money going out: shown in the normal text colour, so lists stay calm.
   Color get moneyOut => onSurface;
@@ -20,7 +20,7 @@ extension MoneyColors on ColorScheme {
   Color get danger => error;
 }
 
-const categoryIcons = <String, IconData>{
+final categoryIcons = <String, IconData>{
   'Food': Icons.restaurant_rounded,
   'Groceries': Icons.local_grocery_store_rounded,
   'Transport': Icons.directions_car_rounded,
@@ -41,7 +41,7 @@ const categoryIcons = <String, IconData>{
 };
 
 /// One calm colour per category, used for its icon everywhere.
-const categoryColors = <String, Color>{
+final categoryColors = <String, Color>{
   'Food': Color(0xFFD9A441),
   'Groceries': Color(0xFF3EA585),
   'Transport': Color(0xFF5B7FD6),
@@ -64,8 +64,7 @@ const categoryColors = <String, Color>{
 IconData iconForCategory(String? c) =>
     categoryIcons[c] ?? Icons.category_rounded;
 
-Color colorForCategory(String? c) =>
-    categoryColors[c] ?? const Color(0xFF64748B);
+Color colorForCategory(String? c) => categoryColors[c] ?? Color(0xFF64748B);
 
 IconData iconForTxn(Txn t) => switch (t.type) {
   TxnType.transfer => Icons.swap_horiz_rounded,
@@ -89,24 +88,29 @@ Color colorForTxn(Txn t) => switch (t.type) {
   TxnType.expense ||
   TxnType.refund ||
   TxnType.income => colorForCategory(t.category),
-  TxnType.investIncome => const Color(0xFF059669),
+  TxnType.investIncome => Color(0xFF059669),
   TxnType.invest || TxnType.investWithdrawal => kViolet,
-  TxnType.transfer || TxnType.cardPayment => const Color(0xFF64748B),
+  TxnType.transfer || TxnType.cardPayment => Color(0xFF64748B),
 };
 
 /// Title shown for a transaction in lists.
 String txnTitle(Txn t, Ledger l) {
   if (t.note != null && t.note!.isNotEmpty) return t.note!;
   return switch (t.type) {
-    TxnType.expense || TxnType.income => t.category ?? t.type.label,
-    TxnType.refund => 'Refund · ${t.category ?? 'Other'}',
-    TxnType.transfer => 'Transfer',
-    TxnType.cardPayment => 'Bill paid · ${l.card(t.toCardId)?.name ?? 'card'}',
-    TxnType.invest => l.investment(t.investmentId)?.name ?? 'Investment',
-    TxnType.investWithdrawal =>
-      'Withdrawn · ${l.investment(t.investmentId)?.name ?? ''}',
-    TxnType.investIncome =>
-      'Income · ${l.investment(t.investmentId)?.name ?? ''}',
+    TxnType.expense ||
+    TxnType.income => t.category != null ? tr(t.category!) : t.type.label,
+    TxnType.refund => tr('Refund · {0}', [tr(t.category ?? 'Other')]),
+    TxnType.transfer => tr('Transfer'),
+    TxnType.cardPayment => tr('Bill paid · {0}', [
+      l.card(t.toCardId)?.name ?? tr('card'),
+    ]),
+    TxnType.invest => l.investment(t.investmentId)?.name ?? tr('Investment'),
+    TxnType.investWithdrawal => tr('Withdrawn · {0}', [
+      l.investment(t.investmentId)?.name ?? '',
+    ]),
+    TxnType.investIncome => tr('Income · {0}', [
+      l.investment(t.investmentId)?.name ?? '',
+    ]),
   };
 }
 
@@ -123,7 +127,7 @@ String txnRoute(Txn t, Ledger l) {
       name(accountId: t.toAccountId, cardId: t.toCardId) ??
       (t.type == TxnType.invest ? l.investment(t.investmentId)?.name : null);
   if (from != null && to != null) return '$from → $to';
-  return from ?? to ?? (t.type == TxnType.investIncome ? 'Reinvested' : '');
+  return from ?? to ?? (t.type == TxnType.investIncome ? tr('Reinvested') : '');
 }
 
 /// +1 money in, -1 money out, 0 moved between the user's own holdings.
@@ -184,13 +188,13 @@ class TxnTile extends StatelessWidget {
             ),
           ),
           if (txn.recurringId != null) ...[
-            const SizedBox(width: 6),
+            SizedBox(width: 6),
             Icon(Icons.event_repeat, size: 14, color: scheme.outline),
           ],
           if (txn.sourceKey != null) ...[
-            const SizedBox(width: 6),
+            SizedBox(width: 6),
             Tooltip(
-              message: 'From ${txn.sourceLabel}',
+              message: tr('From {0}', [txn.sourceLabel]),
               child: Icon(
                 txn.sourceKey!.startsWith('sms')
                     ? Icons.sms_outlined
@@ -203,7 +207,7 @@ class TxnTile extends StatelessWidget {
             ),
           ],
           if (txn.receiptPath != null) ...[
-            const SizedBox(width: 6),
+            SizedBox(width: 6),
             Icon(Icons.receipt_long, size: 14, color: scheme.outline),
           ],
         ],
@@ -223,7 +227,7 @@ class TxnTile extends StatelessWidget {
           ),
           if (balanceAfter != null)
             Text(
-              '$balanceLabel ${formatRupees(balanceAfter!)}',
+              '${tr(balanceLabel)} ${formatRupees(balanceAfter!)}',
               style: Theme.of(context).textTheme.labelSmall
                   ?.copyWith(color: scheme.onSurfaceVariant),
             ),
@@ -261,7 +265,7 @@ class Figure extends StatelessWidget {
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 2),
+        SizedBox(height: 2),
         FittedBox(
           fit: BoxFit.scaleDown,
           alignment: Alignment.centerLeft,
@@ -287,7 +291,7 @@ class SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 8, 4),
+      padding: EdgeInsets.fromLTRB(16, 20, 8, 4),
       child: Row(
         children: [
           Expanded(
@@ -322,26 +326,26 @@ class EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 48),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 48, color: scheme.outline),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
             message,
             textAlign: TextAlign.center,
             style: TextStyle(color: scheme.onSurfaceVariant),
           ),
           if (actionLabel != null) ...[
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             FilledButton.tonal(onPressed: onAction, child: Text(actionLabel!)),
           ],
           if (secondaryLabel != null) ...[
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             TextButton.icon(
               onPressed: onSecondary,
-              icon: const Icon(Icons.auto_awesome, size: 18),
+              icon: Icon(Icons.auto_awesome, size: 18),
               label: Text(secondaryLabel!),
             ),
           ],
@@ -414,7 +418,7 @@ class AmountField extends StatelessWidget {
       autofocus: autofocus,
       onChanged: onChanged,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      decoration: InputDecoration(labelText: label, prefixText: '₹ '),
+      decoration: InputDecoration(labelText: tr(label), prefixText: '₹ '),
     );
   }
 }
