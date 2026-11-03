@@ -88,6 +88,19 @@ jobs:
           name: rupeetrack-release-apk
           path: rupeetrack/build/app/outputs/flutter-apk/app-release.apk
 
+      - name: Pack Google Play store graphics and texts
+        run: |
+          mkdir -p build/store-pack
+          cp -r store/icon-512.png store/feature-graphic.png store/screenshots/phone \
+            store/listing store/PLAY_CONSOLE.md PRIVACY.md build/store-pack/
+          (cd build/store-pack && zip -qr ../Rupio-store-assets.zip .)
+
+      - name: Upload store pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: rupio-store-assets
+          path: rupeetrack/build/Rupio-store-assets.zip
+
   publish:
     name: Publish APK download link
     needs: build
@@ -100,6 +113,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: rupeetrack-release-apk
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: rupio-store-assets
 
       - name: Upload to the rupeetrack-keep release
         env:
@@ -125,4 +142,6 @@ jobs:
               --notes "Newest Rupio APK, rebuilt automatically. Direct link: https://github.com/$GH_REPO/releases/download/$APK_TAG/Rupio.apk"
           fi
           gh release upload "$APK_TAG" Rupio.apk --clobber
+          # Store graphics and texts for the Play Console, one download.
+          gh release upload "$APK_TAG" Rupio-store-assets.zip --clobber
           echo "Direct download: https://github.com/$GH_REPO/releases/download/$APK_TAG/Rupio.apk" >> "$GITHUB_STEP_SUMMARY"
