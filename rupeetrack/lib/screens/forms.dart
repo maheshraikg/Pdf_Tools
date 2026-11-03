@@ -451,6 +451,8 @@ class _InvestmentForm extends StatefulWidget {
 
 class _InvestmentFormState extends State<_InvestmentForm> {
   final _name = TextEditingController();
+  final _invested = TextEditingController();
+  final _value = TextEditingController();
   InvestmentType _type = InvestmentType.mutualFund;
   String? _error;
 
@@ -461,25 +463,52 @@ class _InvestmentFormState extends State<_InvestmentForm> {
     if (inv != null) {
       _name.text = inv.name;
       _type = inv.type;
+      if (inv.openingInvested > 0) {
+        _invested.text = amountText(inv.openingInvested);
+      }
+      if (inv.currentValue != null) {
+        _value.text = amountText(inv.currentValue!);
+      }
     }
   }
 
   @override
   void dispose() {
     _name.dispose();
+    _invested.dispose();
+    _value.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
     final name = _name.text.trim();
     if (name.isEmpty) return setState(() => _error = 'Enter a name');
+    final invested = _optionalAmount(_invested.text);
+    if (invested == null) {
+      return setState(() => _error = 'Enter a valid amount invested');
+    }
+    final value = _value.text.trim().isEmpty ? null : parseRupees(_value.text);
+    if (_value.text.trim().isNotEmpty && value == null) {
+      return setState(() => _error = 'Enter a valid current value');
+    }
     final edit = widget.edit;
     if (edit != null) {
-      await context.store.updateInvestment(edit, name, _type);
+      await context.store.updateInvestment(
+        edit,
+        name,
+        _type,
+        invested: invested,
+        value: value,
+      );
       if (mounted) Navigator.pop(context);
       return;
     }
-    final inv = await context.store.addInvestment(name, _type);
+    final inv = await context.store.addInvestment(
+      name,
+      _type,
+      invested: invested,
+      value: value,
+    );
     if (mounted) Navigator.pop(context, inv);
   }
 
@@ -508,8 +537,17 @@ class _InvestmentFormState extends State<_InvestmentForm> {
             hintText: 'e.g. Nifty 50 index fund',
           ),
         ),
+        AmountField(
+          controller: _invested,
+          label: widget.edit == null
+              ? 'Amount invested so far (optional)'
+              : 'Invested before adding it here',
+        ),
+        AmountField(controller: _value, label: 'Current value (optional)'),
         Text(
-          'Record money you put in with “Invest” in the add screen. It is kept '
+          'Already invested? Enter the total you have put in and today\'s '
+          'value (from your passbook, fund statement or app) to see your '
+          'gain straight away. Add new money later with “Invest”; it is kept '
           'out of your spending.',
           style: Theme.of(context).textTheme.bodySmall,
         ),

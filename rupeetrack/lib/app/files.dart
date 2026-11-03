@@ -29,6 +29,24 @@ Future<void> shareTextFile(
   );
 }
 
+/// Like [shareTextFile] for binary files (Excel, PDF).
+Future<void> shareBytesFile(
+  String fileName,
+  List<int> bytes, {
+  required String mimeType,
+  String? subject,
+}) async {
+  final dir = await getTemporaryDirectory();
+  final file = File('${dir.path}/$fileName');
+  await file.writeAsBytes(bytes);
+  await SharePlus.instance.share(
+    ShareParams(
+      files: [XFile(file.path, mimeType: mimeType)],
+      subject: subject ?? fileName,
+    ),
+  );
+}
+
 /// Lets the user pick a file and returns its text, or null if cancelled.
 Future<String?> pickTextFile() async {
   // Some Android file providers do not map .csv / .json to a MIME type, so

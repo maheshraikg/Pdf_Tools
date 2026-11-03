@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../app/files.dart';
 import '../app/notifications.dart';
 import '../app/scope.dart';
 import '../data/csv.dart';
+import '../data/reports.dart';
 import '../models/models.dart';
 import '../widgets/design.dart';
 import 'auto_detect_screen.dart';
@@ -239,9 +241,45 @@ class SettingsScreen extends StatelessWidget {
                   : () => push(const ImportScreen()),
             ),
             tile(
+              Icons.grid_on_outlined,
+              'Excel report (.xlsx)',
+              'Transactions, accounts, cards, investments and budgets',
+              () => _run(
+                context,
+                () => shareBytesFile(
+                  'rupeetrack-report-$stamp.xlsx',
+                  buildExcelReport(l, today()),
+                  mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ),
+              ),
+            ),
+            tile(
+              Icons.picture_as_pdf_outlined,
+              'PDF report',
+              'A printable summary with every transaction',
+              () => _run(context, () async {
+                final regular = await rootBundle.load(
+                  'assets/fonts/Carlito-Regular.ttf',
+                );
+                final bold = await rootBundle.load(
+                  'assets/fonts/Carlito-Bold.ttf',
+                );
+                await shareBytesFile(
+                  'rupeetrack-report-$stamp.pdf',
+                  await buildPdfReport(
+                    l,
+                    today(),
+                    regular: regular,
+                    bold: bold,
+                  ),
+                  mimeType: 'application/pdf',
+                );
+              }),
+            ),
+            tile(
               Icons.cloud_upload_outlined,
               'Back up',
-              'Save everything to Drive, email or a file',
+              'Everything, to restore later (Drive, email or a file)',
               () => _run(
                 context,
                 () => shareTextFile(

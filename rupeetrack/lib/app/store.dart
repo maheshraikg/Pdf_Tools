@@ -235,8 +235,23 @@ class FinanceStore extends ChangeNotifier {
     return c;
   }
 
-  Future<Investment> addInvestment(String name, InvestmentType type) async {
-    final inv = Investment(id: _newId(), name: name, type: type);
+  /// [invested] is money already put in before adding it here; [value] is
+  /// what it is worth today. Both are optional.
+  Future<Investment> addInvestment(
+    String name,
+    InvestmentType type, {
+    Paise invested = 0,
+    Paise? value,
+  }) async {
+    final now = dateOnly(DateTime.now());
+    var inv = Investment(
+      id: _newId(),
+      name: name,
+      type: type,
+      openingInvested: invested,
+      since: now,
+    );
+    if (value != null) inv = inv.withValue(value, now);
     _investments.add(inv);
     await _save();
     return inv;
@@ -336,12 +351,19 @@ class FinanceStore extends ChangeNotifier {
     return _save();
   }
 
+  /// Edits an investment. A changed [value] becomes today's value.
   Future<void> updateInvestment(
     Investment inv,
     String name,
-    InvestmentType type,
-  ) {
-    _upsert(_investments, inv.renamed(name, type), (e) => e.id);
+    InvestmentType type, {
+    Paise? invested,
+    Paise? value,
+  }) {
+    var updated = inv.renamed(name, type, openingInvested: invested);
+    if (value != null && value != inv.currentValue) {
+      updated = updated.withValue(value, DateTime.now());
+    }
+    _upsert(_investments, updated, (e) => e.id);
     return _save();
   }
 

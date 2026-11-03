@@ -44,6 +44,8 @@ dependencies:
   http: ^1.6.0
   pdfrx: ^2.11.0
   google_sign_in: ^7.2.0
+  pdf: ^3.13.1
+  archive: ^4.6.0
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +68,12 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    # Carlito (SIL OFL 1.1) for PDF reports: it has the ₹ sign.
+    - assets/fonts/Carlito-Regular.ttf
+    - assets/fonts/Carlito-Bold.ttf
+    - assets/fonts/Carlito-OFL.txt
 
   # To add assets to your application, add an assets section, like this:
   # assets:

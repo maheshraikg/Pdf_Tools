@@ -23,7 +23,9 @@ sign-up and no bank login.
   Office schemes, NPS, gold and others, kept separate from spending. Shows
   portfolio value, allocation, gain, return % and yearly return (XIRR). Mutual
   funds can be **linked to the daily NAV from AMFI** (units × NAV); other
-  holdings use a value you enter, with its date.
+  holdings use a value you enter, with its date. When adding a holding you
+  already have, enter the amount invested so far and today's value to see
+  the gain straight away.
 - **Accounts**: bank accounts, cash and UPI wallets, with the total balance
   and savings rate.
 - **Budgets**: monthly limit per category, with a warning at 80% and once
@@ -32,8 +34,10 @@ sign-up and no bank login.
   automatically on each due date.
 - **Reminders** (local notifications at 9 AM): card bills 7 days before, 3
   days before and on the due date; recurring entries on their date.
-- **Your data**: export transactions or a monthly summary as CSV; back up
-  everything as a JSON file and restore it later; **import bank or card
+- **Your data**: **Excel (.xlsx) and PDF reports** (summary, accounts,
+  cards, investments, budgets and every transaction); export transactions or
+  a monthly summary as CSV; back up everything as a JSON file and restore it
+  later; **import bank or card
   statements** (CSV), with column detection, category guessing and
   duplicate skipping.
 - **Auto-detect** (Settings › Automatic): reads bank SMS on the phone and
@@ -135,6 +139,8 @@ management").
 
 ## Notes
 
+- PDF reports use the Carlito font (SIL Open Font License,
+  `assets/fonts/Carlito-OFL.txt`) for the ₹ sign.
 - Receipt photos stay in the app's private folder and are not part of the
   JSON backup.
 - Live prices cover mutual funds only (AMFI publishes them free). Stocks,

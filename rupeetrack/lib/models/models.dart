@@ -228,6 +228,8 @@ class Investment {
     this.valueSource,
     this.schemeCode,
     this.units,
+    this.openingInvested = 0,
+    this.since,
   });
 
   final int id;
@@ -246,6 +248,13 @@ class Investment {
   /// Units held, used with [schemeCode].
   final double? units;
 
+  /// Money already put in before the holding was added to the app (e.g.
+  /// years of PPF deposits), so returns are right without entering each one.
+  final Paise openingInvested;
+
+  /// Day the holding was added; [openingInvested] counts from then.
+  final DateTime? since;
+
   bool get isLinked => schemeCode != null && units != null;
 
   Investment withValue(Paise value, DateTime on, {String? source}) =>
@@ -258,9 +267,15 @@ class Investment {
         valueSource: source,
         schemeCode: schemeCode,
         units: units,
+        openingInvested: openingInvested,
+        since: since,
       );
 
-  Investment renamed(String newName, InvestmentType newType) => Investment(
+  Investment renamed(
+    String newName,
+    InvestmentType newType, {
+    Paise? openingInvested,
+  }) => Investment(
     id: id,
     name: newName,
     type: newType,
@@ -269,6 +284,8 @@ class Investment {
     valueSource: valueSource,
     schemeCode: schemeCode,
     units: units,
+    openingInvested: openingInvested ?? this.openingInvested,
+    since: since,
   );
 
   /// Links (or with nulls, unlinks) this holding to an AMFI scheme.
@@ -281,6 +298,8 @@ class Investment {
     valueSource: valueSource,
     schemeCode: code,
     units: heldUnits,
+    openingInvested: openingInvested,
+    since: since,
   );
 
   Map<String, Object?> toJson() => {
@@ -292,6 +311,8 @@ class Investment {
     if (valueSource != null) 'valueSource': valueSource,
     if (schemeCode != null) 'scheme': schemeCode,
     if (units != null) 'units': units,
+    if (openingInvested != 0) 'openingInvested': openingInvested,
+    if (since != null) 'since': isoDate(since!),
   };
 
   factory Investment.fromJson(Map<String, dynamic> j) => Investment(
@@ -305,6 +326,8 @@ class Investment {
     valueSource: j['valueSource'] as String?,
     schemeCode: j['scheme'] as String?,
     units: (j['units'] as num?)?.toDouble(),
+    openingInvested: (j['openingInvested'] as int?) ?? 0,
+    since: j['since'] == null ? null : parseIsoDate(j['since'] as String),
   );
 }
 

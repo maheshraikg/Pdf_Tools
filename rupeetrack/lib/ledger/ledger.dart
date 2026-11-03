@@ -443,10 +443,15 @@ class Ledger {
   // ---- Investments --------------------------------------------------------
 
   InvestmentSummary investmentSummary(Investment inv, DateTime today) {
-    var contributed = 0;
+    var contributed = inv.openingInvested;
     var withdrawn = 0;
     var paidOut = 0;
-    final flows = <CashFlow>[];
+    final flows = <CashFlow>[
+      // Money put in before the app: dated when the holding was added (the
+      // yearly return is only an estimate until real dates are entered).
+      if (inv.openingInvested > 0)
+        CashFlow(inv.since ?? dateOnly(today), -inv.openingInvested),
+    ];
     for (final t in txns.where((t) => t.investmentId == inv.id)) {
       switch (t.type) {
         case TxnType.invest:

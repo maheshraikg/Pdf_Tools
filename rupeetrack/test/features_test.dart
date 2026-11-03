@@ -1,10 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:archive/archive.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rupeetrack/app/notifications.dart';
 import 'package:rupeetrack/app/store.dart';
 import 'package:rupeetrack/data/amfi.dart';
 import 'package:rupeetrack/data/csv.dart';
+import 'package:rupeetrack/data/reports.dart';
 import 'package:rupeetrack/ledger/ledger.dart';
 import 'package:rupeetrack/models/models.dart';
 import 'package:rupeetrack/models/planning.dart';
@@ -383,6 +388,100 @@ Example Mutual Fund
         2: 1490000,
         3: 1465000,
       });
+    });
+  });
+
+  group('investments added with an existing balance', () {
+    test(
+      'amount invested so far and current value give returns at once',
+      () async {
+        final store = FinanceStore.memory();
+        final inv = await store.addInvestment(
+          'PPF',
+          InvestmentType.ppf,
+          invested: 15000000, // ₹1,50,000 put in over the years
+          value: 18000000, // worth ₹1,80,000 today
+        );
+        final s = store.ledger.investmentSummary(inv, DateTime.now());
+        expect(s.contributed, 15000000);
+        expect(s.currentValue, 18000000);
+        expect(s.absoluteReturn, 3000000);
+        expect(s.returnPercent, closeTo(20, 1e-9));
+        // No bank account is touched by money invested before the app.
+        expect(store.ledger.totalCash, 0);
+        expect(store.ledger.netWorth(DateTime.now()).investments, 18000000);
+      },
+    );
+
+    test('editing keeps both figures', () async {
+      final store = FinanceStore.memory();
+      final inv = await store.addInvestment('FD', InvestmentType.fixedDeposit);
+      await store.updateInvestment(
+        inv,
+        'SBI FD',
+        InvestmentType.fixedDeposit,
+        invested: 5000000,
+        value: 5200000,
+      );
+      final e = store.ledger.investments.single;
+      expect(e.name, 'SBI FD');
+      expect(e.openingInvested, 5000000);
+      expect(e.currentValue, 5200000);
+      final copy = FinanceStore.memory();
+      await copy.restoreBackup(store.backupJson());
+      expect(copy.ledger.investments.single.openingInvested, 5000000);
+    });
+  });
+
+  group('reports', () {
+    Ledger sample() => Ledger(
+      accounts: [sbi],
+      budgets: const [Budget(category: 'Food', monthlyLimit: 500000)],
+      txns: [
+        expense(250, d(2026, 10, 3)).copyWith(id: 1),
+        withNote(
+          expense(99, d(2026, 10, 4)).copyWith(id: 2),
+          note: 'Tea & <snacks>',
+        ),
+      ],
+    );
+
+    test('Excel workbook has all sheets and escapes text', () {
+      final bytes = buildExcelReport(sample(), d(2026, 10, 30));
+      final zip = ZipDecoder().decodeBytes(bytes);
+      final names = zip.files.map((f) => f.name).toSet();
+      expect(
+        names,
+        containsAll([
+          '[Content_Types].xml',
+          'xl/workbook.xml',
+          'xl/styles.xml',
+          for (var i = 1; i <= 6; i++) 'xl/worksheets/sheet$i.xml',
+        ]),
+      );
+      String text(String name) =>
+          utf8.decode(zip.files.firstWhere((f) => f.name == name).content);
+      expect(text('xl/workbook.xml'), contains('name="Transactions"'));
+      final txns = text('xl/worksheets/sheet2.xml');
+      expect(txns, contains('Tea &amp; &lt;snacks&gt;'));
+      expect(txns, contains('<v>250.00</v>'));
+      final out = Platform.environment['RT_XLSX_OUT'];
+      if (out != null) File(out).writeAsBytesSync(bytes);
+    });
+
+    test('PDF report renders', () async {
+      ByteData font(String f) =>
+          ByteData.sublistView(File('assets/fonts/$f').readAsBytesSync());
+      final pdf = await buildPdfReport(
+        sample(),
+        d(2026, 10, 30),
+        regular: font('Carlito-Regular.ttf'),
+        bold: font('Carlito-Bold.ttf'),
+      );
+      expect(String.fromCharCodes(pdf.take(5)), '%PDF-');
+      expect(pdf.length, greaterThan(5000));
+      final out = Platform.environment['RT_PDF_OUT'];
+      if (out != null) File(out).writeAsBytesSync(pdf);
     });
   });
 }
