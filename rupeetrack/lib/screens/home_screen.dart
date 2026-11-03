@@ -386,40 +386,26 @@ class _QuickActions extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     Widget action(IconData icon, String label, Color color, VoidCallback f) =>
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Material(
-              color: Theme.of(context).colorScheme.surfaceContainerLow,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(kRadius),
-                side: BorderSide(
-                  color: Theme.of(context).colorScheme.outlineVariant,
-                ),
-              ),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(20),
-                onTap: f,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Column(
-                    children: [
-                      IconBadge(icon, color: color, size: 44),
-                      const SizedBox(height: 6),
-                      Text(
-                        label,
-                        style: t.labelMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
+          child: InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: f,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Column(
+                children: [
+                  IconBadge(icon, color: color, size: 46),
+                  const SizedBox(height: 8),
+                  Text(
+                    label,
+                    style: t.labelMedium?.copyWith(fontWeight: FontWeight.w600),
                   ),
-                ),
+                ],
               ),
             ),
           ),
         );
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+    return Panel(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
       child: Row(
         children: [
           action(

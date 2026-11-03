@@ -135,16 +135,7 @@ class _HomeShellState extends State<HomeShell> {
     ];
     return Scaffold(
       body: IndexedStack(index: _tab, children: pages),
-      floatingActionButton: context.store.isEmpty
-          ? null
-          : FloatingActionButton.extended(
-              onPressed: () => showQuickAdd(context),
-              icon: const Icon(Icons.add_rounded),
-              label: const Text(
-                'Add',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ),
-            ),
+      floatingActionButton: context.store.isEmpty ? null : const _AddButton(),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _tab,
         onDestinationSelected: _openTab,
@@ -175,6 +166,34 @@ class _HomeShellState extends State<HomeShell> {
             label: 'Accounts',
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Compact square "+" button with a soft tinted shadow, in place of a
+/// loud extended pill.
+class _AddButton extends StatelessWidget {
+  const _AddButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: primary.withValues(alpha: 0.28),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: FloatingActionButton(
+        tooltip: 'Add entry',
+        onPressed: () => showQuickAdd(context),
+        child: const Icon(Icons.add_rounded, size: 30),
       ),
     );
   }

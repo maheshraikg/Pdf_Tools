@@ -599,11 +599,17 @@ ThemeData buildAppTheme(Brightness b) {
     colorScheme: scheme,
     fontFamily: 'Inter',
     fontFamilyFallback: debugFontFallback,
-    textTheme: text.copyWith(
-      titleLarge: text.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-      titleMedium: text.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-      titleSmall: text.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-      labelLarge: text.labelLarge?.copyWith(fontWeight: FontWeight.w600),
+    // Inter reads best with tight tracking; Material's default letter
+    // spacing (up to 0.5) makes it look loose and unpolished.
+    textTheme: _tight(text).copyWith(
+      titleLarge: _tight(text).titleLarge
+          ?.copyWith(fontWeight: FontWeight.w700),
+      titleMedium: _tight(text).titleMedium
+          ?.copyWith(fontWeight: FontWeight.w600),
+      titleSmall: _tight(text).titleSmall
+          ?.copyWith(fontWeight: FontWeight.w600),
+      labelLarge: _tight(text).labelLarge
+          ?.copyWith(fontWeight: FontWeight.w600),
     ),
     scaffoldBackgroundColor: scheme.surface,
     appBarTheme: AppBarTheme(
@@ -652,7 +658,11 @@ ThemeData buildAppTheme(Brightness b) {
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: scheme.primary,
       foregroundColor: Colors.white,
-      shape: const StadiumBorder(),
+      elevation: 0,
+      focusElevation: 0,
+      hoverElevation: 0,
+      highlightElevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -728,5 +738,27 @@ ThemeData buildAppTheme(Brightness b) {
       titleTextStyle: text.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
     ),
     dividerTheme: DividerThemeData(color: scheme.outlineVariant),
+  );
+}
+
+TextTheme _tight(TextTheme t) {
+  TextStyle? f(TextStyle? s, double spacing) =>
+      s?.copyWith(letterSpacing: spacing);
+  return t.copyWith(
+    displayLarge: f(t.displayLarge, -1.2),
+    displayMedium: f(t.displayMedium, -1),
+    displaySmall: f(t.displaySmall, -0.8),
+    headlineLarge: f(t.headlineLarge, -0.6),
+    headlineMedium: f(t.headlineMedium, -0.5),
+    headlineSmall: f(t.headlineSmall, -0.4),
+    titleLarge: f(t.titleLarge, -0.3),
+    titleMedium: f(t.titleMedium, -0.1),
+    titleSmall: f(t.titleSmall, 0),
+    bodyLarge: f(t.bodyLarge, 0),
+    bodyMedium: f(t.bodyMedium, 0),
+    bodySmall: f(t.bodySmall, 0),
+    labelLarge: f(t.labelLarge, 0),
+    labelMedium: f(t.labelMedium, 0),
+    labelSmall: f(t.labelSmall, 0.1),
   );
 }
