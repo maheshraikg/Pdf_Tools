@@ -30,7 +30,8 @@ sign-up and no bank login.
 - **Loans payoff graph**: what is left to pay month by month (or year by
   year) and the "debt-free by" month; each loan shows % paid.
 - **Home screen widget**: this month's spending with a bar per day.
-- **Languages**: English, हिन्दी (Hindi) and ಕನ್ನಡ (Kannada), more coming;
+- **Languages**: English, हिन्दी (Hindi), ಕನ್ನಡ (Kannada), മലയാളം
+  (Malayalam), தமிழ் (Tamil) and తెలుగు (Telugu);
   chosen from Settings or More › Language (the phone's language is used on
   first start). Translations live in `tool/l10n/<code>.txt`; run
   `python3 tool/l10n/extract.py` after adding text and

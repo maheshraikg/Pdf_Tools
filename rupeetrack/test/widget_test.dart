@@ -106,7 +106,7 @@ void main() {
     expect(find.text('Pay bill'), findsOneWidget);
   });
 
-  for (final lang in ['kn', 'hi']) {
+  for (final lang in ['kn', 'hi', 'ml', 'ta', 'te']) {
     testWidgets('every screen renders in $lang', (tester) async {
       final store = FinanceStore.memory();
       await store.addAccount('SBI', AccountKind.savings, 1000000);
