@@ -169,6 +169,13 @@ verification and a yearly security assessment for this scope. Reading SMS
 on the Play Store needs the SMS permission declaration ("SMS-based money
 management").
 
+## Icons
+
+The logo (a white wallet with a green tab) is `store/icon-source.png`.
+`python3 tool/icon/make_icons.py` rebuilds the launcher icons (legacy,
+adaptive and themed), the notification icon, `store/icon-512.png` and the
+Play feature graphic `store/feature-graphic.png` from it.
+
 ## Notes
 
 - The app uses the Inter typeface (SIL Open Font License,
