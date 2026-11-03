@@ -86,10 +86,7 @@ class AccountsScreen extends StatelessWidget {
                     children: [
                       for (final a in l.accounts)
                         ListTile(
-                          leading: IconBadge(
-                            iconForAccount(a.kind),
-                            color: chartColor(a.id),
-                          ),
+                          leading: IconBadge(iconForAccount(a.kind)),
                           title: Text(a.name),
                           subtitle: Text(a.kind.label),
                           trailing: Text(

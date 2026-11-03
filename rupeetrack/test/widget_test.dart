@@ -15,7 +15,7 @@ void main() {
     await tester.pumpWidget(
       RupeeTrackApp(store: FinanceStore.memory(), background: false),
     );
-    expect(find.text('Know where every\nrupee goes.'), findsOneWidget);
+    expect(find.textContaining('rupee goes.', findRichText: true), findsOneWidget);
     expect(find.byType(FloatingActionButton), findsNothing);
   });
 
@@ -23,8 +23,8 @@ void main() {
     final store = FinanceStore.memory();
     await store.addAccount('SBI Savings', AccountKind.savings, 1000000);
     await tester.pumpWidget(RupeeTrackApp(store: store, background: false));
-    expect(find.text('Spent in October'), findsOneWidget);
-    expect(find.text('₹10K'), findsNWidgets(2)); // net worth + in accounts
+    expect(find.text('October'), findsOneWidget);
+    expect(find.text('₹10,000'), findsNWidgets(2)); // net worth + accounts
 
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
@@ -41,7 +41,7 @@ void main() {
     expect(t.fromAccountId, store.ledger.accounts.single.id);
     expect(store.ledger.accountBalance(t.fromAccountId!), 975000);
     expect(find.text('₹250'), findsWidgets); // spent this month (hero)
-    expect(find.text('₹9,750'), findsNWidgets(2)); // net worth + in accounts
+    expect(find.text('₹9,750'), findsNWidgets(2)); // net worth + accounts
     expect(store.lastCategory, 'Food');
   });
 
@@ -83,22 +83,19 @@ void main() {
       ),
     );
     await tester.pumpWidget(RupeeTrackApp(store: store, background: false));
-    for (final tab in ['Activity', 'Cards', 'Invest', 'Accounts', 'Home']) {
-      await tester.tap(
-        find.descendant(
-          of: find.byType(NavigationBar),
-          matching: find.text(tab),
-        ),
-      );
+    for (final tab in ['Activity', 'Cards', 'More', 'Home']) {
+      await tester.tap(find.text(tab).last);
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
     }
-    await tester.tap(
-      find.descendant(
-        of: find.byType(NavigationBar),
-        matching: find.text('Cards'),
-      ),
-    );
+    for (final range in ['1Y', 'All', '1M']) {
+      await tester.tap(find.text(range));
+      await tester.pumpAndSettle();
+    }
+    await tester.tap(find.text('Income'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.tap(find.text('Cards').last);
     await tester.pumpAndSettle();
     expect(find.text('HDFC'), findsOneWidget);
     expect(find.text('•••• 1234'), findsOneWidget);

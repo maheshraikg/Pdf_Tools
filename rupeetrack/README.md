@@ -7,10 +7,20 @@ sign-up and no bank login.
 
 ## Features
 
-- **Home**: net worth card (accounts + investments − card dues), quick
-  actions, alerts, this month's spending, income and amount invested with a
-  six-month chart, a "where it went" category donut, budgets, and recent
-  activity.
+- **Home**: switch between Expense and Income; one big total for the
+  month, year or all time (1M / 1Y / All) with a bar chart; budget left;
+  alerts; an overview (net worth, accounts, card dues, investments, EMIs per
+  month, savings goals) and that period's entries by day.
+- **Loans & EMIs**: home, car, bike, personal or phone EMIs with the EMI
+  amount, number of EMIs and first EMI date. Shows EMIs paid and left, the
+  next due date, when the loan ends, total EMIs per month and what is left
+  to pay. Paying an EMI records it as an expense from your account; an alert
+  appears 3 days before each due date.
+- **Savings goals**: a target (and optional date) for an emergency fund,
+  phone, bike or trip; add or take out money and see how much to put aside
+  each month.
+- **Insights**: no-spend streak, change vs last month, daily average,
+  spending pace, income vs spending by month and a category breakdown.
 - **Quick add**: enter the amount, tap a category, tap the account or card,
   then Save. The last category and source are remembered. Also covers income,
   transfers, card bills, refunds and investments. Optional receipt photo
@@ -58,12 +68,11 @@ sign-up and no bank login.
   MobiKwik to pay, then record the full, minimum or a custom amount.
 - Account, card and investment screens read like a bank statement: entries
   by date with the balance after each one; edit or delete anything.
-- Clean, professional design: neutral surfaces, one indigo brand colour,
-  vector icons with a colour per category, the Inter typeface, and
-  interactive charts (spending pace vs last month, income vs spending by
-  month, a tap-to-highlight category breakdown). Light and dark themes and a
-  custom launcher icon. Works fully offline; the
-  internet is used only when you choose to update fund NAVs.
+- Minimal black design (default; a light theme is in Settings): pure black
+  background, dark grey cards, white and grey text, green only for money in
+  and the main button, coral only for dues and EMIs, neutral vector icons,
+  the Inter typeface and a round + button in the bottom bar. Works fully
+  offline; the internet is used only when you choose to update fund NAVs.
 
 ## Accounting rules
 

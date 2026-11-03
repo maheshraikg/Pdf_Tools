@@ -79,8 +79,12 @@ class SpendingPaceChart extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final now = ledger.cumulativeSpending(today, upTo: today);
     final lastMonth = DateTime.utc(today.year, today.month - 1);
-    final prev = ledger.cumulativeSpending(lastMonth);
     final daysInMonth = monthEnd(today).day;
+    // Last month can be longer; keep it inside this month's axis.
+    final prev = ledger
+        .cumulativeSpending(lastMonth)
+        .take(daysInMonth)
+        .toList();
     final maxY = _niceMax([...now, ...prev].fold<int>(0, math.max) / 100);
     List<FlSpot> spots(List<int> v) => [
       for (var i = 0; i < v.length; i++) FlSpot(i + 1.0, v[i] / 100),
@@ -162,7 +166,7 @@ class SpendingPaceChart extends StatelessWidget {
             ),
             LineChartBarData(
               spots: spots(now),
-              color: scheme.primary,
+              color: scheme.onSurface,
               barWidth: 3,
               isCurved: true,
               preventCurveOverShooting: true,
@@ -172,7 +176,7 @@ class SpendingPaceChart extends StatelessWidget {
                 getDotPainter: (spot, percent, bar, index) =>
                     FlDotCirclePainter(
                       radius: 4.5,
-                      color: scheme.primary,
+                      color: scheme.onSurface,
                       strokeWidth: 2.5,
                       strokeColor: scheme.surfaceContainerLow,
                     ),
@@ -183,8 +187,8 @@ class SpendingPaceChart extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    scheme.primary.withValues(alpha: 0.22),
-                    scheme.primary.withValues(alpha: 0.0),
+                    scheme.onSurface.withValues(alpha: 0.22),
+                    scheme.onSurface.withValues(alpha: 0.0),
                   ],
                 ),
               ),
@@ -223,7 +227,7 @@ class IncomeSpendBars extends StatelessWidget {
     ];
     final maxY = _niceMax([...income, ...spent].fold<double>(0, math.max));
     final inColor = scheme.moneyIn;
-    final outColor = scheme.primary;
+    final outColor = scheme.onSurface;
 
     return SizedBox(
       height: 200,
@@ -463,6 +467,127 @@ class _CategoryBreakdownState extends State<CategoryBreakdown> {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// Minimal column chart for one series over a period (days of a month,
+/// months of a year, or years). Neutral bars with the current one in the
+/// primary colour; tap a bar to read its amount.
+class PeriodBars extends StatelessWidget {
+  const PeriodBars({
+    super.key,
+    required this.values,
+    required this.labels,
+    required this.tooltipLabels,
+    this.highlight,
+    this.labelEvery = 1,
+    this.color,
+    this.height = 170,
+  });
+
+  /// Amounts in paise.
+  final List<int> values;
+  final List<String> labels;
+  final List<String> tooltipLabels;
+
+  /// Index of the bar to emphasise (today / this month).
+  final int? highlight;
+
+  /// Show every n-th bottom label.
+  final int labelEvery;
+  final Color? color;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final ys = [for (final v in values) v / 100];
+    final maxY = _niceMax(ys.fold<double>(0, math.max));
+    final strong = color ?? scheme.primary;
+    final soft = scheme.surfaceContainerHighest;
+    final width = values.length > 20
+        ? 6.0
+        : values.length > 8
+        ? 12.0
+        : 22.0;
+    return SizedBox(
+      height: height,
+      child: BarChart(
+        BarChartData(
+          maxY: maxY,
+          minY: 0,
+          alignment: BarChartAlignment.spaceBetween,
+          borderData: FlBorderData(show: false),
+          gridData: const FlGridData(show: false),
+          extraLinesData: ExtraLinesData(
+            horizontalLines: [
+              HorizontalLine(
+                y: 0,
+                color: scheme.outline.withValues(alpha: 0.5),
+                strokeWidth: 1,
+                dashArray: [4, 4],
+              ),
+            ],
+          ),
+          titlesData: FlTitlesData(
+            topTitles: const AxisTitles(),
+            rightTitles: const AxisTitles(),
+            leftTitles: const AxisTitles(),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 28,
+                getTitlesWidget: (v, meta) {
+                  final i = v.toInt();
+                  // Regular labels make room for the highlighted one.
+                  final h = highlight;
+                  final near =
+                      labelEvery > 1 &&
+                      h != null &&
+                      i != h &&
+                      (i - h).abs() < 3;
+                  final show = i == h || (i % labelEvery == 0 && !near);
+                  return SideTitleWidget(
+                    meta: meta,
+                    child: show
+                        ? _axisLabel(context, labels[i])
+                        : const SizedBox.shrink(),
+                  );
+                },
+              ),
+            ),
+          ),
+          barTouchData: BarTouchData(
+            touchTooltipData: BarTouchTooltipData(
+              getTooltipColor: (_) => scheme.inverseSurface,
+              fitInsideHorizontally: true,
+              getTooltipItem: (group, gi, rod, ri) => BarTooltipItem(
+                '${tooltipLabels[gi]}\n${formatRupees(values[gi])}',
+                TextStyle(
+                  color: scheme.onInverseSurface,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ),
+          barGroups: [
+            for (var i = 0; i < ys.length; i++)
+              BarChartGroupData(
+                x: i,
+                barRods: [
+                  BarChartRodData(
+                    toY: ys[i],
+                    color: i == highlight ? strong : soft,
+                    width: width,
+                    borderRadius: BorderRadius.circular(width / 2.5),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

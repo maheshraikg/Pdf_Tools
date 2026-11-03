@@ -147,11 +147,7 @@ class BudgetsScreen extends StatelessWidget {
               children: [
                 for (final c in others)
                   ListTile(
-                    leading: IconBadge(
-                      iconForCategory(c),
-                      size: 40,
-                      color: colorForCategory(c),
-                    ),
+                    leading: IconBadge(iconForCategory(c), size: 40),
                     title: Text(c),
                     subtitle: (spent[c] ?? 0) > 0
                         ? Text('${formatRupees(spent[c]!)} this month')

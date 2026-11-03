@@ -1,3 +1,4 @@
+import '../models/goals.dart';
 import '../models/models.dart';
 import '../models/money.dart';
 import '../models/planning.dart';
@@ -75,12 +76,65 @@ class NetWorth {
   Paise get total => cash + investments - liabilities;
 }
 
-enum AlertKind { overdue, dueSoon, overBudget, highUtilisation, nearBudget }
+enum AlertKind {
+  overdue,
+  dueSoon,
+  overBudget,
+  highUtilisation,
+  nearBudget,
+  emiDue,
+}
+
+/// Where a [Loan] stands on a given day.
+class LoanStatus {
+  const LoanStatus({
+    required this.loan,
+    required this.emisPaid,
+    required this.amountPaid,
+    required this.nextDue,
+    required this.paidThisMonth,
+  });
+
+  final Loan loan;
+
+  /// Instalments paid, including those paid before the loan was added.
+  final int emisPaid;
+  final Paise amountPaid;
+
+  /// Date of the next unpaid instalment, or null once all are paid.
+  final DateTime? nextDue;
+
+  /// True when an EMI was recorded in the current month.
+  final bool paidThisMonth;
+
+  int get emisLeft {
+    final left = loan.tenureMonths - emisPaid;
+    return left < 0 ? 0 : left;
+  }
+
+  bool get finished => loan.closed || emisLeft == 0;
+
+  /// What is still to be paid at the current EMI (interest included).
+  Paise get remaining => finished ? 0 : emisLeft * loan.emi;
+
+  double get progress => loan.tenureMonths <= 0
+      ? 1
+      : (emisPaid / loan.tenureMonths).clamp(0, 1).toDouble();
+}
 
 class FinanceAlert {
-  const FinanceAlert(this.kind, this.message, {this.card, this.category});
+  const FinanceAlert(
+    this.kind,
+    this.message, {
+    this.card,
+    this.category,
+    this.loan,
+  });
   final AlertKind kind;
   final String message;
+
+  /// The loan an EMI alert is about.
+  final Loan? loan;
 
   /// The card a due-date or utilisation alert is about.
   final CreditCard? card;
@@ -110,6 +164,8 @@ class Ledger {
     this.investments = const [],
     this.budgets = const [],
     this.recurring = const [],
+    this.loans = const [],
+    this.goals = const [],
     List<Txn> txns = const [],
   }) : txns = List.unmodifiable(
          [...txns]..sort((a, b) {
@@ -123,6 +179,50 @@ class Ledger {
   final List<Investment> investments;
   final List<Budget> budgets;
   final List<Recurring> recurring;
+  final List<Loan> loans;
+  final List<SavingsGoal> goals;
+
+  Loan? loan(int id) {
+    for (final l in loans) {
+      if (l.id == id) return l;
+    }
+    return null;
+  }
+
+  LoanStatus loanStatus(Loan loan, DateTime today) {
+    final t = dateOnly(today);
+    var count = loan.paidBefore;
+    var paid = loan.paidBefore * loan.emi;
+    var thisMonth = false;
+    for (final x in txns) {
+      if (x.loanId != loan.id) continue;
+      count++;
+      paid += x.amount;
+      if (x.date.year == t.year && x.date.month == t.month) thisMonth = true;
+    }
+    final next = count >= loan.tenureMonths || loan.closed
+        ? null
+        : loan.emiDate(count);
+    return LoanStatus(
+      loan: loan,
+      emisPaid: count,
+      amountPaid: paid,
+      nextDue: next,
+      paidThisMonth: thisMonth,
+    );
+  }
+
+  /// Total of the EMIs still running.
+  Paise monthlyEmi(DateTime today) => loans
+      .map((l) => loanStatus(l, today))
+      .where((s) => !s.finished)
+      .fold(0, (a, s) => a + s.loan.emi);
+
+  /// What is left to pay on all running loans.
+  Paise loansRemaining(DateTime today) =>
+      loans.map((l) => loanStatus(l, today)).fold(0, (a, s) => a + s.remaining);
+
+  Paise get goalsSaved => goals.fold(0, (a, g) => a + g.saved);
 
   /// Newest first.
   final List<Txn> txns;
@@ -358,6 +458,27 @@ class Ledger {
             card: c,
             '${c.displayName}: ${s.utilisationPercent.toStringAsFixed(0)}% of '
             'the limit used (over $hit%)',
+          ),
+        );
+      }
+    }
+    for (final l in loans) {
+      final st = loanStatus(l, t);
+      final due = st.nextDue;
+      if (due == null) continue;
+      final days = due.difference(t).inDays;
+      if (days <= 3) {
+        result.add(
+          FinanceAlert(
+            AlertKind.emiDue,
+            days < 0
+                ? '${l.name}: EMI of ${formatRupees(l.emi)} was due '
+                      '${_daysText(-days)} ago'
+                : days == 0
+                ? '${l.name}: EMI of ${formatRupees(l.emi)} is due today'
+                : '${l.name}: EMI of ${formatRupees(l.emi)} due in '
+                      '${_daysText(days)}',
+            loan: l,
           ),
         );
       }

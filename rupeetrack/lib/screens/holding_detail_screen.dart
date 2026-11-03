@@ -356,8 +356,10 @@ class _DayHeader extends StatelessWidget {
         relativeDate(date) == shortDate(date)
             ? '${_weekday(date)}, ${shortDate(date)}'
             : '${relativeDate(date)} · ${shortDate(date)}',
-        style: Theme.of(context).textTheme.labelLarge
-            ?.copyWith(color: scheme.primary, fontWeight: FontWeight.w700),
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+          color: scheme.onSurfaceVariant,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

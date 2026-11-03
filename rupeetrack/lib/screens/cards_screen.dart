@@ -12,11 +12,11 @@ import 'pay_bill_sheet.dart';
 
 /// Gradients for the card faces, picked by card id so each keeps its look.
 const _cardFaces = [
-  [Color(0xFF1E1B4B), Color(0xFF4338CA)], // indigo
-  [Color(0xFF111827), Color(0xFF374151)], // graphite
-  [Color(0xFF064E3B), Color(0xFF047857)], // emerald
-  [Color(0xFF0C4A6E), Color(0xFF0369A1)], // ocean
-  [Color(0xFF4C0519), Color(0xFF9F1239)], // wine
+  [Color(0xFF2C2C30), Color(0xFF111113)], // graphite
+  [Color(0xFF173D2C), Color(0xFF0B1F17)], // forest
+  [Color(0xFF3A3F47), Color(0xFF17191D)], // steel
+  [Color(0xFF243447), Color(0xFF0F1620)], // midnight
+  [Color(0xFF453628), Color(0xFF1B1510)], // bronze
 ];
 
 /// Every credit card with its limit, usage, bill and due date.
@@ -180,7 +180,7 @@ class _CardBlock extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(6),
                           gradient: const LinearGradient(
-                            colors: [Color(0xFFE6C77A), Color(0xFFB8913C)],
+                            colors: [Color(0xFFD9C08A), Color(0xFFA2884F)],
                           ),
                         ),
                       ),

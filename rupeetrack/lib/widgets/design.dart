@@ -2,45 +2,49 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-/// RupeeTrack's design system: a calm neutral base, one confident indigo
-/// brand colour, green only for money coming in, amber only for warnings,
-/// rounded vector icons and generous spacing.
+/// RupeeTrack's design system: monochrome. Near-black and white with
+/// neutral greys carry the interface; colour is used only for meaning:
+/// green for money in, a muted red for dues and EMIs, amber for warnings,
+/// and a calm palette inside charts.
 
 // ---- Tokens ------------------------------------------------------------------
 
-/// Brand indigo.
-const kViolet = Color(0xFF4F46E5);
+/// Calm blue accent (links, informational icons).
+const kViolet = Color(0xFF5B7FD6);
 
-/// Lighter brand tone (gradient partner, highlights).
-const kPink = Color(0xFF6366F1);
+/// Neutral slate accent.
+const kPink = Color(0xFF8A94A6);
 
 /// Positive / money in.
-const kLime = Color(0xFF10B981);
+const kLime = Color(0xFF4ADE80);
 
-/// Informational accent.
-const kCyan = Color(0xFF0EA5E9);
+/// Muted teal accent.
+const kCyan = Color(0xFF3E9AA8);
 
 /// Warning.
-const kOrange = Color(0xFFF59E0B);
+const kOrange = Color(0xFFD08B2C);
 
-const kInk = Color(0xFF0B0D12);
+/// Dues, EMIs, overspending.
+const kCoral = Color(0xFFF87171);
 
-/// Deep indigo of the hero card.
-const kAurora = [Color(0xFF1E1B4B), Color(0xFF312E81), Color(0xFF3730A3)];
+const kInk = Color(0xFF000000);
+
+/// The headline card: a flat near-black panel in both themes.
+const kAurora = [Color(0xFF1A1A1A), Color(0xFF1A1A1A)];
 
 const double kRadius = 20;
 const EdgeInsets kPagePadding = EdgeInsets.symmetric(horizontal: 16);
 
 /// Calm, distinguishable palette for categories and charts.
 const List<Color> kChartColors = [
-  Color(0xFF6366F1), // indigo
-  Color(0xFF14B8A6), // teal
-  Color(0xFFF59E0B), // amber
-  Color(0xFFF43F5E), // rose
-  Color(0xFF0EA5E9), // sky
-  Color(0xFF8B5CF6), // violet
-  Color(0xFF10B981), // emerald
-  Color(0xFF64748B), // slate
+  Color(0xFF5B7FD6), // blue
+  Color(0xFF3EA585), // green
+  Color(0xFFD9A441), // ochre
+  Color(0xFFD9695B), // terracotta
+  Color(0xFF8B7FC9), // lavender
+  Color(0xFF4CA3B3), // teal
+  Color(0xFFC77A9A), // dusty rose
+  Color(0xFF8A94A6), // slate
 ];
 
 Color chartColor(int i) => kChartColors[i % kChartColors.length];
@@ -74,24 +78,12 @@ class Panel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final dark = isDark(context);
     return Padding(
       padding: margin,
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(kRadius),
-          border: Border.all(
-            color: dark ? const Color(0xFF222632) : const Color(0xFFE6E8EE),
-          ),
-          boxShadow: dark
-              ? null
-              : [
-                  BoxShadow(
-                    color: const Color(0xFF0F172A).withValues(alpha: 0.04),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+          border: Border.all(color: scheme.outlineVariant),
         ),
         child: Material(
           color: color ?? scheme.surfaceContainerLow,
@@ -133,34 +125,12 @@ class HeroPanel extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: c,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: c.first.withValues(alpha: 0.25),
-            blurRadius: 24,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        border: Border.all(color: const Color(0xFF262626)),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(kRadius + 6),
         child: Stack(
           children: [
-            // A single faint ring for depth, like a premium card.
-            Positioned(
-              right: -60,
-              top: -80,
-              child: Container(
-                width: 220,
-                height: 220,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.07),
-                    width: 28,
-                  ),
-                ),
-              ),
-            ),
             Padding(
               padding: const EdgeInsets.all(22),
               child: DefaultTextStyle.merge(
@@ -196,9 +166,8 @@ class HeroFigure extends StatelessWidget {
         Text(
           label,
           style: t.labelMedium?.copyWith(
-            color: Colors.white.withValues(alpha: 0.8),
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.2,
+            color: Colors.white.withValues(alpha: 0.6),
+            fontWeight: FontWeight.w500,
           ),
         ),
         const SizedBox(height: 4),
@@ -209,7 +178,7 @@ class HeroFigure extends StatelessWidget {
             value,
             style: (big ? t.displaySmall : t.titleMedium)?.copyWith(
               color: Colors.white,
-              fontWeight: FontWeight.w800,
+              fontWeight: big ? FontWeight.w600 : FontWeight.w600,
               letterSpacing: big ? -1 : -0.2,
             ),
           ),
@@ -280,7 +249,9 @@ class Meter extends StatelessWidget {
         child: Stack(
           children: [
             Positioned.fill(
-              child: ColoredBox(color: scheme.surfaceContainerHighest),
+              child: ColoredBox(
+                color: scheme.onSurface.withValues(alpha: 0.12),
+              ),
             ),
             FractionallySizedBox(
               widthFactor: v,
@@ -309,12 +280,15 @@ class IconBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = color ?? Theme.of(context).colorScheme.primary;
+    final scheme = Theme.of(context).colorScheme;
+    final c = color ?? scheme.onSurface;
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: c.withValues(alpha: isDark(context) ? 0.18 : 0.10),
+        color: color == null
+            ? scheme.surfaceContainerHigh
+            : c.withValues(alpha: isDark(context) ? 0.16 : 0.10),
         borderRadius: BorderRadius.circular(size * 0.32),
       ),
       alignment: Alignment.center,
@@ -341,20 +315,13 @@ class GradientButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final enabled = onPressed != null;
+    final on = Theme.of(context).colorScheme.onPrimary;
     return Opacity(
       opacity: enabled ? 1 : 0.5,
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(999),
           color: Theme.of(context).colorScheme.primary,
-          boxShadow: [
-            if (enabled)
-              BoxShadow(
-                color: kViolet.withValues(alpha: 0.25),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-              ),
-          ],
         ),
         child: Material(
           type: MaterialType.transparency,
@@ -367,7 +334,7 @@ class GradientButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (icon != null) ...[
-                    Icon(icon, color: Colors.white),
+                    Icon(icon, color: on),
                     const SizedBox(width: 8),
                   ],
                   Flexible(
@@ -378,9 +345,9 @@ class GradientButton extends StatelessWidget {
                         child: Text(
                           label,
                           maxLines: 1,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
+                          style: TextStyle(
+                            color: on,
+                            fontWeight: FontWeight.w600,
                             fontSize: 16,
                           ),
                         ),
@@ -551,36 +518,47 @@ class MiniBars extends StatelessWidget {
 /// App-wide Material 3 theme in the RupeeTrack style.
 ThemeData buildAppTheme(Brightness b) {
   final dark = b == Brightness.dark;
-  final base = ColorScheme.fromSeed(seedColor: kViolet, brightness: b);
+  final base = ColorScheme.fromSeed(
+    seedColor: const Color(0xFF52525B),
+    brightness: b,
+  );
+  // Dark: pure black, #1A1A1A surfaces, white and grey text, green as the
+  // one positive accent and coral for dues. Light mirrors it on white.
   final scheme = base.copyWith(
-    primary: dark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
-    onPrimary: Colors.white,
-    primaryContainer: dark ? const Color(0xFF1E1B4B) : const Color(0xFFEEF2FF),
+    primary: dark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
+    onPrimary: dark ? Colors.black : Colors.white,
+    primaryContainer: dark ? const Color(0xFF14311F) : const Color(0xFFE3F4E8),
     onPrimaryContainer: dark
-        ? const Color(0xFFE0E7FF)
-        : const Color(0xFF312E81),
-    secondary: dark ? const Color(0xFF94A3B8) : const Color(0xFF475569),
-    tertiary: dark ? const Color(0xFF34D399) : const Color(0xFF059669),
-    tertiaryContainer: dark ? const Color(0xFF052E25) : const Color(0xFFECFDF5),
+        ? const Color(0xFF4ADE80)
+        : const Color(0xFF14532D),
+    secondary: dark ? const Color(0xFF9E9E9E) : const Color(0xFF5F5F66),
+    secondaryContainer: dark
+        ? const Color(0xFF3A3A3A)
+        : const Color(0xFFE4E4E7),
+    onSecondaryContainer: dark ? Colors.white : const Color(0xFF111113),
+    tertiary: dark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
+    tertiaryContainer: dark ? const Color(0xFF14311F) : const Color(0xFFE3F4E8),
     onTertiaryContainer: dark
-        ? const Color(0xFFA7F3D0)
-        : const Color(0xFF065F46),
+        ? const Color(0xFF4ADE80)
+        : const Color(0xFF14532D),
     error: dark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
-    errorContainer: dark ? const Color(0xFF3B1212) : const Color(0xFFFEF2F2),
-    onSurface: dark ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A),
-    onSurfaceVariant: dark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
-    surface: dark ? kInk : const Color(0xFFF6F7F9),
-    surfaceContainerLowest: dark ? const Color(0xFF0E1016) : Colors.white,
-    surfaceContainerLow: dark ? const Color(0xFF141720) : Colors.white,
-    surfaceContainer: dark ? const Color(0xFF181B25) : const Color(0xFFF1F3F7),
+    errorContainer: dark ? const Color(0xFF3A1616) : const Color(0xFFFDECEC),
+    onSurface: dark ? Colors.white : const Color(0xFF111113),
+    onSurfaceVariant: dark ? const Color(0xFF9E9E9E) : const Color(0xFF6B6B74),
+    surface: dark ? kInk : const Color(0xFFF7F7F8),
+    surfaceContainerLowest: dark ? const Color(0xFF0D0D0D) : Colors.white,
+    surfaceContainerLow: dark ? const Color(0xFF1A1A1A) : Colors.white,
+    surfaceContainer: dark ? const Color(0xFF1C1C1C) : const Color(0xFFF2F2F4),
     surfaceContainerHigh: dark
-        ? const Color(0xFF1D212C)
-        : const Color(0xFFEDEFF4),
+        ? const Color(0xFF242424)
+        : const Color(0xFFEEEEF0),
     surfaceContainerHighest: dark
-        ? const Color(0xFF262B38)
-        : const Color(0xFFE4E7EE),
-    outline: dark ? const Color(0xFF475569) : const Color(0xFF94A3B8),
-    outlineVariant: dark ? const Color(0xFF262B38) : const Color(0xFFE2E5EC),
+        ? const Color(0xFF2E2E2E)
+        : const Color(0xFFE4E4E7),
+    inverseSurface: dark ? const Color(0xFFEDEDED) : const Color(0xFF1A1A1A),
+    onInverseSurface: dark ? Colors.black : Colors.white,
+    outline: dark ? const Color(0xFF5C5C5C) : const Color(0xFFA1A1AA),
+    outlineVariant: dark ? const Color(0xFF262626) : const Color(0xFFE6E6E9),
   );
   final typography = Typography.material2021(
     platform: TargetPlatform.android,
@@ -633,9 +611,9 @@ ThemeData buildAppTheme(Brightness b) {
     ),
     navigationBarTheme: NavigationBarThemeData(
       height: 72,
-      backgroundColor: dark ? const Color(0xFF0F1117) : Colors.white,
+      backgroundColor: dark ? kInk : Colors.white,
       surfaceTintColor: Colors.transparent,
-      indicatorColor: scheme.primaryContainer,
+      indicatorColor: scheme.secondaryContainer,
       indicatorShape: const StadiumBorder(),
       labelTextStyle: WidgetStateProperty.resolveWith(
         (states) => text.labelSmall?.copyWith(
@@ -656,13 +634,13 @@ ThemeData buildAppTheme(Brightness b) {
       ),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      backgroundColor: scheme.primary,
+      backgroundColor: dark ? const Color(0xFF3A3A3A) : const Color(0xFF111113),
       foregroundColor: Colors.white,
       elevation: 0,
       focusElevation: 0,
       hoverElevation: 0,
       highlightElevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      shape: const CircleBorder(),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -684,8 +662,10 @@ ThemeData buildAppTheme(Brightness b) {
       shape: const StadiumBorder(),
       side: BorderSide(color: scheme.outlineVariant),
       backgroundColor: scheme.surfaceContainerLow,
-      selectedColor: scheme.primaryContainer,
-      labelStyle: text.labelLarge?.copyWith(fontWeight: FontWeight.w600),
+      selectedColor: scheme.secondaryContainer,
+      iconTheme: IconThemeData(color: scheme.onSurfaceVariant, size: 18),
+      checkmarkColor: scheme.onSurface,
+      labelStyle: text.labelLarge?.copyWith(fontWeight: FontWeight.w500),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
     ),
     filledButtonTheme: FilledButtonThemeData(
@@ -735,7 +715,7 @@ ThemeData buildAppTheme(Brightness b) {
     ),
     listTileTheme: ListTileThemeData(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-      titleTextStyle: text.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+      titleTextStyle: text.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
     ),
     dividerTheme: DividerThemeData(color: scheme.outlineVariant),
   );

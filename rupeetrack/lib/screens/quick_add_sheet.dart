@@ -387,11 +387,7 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                         for (final c in categories)
                           ChoiceChip(
                             showCheckmark: false,
-                            avatar: Icon(
-                              iconForCategory(c),
-                              size: 18,
-                              color: colorForCategory(c),
-                            ),
+                            avatar: Icon(iconForCategory(c), size: 18),
                             label: Text(c),
                             selected: _category == c,
                             onSelected: (_) => setState(() => _category = c),

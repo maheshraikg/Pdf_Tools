@@ -92,8 +92,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   child: Text(
                     relativeDate(t.date),
                     style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: scheme.primary,
-                      fontWeight: FontWeight.w700,
+                      color: scheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),

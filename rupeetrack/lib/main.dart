@@ -6,11 +6,10 @@ import 'app/native.dart';
 import 'app/notifications.dart';
 import 'app/scope.dart';
 import 'app/store.dart';
-import 'screens/accounts_screen.dart';
 import 'screens/auto_detect_screen.dart';
 import 'screens/cards_screen.dart';
 import 'screens/home_screen.dart';
-import 'screens/investments_screen.dart';
+import 'screens/more_screen.dart';
 import 'screens/quick_add_sheet.dart';
 import 'screens/transactions_screen.dart';
 import 'widgets/design.dart';
@@ -130,68 +129,98 @@ class _HomeShellState extends State<HomeShell> {
       HomeScreen(onOpenTab: _openTab),
       const TransactionsScreen(),
       const CardsScreen(),
-      const InvestmentsScreen(),
-      const AccountsScreen(),
+      const MoreScreen(),
     ];
+    final empty = context.store.isEmpty;
     return Scaffold(
       body: IndexedStack(index: _tab, children: pages),
-      floatingActionButton: context.store.isEmpty ? null : const _AddButton(),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _tab,
-        onDestinationSelected: _openTab,
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home_rounded),
-            label: 'Home',
+      bottomNavigationBar: empty
+          ? null
+          : _BottomBar(selected: _tab, onSelected: _openTab),
+    );
+  }
+}
+
+/// Four destinations with the round add button in the middle.
+class _BottomBar extends StatelessWidget {
+  const _BottomBar({required this.selected, required this.onSelected});
+  final int selected;
+  final ValueChanged<int> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    Widget tab(int i, IconData icon, IconData active, String label) {
+      final on = i == selected;
+      final color = on ? scheme.onSurface : scheme.onSurfaceVariant;
+      return Expanded(
+        child: InkResponse(
+          onTap: () => onSelected(i),
+          radius: 36,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(on ? active : icon, color: color, size: 24),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: color,
+                  fontWeight: on ? FontWeight.w700 : FontWeight.w500,
+                ),
+              ),
+            ],
           ),
-          NavigationDestination(
-            icon: Icon(Icons.receipt_long_outlined),
-            selectedIcon: Icon(Icons.receipt_long_rounded),
-            label: 'Activity',
+        ),
+      );
+    }
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        border: Border(top: BorderSide(color: scheme.outlineVariant)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 68,
+          child: Row(
+            children: [
+              tab(0, Icons.home_outlined, Icons.home_rounded, 'Home'),
+              tab(
+                1,
+                Icons.receipt_long_outlined,
+                Icons.receipt_long_rounded,
+                'Activity',
+              ),
+              const Expanded(child: Center(child: _AddButton())),
+              tab(
+                2,
+                Icons.credit_card_outlined,
+                Icons.credit_card_rounded,
+                'Cards',
+              ),
+              tab(3, Icons.grid_view_outlined, Icons.grid_view_rounded, 'More'),
+            ],
           ),
-          NavigationDestination(
-            icon: Icon(Icons.credit_card_outlined),
-            selectedIcon: Icon(Icons.credit_card_rounded),
-            label: 'Cards',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.show_chart_rounded),
-            selectedIcon: Icon(Icons.insights_rounded),
-            label: 'Invest',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.account_balance_outlined),
-            selectedIcon: Icon(Icons.account_balance_rounded),
-            label: 'Accounts',
-          ),
-        ],
+        ),
       ),
     );
   }
 }
 
-/// Compact square "+" button with a soft tinted shadow, in place of a
-/// loud extended pill.
+/// Round grey + button in the middle of the bottom bar.
 class _AddButton extends StatelessWidget {
   const _AddButton();
 
   @override
   Widget build(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: primary.withValues(alpha: 0.28),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
+    return SizedBox(
+      width: 54,
+      height: 54,
       child: FloatingActionButton(
         tooltip: 'Add entry',
+        heroTag: null,
         onPressed: () => showQuickAdd(context),
         child: const Icon(Icons.add_rounded, size: 30),
       ),

@@ -10,8 +10,8 @@ import 'design.dart';
 extension MoneyColors on ColorScheme {
   /// Money coming in.
   Color get moneyIn => brightness == Brightness.light
-      ? const Color(0xFF059669)
-      : const Color(0xFF34D399);
+      ? const Color(0xFF15803D)
+      : const Color(0xFF4ADE80);
 
   /// Money going out: shown in the normal text colour, so lists stay calm.
   Color get moneyOut => onSurface;
@@ -32,6 +32,7 @@ const categoryIcons = <String, IconData>{
   'Entertainment': Icons.movie_rounded,
   'Travel': Icons.flight_rounded,
   'Education': Icons.school_rounded,
+  'EMI': Icons.event_repeat_rounded,
   'Other': Icons.category_rounded,
   'Salary': Icons.work_rounded,
   'Interest': Icons.savings_rounded,
@@ -41,22 +42,23 @@ const categoryIcons = <String, IconData>{
 
 /// One calm colour per category, used for its icon everywhere.
 const categoryColors = <String, Color>{
-  'Food': Color(0xFFF97316),
-  'Groceries': Color(0xFF16A34A),
-  'Transport': Color(0xFF0EA5E9),
-  'Fuel': Color(0xFFEAB308),
-  'Shopping': Color(0xFFEC4899),
-  'Bills': Color(0xFF6366F1),
-  'Rent': Color(0xFF8B5CF6),
-  'Health': Color(0xFFEF4444),
-  'Entertainment': Color(0xFFD946EF),
-  'Travel': Color(0xFF06B6D4),
-  'Education': Color(0xFF3B82F6),
-  'Other': Color(0xFF64748B),
-  'Salary': Color(0xFF059669),
-  'Interest': Color(0xFF0D9488),
-  'Business': Color(0xFF0891B2),
-  'Gift': Color(0xFFDB2777),
+  'Food': Color(0xFFD9A441),
+  'Groceries': Color(0xFF3EA585),
+  'Transport': Color(0xFF5B7FD6),
+  'Fuel': Color(0xFFC9925A),
+  'Shopping': Color(0xFFC77A9A),
+  'Bills': Color(0xFF8B7FC9),
+  'Rent': Color(0xFF7A8FB0),
+  'Health': Color(0xFFD9695B),
+  'Entertainment': Color(0xFFB07CC0),
+  'Travel': Color(0xFF4CA3B3),
+  'Education': Color(0xFF6C8FC7),
+  'EMI': Color(0xFFE0604F),
+  'Other': Color(0xFF8A94A6),
+  'Salary': Color(0xFF22A06B),
+  'Interest': Color(0xFF3E9A8A),
+  'Business': Color(0xFF4C93A8),
+  'Gift': Color(0xFFC77A9A),
 };
 
 IconData iconForCategory(String? c) =>
@@ -171,7 +173,7 @@ class TxnTile extends StatelessWidget {
     ].join(' · ');
     return ListTile(
       onTap: onTap,
-      leading: IconBadge(iconForTxn(txn), color: colorForTxn(txn)),
+      leading: IconBadge(iconForTxn(txn)),
       title: Row(
         children: [
           Flexible(
@@ -372,14 +374,14 @@ class AmountField extends StatelessWidget {
       // The hero of the add screen: a huge amount, centred with its ₹.
       final scheme = Theme.of(context).colorScheme;
       final big = Theme.of(context).textTheme.displayMedium?.copyWith(
-        fontWeight: FontWeight.w800,
+        fontWeight: FontWeight.w700,
         letterSpacing: -1.5,
         color: scheme.onSurface,
       );
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('₹', style: big?.copyWith(color: scheme.primary)),
+          Text('₹', style: big?.copyWith(color: scheme.onSurfaceVariant)),
           const SizedBox(width: 4),
           Flexible(
             child: IntrinsicWidth(
@@ -399,7 +401,7 @@ class AmountField extends StatelessWidget {
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
                   hintText: '0',
-                  hintStyle: big?.copyWith(color: scheme.outlineVariant),
+                  hintStyle: big?.copyWith(color: scheme.outline),
                 ),
               ),
             ),

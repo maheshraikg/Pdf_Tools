@@ -382,6 +382,7 @@ class Txn {
     this.receiptPath,
     this.recurringId,
     this.sourceKey,
+    this.loanId,
   });
 
   final int id;
@@ -406,6 +407,9 @@ class Txn {
   /// same message is never imported twice.
   final String? sourceKey;
 
+  /// The [Loan] this entry pays an EMI on.
+  final int? loanId;
+
   /// Where an automatically detected entry came from, for display.
   String? get sourceLabel => switch (sourceKey?.split(':').first) {
     'sms' => 'SMS',
@@ -429,6 +433,7 @@ class Txn {
     receiptPath: receiptPath,
     recurringId: recurringId ?? this.recurringId,
     sourceKey: sourceKey,
+    loanId: loanId,
   );
 
   Map<String, Object?> toJson() => {
@@ -446,6 +451,7 @@ class Txn {
     if (receiptPath != null) 'receipt': receiptPath,
     if (recurringId != null) 'recurring': recurringId,
     if (sourceKey != null) 'src': sourceKey,
+    if (loanId != null) 'loan': loanId,
   };
 
   factory Txn.fromJson(Map<String, dynamic> j) => Txn(
@@ -463,6 +469,7 @@ class Txn {
     receiptPath: j['receipt'] as String?,
     recurringId: j['recurring'] as int?,
     sourceKey: j['src'] as String?,
+    loanId: j['loan'] as int?,
   );
 }
 
@@ -519,6 +526,7 @@ const expenseCategories = [
   'Entertainment',
   'Travel',
   'Education',
+  'EMI',
   'Other',
 ];
 

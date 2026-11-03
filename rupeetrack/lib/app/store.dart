@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../ledger/ledger.dart';
+import '../models/goals.dart';
 import '../models/models.dart';
 import '../data/amfi.dart';
 import '../models/money.dart';
@@ -62,9 +63,15 @@ class FinanceStore extends ChangeNotifier {
   final List<Txn> _txns = [];
   final List<Budget> _budgets = [];
   final List<Recurring> _recurring = [];
+  final List<Loan> _loans = [];
+  final List<SavingsGoal> _goals = [];
   int _nextId = 1;
 
-  ThemeMode themeMode = ThemeMode.system;
+  /// Interface language code ('en', 'hi', 'kn', …).
+  String language = 'en';
+
+  /// Black theme by default.
+  ThemeMode themeMode = ThemeMode.dark;
 
   /// Card due-date and recurring-entry reminders.
   bool notifications = true;
@@ -114,6 +121,8 @@ class FinanceStore extends ChangeNotifier {
     final txns = list('txns', Txn.fromJson);
     final budgets = list('budgets', Budget.fromJson);
     final recurring = list('recurring', Recurring.fromJson);
+    final loans = list('loans', Loan.fromJson);
+    final goals = list('goals', SavingsGoal.fromJson);
     _accounts
       ..clear()
       ..addAll(accounts);
@@ -132,8 +141,20 @@ class FinanceStore extends ChangeNotifier {
     _recurring
       ..clear()
       ..addAll(recurring);
+    _loans
+      ..clear()
+      ..addAll(loans);
+    _goals
+      ..clear()
+      ..addAll(goals);
+    language = (j['language'] as String?) ?? language;
     _nextId = (j['nextId'] as int?) ?? 1;
-    themeMode = ThemeMode.values.asNameMap()[j['theme']] ?? ThemeMode.system;
+    // Before v2 the theme was never chosen explicitly ('system' was the
+    // default); move those users to the black theme once.
+    final theme = j['themeV2'] == true
+        ? j['theme']
+        : (j['theme'] == 'light' ? 'light' : 'dark');
+    themeMode = ThemeMode.values.asNameMap()[theme] ?? ThemeMode.dark;
     notifications = (j['notifications'] as bool?) ?? true;
     smsSync = (j['smsSync'] as bool?) ?? false;
     lastSync = j['lastSync'] == null
@@ -153,8 +174,12 @@ class FinanceStore extends ChangeNotifier {
     'txns': _txns.map((e) => e.toJson()).toList(),
     'budgets': _budgets.map((e) => e.toJson()).toList(),
     'recurring': _recurring.map((e) => e.toJson()).toList(),
+    'loans': _loans.map((e) => e.toJson()).toList(),
+    'goals': _goals.map((e) => e.toJson()).toList(),
+    'language': language,
     'nextId': _nextId,
     'theme': themeMode.name,
+    'themeV2': true,
     'notifications': notifications,
     'smsSync': smsSync,
     if (lastSync != null) 'lastSync': lastSync!.toIso8601String(),
@@ -170,6 +195,8 @@ class FinanceStore extends ChangeNotifier {
       investments: List.unmodifiable(_investments),
       budgets: List.unmodifiable(_budgets),
       recurring: List.unmodifiable(_recurring),
+      loans: List.unmodifiable(_loans),
+      goals: List.unmodifiable(_goals),
       txns: _txns,
     );
   }
@@ -673,4 +700,84 @@ class FinanceStore extends ChangeNotifier {
     themeMode = mode;
     return _save();
   }
+
+  Future<void> setLanguage(String code) {
+    language = code;
+    return _save();
+  }
+
+  // ---- Loans and savings goals -------------------------------------------
+
+  /// Adds [loan] (id 0) or replaces the loan with the same id.
+  Future<Loan> saveLoan(Loan loan) async {
+    final l = loan.id == 0
+        ? Loan(
+            id: _newId(),
+            name: loan.name,
+            lender: loan.lender,
+            principal: loan.principal,
+            emi: loan.emi,
+            interestRate: loan.interestRate,
+            tenureMonths: loan.tenureMonths,
+            firstEmiDate: loan.firstEmiDate,
+            paidBefore: loan.paidBefore,
+            accountId: loan.accountId,
+            closed: loan.closed,
+          )
+        : loan;
+    _upsert(_loans, l, (e) => e.id);
+    await _save();
+    return l;
+  }
+
+  /// Deletes the loan; EMIs already recorded stay as expenses.
+  Future<void> deleteLoan(int id) {
+    _loans.removeWhere((l) => l.id == id);
+    return _save();
+  }
+
+  /// Records one EMI on [loan] as an expense from [accountId].
+  Future<List<String>> payEmi(
+    Loan loan, {
+    required int accountId,
+    required DateTime date,
+    Paise? amount,
+  }) => saveTxn(
+    Txn(
+      id: 0,
+      type: TxnType.expense,
+      amount: amount ?? loan.emi,
+      date: date,
+      category: 'EMI',
+      note: loan.name,
+      fromAccountId: accountId,
+      loanId: loan.id,
+    ),
+  );
+
+  Future<SavingsGoal> saveGoal(SavingsGoal goal) async {
+    final g = goal.id == 0
+        ? SavingsGoal(
+            id: _newId(),
+            name: goal.name,
+            target: goal.target,
+            targetDate: goal.targetDate,
+            entries: goal.entries,
+          )
+        : goal;
+    _upsert(_goals, g, (e) => e.id);
+    await _save();
+    return g;
+  }
+
+  Future<void> deleteGoal(int id) {
+    _goals.removeWhere((g) => g.id == id);
+    return _save();
+  }
+
+  /// Puts [amount] aside for [goal] (negative to take money out).
+  Future<void> addToGoal(SavingsGoal goal, Paise amount, DateTime date) =>
+      saveGoal(
+        goal.copyWith(entries: [...goal.entries, GoalEntry(date, amount)]),
+      );
 }
