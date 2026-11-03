@@ -169,6 +169,15 @@ verification and a yearly security assessment for this scope. Reading SMS
 on the Play Store needs the SMS permission declaration ("SMS-based money
 management").
 
+## Google Play
+
+`store/PLAY_CONSOLE.md` walks through publishing step by step, with the
+answers for every Play Console form. `store/` holds the icon, feature
+graphic, screenshots and the listing text in six languages; `PRIVACY.md`
+is the privacy policy. The Play build (`--flavor play`) has no SMS
+permission; CI builds a signed `.aab` once the `RUPIO_UPLOAD_*` secrets are
+set.
+
 ## Icons
 
 The logo (a white wallet with a green tab) is `store/icon-source.png`.
