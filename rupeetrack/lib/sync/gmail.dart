@@ -1,6 +1,6 @@
 /// Optional Gmail source: reads bank alert emails and statement PDFs with
 /// read-only access. Requests go straight from the phone to Google; there is
-/// no RupeeTrack server.
+/// no Rupio server.
 library;
 
 import 'dart:convert';

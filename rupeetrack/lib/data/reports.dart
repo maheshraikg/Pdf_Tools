@@ -43,7 +43,7 @@ Uint8List buildExcelReport(Ledger l, DateTime today) {
     XlsxSheet(
       'Summary',
       [
-        ['RupeeTrack report', _date(today)],
+        ['Rupio report', _date(today)],
         ['Net worth', Money(worth.total)],
         ['In accounts', Money(worth.cash)],
         ['Investments', Money(worth.investments)],
@@ -183,8 +183,8 @@ Future<Uint8List> buildPdfReport(
   final from = monthStart(today), to = monthEnd(today);
   const teal = PdfColor.fromInt(0xFF00695C);
   final doc = pw.Document(
-    title: 'RupeeTrack report ${_date(today)}',
-    author: 'RupeeTrack',
+    title: 'Rupio report ${_date(today)}',
+    author: 'Rupio',
     theme: pw.ThemeData.withFont(
       base: pw.Font.ttf(regular),
       bold: pw.Font.ttf(bold),
@@ -259,7 +259,7 @@ Future<Uint8List> buildPdfReport(
           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
           children: [
             pw.Text(
-              'RupeeTrack',
+              'Rupio',
               style: pw.TextStyle(
                 fontSize: 16,
                 fontWeight: pw.FontWeight.bold,

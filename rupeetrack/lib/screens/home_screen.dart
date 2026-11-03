@@ -795,13 +795,33 @@ class _Welcome extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton.icon(
-              onPressed: () => showLanguagePicker(context),
-              icon: const Icon(Icons.translate, size: 18),
-              label: Text(currentLanguageName()),
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Rupio',
+                      style: t.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    Text(
+                      tr('Expense Tracker'),
+                      style: t.bodyMedium?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () => showLanguagePicker(context),
+                icon: const Icon(Icons.translate, size: 18),
+                label: Text(currentLanguageName()),
+              ),
+            ],
           ),
           const Spacer(),
           Text.rich(

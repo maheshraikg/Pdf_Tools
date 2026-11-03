@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-/// RupeeTrack's design system: monochrome. Near-black and white with
+/// Rupio's design system: monochrome. Near-black and white with
 /// neutral greys carry the interface; colour is used only for meaning:
 /// green for money in, a muted red for dues and EMIs, amber for warnings,
 /// and a calm palette inside charts.
@@ -515,7 +515,7 @@ class MiniBars extends StatelessWidget {
 
 // ---- Theme -------------------------------------------------------------------
 
-/// App-wide Material 3 theme in the RupeeTrack style.
+/// App-wide Material 3 theme in the Rupio style.
 ThemeData buildAppTheme(Brightness b) {
   final dark = b == Brightness.dark;
   final base = ColorScheme.fromSeed(

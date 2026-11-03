@@ -1,4 +1,7 @@
-# RupeeTrack
+# Rupio – Expense Tracker
+
+_Formerly RupeeTrack. The Android package id stays `com.kspstadk.rupeetrack`, so
+updates install over earlier builds and keep their data._
 
 A personal finance tracker in Indian rupees for Android, built with Flutter.
 It tracks savings accounts, credit cards and investments, and recording an
@@ -75,7 +78,7 @@ sign-up and no bank login.
   you already typed in, or that arrive by both SMS and email, are counted
   once; deleted imports never come back. New SMS are read whenever the app
   opens.
-- **Statement PDFs**: choose one, or share/open it with RupeeTrack from
+- **Statement PDFs**: choose one, or share/open it with Rupio from
   Gmail, WhatsApp or Files. Password-protected statements are unlocked on
   the phone.
 - **Gmail (optional)**: read-only access to bank alert emails and

@@ -6,7 +6,7 @@
     <!-- Bank SMS are read on the phone to detect card and account activity. -->
     <uses-permission android:name="android.permission.READ_SMS" />
     <application
-        android:label="RupeeTrack"
+        android:label="Rupio"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -30,7 +30,7 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <!-- "Share" or "Open with" a bank statement PDF into RupeeTrack. -->
+            <!-- "Share" or "Open with" a bank statement PDF into Rupio. -->
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />

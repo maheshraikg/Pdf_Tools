@@ -263,7 +263,7 @@ class _AccountFormState extends State<_AccountForm> {
             maxLength: 6,
             decoration: InputDecoration(
               labelText: tr('Last 4 digits of account (optional)'),
-              helperText: tr('Lets RupeeTrack match bank SMS to this account'),
+              helperText: tr('Lets Rupio match bank SMS to this account'),
               counterText: '',
             ),
           ),

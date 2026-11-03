@@ -42,7 +42,7 @@ class GoalsScreen extends StatelessWidget {
                 tr('Bike, trip or wedding'),
               ],
               note:
-                  'Set a target and a date. RupeeTrack tells you how much '
+                  'Set a target and a date. Rupio tells you how much '
                   'to put aside each month.',
               actionLabel: tr('Add a goal'),
               onAction: () => showGoalForm(context),

@@ -323,7 +323,7 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
       return EmptyState(
         icon: Icons.account_balance,
         message: tr(
-          'Add a bank account, cash or a credit card first so that RupeeTrack knows where the money comes from.',
+          'Add a bank account, cash or a credit card first so that Rupio knows where the money comes from.',
         ),
         actionLabel: tr('Add account'),
         onAction: () async {

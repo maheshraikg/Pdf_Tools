@@ -6,7 +6,7 @@
 6|Credit card due dates and recurring payments
 7|Today
 8|Yesterday
-9|This file is not a RupeeTrack backup
+9|This file is not a Rupio backup
 10|The backup file is damaged
 11|Spent in {0}
 12|{0}: {1} was due {2} ago
@@ -20,7 +20,7 @@
 20|{0}: {1}% of the budget used, {2} left
 21|1 day
 22|{0} days
-23|RupeeTrack
+23|Rupio
 24|Home
 25|Activity
 26|Cards
@@ -45,7 +45,7 @@
 45|Saved this month
 46|Could not read: {0}
 47|Something went wrong: {0}
-48|Allow "SMS" for RupeeTrack in the settings that opened, then tap Scan again.
+48|Allow "SMS" for Rupio in the settings that opened, then tap Scan again.
 49|SMS access was not allowed.
 50|SMS: {0}
 51|Statement: {0}
@@ -68,7 +68,7 @@
 68|Ignore
 69|Add
 70|Statement PDF
-71|Choose a card or bank statement PDF, or share one to RupeeTrack from Gmail, WhatsApp or Files. Password-protected statements are fine.
+71|Choose a card or bank statement PDF, or share one to Rupio from Gmail, WhatsApp or Files. Password-protected statements are fine.
 72|Choose statement PDF
 73|Gmail (optional)
 74|Read-only access to bank alert emails and statement PDFs. Google asks you to allow it.
@@ -78,7 +78,7 @@
 78|Disconnect
 79|How to set up
 80|Set up Gmail access
-81|Google only lets apps read Gmail after the developer registers them. For personal use this is free:\n\n1. In console.cloud.google.com create a project and enable the Gmail API.\n2. OAuth consent screen: External, add the gmail.readonly scope and add your Gmail address (up to 100 people) as test users.\n3. Credentials: create an "Android" OAuth client with package com.kspstadk.rupeetrack and the app's SHA-1 (see the README), and a "Web application" client.\n4. Build the app with the web client id: in the GitHub repository add an Actions variable GMAIL_WEB_CLIENT_ID.\n\nUntil then, statement PDFs can be shared to RupeeTrack from the Gmail app.
+81|Google only lets apps read Gmail after the developer registers them. For personal use this is free:\n\n1. In console.cloud.google.com create a project and enable the Gmail API.\n2. OAuth consent screen: External, add the gmail.readonly scope and add your Gmail address (up to 100 people) as test users.\n3. Credentials: create an "Android" OAuth client with package com.kspstadk.rupeetrack and the app's SHA-1 (see the README), and a "Web application" client.\n4. Build the app with the web client id: in the GitHub repository add an Actions variable GMAIL_WEB_CLIENT_ID.\n\nUntil then, statement PDFs can be shared to Rupio from the Gmail app.
 82|OK
 83|this PDF does not look like a bank or card statement
 84|statement PDF
@@ -92,8 +92,8 @@
 92|Bank statement
 93|{0}{1} · {2} transactions
 94|Bank
-95|This card is not in RupeeTrack yet. Add it (with its last digits) from Auto-detect, then import the statement again.
-96|This account is not in RupeeTrack yet. Add it (with its last digits) from Auto-detect, then import the statement again.
+95|This card is not in Rupio yet. Add it (with its last digits) from Auto-detect, then import the statement again.
+96|This account is not in Rupio yet. Add it (with its last digits) from Auto-detect, then import the statement again.
 97|{0} new entries
 98|{0} already in the app (skipped)
 99|Bill: {0} due {1}
@@ -139,7 +139,7 @@
 139|e.g. Paytm wallet
 140|Current balance
 141|Last 4 digits of account (optional)
-142|Lets RupeeTrack match bank SMS to this account
+142|Lets Rupio match bank SMS to this account
 143|Changing the balance keeps all transactions; the starting balance is adjusted so the total matches.
 144|Enter the card name
 145|Last four digits must be 4 numbers
@@ -218,7 +218,7 @@
 218|Add spend
 219|Invested
 220|Not set
-221|Your bank said the balance was {0} on {1}; RupeeTrack shows {2}.
+221|Your bank said the balance was {0} on {1}; Rupio shows {2}.
 222|Use bank balance
 223|No transactions yet.
 224|Opening amount owed
@@ -406,7 +406,7 @@
 406|Choose from gallery
 407|Could not attach the photo: {0}
 408|New category
-409|Add a bank account, cash or a credit card first so that RupeeTrack knows where the money comes from.
+409|Add a bank account, cash or a credit card first so that Rupio knows where the money comes from.
 410|Edit transaction
 411|Add transaction
 412|Category
@@ -555,3 +555,4 @@
 555|Bal
 556|Owed
 557|tracked.
+558|Expense Tracker

@@ -306,7 +306,7 @@ class HoldingDetailScreen extends StatelessWidget {
                     children: [
                       Text(
                         tr(
-                          'Your bank said the balance was {0} on {1}; RupeeTrack shows {2}.',
+                          'Your bank said the balance was {0} on {1}; Rupio shows {2}.',
                           [
                             formatRupees(hint.balance),
                             shortDate(hint.date),

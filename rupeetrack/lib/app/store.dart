@@ -107,16 +107,14 @@ class FinanceStore extends ChangeNotifier {
     if (raw == null) {
       // First start: use the phone's language when the app has it.
       final phone = ui.PlatformDispatcher.instance.locale.languageCode;
-      language = availableLanguages.any((l) => l.code == phone)
-          ? phone
-          : 'en';
+      language = availableLanguages.any((l) => l.code == phone) ? phone : 'en';
       setCurrentLanguage(language);
       return;
     }
     try {
       _loadJson(jsonDecode(raw) as Map<String, dynamic>);
     } catch (e) {
-      debugPrint('RupeeTrack: could not read saved data: $e');
+      debugPrint('Rupio: could not read saved data: $e');
     }
     _rebuild();
   }
@@ -684,17 +682,17 @@ class FinanceStore extends ChangeNotifier {
           .convert({'app': 'rupeetrack', 'version': 1, ...toJson()});
 
   /// Replaces all data with a backup made by [backupJson]. Throws
-  /// [FormatException] if the file is not a RupeeTrack backup; the current
+  /// [FormatException] if the file is not a Rupio backup; the current
   /// data is kept in that case.
   Future<void> restoreBackup(String json) async {
     final Object? decoded;
     try {
       decoded = jsonDecode(json);
     } on FormatException {
-      throw FormatException(tr('This file is not a RupeeTrack backup'));
+      throw FormatException(tr('This file is not a Rupio backup'));
     }
     if (decoded is! Map<String, dynamic> || decoded['app'] != 'rupeetrack') {
-      throw FormatException(tr('This file is not a RupeeTrack backup'));
+      throw FormatException(tr('This file is not a Rupio backup'));
     }
     try {
       _loadJson(decoded);

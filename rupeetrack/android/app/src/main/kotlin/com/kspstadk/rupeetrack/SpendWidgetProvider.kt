@@ -30,7 +30,7 @@ class SpendWidgetProvider : AppWidgetProvider() {
         private const val PREFS = "rupeetrack_widget"
         private const val KEY = "data"
 
-        /** Stores [json] and redraws every RupeeTrack widget. */
+        /** Stores [json] and redraws every Rupio widget. */
         fun save(context: Context, json: String) {
             context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
                 .edit().putString(KEY, json).apply()
@@ -45,7 +45,7 @@ class SpendWidgetProvider : AppWidgetProvider() {
             val views = RemoteViews(context.packageName, R.layout.rupeetrack_widget)
             val raw = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
                 .getString(KEY, null)
-            var label = "RupeeTrack"
+            var label = "Rupio"
             var total = "₹0"
             var values = DoubleArray(0)
             var color = Color.parseColor("#F87171")

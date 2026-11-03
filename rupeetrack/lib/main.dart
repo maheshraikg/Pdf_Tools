@@ -57,7 +57,7 @@ class _RupeeTrackAppState extends State<RupeeTrackApp>
     if (widget.background) _listenForShares();
   }
 
-  /// Statement PDFs shared to (or opened with) RupeeTrack.
+  /// Statement PDFs shared to (or opened with) Rupio.
   void _listenForShares() {
     void open(String? path) {
       final ctx = _navigator.currentContext;
@@ -114,7 +114,7 @@ class _RupeeTrackAppState extends State<RupeeTrackApp>
           locale: Locale(store.language),
           supportedLocales: [for (final l in appLanguages) Locale(l.code)],
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
-          title: tr('RupeeTrack'),
+          title: 'Rupio – ${tr('Expense Tracker')}',
           debugShowCheckedModeBanner: false,
           theme: buildAppTheme(Brightness.light),
           darkTheme: buildAppTheme(Brightness.dark),

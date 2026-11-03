@@ -1,4 +1,4 @@
-name: RupeeTrack (Flutter)
+name: Rupio (Flutter)
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 # A fixed tag gives a permanent direct link to the newest APK:
-#   https://github.com/<owner>/<repo>/releases/download/rupeetrack-keep/RupeeTrack.apk
+#   https://github.com/<owner>/<repo>/releases/download/rupeetrack-keep/Rupio.apk
 # "keep" protects it from manage-releases.yml pruning; it is a pre-release so
 # it never becomes the PDF Toolkit's "Latest" release.
 env:
@@ -77,14 +77,18 @@ jobs:
           GH_REPO: ${{ github.repository }}
           SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
-          mv app-release.apk RupeeTrack.apk
+          mv app-release.apk Rupio.apk
           if gh release view "$APK_TAG" >/dev/null 2>&1; then
             # Point the tag at the commit this APK was built from.
             gh api -X PATCH "repos/$GH_REPO/git/refs/tags/$APK_TAG" -f sha="$SHA" -F force=true
+            gh release edit "$APK_TAG" --title "Rupio (latest build)" \
+              --notes "Newest Rupio APK, rebuilt automatically. Direct link: https://github.com/$GH_REPO/releases/download/$APK_TAG/Rupio.apk"
+            # The app was called RupeeTrack before; drop the old file name.
+            gh release delete-asset "$APK_TAG" RupeeTrack.apk -y || true
           else
             gh release create "$APK_TAG" --target "$SHA" --prerelease --latest=false \
-              --title "RupeeTrack (latest build)" \
-              --notes "Newest RupeeTrack APK, rebuilt automatically. Direct link: https://github.com/$GH_REPO/releases/download/$APK_TAG/RupeeTrack.apk"
+              --title "Rupio (latest build)" \
+              --notes "Newest Rupio APK, rebuilt automatically. Direct link: https://github.com/$GH_REPO/releases/download/$APK_TAG/Rupio.apk"
           fi
-          gh release upload "$APK_TAG" RupeeTrack.apk --clobber
-          echo "Direct download: https://github.com/$GH_REPO/releases/download/$APK_TAG/RupeeTrack.apk" >> "$GITHUB_STEP_SUMMARY"
+          gh release upload "$APK_TAG" Rupio.apk --clobber
+          echo "Direct download: https://github.com/$GH_REPO/releases/download/$APK_TAG/Rupio.apk" >> "$GITHUB_STEP_SUMMARY"
