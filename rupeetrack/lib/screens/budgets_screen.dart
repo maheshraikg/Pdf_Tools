@@ -148,8 +148,9 @@ class BudgetsScreen extends StatelessWidget {
                 for (final c in others)
                   ListTile(
                     leading: IconBadge(
-                      categoryIcons[c] ?? Icons.category,
-                      size: 36,
+                      iconForCategory(c),
+                      size: 40,
+                      color: colorForCategory(c),
                     ),
                     title: Text(c),
                     subtitle: (spent[c] ?? 0) > 0

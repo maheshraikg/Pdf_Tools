@@ -15,7 +15,7 @@ void main() {
     await tester.pumpWidget(
       RupeeTrackApp(store: FinanceStore.memory(), background: false),
     );
-    expect(find.text('All your money,\none simple view.'), findsOneWidget);
+    expect(find.text('Know where every\nrupee goes.'), findsOneWidget);
     expect(find.byType(FloatingActionButton), findsNothing);
   });
 
@@ -23,7 +23,8 @@ void main() {
     final store = FinanceStore.memory();
     await store.addAccount('SBI Savings', AccountKind.savings, 1000000);
     await tester.pumpWidget(RupeeTrackApp(store: store, background: false));
-    expect(find.text('₹10,000'), findsOneWidget); // net worth
+    expect(find.text('Spent in October'), findsOneWidget);
+    expect(find.text('₹10K'), findsNWidgets(2)); // net worth + in accounts
 
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
@@ -39,6 +40,7 @@ void main() {
     expect(t.category, 'Food');
     expect(t.fromAccountId, store.ledger.accounts.single.id);
     expect(store.ledger.accountBalance(t.fromAccountId!), 975000);
+    expect(find.text('₹250'), findsWidgets); // spent this month (hero)
     expect(find.text('₹9,750'), findsNWidgets(2)); // net worth + in accounts
     expect(store.lastCategory, 'Food');
   });

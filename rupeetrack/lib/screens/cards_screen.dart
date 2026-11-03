@@ -12,11 +12,11 @@ import 'pay_bill_sheet.dart';
 
 /// Gradients for the card faces, picked by card id so each keeps its look.
 const _cardFaces = [
-  [Color(0xFF1F2A44), Color(0xFF3B4C7A)],
-  [Color(0xFF004D40), Color(0xFF00897B)],
-  [Color(0xFF4A148C), Color(0xFF7B4BC4)],
-  [Color(0xFF8E2C2C), Color(0xFFD06A4C)],
-  [Color(0xFF263238), Color(0xFF546E7A)],
+  [Color(0xFF1E1B4B), Color(0xFF4338CA)], // indigo
+  [Color(0xFF111827), Color(0xFF374151)], // graphite
+  [Color(0xFF064E3B), Color(0xFF047857)], // emerald
+  [Color(0xFF0C4A6E), Color(0xFF0369A1)], // ocean
+  [Color(0xFF4C0519), Color(0xFF9F1239)], // wine
 ];
 
 /// Every credit card with its limit, usage, bill and due date.
@@ -83,7 +83,8 @@ class CardsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                for (final s in statuses) _CardBlock(status: s),
+                for (var i = 0; i < statuses.length; i++)
+                  _CardBlock(status: statuses[i], face: i),
               ],
             ),
     );
@@ -91,8 +92,11 @@ class CardsScreen extends StatelessWidget {
 }
 
 class _CardBlock extends StatelessWidget {
-  const _CardBlock({required this.status});
+  const _CardBlock({required this.status, required this.face});
   final CardStatus status;
+
+  /// Position in the list, so cards take the colourful faces in order.
+  final int face;
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +107,7 @@ class _CardBlock extends StatelessWidget {
     final utilColor = util >= 75
         ? scheme.error
         : util >= 30
-        ? const Color(0xFFE08A00)
+        ? kOrange
         : scheme.moneyIn;
     final daysLeft = s.dueDate.difference(today()).inDays;
     final (dueText, dueColor) = s.overdue
@@ -113,7 +117,7 @@ class _CardBlock extends StatelessWidget {
             daysLeft == 0
                 ? 'Due today'
                 : 'Due ${dayMonth(s.dueDate)} · $daysLeft days',
-            daysLeft <= 7 ? const Color(0xFFE08A00) : scheme.onSurfaceVariant,
+            daysLeft <= 7 ? kOrange : scheme.onSurfaceVariant,
           )
         : ('Next due ${dayMonth(s.dueDate)}', scheme.moneyIn);
 
@@ -139,7 +143,7 @@ class _CardBlock extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: _cardFaces[s.card.id % _cardFaces.length],
+                    colors: _cardFaces[face % _cardFaces.length],
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -263,9 +267,13 @@ class _CardBlock extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    FilledButton(
-                      onPressed: () => showPayBillSheet(context, s.card),
-                      child: const Text('Pay bill'),
+                    SizedBox(
+                      width: 128,
+                      child: GradientButton(
+                        height: 46,
+                        onPressed: () => showPayBillSheet(context, s.card),
+                        label: 'Pay bill',
+                      ),
                     ),
                   ],
                 ),

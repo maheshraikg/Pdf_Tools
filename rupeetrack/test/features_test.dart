@@ -484,6 +484,40 @@ Example Mutual Fund
       if (out != null) File(out).writeAsBytesSync(pdf);
     });
   });
+
+  group('insights', () {
+    Ledger withSpends(List<DateTime> days) => Ledger(
+      accounts: [sbi],
+      txns: [
+        for (var i = 0; i < days.length; i++)
+          expense(100, days[i]).copyWith(id: i + 1),
+      ],
+    );
+
+    test('no-spend streak', () {
+      final l = withSpends([d(2026, 10, 20), d(2026, 10, 25)]);
+      // 26th..29th without spending; today (30th) not over yet but clean.
+      expect(l.noSpendStreak(d(2026, 10, 30)), 4);
+      // Spent today: the streak shown is the one that ended yesterday.
+      final l2 = withSpends([d(2026, 10, 25), d(2026, 10, 30)]);
+      expect(l2.noSpendStreak(d(2026, 10, 30)), 4);
+      expect(withSpends([d(2026, 10, 29)]).noSpendStreak(d(2026, 10, 30)), 0);
+      expect(Ledger().noSpendStreak(d(2026, 10, 30)), 0);
+    });
+
+    test('vs last month and daily average', () {
+      final l = Ledger(
+        accounts: [sbi],
+        txns: [
+          expense(1000, d(2026, 9, 5)).copyWith(id: 1),
+          expense(5000, d(2026, 9, 20)).copyWith(id: 2), // after the 10th
+          expense(800, d(2026, 10, 4)).copyWith(id: 3),
+        ],
+      );
+      expect(l.spendingChangeVsLastMonth(d(2026, 10, 10)), closeTo(-20, 1e-9));
+      expect(l.dailyAverage(d(2026, 10, 10)), 8000);
+    });
+  });
 }
 
 extension on Txn {

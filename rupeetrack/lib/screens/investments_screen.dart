@@ -113,7 +113,7 @@ class InvestmentsScreen extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 96),
               children: [
                 HeroPanel(
-                  colors: const [Color(0xFF283593), Color(0xFF00695C)],
+                  colors: const [Color(0xFF0F172A), Color(0xFF1E3A8A)],
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -269,7 +269,7 @@ class _InvestmentTile extends StatelessWidget {
         ? scheme.onSurfaceVariant
         : gain >= 0
         ? scheme.moneyIn
-        : scheme.moneyOut;
+        : scheme.danger;
     final valueNote = inv.valueUpdatedOn == null
         ? 'Add today’s value to see returns'
         : '${inv.valueSource ?? 'Value you entered'} · '

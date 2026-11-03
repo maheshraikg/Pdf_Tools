@@ -159,7 +159,7 @@ class HoldingDetailScreen extends StatelessWidget {
     } else if (card != null) {
       final s = l.cardStatus(card, now);
       header = HeroPanel(
-        colors: const [Color(0xFF1F2A44), Color(0xFF3B4C7A)],
+        colors: const [Color(0xFF111827), Color(0xFF374151)],
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -211,7 +211,7 @@ class HoldingDetailScreen extends StatelessWidget {
     } else {
       final s = l.investmentSummary(investment!, now);
       header = HeroPanel(
-        colors: const [Color(0xFF283593), Color(0xFF00695C)],
+        colors: const [Color(0xFF0F172A), Color(0xFF1E3A8A)],
         child: Row(
           children: [
             Expanded(

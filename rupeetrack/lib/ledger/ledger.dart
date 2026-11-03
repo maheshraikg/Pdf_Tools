@@ -440,6 +440,65 @@ class Ledger {
     return [for (final b in budgets) BudgetStatus(b, spent[b.category] ?? 0)];
   }
 
+  // ---- Insights -----------------------------------------------------------
+
+  /// Days in a row without any spending, ending yesterday. Today is left
+  /// out: it is not over yet, so a streak is neither lost nor grown by it.
+  int noSpendStreak(DateTime today) {
+    final t = dateOnly(today);
+    final spentDays = {
+      for (final x in txns)
+        if (x.type == TxnType.expense) x.date,
+    };
+    if (spentDays.isEmpty) return 0;
+    final first = spentDays.reduce((a, b) => a.isBefore(b) ? a : b);
+    var day = t.subtract(const Duration(days: 1));
+    var n = 0;
+    while (!day.isBefore(first) && !spentDays.contains(day)) {
+      n++;
+      day = day.subtract(const Duration(days: 1));
+    }
+    return n;
+  }
+
+  /// Change in spending from the 1st to [today] versus the same days last
+  /// month, as a percentage (−12 = 12% less). Null without last month data.
+  double? spendingChangeVsLastMonth(DateTime today) {
+    final t = dateOnly(today);
+    final thisMonth = spending(monthStart(t), t);
+    final lastStart = DateTime.utc(t.year, t.month - 1);
+    final lastEnd = monthEnd(lastStart);
+    final sameDay = DateTime.utc(
+      lastStart.year,
+      lastStart.month,
+      t.day > lastEnd.day ? lastEnd.day : t.day,
+    );
+    final last = spending(lastStart, sameDay);
+    if (last <= 0) return null;
+    return (thisMonth - last) * 100 / last;
+  }
+
+  /// Running total of spending for each day of the month containing [day]
+  /// (index 0 = the 1st), up to [upTo] when given.
+  List<Paise> cumulativeSpending(DateTime day, {DateTime? upTo}) {
+    final from = monthStart(day);
+    final last = upTo != null ? dateOnly(upTo) : monthEnd(day);
+    final perDay = List<Paise>.filled(last.day, 0);
+    for (final t in _between(from, last)) {
+      final i = t.date.day - 1;
+      if (t.type == TxnType.expense) perDay[i] += t.amount;
+      if (t.type == TxnType.refund) perDay[i] -= t.amount;
+    }
+    var run = 0;
+    return [for (final v in perDay) run += v];
+  }
+
+  /// Average spending per day so far this month.
+  Paise dailyAverage(DateTime today) {
+    final t = dateOnly(today);
+    return spending(monthStart(t), t) ~/ t.day;
+  }
+
   // ---- Investments --------------------------------------------------------
 
   InvestmentSummary investmentSummary(Investment inv, DateTime today) {

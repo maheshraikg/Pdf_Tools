@@ -4,6 +4,7 @@ import '../app/scope.dart';
 import '../ledger/ledger.dart';
 import '../models/models.dart';
 import '../models/money.dart';
+import '../widgets/charts.dart';
 import '../widgets/common.dart';
 import '../widgets/design.dart';
 import 'auto_detect_screen.dart';
@@ -13,13 +14,14 @@ import 'pay_bill_sheet.dart';
 import 'quick_add_sheet.dart';
 import 'settings_screen.dart';
 
-const _monthsShort = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', //
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+const _monthsLong = [
+  'January', 'February', 'March', 'April', 'May', 'June', //
+  'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
-/// One-screen overview: net worth, alerts, this month, where the money went,
-/// budgets and the latest activity.
+/// The home screen: this month's spending up front, quick actions,
+/// insights, alerts, trends, where the money went, budgets and the latest
+/// activity.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key, required this.onOpenTab});
 
@@ -47,7 +49,7 @@ class HomeScreen extends StatelessWidget {
           slivers: [
             SliverAppBar(
               floating: true,
-              toolbarHeight: 72,
+              toolbarHeight: 76,
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -56,21 +58,31 @@ class HomeScreen extends StatelessWidget {
                     style: Theme.of(context).textTheme.labelLarge
                         ?.copyWith(color: scheme.onSurfaceVariant),
                   ),
-                  const Text('RupeeTrack'),
+                  ShaderMask(
+                    shaderCallback: (r) =>
+                        const LinearGradient(colors: [kViolet, kPink])
+                            .createShader(r),
+                    child: const Text(
+                      'RupeeTrack',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ],
               ),
               actions: [
-                IconButton(
-                  icon: const Icon(Icons.settings_outlined),
-                  tooltip: 'Settings',
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (_) => const SettingsScreen(),
+                Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: IconButton.filledTonal(
+                    icon: const Icon(Icons.tune_rounded),
+                    tooltip: 'Settings',
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (_) => const SettingsScreen(),
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 4),
               ],
             ),
             if (store.isEmpty)
@@ -78,13 +90,13 @@ class HomeScreen extends StatelessWidget {
             else
               SliverList.list(
                 children: [
-                  _NetWorthHero(worth: l.netWorth(now)),
-                  _QuickActions(onOpenTab: onOpenTab),
+                  _SpendHero(now: now),
+                  const _QuickActions(),
                   if (store.detected.isNotEmpty)
                     Panel(
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                      padding: const EdgeInsets.fromLTRB(14, 10, 8, 10),
-                      margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                      color: scheme.primaryContainer,
+                      padding: const EdgeInsets.fromLTRB(16, 12, 10, 12),
+                      margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute<void>(
@@ -93,7 +105,10 @@ class HomeScreen extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.auto_awesome),
+                          Icon(
+                            Icons.auto_awesome_rounded,
+                            color: scheme.primary,
+                          ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
@@ -101,14 +116,14 @@ class HomeScreen extends StatelessWidget {
                               'in your bank messages',
                             ),
                           ),
-                          const Text('Add'),
                           const Icon(Icons.chevron_right),
                         ],
                       ),
                     ),
                   for (final a in l.alerts(now))
                     _AlertBanner(alert: a, onOpenTab: onOpenTab),
-                  _MonthPanel(now: now),
+                  _Insights(now: now),
+                  _TrendPanel(now: now),
                   _WhereItWent(now: now),
                   _BudgetsPanel(now: now),
                   SectionHeader(
@@ -122,12 +137,12 @@ class HomeScreen extends StatelessWidget {
                     const EmptyState(
                       icon: Icons.receipt_long,
                       message:
-                          'No transactions yet. Tap Add to record your '
-                          'first expense. It takes a few seconds.',
+                          'Nothing here yet. Tap Add to log your first spend. '
+                          'It takes a few seconds.',
                     )
                   else
                     Panel(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Column(
                         children: [
                           for (final t in l.txns.take(5))
@@ -138,7 +153,7 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                  const SizedBox(height: 96),
+                  const SizedBox(height: 110),
                 ],
               ),
           ],
@@ -156,11 +171,10 @@ class _Welcome extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
     Widget point(IconData icon, String title, String text) => Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          IconBadge(icon),
+          IconBadge(icon, size: 46),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
@@ -178,7 +192,7 @@ class _Welcome extends StatelessWidget {
       ),
     );
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+      padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -187,16 +201,26 @@ class _Welcome extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.currency_rupee, size: 40),
-                const SizedBox(height: 12),
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(Icons.currency_rupee_rounded, size: 30),
+                ),
+                const SizedBox(height: 18),
                 Text(
-                  'All your money,\none simple view.',
-                  style: t.headlineSmall?.copyWith(
+                  'Know where every\nrupee goes.',
+                  style: t.headlineMedium?.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.8,
+                    height: 1.1,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
                 Text(
                   'Private, offline and free. No sign-up, no bank login.',
                   style: t.bodyMedium?.copyWith(color: Colors.white70),
@@ -205,27 +229,32 @@ class _Welcome extends StatelessWidget {
             ),
           ),
           point(
-            Icons.bolt,
-            'Add an expense in seconds',
-            'Amount, category, account and done.',
+            Icons.bolt_rounded,
+            'Log a spend in seconds',
+            'Amount, category, account. Done.',
           ),
           point(
-            Icons.credit_card,
+            Icons.credit_card_rounded,
             'Never miss a card bill',
-            'Limits, usage and due-date reminders for every card.',
+            'Limits, dues and reminders for every card.',
           ),
           point(
-            Icons.insights,
-            'Watch your investments grow',
-            'SIPs, PPF, FDs, NPS and more, with returns.',
+            Icons.trending_up_rounded,
+            'Watch your money grow',
+            'SIPs, PPF, FDs, gold and more, with returns.',
+          ),
+          point(
+            Icons.insights_rounded,
+            'Insights that help you save',
+            'Streaks, trends and budgets at a glance.',
           ),
           const Spacer(),
-          FilledButton.icon(
+          GradientButton(
             onPressed: () => showAddAccountDialog(context),
-            icon: const Icon(Icons.account_balance),
-            label: const Text('Add bank account or cash'),
+            icon: Icons.account_balance_rounded,
+            label: 'Add bank account or cash',
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           OutlinedButton.icon(
             onPressed: () => showAddCardDialog(context),
             icon: const Icon(Icons.credit_card),
@@ -237,48 +266,112 @@ class _Welcome extends StatelessWidget {
   }
 }
 
-class _NetWorthHero extends StatelessWidget {
-  const _NetWorthHero({required this.worth});
-  final NetWorth worth;
+/// This month's spending, big, with how it compares to last month.
+class _SpendHero extends StatelessWidget {
+  const _SpendHero({required this.now});
+  final DateTime now;
 
   @override
   Widget build(BuildContext context) {
+    final l = context.ledger;
+    final from = monthStart(now), to = monthEnd(now);
+    final spent = l.spending(from, to);
+    final change = l.spendingChangeVsLastMonth(now);
+    final worth = l.netWorth(now);
+    final rate = l.savingsRate(from, to);
+    final daysLeft = to.difference(now).inDays;
     return HeroPanel(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          HeroFigure('Net worth', formatRupees(worth.total), big: true),
-          const SizedBox(height: 20),
           Row(
             children: [
               Expanded(
-                child: HeroFigure(
-                  'In accounts',
-                  formatRupeesCompact(worth.cash),
+                child: Text(
+                  'Spent in ${_monthsLong[now.month - 1]}',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.85),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-              Expanded(
-                child: HeroFigure(
-                  'Investments',
-                  formatRupeesCompact(worth.investments),
+              if (change != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    change <= 0
+                        ? '▼ ${(-change).toStringAsFixed(0)}% vs last month'
+                        : '▲ ${change.toStringAsFixed(0)}% vs last month',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                    ),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: HeroFigure(
-                  'Cards owed',
-                  formatRupeesCompact(worth.liabilities),
-                ),
-              ),
             ],
           ),
-          if (worth.hasUnvaluedInvestments) ...[
-            const SizedBox(height: 12),
-            Text(
-              'Investments without a current value are counted at cost.',
-              style: Theme.of(context).textTheme.bodySmall
-                  ?.copyWith(color: Colors.white70),
+          const SizedBox(height: 6),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              formatRupees(spent),
+              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -1.5,
+              ),
             ),
-          ],
+          ),
+          Text(
+            '${formatRupees(l.dailyAverage(now) ~/ 100 * 100)}/day · '
+            '${daysLeft == 0
+                ? 'last day of the month'
+                : daysLeft == 1
+                ? '1 day to go'
+                : '$daysLeft days to go'}',
+            style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
+          ),
+          const SizedBox(height: 18),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: HeroFigure(
+                    'Net worth',
+                    formatRupeesCompact(worth.total),
+                  ),
+                ),
+                Expanded(
+                  child: HeroFigure(
+                    'In accounts',
+                    formatRupeesCompact(worth.cash),
+                  ),
+                ),
+                Expanded(
+                  child: HeroFigure(
+                    rate == null ? 'Cards owed' : 'Saved',
+                    rate == null
+                        ? formatRupeesCompact(worth.liabilities)
+                        : '${rate.toStringAsFixed(0)}%',
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -286,58 +379,189 @@ class _NetWorthHero extends StatelessWidget {
 }
 
 class _QuickActions extends StatelessWidget {
-  const _QuickActions({required this.onOpenTab});
-  final ValueChanged<int> onOpenTab;
+  const _QuickActions();
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    final t = Theme.of(context).textTheme;
     Widget action(IconData icon, String label, Color color, VoidCallback f) =>
         Expanded(
-          child: InkWell(
-            borderRadius: BorderRadius.circular(16),
-            onTap: f,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Column(
-                children: [
-                  IconBadge(icon, color: color, size: 52),
-                  const SizedBox(height: 6),
-                  Text(label, style: Theme.of(context).textTheme.labelMedium),
-                ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Material(
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(kRadius),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: f,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Column(
+                    children: [
+                      IconBadge(icon, color: color, size: 44),
+                      const SizedBox(height: 6),
+                      Text(
+                        label,
+                        style: t.labelMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
         );
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
       child: Row(
         children: [
           action(
-            Icons.remove,
+            Icons.arrow_outward_rounded,
             'Expense',
-            scheme.moneyOut,
+            const Color(0xFFF43F5E),
             () => showQuickAdd(context),
           ),
           action(
-            Icons.add,
+            Icons.south_west_rounded,
             'Income',
-            scheme.moneyIn,
+            kLime,
             () => showQuickAdd(context, type: TxnType.income),
           ),
           action(
-            Icons.credit_score,
+            Icons.credit_score_rounded,
             'Pay card',
-            chartColor(1),
+            kViolet,
             () => showQuickAdd(context, type: TxnType.cardPayment),
           ),
           action(
-            Icons.trending_up,
+            Icons.trending_up_rounded,
             'Invest',
-            chartColor(0),
+            kCyan,
             () => showQuickAdd(context, type: TxnType.invest),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Swipeable insight cards: streaks, top category, budgets, pace.
+class _Insights extends StatelessWidget {
+  const _Insights({required this.now});
+  final DateTime now;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.ledger;
+    final from = monthStart(now), to = monthEnd(now);
+    final byCat = l
+        .spendingByCategory(from, to)
+        .entries
+        .where((e) => e.value > 0)
+        .toList();
+    final total = byCat.fold(0, (s, e) => s + e.value);
+    final streak = l.noSpendStreak(now);
+    final change = l.spendingChangeVsLastMonth(now);
+    final budgets = l.budgetStatuses(now);
+    final left = budgets.fold(0, (s, b) => s + b.remaining);
+    final daysLeft = to.difference(now).inDays + 1;
+
+    final cards = <(IconData, String, String, Color)>[
+      if (streak > 0)
+        (
+          Icons.local_fire_department_rounded,
+          '$streak-day streak',
+          'No spending for $streak day${streak == 1 ? '' : 's'}. Keep it going!',
+          kOrange,
+        ),
+      if (byCat.isNotEmpty)
+        (
+          iconForCategory(byCat.first.key),
+          '${byCat.first.key} is ${(byCat.first.value * 100 / total).round()}%',
+          'Your top spend this month: ${formatRupees(byCat.first.value)}',
+          colorForCategory(byCat.first.key),
+        ),
+      if (change != null)
+        change <= 0
+            ? (
+                Icons.trending_down_rounded,
+                '${(-change).toStringAsFixed(0)}% less',
+                'than this time last month. Nice!',
+                kLime,
+              )
+            : (
+                Icons.trending_up_rounded,
+                '${change.toStringAsFixed(0)}% more',
+                'than this time last month.',
+                kOrange,
+              ),
+      if (budgets.isNotEmpty && left > 0)
+        (
+          Icons.track_changes_rounded,
+          '${formatRupeesCompact(left ~/ daysLeft)}/day left',
+          'to stay within your budgets',
+          kViolet,
+        ),
+      if (l.dailyAverage(now) > 0)
+        (
+          Icons.calendar_today_rounded,
+          '${formatRupeesCompact(l.dailyAverage(now))}/day',
+          'average spend this month',
+          kCyan,
+        ),
+    ];
+    if (cards.isEmpty) return const SizedBox.shrink();
+    final t = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: SizedBox(
+        height: 132,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          itemCount: cards.length,
+          separatorBuilder: (_, _) => const SizedBox(width: 10),
+          itemBuilder: (context, i) {
+            final (icon, title, text, color) = cards[i];
+            final scheme = Theme.of(context).colorScheme;
+            return Container(
+              width: 172,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(kRadius),
+                color: scheme.surfaceContainerLow,
+                border: Border.all(color: scheme.outlineVariant),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IconBadge(icon, color: color, size: 36),
+                  const Spacer(),
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: t.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    text,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: t.bodySmall,
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -353,17 +577,17 @@ class _AlertBanner extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final (icon, color) = switch (alert.kind) {
       AlertKind.overdue => (Icons.error, scheme.error),
-      AlertKind.dueSoon => (Icons.event, const Color(0xFFE08A00)),
+      AlertKind.dueSoon => (Icons.event, kOrange),
       AlertKind.overBudget => (Icons.money_off, scheme.error),
-      AlertKind.highUtilisation => (Icons.speed, const Color(0xFFE08A00)),
-      AlertKind.nearBudget => (Icons.pie_chart, const Color(0xFFE08A00)),
+      AlertKind.highUtilisation => (Icons.speed, kOrange),
+      AlertKind.nearBudget => (Icons.pie_chart, kOrange),
     };
     final card = alert.card;
     final payable =
         card != null &&
         (alert.kind == AlertKind.overdue || alert.kind == AlertKind.dueSoon);
     return Panel(
-      color: color.withValues(alpha: 0.10),
+      color: color.withValues(alpha: isDark(context) ? 0.16 : 0.10),
       padding: const EdgeInsets.fromLTRB(14, 10, 8, 10),
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       onTap: () => alert.category != null
@@ -388,73 +612,78 @@ class _AlertBanner extends StatelessWidget {
   }
 }
 
-class _MonthPanel extends StatelessWidget {
-  const _MonthPanel({required this.now});
+class _TrendPanel extends StatelessWidget {
+  const _TrendPanel({required this.now});
   final DateTime now;
 
   @override
   Widget build(BuildContext context) {
     final l = context.ledger;
     final scheme = Theme.of(context).colorScheme;
+    final t = Theme.of(context).textTheme;
     final from = monthStart(now), to = monthEnd(now);
-    final spent = l.spending(from, to);
-    final income = l.income(from, to);
-    final rate = l.savingsRate(from, to);
-    final months = [
-      for (var i = 5; i >= 0; i--) DateTime.utc(now.year, now.month - i),
-    ];
-    return Panel(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return Column(
+      children: [
+        Panel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Text(
-                  monthLabel(now),
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+              Text('Spending pace', style: t.titleMedium),
+              const SizedBox(height: 2),
+              Text(
+                'Total spent so far this month, day by day',
+                style: t.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
               ),
-              if (rate != null)
-                Pill(
-                  'Saved ${rate.toStringAsFixed(0)}%',
-                  color: rate >= 0 ? scheme.moneyIn : scheme.moneyOut,
-                  icon: Icons.savings_outlined,
-                ),
+              const SizedBox(height: 16),
+              SpendingPaceChart(ledger: l, today: now),
+              const SizedBox(height: 10),
+              ChartLegend([
+                ('This month', scheme.primary, false),
+                ('Last month', scheme.outline, true),
+              ]),
             ],
           ),
-          const SizedBox(height: 14),
-          Row(
+        ),
+        Panel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Figure(
-                  'Spent',
-                  formatRupees(spent),
-                  color: scheme.moneyOut,
-                ),
+              Text('Income vs spending', style: t.titleMedium),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: Figure(
+                      'Income',
+                      formatRupeesCompact(l.income(from, to)),
+                      color: scheme.moneyIn,
+                    ),
+                  ),
+                  Expanded(
+                    child: Figure(
+                      'Spent',
+                      formatRupeesCompact(l.spending(from, to)),
+                    ),
+                  ),
+                  Expanded(
+                    child: Figure(
+                      'Invested',
+                      formatRupeesCompact(l.invested(from, to)),
+                    ),
+                  ),
+                ],
               ),
-              Expanded(
-                child: Figure(
-                  'Income',
-                  formatRupees(income),
-                  color: scheme.moneyIn,
-                ),
-              ),
-              Expanded(
-                child: Figure('Invested', formatRupees(l.invested(from, to))),
-              ),
+              const SizedBox(height: 18),
+              IncomeSpendBars(ledger: l, today: now),
+              const SizedBox(height: 10),
+              ChartLegend([
+                ('Income', scheme.moneyIn, false),
+                ('Spent', scheme.primary, false),
+              ]),
             ],
           ),
-          const SizedBox(height: 18),
-          MiniBars(
-            values: [
-              for (final m in months)
-                l.spending(monthStart(m), monthEnd(m)).toDouble(),
-            ],
-            labels: [for (final m in months) _monthsShort[m.month - 1]],
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -465,84 +694,18 @@ class _WhereItWent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l = context.ledger;
-    final byCategory = l
-        .spendingByCategory(monthStart(now), monthEnd(now))
-        .entries
-        .where((e) => e.value > 0)
-        .toList();
-    if (byCategory.isEmpty) return const SizedBox.shrink();
-    final top = byCategory.take(5).toList();
-    final rest = byCategory.skip(5).fold(0, (s, e) => s + e.value);
-    final total = byCategory.fold(0, (s, e) => s + e.value);
-    final rows = [
-      for (var i = 0; i < top.length; i++) (top[i].key, top[i].value, i),
-      if (rest > 0) ('Others', rest, top.length),
-    ];
-    final t = Theme.of(context).textTheme;
+    final byCategory = context.ledger.spendingByCategory(
+      monthStart(now),
+      monthEnd(now),
+    );
+    if (!byCategory.values.any((v) => v > 0)) return const SizedBox.shrink();
     return Panel(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Where it went', style: t.titleMedium),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Donut(
-                slices: [
-                  for (final r in rows)
-                    DonutSlice(r.$2.toDouble(), chartColor(r.$3)),
-                ],
-                center: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('Spent', style: t.labelSmall),
-                    Text(
-                      formatRupeesCompact(total),
-                      style: t.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  children: [
-                    for (final r in rows)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: chartColor(r.$3),
-                                borderRadius: BorderRadius.circular(3),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                r.$1,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Text(
-                              '${(r.$2 * 100 / total).round()}%',
-                              style: t.labelMedium,
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          Text('Where it went', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          CategoryBreakdown(byCategory: byCategory),
         ],
       ),
     );
@@ -567,7 +730,7 @@ class _BudgetsPanel extends StatelessWidget {
         onTap: open,
         child: Row(
           children: [
-            const IconBadge(Icons.pie_chart_outline),
+            const IconBadge(Icons.donut_large_rounded),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
@@ -623,14 +786,18 @@ class BudgetRow extends StatelessWidget {
     final color = s.percent >= 100
         ? scheme.error
         : s.percent >= 80
-        ? const Color(0xFFE08A00)
-        : scheme.primary;
+        ? kOrange
+        : null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(categoryIcons[s.budget.category] ?? Icons.category, size: 18),
+            Icon(
+              iconForCategory(s.budget.category),
+              size: 18,
+              color: colorForCategory(s.budget.category),
+            ),
             const SizedBox(width: 8),
             Expanded(child: Text(s.budget.category)),
             Text(

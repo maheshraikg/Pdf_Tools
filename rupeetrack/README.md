@@ -58,7 +58,11 @@ sign-up and no bank login.
   MobiKwik to pay, then record the full, minimum or a custom amount.
 - Account, card and investment screens read like a bank statement: entries
   by date with the balance after each one; edit or delete anything.
-- Light and dark themes and a custom launcher icon. Works fully offline; the
+- Clean, professional design: neutral surfaces, one indigo brand colour,
+  vector icons with a colour per category, the Inter typeface, and
+  interactive charts (spending pace vs last month, income vs spending by
+  month, a tap-to-highlight category breakdown). Light and dark themes and a
+  custom launcher icon. Works fully offline; the
   internet is used only when you choose to update fund NAVs.
 
 ## Accounting rules
@@ -139,6 +143,8 @@ management").
 
 ## Notes
 
+- The app uses the Inter typeface (SIL Open Font License,
+  `assets/fonts/Inter-OFL.txt`) and fl_chart for charts.
 - PDF reports use the Carlito font (SIL Open Font License,
   `assets/fonts/Carlito-OFL.txt`) for the ₹ sign.
 - Receipt photos stay in the app's private folder and are not part of the

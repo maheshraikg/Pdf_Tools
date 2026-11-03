@@ -9,6 +9,7 @@ import '../models/models.dart';
 import '../models/money.dart';
 import '../models/planning.dart';
 import '../widgets/common.dart';
+import '../widgets/design.dart';
 import 'forms.dart';
 
 /// Opens the quick entry sheet. Pass [initial] to edit an existing
@@ -387,8 +388,9 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                           ChoiceChip(
                             showCheckmark: false,
                             avatar: Icon(
-                              categoryIcons[c] ?? Icons.category,
+                              iconForCategory(c),
                               size: 18,
+                              color: colorForCategory(c),
                             ),
                             label: Text(c),
                             selected: _category == c,
@@ -551,13 +553,10 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Text(e, style: TextStyle(color: scheme.error)),
                   ),
-                FilledButton.icon(
+                GradientButton(
                   onPressed: _save,
-                  icon: const Icon(Icons.check),
-                  label: Text(_editing ? 'Update' : 'Save'),
-                  style: FilledButton.styleFrom(
-                    minimumSize: const Size.fromHeight(52),
-                  ),
+                  icon: Icons.check_rounded,
+                  label: _editing ? 'Update' : 'Save',
                 ),
               ],
             ),

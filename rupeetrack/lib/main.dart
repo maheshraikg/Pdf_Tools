@@ -139,36 +139,39 @@ class _HomeShellState extends State<HomeShell> {
           ? null
           : FloatingActionButton.extended(
               onPressed: () => showQuickAdd(context),
-              icon: const Icon(Icons.add),
-              label: const Text('Add'),
+              icon: const Icon(Icons.add_rounded),
+              label: const Text(
+                'Add',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
             ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _tab,
         onDestinationSelected: _openTab,
         destinations: const [
           NavigationDestination(
-            icon: Icon(Icons.space_dashboard_outlined),
-            selectedIcon: Icon(Icons.space_dashboard),
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home_rounded),
             label: 'Home',
           ),
           NavigationDestination(
             icon: Icon(Icons.receipt_long_outlined),
-            selectedIcon: Icon(Icons.receipt_long),
+            selectedIcon: Icon(Icons.receipt_long_rounded),
             label: 'Activity',
           ),
           NavigationDestination(
             icon: Icon(Icons.credit_card_outlined),
-            selectedIcon: Icon(Icons.credit_card),
+            selectedIcon: Icon(Icons.credit_card_rounded),
             label: 'Cards',
           ),
           NavigationDestination(
-            icon: Icon(Icons.show_chart),
-            selectedIcon: Icon(Icons.insights),
+            icon: Icon(Icons.show_chart_rounded),
+            selectedIcon: Icon(Icons.insights_rounded),
             label: 'Invest',
           ),
           NavigationDestination(
             icon: Icon(Icons.account_balance_outlined),
-            selectedIcon: Icon(Icons.account_balance),
+            selectedIcon: Icon(Icons.account_balance_rounded),
             label: 'Accounts',
           ),
         ],
