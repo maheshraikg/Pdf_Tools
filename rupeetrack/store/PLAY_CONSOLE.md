@@ -22,12 +22,13 @@ keeps SMS auto-detect.
 
 ## 1. Developer account (once)
 
-1. Go to https://play.google.com/console and sign up (one-time fee of
-   US$25). Choose a **personal** account.
-2. Verify your identity and your Android phone when asked.
+Rupio is published from a **business (organization) account**. The
+account's organization name is shown as the developer on Google Play; the
+app itself is still called Rupio.
 
-New personal accounts must run a **closed test with at least 12 testers for
-14 days** before the app can go public (step 8).
+Organization accounts do **not** need the 12-tester, 14-day closed test
+that new personal accounts must run: after the internal test (step 7) you
+can go straight to production (step 9).
 
 ## 2. Signing key and app bundle (once)
 
@@ -95,7 +96,9 @@ Play Console → **Create app**:
 - App icon: `icon-512.png` · Feature graphic: `feature-graphic.png`.
 - Phone screenshots: all files in `screenshots/phone/` in their order.
 - Category: **Finance** · Tags: Budgeting, Personal finance.
-- Contact email: your support email. Website: optional.
+- Contact email: your business support email (also put it in
+  `PRIVACY.md` in place of `CONTACT_EMAIL`). Website: optional; your
+  business website if you have one.
 - **Translations:** "Manage translations → Add your own translation text"
   for Hindi, Kannada, Malayalam, Tamil and Telugu, using the files in
   `listing/hi-IN`, `kn-IN`, `ml-IN`, `ta-IN` and `te-IN`.
@@ -113,7 +116,11 @@ Testing → Internal testing → Create release → upload
 `app-play-release.aab` → add your own Gmail as a tester → install from the
 opt-in link and check the app.
 
-## 8. Closed test with 12 testers for 14 days (required for new accounts)
+## 8. Closed test (only for personal accounts – skip with a business account)
+
+New *personal* accounts created after November 2023 must run this before
+production. Business accounts can skip this step.
+
 
 1. Testing → Closed testing → create a track, upload the same `.aab`.
 2. Testers: add an email list with **at least 12 Gmail addresses** (friends
