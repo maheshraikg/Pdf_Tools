@@ -13,6 +13,7 @@ import 'loans_screen.dart';
 import 'recurring_screen.dart';
 import 'settings_screen.dart';
 import '../l10n/strings.dart';
+import '../sync/sms_sync.dart';
 
 /// Every other part of the app, in three short groups.
 class MoreScreen extends StatelessWidget {
@@ -91,7 +92,9 @@ class MoreScreen extends StatelessWidget {
           group(tr('Data'), [
             item(
               Icons.auto_awesome_outlined,
-              tr('Automatic (SMS, Gmail)'),
+              SmsSync.available
+                  ? tr('Automatic (SMS, Gmail)')
+                  : tr('Automatic (statements)'),
               const AutoDetectScreen(),
             ),
             item(

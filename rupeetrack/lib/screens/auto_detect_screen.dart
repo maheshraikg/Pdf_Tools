@@ -163,39 +163,40 @@ class _AutoDetectScreenState extends State<AutoDetectScreen> {
           if (_status != null)
             Panel(color: scheme.primaryContainer, child: Text(_status!)),
 
-          _Section(
-            icon: Icons.sms_outlined,
-            title: tr('Bank SMS'),
-            subtitle: !store.smsSync || store.lastSync == null
-                ? tr(
-                    'Reads the last {0} days of bank SMS, then new ones each time you open the app.',
-                    [SmsSync.historyDays],
-                  )
-                : tr(
-                    'On · last checked {0}. New SMS are read each time you open the app.',
-                    [relativeDate(store.lastSync!)],
-                  ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed: _busy ? null : _scanSms,
-                    icon: const Icon(Icons.search),
-                    label: Text(
-                      store.smsSync ? tr('Scan now') : tr('Allow SMS & scan'),
+          if (SmsSync.available)
+            _Section(
+              icon: Icons.sms_outlined,
+              title: tr('Bank SMS'),
+              subtitle: !store.smsSync || store.lastSync == null
+                  ? tr(
+                      'Reads the last {0} days of bank SMS, then new ones each time you open the app.',
+                      [SmsSync.historyDays],
+                    )
+                  : tr(
+                      'On · last checked {0}. New SMS are read each time you open the app.',
+                      [relativeDate(store.lastSync!)],
+                    ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: FilledButton.icon(
+                      onPressed: _busy ? null : _scanSms,
+                      icon: const Icon(Icons.search),
+                      label: Text(
+                        store.smsSync ? tr('Scan now') : tr('Allow SMS & scan'),
+                      ),
                     ),
                   ),
-                ),
-                if (store.smsSync) ...[
-                  const SizedBox(width: 8),
-                  TextButton(
-                    onPressed: () => store.setSmsSync(false),
-                    child: Text(tr('Turn off')),
-                  ),
+                  if (store.smsSync) ...[
+                    const SizedBox(width: 8),
+                    TextButton(
+                      onPressed: () => store.setSmsSync(false),
+                      child: Text(tr('Turn off')),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
 
           if (detected.isNotEmpty) ...[
             SectionHeader(tr('Found in your messages')),
@@ -542,7 +543,9 @@ Future<void> handleSharedPdf(BuildContext context, String path) async {
 
 /// Runs an SMS sync quietly (app start / resume) when it is turned on.
 Future<SyncResult?> backgroundSmsSync(FinanceStore store) async {
-  if (!store.smsSync || !await SmsSync.hasPermission()) return null;
+  if (!SmsSync.available || !store.smsSync || !await SmsSync.hasPermission()) {
+    return null;
+  }
   try {
     return await SmsSync.run(store);
   } catch (_) {

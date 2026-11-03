@@ -556,3 +556,7 @@
 556|Owed
 557|tracked.
 558|Expense Tracker
+559|Automatic (statements)
+560|Auto-detect from statement PDFs
+561|Fill cards and accounts from bank statements
+562|{0} new found

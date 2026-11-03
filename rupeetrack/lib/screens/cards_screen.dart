@@ -10,6 +10,7 @@ import 'forms.dart';
 import 'holding_detail_screen.dart';
 import 'pay_bill_sheet.dart';
 import '../l10n/strings.dart';
+import '../sync/sms_sync.dart';
 
 /// Gradients for the card faces, picked by card id so each keeps its look.
 const _cardFaces = [
@@ -52,7 +53,9 @@ class CardsScreen extends StatelessWidget {
               ),
               actionLabel: tr('Add card'),
               onAction: () => showAddCardDialog(context),
-              secondaryLabel: tr('Find my cards from SMS'),
+              secondaryLabel: SmsSync.available
+                  ? tr('Find my cards from SMS')
+                  : null,
               onSecondary: () => Navigator.push(
                 context,
                 MaterialPageRoute<void>(

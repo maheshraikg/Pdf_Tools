@@ -56,13 +56,28 @@ android {
         }
     }
 
-    buildTypes {
-        release {
+    // Two builds of the same app:
+    //  - direct: the APK people download from GitHub. Reads bank SMS and is
+    //    always signed with the dev key, so it installs over earlier builds.
+    //  - play: the Google Play bundle. No SMS permission (Play only allows
+    //    it after a separate declaration is approved); signed with the
+    //    private upload key from android/key.properties.
+    flavorDimensions += "store"
+    productFlavors {
+        create("direct") {
+            dimension = "store"
+            signingConfig = signingConfigs.getByName("dev")
+        }
+        create("play") {
+            dimension = "store"
             signingConfig = signingConfigs.findByName("release")
                 ?: signingConfigs.getByName("dev")
         }
-        debug {
-            signingConfig = signingConfigs.getByName("dev")
+    }
+
+    buildTypes {
+        release {
+            // Signing comes from the flavor (see above).
         }
     }
 }

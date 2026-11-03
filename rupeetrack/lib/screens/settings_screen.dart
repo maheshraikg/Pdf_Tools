@@ -14,6 +14,7 @@ import 'import_screen.dart';
 import 'investments_screen.dart' show refreshFundPrices;
 import 'recurring_screen.dart';
 import '../l10n/strings.dart';
+import '../sync/sms_sync.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -132,12 +133,16 @@ class SettingsScreen extends StatelessWidget {
           group(tr('Automatic'), [
             tile(
               Icons.auto_awesome,
-              tr('Auto-detect from SMS, statements & Gmail'),
-              store.smsSync
+              SmsSync.available
+                  ? tr('Auto-detect from SMS, statements & Gmail')
+                  : tr('Auto-detect from statement PDFs'),
+              !SmsSync.available
+                  ? tr('Fill cards and accounts from bank statements')
+                  : store.smsSync
                   ? tr('Bank SMS on{0}', [
                       store.detected.isEmpty
                           ? ''
-                          : ' · ${store.detected.length} new found',
+                          : ' · ${tr('{0} new found', [store.detected.length])}',
                     ])
                   : tr('Fill cards and accounts from bank messages'),
               () => push(const AutoDetectScreen()),

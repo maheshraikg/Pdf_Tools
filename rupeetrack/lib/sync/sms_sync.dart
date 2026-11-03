@@ -1,3 +1,5 @@
+import 'package:flutter/services.dart' show appFlavor;
+
 import '../app/native.dart';
 import '../app/store.dart';
 import 'bank_messages.dart';
@@ -8,6 +10,9 @@ import 'sync.dart';
 class SmsSync {
   /// How far back a scan looks.
   static const historyDays = 180;
+
+  /// False in the Google Play build, which has no SMS permission.
+  static bool get available => appFlavor != 'play';
 
   static Future<bool> hasPermission() async =>
       await Native.smsPermission() == 'granted';

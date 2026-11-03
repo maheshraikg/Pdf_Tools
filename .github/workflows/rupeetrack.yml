@@ -45,7 +45,37 @@ jobs:
         env:
           # Optional: turns on "Connect Gmail" (see rupeetrack/README.md).
           GMAIL_WEB_CLIENT_ID: ${{ vars.GMAIL_WEB_CLIENT_ID }}
-        run: flutter build apk --release --dart-define=GMAIL_WEB_CLIENT_ID="$GMAIL_WEB_CLIENT_ID"
+        run: |
+          # The "direct" flavor (with bank SMS) is the APK people download.
+          flutter build apk --release --flavor direct --dart-define=GMAIL_WEB_CLIENT_ID="$GMAIL_WEB_CLIENT_ID"
+          cp build/app/outputs/flutter-apk/app-direct-release.apk build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Build Google Play bundle
+        # Needs the private upload key as repository secrets (see
+        # rupeetrack/store/PLAY_CONSOLE.md). Skipped until they are added.
+        env:
+          UPLOAD_KEYSTORE_BASE64: ${{ secrets.RUPIO_UPLOAD_KEYSTORE_BASE64 }}
+          UPLOAD_STORE_PASSWORD: ${{ secrets.RUPIO_UPLOAD_STORE_PASSWORD }}
+          UPLOAD_KEY_ALIAS: ${{ secrets.RUPIO_UPLOAD_KEY_ALIAS }}
+          UPLOAD_KEY_PASSWORD: ${{ secrets.RUPIO_UPLOAD_KEY_PASSWORD }}
+        run: |
+          if [ -z "$UPLOAD_KEYSTORE_BASE64" ]; then
+            echo "Play bundle skipped: upload key secrets are not set." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "$UPLOAD_KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
+          printf 'storeFile=upload-keystore.jks\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
+            "$UPLOAD_STORE_PASSWORD" "$UPLOAD_KEY_ALIAS" "$UPLOAD_KEY_PASSWORD" > android/key.properties
+          flutter build appbundle --release --flavor play
+          rm -f android/key.properties android/app/upload-keystore.jks
+          echo "Play bundle: $(du -h build/app/outputs/bundle/playRelease/app-play-release.aab | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload Google Play bundle
+        if: hashFiles('rupeetrack/build/app/outputs/bundle/playRelease/app-play-release.aab') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: rupio-play-bundle
+          path: rupeetrack/build/app/outputs/bundle/playRelease/app-play-release.aab
 
       - name: APK size
         run: |
