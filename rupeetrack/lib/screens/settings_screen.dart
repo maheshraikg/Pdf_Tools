@@ -122,6 +122,35 @@ class SettingsScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.only(bottom: 32),
         children: [
+          group(tr('Backup & import'), [
+            tile(
+              Icons.download_outlined,
+              tr('Backup data'),
+              tr('Everything, to restore later (Drive, email or a file)'),
+              () => _run(
+                context,
+                () => shareTextFile(
+                  'rupio-backup-$stamp.json',
+                  store.backupJson(),
+                  mimeType: 'application/json',
+                ),
+              ),
+            ),
+            tile(
+              Icons.upload_outlined,
+              tr('Import data'),
+              tr('Restore a Rupio backup file'),
+              () => _restore(context),
+            ),
+            tile(
+              Icons.upload_file_outlined,
+              tr('Import bank statement'),
+              tr('CSV from net banking; duplicates are skipped'),
+              l.accounts.isEmpty && l.cards.isEmpty
+                  ? null
+                  : () => push(const ImportScreen()),
+            ),
+          ]),
           group(tr('Language'), [
             tile(
               Icons.translate,
@@ -223,7 +252,7 @@ class SettingsScreen extends StatelessWidget {
                   : null,
             ),
           ]),
-          group(tr('Your data'), [
+          group(tr('Export'), [
             tile(
               Icons.table_view_outlined,
               tr('Export transactions (CSV)'),
@@ -233,7 +262,7 @@ class SettingsScreen extends StatelessWidget {
                   : () => _run(
                       context,
                       () => shareTextFile(
-                        'rupeetrack-transactions-$stamp.csv',
+                        'rupio-transactions-$stamp.csv',
                         exportTransactionsCsv(l),
                         mimeType: 'text/csv',
                       ),
@@ -248,19 +277,11 @@ class SettingsScreen extends StatelessWidget {
                   : () => _run(
                       context,
                       () => shareTextFile(
-                        'rupeetrack-summary-$stamp.csv',
+                        'rupio-summary-$stamp.csv',
                         exportMonthSummaryCsv(l, today()),
                         mimeType: 'text/csv',
                       ),
                     ),
-            ),
-            tile(
-              Icons.upload_file_outlined,
-              tr('Import bank statement'),
-              tr('CSV from net banking; duplicates are skipped'),
-              l.accounts.isEmpty && l.cards.isEmpty
-                  ? null
-                  : () => push(const ImportScreen()),
             ),
             tile(
               Icons.grid_on_outlined,
@@ -269,7 +290,7 @@ class SettingsScreen extends StatelessWidget {
               () => _run(
                 context,
                 () => shareBytesFile(
-                  'rupeetrack-report-$stamp.xlsx',
+                  'rupio-report-$stamp.xlsx',
                   buildExcelReport(l, today()),
                   mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 ),
@@ -287,7 +308,7 @@ class SettingsScreen extends StatelessWidget {
                   'assets/fonts/Carlito-Bold.ttf',
                 );
                 await shareBytesFile(
-                  'rupeetrack-report-$stamp.pdf',
+                  'rupio-report-$stamp.pdf',
                   await buildPdfReport(
                     l,
                     today(),
@@ -297,25 +318,6 @@ class SettingsScreen extends StatelessWidget {
                   mimeType: 'application/pdf',
                 );
               }),
-            ),
-            tile(
-              Icons.cloud_upload_outlined,
-              tr('Back up'),
-              tr('Everything, to restore later (Drive, email or a file)'),
-              () => _run(
-                context,
-                () => shareTextFile(
-                  'rupeetrack-backup-$stamp.json',
-                  store.backupJson(),
-                  mimeType: 'application/json',
-                ),
-              ),
-            ),
-            tile(
-              Icons.settings_backup_restore,
-              tr('Restore from backup'),
-              tr('Replace the data in this app'),
-              () => _restore(context),
             ),
           ]),
           group(tr('About'), [

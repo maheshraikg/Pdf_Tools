@@ -581,3 +581,8 @@
 581|Description
 582|Fewer details
 583|More details
+584|Backup & import
+585|Backup data
+586|Import data
+587|Restore a Rupio backup file
+588|Export
