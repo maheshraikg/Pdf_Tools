@@ -62,4 +62,4 @@ with a new date.
 
 ## Contact
 
-Questions about privacy: CONTACT_EMAIL
+Questions about privacy: maheshraikg@gmail.com

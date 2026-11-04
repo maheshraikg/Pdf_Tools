@@ -66,7 +66,7 @@ Play Console → **Create app**:
 - **Privacy policy:** the public link to `PRIVACY.md`, for example
   `https://github.com/maheshraikg/Pdf_Tools/blob/master/rupeetrack/PRIVACY.md`
   (after this branch is merged; until then use the branch name instead of
-  `master`). Replace `CONTACT_EMAIL` in it with your support email first.
+  `master`).
 - **App access:** All functionality is available without special access.
 - **Ads:** No, the app does not contain ads (if ads are added later, answer
   Yes and update the privacy policy and Data safety form).
@@ -96,9 +96,8 @@ Play Console → **Create app**:
 - App icon: `icon-512.png` · Feature graphic: `feature-graphic.png`.
 - Phone screenshots: all files in `screenshots/phone/` in their order.
 - Category: **Finance** · Tags: Budgeting, Personal finance.
-- Contact email: your business support email (also put it in
-  `PRIVACY.md` in place of `CONTACT_EMAIL`). Website: optional; your
-  business website if you have one.
+- Contact email: maheshraikg@gmail.com (the same address is in
+  `PRIVACY.md`). Website: optional; your business website if you have one.
 - **Translations:** "Manage translations → Add your own translation text"
   for Hindi, Kannada, Malayalam, Tamil and Telugu, using the files in
   `listing/hi-IN`, `kn-IN`, `ml-IN`, `ta-IN` and `te-IN`.
