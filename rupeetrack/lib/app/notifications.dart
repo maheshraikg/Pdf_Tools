@@ -129,6 +129,7 @@ class Reminders {
     try {
       await init();
       await _plugin.cancelAll();
+      await _scheduleDaily(store);
       if (!store.notifications) return;
       final details = NotificationDetails(
         android: AndroidNotificationDetails(
@@ -157,4 +158,63 @@ class Reminders {
       debugPrint('Reminder refresh failed: $e\n$st');
     }
   }
+
+  static const _dailyId = 0;
+
+  /// Repeats every day at the chosen time. Skips today when something was
+  /// already added today.
+  static Future<void> _scheduleDaily(FinanceStore store) async {
+    final minutes = store.dailyReminder;
+    if (minutes == null) return;
+    final now = DateTime.now();
+    final loggedToday = store.ledger.txns.any((t) => t.date == dateOnly(now));
+    var when = nextDailyReminder(minutes, now);
+    if (loggedToday && when.day == now.day) {
+      when = when.add(const Duration(days: 1));
+    }
+    await _plugin.zonedSchedule(
+      id: _dailyId,
+      scheduledDate: tz.TZDateTime.from(when.toUtc(), tz.UTC),
+      notificationDetails: NotificationDetails(
+        android: AndroidNotificationDetails(
+          'daily',
+          tr('Daily reminder'),
+          channelDescription: tr('A nudge to add the day\'s expenses'),
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time,
+      title: tr('Add today\'s expenses'),
+      body: tr('Takes a few seconds and keeps your month accurate.'),
+    );
+  }
+}
+
+/// The next moment, after [now], at [minutes] past midnight local time.
+DateTime nextDailyReminder(int minutes, DateTime now) {
+  var when = DateTime(
+    now.year,
+    now.month,
+    now.day,
+    minutes ~/ 60,
+    minutes % 60,
+  );
+  if (!when.isAfter(now)) {
+    when = DateTime(
+      now.year,
+      now.month,
+      now.day + 1,
+      minutes ~/ 60,
+      minutes % 60,
+    );
+  }
+  return when;
+}
+
+/// 21:00 -> "9 PM", 21:30 -> "9:30 PM".
+String formatReminderTime(int minutes) {
+  final h = minutes ~/ 60, m = minutes % 60;
+  final h12 = h % 12 == 0 ? 12 : h % 12;
+  final mm = m == 0 ? '' : ':${m.toString().padLeft(2, '0')}';
+  return '$h12$mm ${h < 12 ? 'AM' : 'PM'}';
 }

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../app/files.dart';
 import '../app/notifications.dart';
 import '../app/scope.dart';
+import '../app/store.dart';
 import '../data/csv.dart';
 import '../data/reports.dart';
 import '../models/models.dart';
@@ -35,6 +36,16 @@ class SettingsScreen extends StatelessWidget {
         SnackBar(content: Text(tr('Something went wrong: {0}', [e]))),
       );
     }
+  }
+
+  Future<void> _pickDailyReminder(BuildContext context) async {
+    final store = context.store;
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (_) => _DailyReminderSheet(store: store),
+    );
   }
 
   Future<void> _restore(BuildContext context) async {
@@ -198,6 +209,26 @@ class SettingsScreen extends StatelessWidget {
             ),
           ]),
           group(tr('Reminders'), [
+            tile(
+              Icons.alarm,
+              tr('Daily reminder'),
+              tr('A nudge to add the day\'s expenses'),
+              () => _pickDailyReminder(context),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    store.dailyReminder == null
+                        ? tr('Off')
+                        : formatReminderTime(store.dailyReminder!),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const Icon(Icons.chevron_right),
+                ],
+              ),
+            ),
             SwitchListTile(
               secondary: const IconBadge(
                 Icons.notifications_active_outlined,
@@ -374,3 +405,82 @@ Future<void> showLanguagePicker(BuildContext context) =>
         ),
       ),
     );
+
+class _DailyReminderSheet extends StatefulWidget {
+  const _DailyReminderSheet({required this.store});
+  final FinanceStore store;
+
+  @override
+  State<_DailyReminderSheet> createState() => _DailyReminderSheetState();
+}
+
+class _DailyReminderSheetState extends State<_DailyReminderSheet> {
+  static const _defaultTime = 21 * 60;
+  static const _hours = [8, 12, 18, 19, 20, 21, 22, 23];
+
+  int? get _time => widget.store.dailyReminder;
+
+  Future<void> _set(int? minutes) async {
+    if (minutes != null) await Reminders.requestPermission();
+    await widget.store.setDailyReminder(minutes);
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _custom() async {
+    final t = _time ?? _defaultTime;
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: t ~/ 60, minute: t % 60),
+    );
+    if (picked != null) await _set(picked.hour * 60 + picked.minute);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final on = _time != null;
+    final options = {for (final h in _hours) h * 60, if (on) _time!}.toList()
+      ..sort();
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                tr('Daily reminder'),
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              subtitle: Text(tr('A nudge to add the day\'s expenses')),
+              value: on,
+              onChanged: (v) => _set(v ? _defaultTime : null),
+            ),
+            if (on) ...[
+              const SizedBox(height: 8),
+              for (final m in options)
+                ListTile(
+                  title: Text(
+                    formatReminderTime(m),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: m == _time ? FontWeight.w700 : null,
+                      color: m == _time ? scheme.primary : null,
+                    ),
+                  ),
+                  onTap: () => _set(m),
+                ),
+              TextButton.icon(
+                onPressed: _custom,
+                icon: const Icon(Icons.schedule),
+                label: Text(tr('Other time')),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}

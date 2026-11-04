@@ -586,3 +586,9 @@
 586|Import data
 587|Restore a Rupio backup file
 588|Export
+589|Daily reminder
+590|A nudge to add the day's expenses
+591|Add today's expenses
+592|Takes a few seconds and keeps your month accurate.
+593|Off
+594|Other time

@@ -83,6 +83,10 @@ class FinanceStore extends ChangeNotifier {
   /// Card due-date and recurring-entry reminders.
   bool notifications = true;
 
+  /// Daily "add today's expenses" nudge, as minutes after midnight; null
+  /// when off.
+  int? dailyReminder;
+
   /// Read bank SMS to detect transactions (Android permission also needed).
   bool smsSync = false;
   DateTime? lastSync;
@@ -173,6 +177,7 @@ class FinanceStore extends ChangeNotifier {
         : (j['theme'] == 'light' ? 'light' : 'dark');
     themeMode = ThemeMode.values.asNameMap()[theme] ?? ThemeMode.dark;
     notifications = (j['notifications'] as bool?) ?? true;
+    dailyReminder = j['dailyReminder'] as int?;
     smsSync = (j['smsSync'] as bool?) ?? false;
     lastSync = j['lastSync'] == null
         ? null
@@ -199,6 +204,7 @@ class FinanceStore extends ChangeNotifier {
     'theme': themeMode.name,
     'themeV2': true,
     'notifications': notifications,
+    if (dailyReminder != null) 'dailyReminder': dailyReminder,
     'smsSync': smsSync,
     if (lastSync != null) 'lastSync': lastSync!.toIso8601String(),
     'ignored': _ignoredKeys.toList(),
@@ -734,6 +740,11 @@ class FinanceStore extends ChangeNotifier {
 
   Future<void> setNotifications(bool on) {
     notifications = on;
+    return _save();
+  }
+
+  Future<void> setDailyReminder(int? minutes) {
+    dailyReminder = minutes;
     return _save();
   }
 
