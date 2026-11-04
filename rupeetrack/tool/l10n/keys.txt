@@ -578,3 +578,6 @@
 578|Started investing on
 579|After 1 year
 580|Add start date
+581|Description
+582|Fewer details
+583|More details

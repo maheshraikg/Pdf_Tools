@@ -73,6 +73,7 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
   bool _initialised = false;
   String? _receipt;
   Frequency? _repeat;
+  bool _more = false;
 
   bool get _editing => widget.initial != null;
 
@@ -93,6 +94,7 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
       _investmentId = t.investmentId;
       _date = t.date;
       _receipt = t.receiptPath;
+      _more = !_simpleType || t.receiptPath != null || t.date != today();
     } else {
       _type = widget.type ?? TxnType.expense;
       if (widget.amount != null) {
@@ -175,6 +177,14 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
       _category = context.store.lastCategory;
     }
   }
+
+  bool get _simpleType => _type == TxnType.expense || _type == TxnType.income;
+
+  void _setType(TxnType t) => setState(() {
+    _type = t;
+    _errors = const [];
+    _adjustForType();
+  });
 
   bool get _usesCategory => switch (_type) {
     TxnType.expense || TxnType.income || TxnType.refund => true,
@@ -355,36 +365,54 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    _editing ? tr('Edit transaction') : tr('Add transaction'),
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 12),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        for (final t in TxnType.values)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: ChoiceChip(
-                              label: Text(t.label),
-                              selected: _type == t,
-                              onSelected: (_) => setState(() {
-                                _type = t;
-                                _errors = const [];
-                                _adjustForType();
-                              }),
-                            ),
-                          ),
-                      ],
+                  if (_editing)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        tr('Edit transaction'),
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                  Center(
+                    child: Toggle(
+                      options: [tr('Expense'), tr('Income')],
+                      selected: switch (_type) {
+                        TxnType.expense => 0,
+                        TxnType.income => 1,
+                        _ => -1,
+                      },
+                      onChanged: (i) =>
+                          _setType(i == 1 ? TxnType.income : TxnType.expense),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  if (!_simpleType)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        _type.label,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: scheme.primary),
+                      ),
+                    ),
+                  const SizedBox(height: 20),
                   AmountField(
                     controller: _amount,
                     autofocus: !_editing && widget.amount == null,
                     large: true,
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _note,
+                    textAlign: TextAlign.center,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: InputDecoration(
+                      hintText: tr('Description'),
+                      filled: false,
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                    ),
                   ),
                   if (_usesCategory) ...[
                     _Label(tr('Category')),
@@ -463,89 +491,105 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                       ),
                     ),
                   ],
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      ActionChip(
+                  const SizedBox(height: 12),
+                  Center(
+                    child: TextButton.icon(
+                      onPressed: () => setState(() => _more = !_more),
+                      icon: Icon(
+                        _more ? Icons.expand_less : Icons.expand_more,
+                        size: 20,
+                      ),
+                      label: Text(
+                        _more ? tr('Fewer details') : tr('More details'),
+                      ),
+                    ),
+                  ),
+                  if (_more) ...[
+                    _Label(tr('Type')),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: [
+                        for (final t in TxnType.values)
+                          ChoiceChip(
+                            label: Text(t.label),
+                            selected: _type == t,
+                            onSelected: (_) => _setType(t),
+                          ),
+                      ],
+                    ),
+                    _Label(tr('Date')),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: ActionChip(
                         avatar: const Icon(Icons.event, size: 18),
                         label: Text(relativeDate(_date)),
                         onPressed: _pickDate,
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: TextField(
-                          controller: _note,
-                          textCapitalization: TextCapitalization.sentences,
-                          decoration: InputDecoration(
-                            hintText: tr('Note (optional), e.g. Lunch'),
-                            isDense: true,
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 6,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        if (_receipt == null)
+                          ActionChip(
+                            avatar: const Icon(Icons.receipt_long, size: 18),
+                            label: Text(tr('Add receipt')),
+                            onPressed: _addReceipt,
+                          )
+                        else
+                          InputChip(
+                            avatar: ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: Image.file(
+                                File(_receipt!),
+                                width: 24,
+                                height: 24,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, _, _) =>
+                                    const Icon(Icons.broken_image, size: 18),
+                              ),
+                            ),
+                            label: Text(tr('Receipt')),
+                            onPressed: () => showReceipt(context, _receipt!),
+                            onDeleted: () => setState(() => _receipt = null),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 6,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      if (_receipt == null)
-                        ActionChip(
-                          avatar: const Icon(Icons.receipt_long, size: 18),
-                          label: Text(tr('Add receipt')),
-                          onPressed: _addReceipt,
-                        )
-                      else
-                        InputChip(
-                          avatar: ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: Image.file(
-                              File(_receipt!),
-                              width: 24,
-                              height: 24,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, _, _) =>
-                                  const Icon(Icons.broken_image, size: 18),
+                        if (widget.initial?.recurringId == null && !_editing)
+                          PopupMenuButton<Frequency?>(
+                            tooltip: tr('Repeat'),
+                            initialValue: _repeat,
+                            onSelected: (f) => setState(() => _repeat = f),
+                            itemBuilder: (_) => [
+                              PopupMenuItem(
+                                value: null,
+                                child: Text(tr('Does not repeat')),
+                              ),
+                              for (final f in Frequency.values)
+                                PopupMenuItem(value: f, child: Text(f.label)),
+                            ],
+                            child: Chip(
+                              avatar: Icon(
+                                _repeat == null
+                                    ? Icons.repeat
+                                    : Icons.event_repeat,
+                                size: 18,
+                              ),
+                              label: Text(_repeat?.label ?? 'Repeat'),
+                              backgroundColor: _repeat == null
+                                  ? null
+                                  : scheme.secondaryContainer,
                             ),
                           ),
-                          label: Text(tr('Receipt')),
-                          onPressed: () => showReceipt(context, _receipt!),
-                          onDeleted: () => setState(() => _receipt = null),
-                        ),
-                      if (widget.initial?.recurringId == null && !_editing)
-                        PopupMenuButton<Frequency?>(
-                          tooltip: tr('Repeat'),
-                          initialValue: _repeat,
-                          onSelected: (f) => setState(() => _repeat = f),
-                          itemBuilder: (_) => [
-                            PopupMenuItem(
-                              value: null,
-                              child: Text(tr('Does not repeat')),
-                            ),
-                            for (final f in Frequency.values)
-                              PopupMenuItem(value: f, child: Text(f.label)),
-                          ],
-                          child: Chip(
-                            avatar: Icon(
-                              _repeat == null
-                                  ? Icons.repeat
-                                  : Icons.event_repeat,
-                              size: 18,
-                            ),
-                            label: Text(_repeat?.label ?? 'Repeat'),
-                            backgroundColor: _repeat == null
-                                ? null
-                                : scheme.secondaryContainer,
+                        if (widget.initial?.recurringId != null)
+                          Chip(
+                            avatar: Icon(Icons.event_repeat, size: 18),
+                            label: Text(tr('Recurring entry')),
                           ),
-                        ),
-                      if (widget.initial?.recurringId != null)
-                        Chip(
-                          avatar: Icon(Icons.event_repeat, size: 18),
-                          label: Text(tr('Recurring entry')),
-                        ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),

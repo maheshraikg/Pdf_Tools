@@ -575,6 +575,9 @@ const Map<String, Map<String, String>> translations = {
     'Started investing on': 'निवेश शुरू करने की तारीख',
     'After 1 year': '1 साल बाद',
     'Add start date': 'शुरुआती तारीख जोड़ें',
+    'Description': 'विवरण',
+    'Fewer details': 'कम जानकारी',
+    'More details': 'और जानकारी',
   },
   'kn': {
     '{0} bill due today': '{0} ಬಿಲ್ ಇಂದು ಪಾವತಿಸಬೇಕು',
@@ -1148,6 +1151,9 @@ const Map<String, Map<String, String>> translations = {
     'Started investing on': 'ಹೂಡಿಕೆ ಪ್ರಾರಂಭಿಸಿದ ದಿನಾಂಕ',
     'After 1 year': '1 ವರ್ಷದ ನಂತರ',
     'Add start date': 'ಪ್ರಾರಂಭ ದಿನಾಂಕ ಸೇರಿಸಿ',
+    'Description': 'ವಿವರಣೆ',
+    'Fewer details': 'ಕಡಿಮೆ ವಿವರಗಳು',
+    'More details': 'ಹೆಚ್ಚಿನ ವಿವರಗಳು',
   },
   'ml': {
     '{0} bill due today': '{0} ബിൽ ഇന്ന് അടയ്ക്കണം',
@@ -1721,6 +1727,9 @@ const Map<String, Map<String, String>> translations = {
     'Started investing on': 'നിക്ഷേപം തുടങ്ങിയ തീയതി',
     'After 1 year': '1 വർഷത്തിന് ശേഷം',
     'Add start date': 'തുടക്ക തീയതി ചേർക്കുക',
+    'Description': 'വിവരണം',
+    'Fewer details': 'കുറച്ച് വിവരങ്ങൾ',
+    'More details': 'കൂടുതൽ വിവരങ്ങൾ',
   },
   'ta': {
     '{0} bill due today': '{0} பில் இன்று செலுத்த வேண்டும்',
@@ -2294,6 +2303,9 @@ const Map<String, Map<String, String>> translations = {
     'Started investing on': 'முதலீடு தொடங்கிய தேதி',
     'After 1 year': '1 ஆண்டுக்குப் பிறகு',
     'Add start date': 'தொடக்கத் தேதியைச் சேர்க்கவும்',
+    'Description': 'விளக்கம்',
+    'Fewer details': 'குறைவான விவரங்கள்',
+    'More details': 'மேலும் விவரங்கள்',
   },
   'te': {
     '{0} bill due today': '{0} బిల్లు ఈరోజు చెల్లించాలి',
@@ -2867,5 +2879,8 @@ const Map<String, Map<String, String>> translations = {
     'Started investing on': 'పెట్టుబడి ప్రారంభించిన తేదీ',
     'After 1 year': '1 సంవత్సరం తర్వాత',
     'Add start date': 'ప్రారంభ తేదీని జోడించండి',
+    'Description': 'వివరణ',
+    'Fewer details': 'తక్కువ వివరాలు',
+    'More details': 'మరిన్ని వివరాలు',
   },
 };
