@@ -571,6 +571,10 @@ const Map<String, Map<String, String>> translations = {
     'No sign-up and no bank login. Your data stays on your phone.': 'कोई साइन-अप नहीं, कोई बैंक लॉगिन नहीं। आपका डेटा आपके फ़ोन पर रहता है।',
     'Skip': 'छोड़ें',
     'Get started': 'शुरू करें',
+    'Choose when you started investing this amount': 'यह राशि कब से निवेश करना शुरू किया, चुनें',
+    'Started investing on': 'निवेश शुरू करने की तारीख',
+    'After 1 year': '1 साल बाद',
+    'Add start date': 'शुरुआती तारीख जोड़ें',
   },
   'kn': {
     '{0} bill due today': '{0} ಬಿಲ್ ಇಂದು ಪಾವತಿಸಬೇಕು',
@@ -1140,6 +1144,10 @@ const Map<String, Map<String, String>> translations = {
     'No sign-up and no bank login. Your data stays on your phone.': 'ಸೈನ್-ಅಪ್ ಇಲ್ಲ, ಬ್ಯಾಂಕ್ ಲಾಗಿನ್ ಇಲ್ಲ. ನಿಮ್ಮ ಡೇಟಾ ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲೇ ಇರುತ್ತದೆ.',
     'Skip': 'ಬಿಟ್ಟುಬಿಡಿ',
     'Get started': 'ಪ್ರಾರಂಭಿಸಿ',
+    'Choose when you started investing this amount': 'ಈ ಮೊತ್ತವನ್ನು ಯಾವಾಗ ಹೂಡಿಕೆ ಮಾಡಲು ಪ್ರಾರಂಭಿಸಿದಿರಿ ಎಂದು ಆಯ್ಕೆಮಾಡಿ',
+    'Started investing on': 'ಹೂಡಿಕೆ ಪ್ರಾರಂಭಿಸಿದ ದಿನಾಂಕ',
+    'After 1 year': '1 ವರ್ಷದ ನಂತರ',
+    'Add start date': 'ಪ್ರಾರಂಭ ದಿನಾಂಕ ಸೇರಿಸಿ',
   },
   'ml': {
     '{0} bill due today': '{0} ബിൽ ഇന്ന് അടയ്ക്കണം',
@@ -1709,6 +1717,10 @@ const Map<String, Map<String, String>> translations = {
     'No sign-up and no bank login. Your data stays on your phone.': 'സൈൻ-അപ്പ് ഇല്ല, ബാങ്ക് ലോഗിൻ ഇല്ല. നിങ്ങളുടെ ഡാറ്റ നിങ്ങളുടെ ഫോണിൽ തന്നെ.',
     'Skip': 'ഒഴിവാക്കുക',
     'Get started': 'തുടങ്ങാം',
+    'Choose when you started investing this amount': 'ഈ തുക എപ്പോൾ നിക്ഷേപിക്കാൻ തുടങ്ങി എന്ന് തിരഞ്ഞെടുക്കുക',
+    'Started investing on': 'നിക്ഷേപം തുടങ്ങിയ തീയതി',
+    'After 1 year': '1 വർഷത്തിന് ശേഷം',
+    'Add start date': 'തുടക്ക തീയതി ചേർക്കുക',
   },
   'ta': {
     '{0} bill due today': '{0} பில் இன்று செலுத்த வேண்டும்',
@@ -2278,6 +2290,10 @@ const Map<String, Map<String, String>> translations = {
     'No sign-up and no bank login. Your data stays on your phone.': 'பதிவு இல்லை, வங்கி உள்நுழைவு இல்லை. உங்கள் தரவு உங்கள் போனிலேயே இருக்கும்.',
     'Skip': 'தவிர்',
     'Get started': 'தொடங்குங்கள்',
+    'Choose when you started investing this amount': 'இந்தத் தொகையை எப்போது முதலீடு செய்யத் தொடங்கினீர்கள் என்பதைத் தேர்ந்தெடுக்கவும்',
+    'Started investing on': 'முதலீடு தொடங்கிய தேதி',
+    'After 1 year': '1 ஆண்டுக்குப் பிறகு',
+    'Add start date': 'தொடக்கத் தேதியைச் சேர்க்கவும்',
   },
   'te': {
     '{0} bill due today': '{0} బిల్లు ఈరోజు చెల్లించాలి',
@@ -2847,5 +2863,9 @@ const Map<String, Map<String, String>> translations = {
     'No sign-up and no bank login. Your data stays on your phone.': 'సైన్-అప్ లేదు, బ్యాంక్ లాగిన్ లేదు. మీ డేటా మీ ఫోన్‌లోనే ఉంటుంది.',
     'Skip': 'దాటవేయి',
     'Get started': 'ప్రారంభించండి',
+    'Choose when you started investing this amount': 'ఈ మొత్తాన్ని ఎప్పుడు పెట్టుబడి పెట్టడం ప్రారంభించారో ఎంచుకోండి',
+    'Started investing on': 'పెట్టుబడి ప్రారంభించిన తేదీ',
+    'After 1 year': '1 సంవత్సరం తర్వాత',
+    'Add start date': 'ప్రారంభ తేదీని జోడించండి',
   },
 };

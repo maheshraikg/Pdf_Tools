@@ -688,16 +688,40 @@ class Ledger {
 
   // ---- Investments --------------------------------------------------------
 
+  /// Units held in a NAV-linked fund: the units entered when it was linked
+  /// plus units bought, minus units sold, by entries recorded since.
+  double unitsHeld(Investment inv) {
+    var units = inv.units ?? 0;
+    for (final t in txns) {
+      if (t.investmentId != inv.id || t.units == null) continue;
+      if (t.type == TxnType.invest) units += t.units!;
+      if (t.type == TxnType.investWithdrawal) units -= t.units!;
+    }
+    return units;
+  }
+
+  /// Current value: units × latest NAV for linked funds, otherwise the value
+  /// the user entered (null if none yet).
+  Paise? valueOf(Investment inv) {
+    if (inv.isLinked && inv.lastNav != null) {
+      return (unitsHeld(inv) * inv.lastNav! * 100).round();
+    }
+    return inv.currentValue;
+  }
+
   InvestmentSummary investmentSummary(Investment inv, DateTime today) {
     var contributed = inv.openingInvested;
     var withdrawn = 0;
     var paidOut = 0;
+    // Money put in before the holding was added counts from the date it was
+    // invested; without that date no yearly return can be worked out.
+    final openingDate = inv.openingDate;
+    var datesKnown = inv.openingInvested <= 0 || openingDate != null;
     final flows = <CashFlow>[
-      // Money put in before the app: dated when the holding was added (the
-      // yearly return is only an estimate until real dates are entered).
-      if (inv.openingInvested > 0)
-        CashFlow(inv.since ?? dateOnly(today), -inv.openingInvested),
+      if (inv.openingInvested > 0 && openingDate != null)
+        CashFlow(openingDate, -inv.openingInvested),
     ];
+    DateTime? lastFlow;
     for (final t in txns.where((t) => t.investmentId == inv.id)) {
       switch (t.type) {
         case TxnType.invest:
@@ -710,19 +734,34 @@ class Ledger {
           paidOut += t.amount;
           flows.add(CashFlow(t.date, t.amount));
         default:
-          break;
+          continue;
       }
+      if (lastFlow == null || t.date.isAfter(lastFlow)) lastFlow = t.date;
     }
-    final value = inv.currentValue;
-    if (value != null) {
-      flows.add(CashFlow(inv.valueUpdatedOn ?? dateOnly(today), value));
+    final value = valueOf(inv);
+    double? rate;
+    var tooEarly = false;
+    if (value != null && datesKnown && flows.isNotEmpty) {
+      // Value it on its own date, but never before the last entry.
+      var on = inv.valueUpdatedOn ?? dateOnly(today);
+      if (lastFlow != null && lastFlow.isAfter(on)) on = lastFlow;
+      final first = flows
+          .map((f) => f.date)
+          .reduce((a, b) => a.isBefore(b) ? a : b);
+      if (on.difference(first).inDays < 365) {
+        tooEarly = true;
+      } else {
+        rate = xirr([...flows, CashFlow(on, value)]);
+      }
     }
     return InvestmentSummary(
       investment: inv,
       contributed: contributed,
       withdrawn: withdrawn,
       incomePaidOut: paidOut,
-      xirr: value == null ? null : xirr(flows),
+      value: value,
+      xirr: rate,
+      xirrTooEarly: tooEarly,
     );
   }
 

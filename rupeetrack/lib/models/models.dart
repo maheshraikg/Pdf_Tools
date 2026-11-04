@@ -241,6 +241,8 @@ class Investment {
     this.units,
     this.openingInvested = 0,
     this.since,
+    this.openingDate,
+    this.lastNav,
   });
 
   final int id;
@@ -263,29 +265,43 @@ class Investment {
   /// years of PPF deposits), so returns are right without entering each one.
   final Paise openingInvested;
 
-  /// Day the holding was added; [openingInvested] counts from then.
+  /// Day the holding was added to the app.
   final DateTime? since;
+
+  /// When the money in [openingInvested] was invested (the start of the
+  /// investment). Yearly return (XIRR) counts from this date.
+  final DateTime? openingDate;
+
+  /// Latest NAV per unit for a linked fund (from AMFI).
+  final double? lastNav;
 
   bool get isLinked => schemeCode != null && units != null;
 
-  Investment withValue(Paise value, DateTime on, {String? source}) =>
-      Investment(
-        id: id,
-        name: name,
-        type: type,
-        currentValue: value,
-        valueUpdatedOn: dateOnly(on),
-        valueSource: source,
-        schemeCode: schemeCode,
-        units: units,
-        openingInvested: openingInvested,
-        since: since,
-      );
+  Investment withValue(
+    Paise value,
+    DateTime on, {
+    String? source,
+    double? nav,
+  }) => Investment(
+    id: id,
+    name: name,
+    type: type,
+    currentValue: value,
+    valueUpdatedOn: dateOnly(on),
+    valueSource: source,
+    schemeCode: schemeCode,
+    units: units,
+    openingInvested: openingInvested,
+    since: since,
+    openingDate: openingDate,
+    lastNav: nav ?? lastNav,
+  );
 
   Investment renamed(
     String newName,
     InvestmentType newType, {
     Paise? openingInvested,
+    DateTime? openingDate,
   }) => Investment(
     id: id,
     name: newName,
@@ -311,6 +327,8 @@ class Investment {
     units: heldUnits,
     openingInvested: openingInvested,
     since: since,
+    openingDate: openingDate,
+    lastNav: lastNav,
   );
 
   Map<String, Object?> toJson() => {
@@ -324,6 +342,8 @@ class Investment {
     if (units != null) 'units': units,
     if (openingInvested != 0) 'openingInvested': openingInvested,
     if (since != null) 'since': isoDate(since!),
+    if (openingDate != null) 'openingDate': isoDate(openingDate!),
+    if (lastNav != null) 'nav': lastNav,
   };
 
   factory Investment.fromJson(Map<String, dynamic> j) => Investment(
@@ -339,6 +359,10 @@ class Investment {
     units: (j['units'] as num?)?.toDouble(),
     openingInvested: (j['openingInvested'] as int?) ?? 0,
     since: j['since'] == null ? null : parseIsoDate(j['since'] as String),
+    openingDate: j['openingDate'] == null
+        ? null
+        : parseIsoDate(j['openingDate'] as String),
+    lastNav: (j['nav'] as num?)?.toDouble(),
   );
 }
 
@@ -399,6 +423,7 @@ class Txn {
     this.recurringId,
     this.sourceKey,
     this.loanId,
+    this.units,
   });
 
   final int id;
@@ -426,6 +451,10 @@ class Txn {
   /// The [Loan] this entry pays an EMI on.
   final int? loanId;
 
+  /// Mutual fund units bought (invest) or sold (withdraw) by this entry,
+  /// for NAV-linked funds.
+  final double? units;
+
   /// Where an automatically detected entry came from, for display.
   String? get sourceLabel => switch (sourceKey?.split(':').first) {
     'sms' => tr('SMS'),
@@ -434,23 +463,25 @@ class Txn {
     _ => null,
   };
 
-  Txn copyWith({int? id, DateTime? date, int? recurringId}) => Txn(
-    id: id ?? this.id,
-    type: type,
-    amount: amount,
-    date: date ?? this.date,
-    category: category,
-    note: note,
-    fromAccountId: fromAccountId,
-    fromCardId: fromCardId,
-    toAccountId: toAccountId,
-    toCardId: toCardId,
-    investmentId: investmentId,
-    receiptPath: receiptPath,
-    recurringId: recurringId ?? this.recurringId,
-    sourceKey: sourceKey,
-    loanId: loanId,
-  );
+  Txn copyWith({int? id, DateTime? date, int? recurringId, double? units}) =>
+      Txn(
+        id: id ?? this.id,
+        type: type,
+        amount: amount,
+        date: date ?? this.date,
+        category: category,
+        note: note,
+        fromAccountId: fromAccountId,
+        fromCardId: fromCardId,
+        toAccountId: toAccountId,
+        toCardId: toCardId,
+        investmentId: investmentId,
+        receiptPath: receiptPath,
+        recurringId: recurringId ?? this.recurringId,
+        sourceKey: sourceKey,
+        loanId: loanId,
+        units: units ?? this.units,
+      );
 
   Map<String, Object?> toJson() => {
     'id': id,
@@ -468,6 +499,7 @@ class Txn {
     if (recurringId != null) 'recurring': recurringId,
     if (sourceKey != null) 'src': sourceKey,
     if (loanId != null) 'loan': loanId,
+    if (units != null) 'units': units,
   };
 
   factory Txn.fromJson(Map<String, dynamic> j) => Txn(
@@ -486,6 +518,7 @@ class Txn {
     recurringId: j['recurring'] as int?,
     sourceKey: j['src'] as String?,
     loanId: j['loan'] as int?,
+    units: (j['units'] as num?)?.toDouble(),
   );
 }
 

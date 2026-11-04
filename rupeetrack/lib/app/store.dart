@@ -287,6 +287,7 @@ class FinanceStore extends ChangeNotifier {
     InvestmentType type, {
     Paise invested = 0,
     Paise? value,
+    DateTime? investedOn,
   }) async {
     final now = dateOnly(DateTime.now());
     var inv = Investment(
@@ -295,6 +296,7 @@ class FinanceStore extends ChangeNotifier {
       type: type,
       openingInvested: invested,
       since: now,
+      openingDate: investedOn == null ? null : dateOnly(investedOn),
     );
     if (value != null) inv = inv.withValue(value, now);
     _investments.add(inv);
@@ -331,13 +333,14 @@ class FinanceStore extends ChangeNotifier {
     for (final inv in [..._investments]) {
       final quote = navs[inv.schemeCode];
       if (!inv.isLinked || quote == null) continue;
-      final value = (inv.units! * quote.nav * 100).round();
+      final value = (_ledger.unitsHeld(inv) * quote.nav * 100).round();
       _upsert(
         _investments,
         inv.withValue(
           value,
           quote.date,
           source: 'AMFI NAV ${formatRupees((quote.nav * 100).round())}',
+          nav: quote.nav,
         ),
         (e) => e.id,
       );
@@ -403,8 +406,14 @@ class FinanceStore extends ChangeNotifier {
     InvestmentType type, {
     Paise? invested,
     Paise? value,
+    DateTime? investedOn,
   }) {
-    var updated = inv.renamed(name, type, openingInvested: invested);
+    var updated = inv.renamed(
+      name,
+      type,
+      openingInvested: invested,
+      openingDate: investedOn,
+    );
     if (value != null && value != inv.currentValue) {
       updated = updated.withValue(value, DateTime.now());
     }
@@ -474,9 +483,23 @@ class FinanceStore extends ChangeNotifier {
   ///
   /// With [repeat], a new entry also becomes a [Recurring] rule whose later
   /// copies are posted automatically.
+  /// Money into or out of a NAV-linked fund buys or sells units at the
+  /// latest NAV, so the fund's value keeps up with every SIP instalment.
+  Txn _withUnits(Txn t) {
+    if (t.units != null || t.investmentId == null) return t;
+    if (t.type != TxnType.invest && t.type != TxnType.investWithdrawal) {
+      return t;
+    }
+    final inv = _ledger.investment(t.investmentId);
+    final nav = inv?.lastNav;
+    if (inv == null || !inv.isLinked || nav == null || nav <= 0) return t;
+    return t.copyWith(units: t.amount / 100 / nav);
+  }
+
   Future<List<String>> saveTxn(Txn t, {Frequency? repeat}) async {
     final errors = validate(t);
     if (errors.isNotEmpty) return errors;
+    t = _withUnits(t);
     var saved = t.id == 0 ? t.copyWith(id: _newId()) : t;
     if (repeat != null && t.recurringId == null) {
       final rule = Recurring(

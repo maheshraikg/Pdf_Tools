@@ -4,6 +4,7 @@ import '../app/scope.dart';
 import '../models/models.dart';
 import '../models/money.dart';
 import '../widgets/common.dart';
+import 'loans_screen.dart' show DateButton;
 import '../l10n/strings.dart';
 
 /// Asks for a single line of text.
@@ -463,6 +464,7 @@ class _InvestmentFormState extends State<_InvestmentForm> {
   final _name = TextEditingController();
   final _invested = TextEditingController();
   final _value = TextEditingController();
+  DateTime? _investedOn;
   InvestmentType _type = InvestmentType.mutualFund;
   String? _error;
 
@@ -475,6 +477,7 @@ class _InvestmentFormState extends State<_InvestmentForm> {
       _type = inv.type;
       if (inv.openingInvested > 0) {
         _invested.text = amountText(inv.openingInvested);
+        _investedOn = inv.openingDate;
       }
       if (inv.currentValue != null) {
         _value.text = amountText(inv.currentValue!);
@@ -501,6 +504,11 @@ class _InvestmentFormState extends State<_InvestmentForm> {
     if (_value.text.trim().isNotEmpty && value == null) {
       return setState(() => _error = tr('Enter a valid current value'));
     }
+    if (invested > 0 && _investedOn == null) {
+      return setState(
+        () => _error = tr('Choose when you started investing this amount'),
+      );
+    }
     final edit = widget.edit;
     if (edit != null) {
       await context.store.updateInvestment(
@@ -509,6 +517,7 @@ class _InvestmentFormState extends State<_InvestmentForm> {
         _type,
         invested: invested,
         value: value,
+        investedOn: _investedOn,
       );
       if (mounted) Navigator.pop(context);
       return;
@@ -518,6 +527,7 @@ class _InvestmentFormState extends State<_InvestmentForm> {
       _type,
       invested: invested,
       value: value,
+      investedOn: _investedOn,
     );
     if (mounted) Navigator.pop(context, inv);
   }
@@ -552,6 +562,12 @@ class _InvestmentFormState extends State<_InvestmentForm> {
           label: widget.edit == null
               ? tr('Amount invested so far (optional)')
               : tr('Invested before adding it here'),
+        ),
+        DateButton(
+          label: tr('Started investing on'),
+          date: _investedOn,
+          optional: true,
+          onChanged: (d) => setState(() => _investedOn = d),
         ),
         AmountField(controller: _value, label: tr('Current value (optional)')),
         Text(

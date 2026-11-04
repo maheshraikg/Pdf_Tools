@@ -574,3 +574,7 @@
 574|No sign-up and no bank login. Your data stays on your phone.
 575|Skip
 576|Get started
+577|Choose when you started investing this amount
+578|Started investing on
+579|After 1 year
+580|Add start date

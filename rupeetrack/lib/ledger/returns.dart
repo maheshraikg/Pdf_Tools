@@ -9,7 +9,9 @@ class InvestmentSummary {
     required this.contributed,
     required this.withdrawn,
     required this.incomePaidOut,
+    this.value,
     this.xirr,
+    this.xirrTooEarly = false,
   });
 
   final Investment investment;
@@ -20,10 +22,18 @@ class InvestmentSummary {
   /// already part of the current value, so it is not added again.
   final Paise incomePaidOut;
 
+  /// Current value (units × latest NAV for linked funds), or null when not
+  /// known yet.
+  final Paise? value;
+
   /// Annualised return as a fraction (0.12 = 12% a year), when computable.
   final double? xirr;
 
-  Paise? get currentValue => investment.currentValue;
+  /// True when there is less than a year of history: a yearly rate would be
+  /// misleading, so only the plain return is shown.
+  final bool xirrTooEarly;
+
+  Paise? get currentValue => value;
 
   Paise get netInvested => contributed - withdrawn;
 

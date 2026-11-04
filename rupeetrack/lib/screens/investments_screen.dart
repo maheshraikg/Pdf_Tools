@@ -348,7 +348,13 @@ class _InvestmentTile extends StatelessWidget {
                 Expanded(
                   child: Figure(
                     tr('Yearly (XIRR)'),
-                    s.xirr == null ? '–' : _percent(s.xirr! * 100),
+                    s.xirr != null
+                        ? _percent(s.xirr! * 100)
+                        : s.xirrTooEarly
+                        ? tr('After 1 year')
+                        : inv.openingInvested > 0 && inv.openingDate == null
+                        ? tr('Add start date')
+                        : '–',
                   ),
                 ),
               ],
