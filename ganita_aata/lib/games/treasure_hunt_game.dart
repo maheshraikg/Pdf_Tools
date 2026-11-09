@@ -8,7 +8,7 @@ import '../models/game_result.dart';
 import '../models/question.dart';
 import '../services/app_state.dart';
 import '../services/audio_service.dart';
-import '../widgets/app_theme.dart';
+import '../widgets/common.dart';
 import '../widgets/game_shell.dart';
 import '../widgets/l10n_ext.dart';
 import '../widgets/mcq_panel.dart';
@@ -127,11 +127,7 @@ class _TreasureHuntGameState extends State<TreasureHuntGame> with Countdown {
                             AnimatedScale(
                               scale: i < _keys ? 1.15 : 0.9,
                               duration: const Duration(milliseconds: 250),
-                              child: Icon(
-                                Icons.key_rounded,
-                                size: 30,
-                                color: i < _keys ? AppColors.coin : Colors.black26,
-                              ),
+                              child: Opacity(opacity: i < _keys ? 1 : 0.25, child: const AppImage('key', size: 30)),
                             ),
                         ],
                       ),

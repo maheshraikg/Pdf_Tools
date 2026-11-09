@@ -31,7 +31,7 @@ class TablesMasterScreen extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(8),
-              child: Text(l.pickTable, style: Theme.of(context).textTheme.titleLarge),
+              child: MascotBubble(text: l.pickTable, size: 60),
             ),
             Expanded(
               child: GridView.builder(
@@ -47,23 +47,15 @@ class TablesMasterScreen extends StatelessWidget {
                   final mastered = app.engine.isTableMastered(n);
                   return BigCard(
                     key: ValueKey('table_$n'),
-                    color: AppColors.cardColors[i % AppColors.cardColors.length],
+                    color: AppColors.card(i).$1,
                     padding: const EdgeInsets.all(4),
                     onTap: () => _choose(context, n),
                     child: Stack(
                       children: [
                         Center(
-                          child: Text(
-                            '$n',
-                            style: const TextStyle(fontSize: 34, fontWeight: FontWeight.w700, color: Colors.white),
-                          ),
+                          child: Text('$n', style: display(36, color: Colors.white, height: 1)),
                         ),
-                        if (mastered)
-                          const Positioned(
-                            right: 0,
-                            top: 0,
-                            child: Icon(Icons.star_rounded, color: Colors.yellowAccent, size: 26),
-                          ),
+                        if (mastered) const Positioned(right: 0, top: 0, child: AppImage('star', size: 24)),
                       ],
                     ),
                   );
@@ -87,7 +79,14 @@ class TablesMasterScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(l.tableOf(n), style: Theme.of(c).textTheme.headlineMedium),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const AppImage('book', size: 40),
+                  const SizedBox(width: 10),
+                  Text(l.tableOf(n), style: display(30)),
+                ],
+              ),
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -220,19 +219,11 @@ class _TableLearnScreenState extends State<TableLearnScreen> {
                       },
                       title: Text(
                         '$n × $b = ${n * b}',
-                        style: TextStyle(
-                          fontSize: on ? 34 : 28,
-                          fontWeight: FontWeight.w700,
-                          color: on ? Colors.white : AppColors.ink,
-                        ),
+                        style: display(on ? 36 : 30, color: on ? Colors.white : AppColors.ink),
                       ),
                       trailing: mastered
-                          ? Icon(
-                              Icons.star_rounded,
-                              color: on ? Colors.white : AppColors.coin,
-                              semanticLabel: l.mastered,
-                            )
-                          : Icon(Icons.volume_up_rounded, color: on ? Colors.white : Colors.black38),
+                          ? AppImage('glow_star', size: 34, semanticLabel: l.mastered)
+                          : Icon(Icons.volume_up_rounded, size: 30, color: on ? Colors.white : AppColors.secondary),
                     ),
                   );
                 },
@@ -243,22 +234,40 @@ class _TableLearnScreenState extends State<TableLearnScreen> {
               child: Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton.icon(
+                    child: ChunkyButton(
                       key: const ValueKey('listen_btn'),
-                      onPressed: _playAll,
-                      icon: Icon(_playing ? Icons.pause_rounded : Icons.play_arrow_rounded),
-                      label: Text(_playing ? l.pause : l.listen),
+                      color: Colors.white,
+                      edgeColor: const Color(0xFFC9BCF7),
+                      onTap: _playAll,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(_playing ? Icons.pause_rounded : Icons.volume_up_rounded, color: AppColors.secondary),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: FittedBox(
+                              child: Text(
+                                _playing ? l.pause : l.listen,
+                                style: display(20, color: AppColors.secondary),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: FilledButton(
-                      onPressed: () {
+                    child: ChunkyButton(
+                      color: AppColors.primary,
+                      onTap: () {
                         _run++;
                         _audio.stopVoice();
                         startTableQuiz(context, n, replace: true);
                       },
-                      child: Text(l.startQuiz),
+                      child: FittedBox(
+                        child: Text(l.startQuiz, style: display(20, color: Colors.white)),
+                      ),
                     ),
                   ),
                 ],

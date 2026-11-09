@@ -145,13 +145,24 @@ extension AppStrings on AppLocalizations {
   };
 }
 
-String badgeEmoji(String id) {
-  if (Badges.tableOf(id) != null) return '🏅';
+/// Illustration (assets/images) for a badge.
+String badgeImage(String id) {
+  if (Badges.tableOf(id) != null) return 'medal';
   return switch (id) {
-    Badges.streak7 => '🔥',
-    Badges.streak30 => '🌟',
-    Badges.day100 => '💯',
-    Badges.speedStar => '⚡',
-    _ => '🏆',
+    Badges.streak7 => 'fire',
+    Badges.streak30 => 'crown',
+    Badges.day100 => 'hundred',
+    Badges.speedStar => 'speed',
+    _ => 'trophy',
   };
 }
+
+/// Illustration (assets/images) for a game mode.
+String modeImage(GameMode m) => switch (m) {
+  GameMode.balloon => 'balloon',
+  GameMode.race => 'race',
+  GameMode.treasure => 'treasure',
+  GameMode.tables => 'book',
+  GameMode.speed => 'speed',
+  GameMode.daily => 'calendar',
+};

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../models/question.dart';
+import 'app_theme.dart';
+import 'common.dart';
 import 'l10n_ext.dart';
 
-/// The current sum, in very large type.
+/// The current sum, in very large type, on a white card with a colourful rim.
 class QuestionCard extends StatelessWidget {
-  const QuestionCard({super.key, required this.question, this.fontSize = 46, this.trailing});
+  const QuestionCard({super.key, required this.question, this.fontSize = 50, this.trailing});
 
   final Question question;
   final double fontSize;
@@ -17,26 +19,32 @@ class QuestionCard extends StatelessWidget {
     final isLong = text.length > 18;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+      padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: const [BoxShadow(color: Color(0x22000000), blurRadius: 10, offset: Offset(0, 4))],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              text,
-              key: const ValueKey('question_text'),
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: isLong ? fontSize * 0.72 : fontSize, fontWeight: FontWeight.w700),
-            ),
-          ),
-          ?trailing,
+        borderRadius: BorderRadius.circular(30),
+        gradient: const LinearGradient(colors: [AppColors.secondary, Color(0xFFFF6FB5), AppColors.primary]),
+        boxShadow: [
+          BoxShadow(color: AppColors.secondary.withValues(alpha: 0.3), blurRadius: 14, offset: const Offset(0, 6)),
         ],
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(26)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                text,
+                key: const ValueKey('question_text'),
+                textAlign: TextAlign.center,
+                style: display(isLong ? fontSize * 0.66 : fontSize, height: 1.2),
+              ),
+            ),
+            ?trailing,
+          ],
+        ),
       ),
     );
   }
@@ -55,19 +63,25 @@ class FeedbackLine extends StatelessWidget {
       duration: const Duration(milliseconds: 250),
       transitionBuilder: (c, a) => ScaleTransition(scale: a, child: c),
       child: text == null
-          ? const SizedBox(height: 40, key: ValueKey('empty'))
+          ? const SizedBox(height: 48, key: ValueKey('empty'))
           : SizedBox(
               key: ValueKey(text),
-              height: 40,
-              child: FittedBox(
-                child: Text(
-                  text!,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: good ? const Color(0xFF1B8A45) : const Color(0xFFB35C00),
+              height: 48,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AppImage(good ? 'glow_star' : 'muscle', size: 32),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        text!,
+                        style: display(22, color: good ? AppColors.goodDark : const Color(0xFFC46A00)),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
     );

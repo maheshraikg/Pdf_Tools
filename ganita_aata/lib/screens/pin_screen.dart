@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../services/app_state.dart';
 import '../widgets/app_theme.dart';
+import '../widgets/common.dart';
 import '../widgets/l10n_ext.dart';
 
 /// Asks for the parent PIN (creating one first if none is set).
@@ -96,10 +97,15 @@ class _PinScreenState extends State<PinScreen> {
       child: SizedBox(
         width: 84,
         height: 72,
-        child: FilledButton.tonal(
+        child: ChunkyButton(
           key: ValueKey('pin_$d'),
-          onPressed: () => _digit(d),
-          child: Text(d, style: const TextStyle(fontSize: 30)),
+          color: Colors.white,
+          edgeColor: const Color(0xFFD5CFEA),
+          radius: 20,
+          depth: 5,
+          padding: EdgeInsets.zero,
+          onTap: () => _digit(d),
+          child: Text(d, style: display(32, height: 1)),
         ),
       ),
     );

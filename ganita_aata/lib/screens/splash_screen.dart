@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../services/app_state.dart';
 import '../widgets/app_theme.dart';
+import '../widgets/common.dart';
 import '../widgets/l10n_ext.dart';
 import 'home_screen.dart';
 import 'language_screen.dart';
@@ -50,23 +51,28 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
-      body: Center(
-        child: TweenAnimationBuilder<double>(
-          tween: Tween(begin: 0.3, end: 1),
-          duration: const Duration(milliseconds: 900),
-          curve: Curves.elasticOut,
-          builder: (c, v, child) => Transform.scale(scale: v, child: child),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const AppLogo(size: 150),
-              const SizedBox(height: 20),
-              Text(
-                context.l10n.appTitle,
-                style: const TextStyle(fontSize: 44, fontWeight: FontWeight.w700, color: Colors.white),
-              ),
-            ],
+      body: GameBackground(
+        colors: const [Color(0xFFFFA62B), Color(0xFFFF7A00)],
+        child: Center(
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.3, end: 1),
+            duration: const Duration(milliseconds: 900),
+            curve: Curves.elasticOut,
+            builder: (c, v, child) => Transform.scale(scale: v, child: child),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    const AppLogo(size: 150),
+                    const Positioned(right: -34, bottom: -18, child: AppImage('owl', size: 86)),
+                  ],
+                ),
+                const SizedBox(height: 28),
+                Text(context.l10n.appTitle, style: display(52, color: Colors.white)),
+              ],
+            ),
           ),
         ),
       ),
@@ -102,10 +108,7 @@ class AppLogo extends StatelessWidget {
             ('÷', Color(0xFF9B5DE5)),
           ])
             Center(
-              child: Text(
-                s,
-                style: TextStyle(fontSize: size * 0.3, fontWeight: FontWeight.w700, color: c, height: 1),
-              ),
+              child: Text(s, style: display(size * 0.34, color: c, height: 1)),
             ),
         ],
       ),

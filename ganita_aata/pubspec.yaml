@@ -41,6 +41,7 @@ dependencies:
   intl: ^0.20.3
   flutter_localizations:
     sdk: flutter
+  flutter_svg: ^2.3.2
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +63,8 @@ flutter:
 
   assets:
     - assets/fonts/OFL.txt
+    - assets/fonts/OFL-BalooTamma2.txt
+    - assets/images/
     - assets/audio/sfx/
     - assets/audio/en/
     - assets/audio/en/tables/
@@ -69,9 +72,29 @@ flutter:
     - assets/audio/kn/tables/
 
   fonts:
-    # Noto Sans Kannada (SIL OFL 1.1) – used for all text.
+    # Baloo Tamma 2 (SIL OFL 1.1) – rounded, playful; Kannada + Latin.
+    # Used for titles, buttons and numbers.
+    - family: Baloo
+      fonts:
+        - asset: assets/fonts/BalooTamma2-500.ttf
+          weight: 500
+        - asset: assets/fonts/BalooTamma2-700.ttf
+          weight: 700
+        - asset: assets/fonts/BalooTamma2-800.ttf
+          weight: 800
+    # Noto Sans Kannada (SIL OFL 1.1) – body text.
     - family: NotoSansKannada
       fonts:
+    # Baloo Tamma 2 (SIL OFL 1.1) – rounded, playful; Kannada + Latin.
+    # Used for titles, buttons and numbers.
+    - family: Baloo
+      fonts:
+        - asset: assets/fonts/BalooTamma2-500.ttf
+          weight: 500
+        - asset: assets/fonts/BalooTamma2-700.ttf
+          weight: 700
+        - asset: assets/fonts/BalooTamma2-800.ttf
+          weight: 800
         - asset: assets/fonts/NotoSansKannada-Regular.ttf
         - asset: assets/fonts/NotoSansKannada-Bold.ttf
           weight: 700

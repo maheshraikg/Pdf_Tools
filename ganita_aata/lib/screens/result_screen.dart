@@ -6,6 +6,8 @@ import '../services/app_state.dart';
 import '../services/audio_service.dart';
 import '../widgets/app_theme.dart';
 import '../widgets/badge_popup.dart';
+import '../widgets/common.dart';
+import '../widgets/confetti.dart';
 import '../widgets/l10n_ext.dart';
 
 /// Score, stars, coins, mistakes with correct answers, and what to do next.
@@ -58,87 +60,154 @@ class _ResultScreenState extends State<ResultScreen> {
       for (final t in s.unlockedTopics) l.newTopicUnlocked(l.topicName(t)),
     ];
     return Scaffold(
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(20),
+      body: GameBackground(
+        colors: const [Color(0xFFFFE6B5), Color(0xFFFFF7EA), Color(0xFFEAF3FF)],
+        child: Stack(
           children: [
-            Text(l.resultTitle, textAlign: TextAlign.center, style: Theme.of(context).textTheme.headlineMedium),
-            const SizedBox(height: 12),
-            _Stars(stars: s.stars),
-            const SizedBox(height: 8),
-            Text(msg, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _Tile(label: l.score, value: '${r.correct}/${r.total}', color: AppColors.secondary),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: _Tile(label: l.correctLabel, value: '${r.correct}', color: AppColors.good),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: _Tile(label: l.practiseLabel, value: '${r.total - r.correct}', color: AppColors.gentle),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                decoration: BoxDecoration(
-                  color: AppColors.coin.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Text('🪙 ${l.coinsEarned(s.coins)}', style: Theme.of(context).textTheme.titleLarge),
-              ),
-            ),
-            for (final e in extras)
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(e, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleMedium),
-              ),
-            const SizedBox(height: 16),
-            if (r.mistakes.isEmpty && r.total > 0)
-              Text('🎉 ${l.allCorrect}', textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge)
-            else if (r.mistakes.isNotEmpty) ...[
-              Text(l.practiseThese, style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 8),
-              for (final m in r.mistakes)
-                Card(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: ListTile(
-                    leading: const Icon(Icons.lightbulb_rounded, color: AppColors.gentle, size: 32),
-                    title: Text(
-                      l.solvedText(m.question),
-                      style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
+            SafeArea(
+              child: ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  Center(child: AppImage(s.stars >= 2 ? 'trophy' : (s.stars == 1 ? 'party' : 'muscle'), size: 96)),
+                  const SizedBox(height: 6),
+                  Text(l.resultTitle, textAlign: TextAlign.center, style: display(32)),
+                  const SizedBox(height: 8),
+                  _Stars(stars: s.stars),
+                  const SizedBox(height: 8),
+                  Text(
+                    msg,
+                    textAlign: TextAlign.center,
+                    style: display(23, color: AppColors.secondary),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _Tile(label: l.score, value: '${r.correct}/${r.total}', color: AppColors.secondary),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _Tile(label: l.correctLabel, value: '${r.correct}', color: AppColors.good),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _Tile(label: l.practiseLabel, value: '${r.total - r.correct}', color: AppColors.gentle),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Center(
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween(begin: 0.6, end: 1),
+                      duration: const Duration(milliseconds: 700),
+                      curve: Curves.elasticOut,
+                      builder: (c, v, child) => Transform.scale(scale: v, child: child),
+                      child: StatChip(icon: const AppImage('coin', size: 32), label: l.coinsEarned(s.coins)),
                     ),
                   ),
-                ),
-            ],
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    key: const ValueKey('home_btn'),
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.home_rounded),
-                    label: Text(l.home),
+                  for (final e in extras)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Panel(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        child: Row(
+                          children: [
+                            const AppImage('sparkles', size: 30),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(e, style: display(18, weight: FontWeight.w700)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+                  if (r.mistakes.isEmpty && r.total > 0)
+                    Panel(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const AppImage('party', size: 40),
+                          const SizedBox(width: 10),
+                          Flexible(
+                            child: Text(l.allCorrect, style: display(24, color: AppColors.goodDark)),
+                          ),
+                        ],
+                      ),
+                    )
+                  else if (r.mistakes.isNotEmpty) ...[
+                    Text(l.practiseThese, style: display(21)),
+                    const SizedBox(height: 8),
+                    for (final m in r.mistakes)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Panel(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          child: Row(
+                            children: [
+                              const AppImage('bulb', size: 34),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(l.solvedText(m.question), style: display(28)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ChunkyButton(
+                          key: const ValueKey('home_btn'),
+                          color: Colors.white,
+                          edgeColor: const Color(0xFFD5CFEA),
+                          onTap: () => Navigator.of(context).pop(),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.home_rounded, color: AppColors.secondary, size: 28),
+                              const SizedBox(width: 6),
+                              Flexible(
+                                child: FittedBox(
+                                  child: Text(l.home, style: display(21, color: AppColors.secondary)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ChunkyButton(
+                          key: const ValueKey('again_btn'),
+                          color: AppColors.primary,
+                          onTap: () => widget.onReplay(context),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.replay_rounded, color: Colors.white, size: 28),
+                              const SizedBox(width: 6),
+                              Flexible(
+                                child: FittedBox(
+                                  child: Text(l.playAgain, style: display(21, color: Colors.white)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: FilledButton.icon(
-                    key: const ValueKey('again_btn'),
-                    onPressed: () => widget.onReplay(context),
-                    icon: const Icon(Icons.replay_rounded),
-                    label: Text(l.playAgain),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
+            if (s.stars > 0) const Positioned.fill(child: Confetti()),
           ],
         ),
       ),
@@ -162,7 +231,13 @@ class _Stars extends StatelessWidget {
             duration: Duration(milliseconds: 500 + i * 250),
             curve: Curves.elasticOut,
             builder: (c, v, child) => Transform.scale(scale: v, child: child),
-            child: Icon(Icons.star_rounded, size: i == 1 ? 96 : 76, color: i < stars ? AppColors.coin : Colors.black12),
+            child: Padding(
+              padding: EdgeInsets.only(top: i == 1 ? 0 : 18),
+              child: Opacity(
+                opacity: i < stars ? 1 : 0.18,
+                child: AppImage('star', size: i == 1 ? 88 : 66),
+              ),
+            ),
           ),
       ],
     );
@@ -180,13 +255,23 @@ class _Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color, width: 2.5),
+        boxShadow: [BoxShadow(color: color.withValues(alpha: 0.35), offset: const Offset(0, 4))],
+      ),
       child: Column(
         children: [
           FittedBox(
-            child: Text(value, style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w700)),
+            child: Text(value, style: display(32, color: darken(color, 0.12))),
           ),
-          FittedBox(child: Text(label, style: const TextStyle(fontSize: 16))),
+          FittedBox(
+            child: Text(
+              label,
+              style: display(16, weight: FontWeight.w500, color: AppColors.inkSoft),
+            ),
+          ),
         ],
       ),
     );

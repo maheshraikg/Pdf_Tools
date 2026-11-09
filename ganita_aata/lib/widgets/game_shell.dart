@@ -55,6 +55,7 @@ class GameShell extends StatelessWidget {
       child: Scaffold(
         body: GameBackground(
           colors: background,
+          clouds: background == null,
           child: SafeArea(
             child: Column(
               children: [
@@ -62,21 +63,23 @@ class GameShell extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(8, 8, 12, 4),
                   child: Row(
                     children: [
-                      IconButton.filledTonal(
-                        key: const ValueKey('close_game'),
-                        iconSize: 28,
-                        tooltip: l.stop,
-                        onPressed: () => Navigator.maybePop(context),
-                        icon: const Icon(Icons.close_rounded),
+                      SizedBox(
+                        width: 48,
+                        height: 50,
+                        child: ChunkyButton(
+                          key: const ValueKey('close_game'),
+                          color: Colors.white,
+                          edgeColor: const Color(0xFFD5CFEA),
+                          radius: 16,
+                          depth: 4,
+                          padding: EdgeInsets.zero,
+                          onTap: () => Navigator.maybePop(context),
+                          child: Icon(Icons.close_rounded, size: 28, color: AppColors.inkSoft, semanticLabel: l.stop),
+                        ),
                       ),
                       const SizedBox(width: 6),
                       Expanded(
-                        child: Text(
-                          title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
+                        child: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: display(21)),
                       ),
                       if (secondsLeft != null) ...[
                         StatChip(
@@ -92,7 +95,7 @@ class GameShell extends StatelessWidget {
                       ],
                       if (score != null)
                         StatChip(
-                          icon: const Icon(Icons.star_rounded, color: AppColors.coin),
+                          icon: const AppImage('star', size: 22),
                           label: '$score',
                           semantics: l.score,
                           compact: true,

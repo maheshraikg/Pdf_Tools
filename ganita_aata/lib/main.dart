@@ -18,6 +18,12 @@ Future<void> main() async {
   LicenseRegistry.addLicense(() async* {
     final ofl = await rootBundle.loadString('assets/fonts/OFL.txt');
     yield LicenseEntryWithLineBreaks(['Noto Sans Kannada'], ofl);
+    yield LicenseEntryWithLineBreaks([
+      'Baloo Tamma 2',
+    ], await rootBundle.loadString('assets/fonts/OFL-BalooTamma2.txt'));
+    yield LicenseEntryWithLineBreaks([
+      'Fluent Emoji (illustrations)',
+    ], await rootBundle.loadString('assets/images/LICENSE-fluentui-emoji.txt'));
   });
   NotificationService.initTimeZones();
   final store = await HiveAppStore.open();

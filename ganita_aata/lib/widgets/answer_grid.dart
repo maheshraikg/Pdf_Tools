@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../models/question.dart';
 import 'app_theme.dart';
+import 'common.dart';
 import 'l10n_ext.dart';
 import 'shake.dart';
 
-/// Four big answer buttons in a 2 × 2 grid.
+/// Four big, chunky answer buttons in a 2 × 2 grid.
 ///
 /// After a choice, the correct answer turns green; a wrong choice shakes
 /// gently and turns soft orange (never red).
@@ -31,60 +32,50 @@ class AnswerGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       mainAxisSpacing: 14,
       crossAxisSpacing: 14,
-      childAspectRatio: 1.9,
+      childAspectRatio: 1.75,
       children: [
         for (var i = 0; i < options.length; i++)
-          _AnswerButton(
-            key: ValueKey('answer_$i'),
-            label: l.answerText(options[i]),
-            color: !done
-                ? AppColors.cardColors[i % AppColors.cardColors.length]
-                : options[i] == correct
-                ? AppColors.good
-                : options[i] == chosen
-                ? AppColors.gentle
-                : Colors.grey.shade400,
-            shake: done && options[i] == chosen && chosen != correct,
-            onTap: done ? null : () => onTap(options[i]),
+          Builder(
+            builder: (context) {
+              final isRight = options[i] == correct;
+              final isChosen = options[i] == chosen;
+              final Color color = !done
+                  ? AppColors.card(i).$1
+                  : isRight
+                  ? AppColors.good
+                  : isChosen
+                  ? AppColors.gentle
+                  : const Color(0xFFCFCBE0);
+              return Shake(
+                active: done && isChosen && !isRight,
+                child: AnimatedScale(
+                  scale: done && isRight ? 1.06 : 1,
+                  duration: const Duration(milliseconds: 200),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Positioned.fill(
+                        child: ChunkyButton(
+                          key: ValueKey('answer_$i'),
+                          color: color,
+                          radius: 24,
+                          depth: 7,
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          onTap: done ? null : () => onTap(options[i]),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(l.answerText(options[i]), style: display(42, color: Colors.white)),
+                          ),
+                        ),
+                      ),
+                      if (done && isRight) const Positioned(right: -6, top: -10, child: AppImage('check', size: 34)),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
       ],
-    );
-  }
-}
-
-class _AnswerButton extends StatelessWidget {
-  const _AnswerButton({super.key, required this.label, required this.color, required this.onTap, required this.shake});
-
-  final String label;
-  final Color color;
-  final VoidCallback? onTap;
-  final bool shake;
-
-  @override
-  Widget build(BuildContext context) {
-    return Shake(
-      active: shake,
-      child: Material(
-        color: color,
-        borderRadius: BorderRadius.circular(24),
-        elevation: 3,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(24),
-          onTap: onTap,
-          child: Center(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  label,
-                  style: const TextStyle(fontSize: 38, fontWeight: FontWeight.w700, color: Colors.white),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

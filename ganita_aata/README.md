@@ -84,7 +84,8 @@ lib/
   l10n/                  app_en.arb, app_kn.arb (+ generated Dart)
 assets/
   audio/                 placeholder voice clips and sound effects
-  fonts/                 Noto Sans Kannada (SIL OFL)
+  fonts/                 Baloo Tamma 2 + Noto Sans Kannada (SIL OFL)
+  images/                flat 2D vector illustrations (SVG, Fluent Emoji, MIT)
 test/                    unit and widget tests
 tool/                    gen_audio.py, gen_icon.py
 ```
@@ -173,8 +174,21 @@ Tips:
 
 All visible text lives in `lib/l10n/app_kn.arb` and `lib/l10n/app_en.arb`
 (generated into `lib/l10n/app_localizations*.dart`). Praise and encouragement
-messages are `|`-separated lists in `praise` and `encourage`. The whole app
-uses Noto Sans Kannada (`assets/fonts`, SIL Open Font License).
+messages are `|`-separated lists in `praise` and `encourage`.
+
+## Look and feel
+
+- **Fonts** (`assets/fonts`, SIL Open Font License): Baloo Tamma 2, a rounded,
+  playful face covering Kannada and Latin, for titles, buttons and numbers;
+  Noto Sans Kannada for body text.
+- **Illustrations** (`assets/images/*.svg`): flat 2D vectors from Microsoft's
+  Fluent Emoji ("Flat" style, MIT licence, see `LICENSE-fluentui-emoji.txt`),
+  drawn with `flutter_svg` so they stay sharp on every screen and add only
+  about 200 KB. Avatars are `av_<name>.svg`; to change any picture, replace the
+  SVG with one of the same name. `AppImage('name')` shows one.
+- **Widgets** (`lib/widgets/common.dart`): `ChunkyButton` (3D game button
+  that sinks when pressed), `BigCard`, `Panel`, `GameBackground`,
+  `MascotBubble` (the owl), plus `confetti.dart` and `badge_icon.dart`.
 
 ## Notifications
 

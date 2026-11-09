@@ -75,7 +75,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               controller: _name,
               maxLength: 20,
               textCapitalization: TextCapitalization.words,
-              style: const TextStyle(fontSize: 26),
+              style: display(28, weight: FontWeight.w700),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
@@ -94,20 +94,30 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               runSpacing: 10,
               children: [
                 for (var c = 1; c <= 8; c++)
-                  ChoiceChip(
-                    key: ValueKey('class_$c'),
-                    label: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                      child: Text('$c', style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700)),
+                  SizedBox(
+                    width: 62,
+                    height: 64,
+                    child: ChunkyButton(
+                      key: ValueKey('class_$c'),
+                      color: _class == c ? AppColors.card(c - 1).$1 : Colors.white,
+                      edgeColor: _class == c ? AppColors.card(c - 1).$2 : const Color(0xFFD5CFEA),
+                      radius: 18,
+                      depth: 5,
+                      padding: EdgeInsets.zero,
+                      onTap: () => setState(() => _class = c),
+                      child: Text(
+                        '$c',
+                        style: display(30, color: _class == c ? Colors.white : AppColors.ink, height: 1),
+                      ),
                     ),
-                    selected: _class == c,
-                    selectedColor: AppColors.primary.withValues(alpha: 0.3),
-                    onSelected: (_) => setState(() => _class = c),
                   ),
               ],
             ),
             const SizedBox(height: 4),
-            Text(l.classN(_class), style: Theme.of(context).textTheme.bodyLarge),
+            Text(
+              l.classN(_class),
+              style: display(18, color: AppColors.inkSoft, weight: FontWeight.w700),
+            ),
             const SizedBox(height: 16),
             Text(l.chooseAvatar, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),

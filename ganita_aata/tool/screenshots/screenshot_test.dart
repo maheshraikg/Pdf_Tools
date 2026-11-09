@@ -48,6 +48,7 @@ void main() {
 
   setUpAll(() async {
     await loadFont('NotoSansKannada', ['assets/fonts/NotoSansKannada-Regular.ttf', 'assets/fonts/NotoSansKannada-Bold.ttf']);
+    await loadFont('Baloo', ['assets/fonts/BalooTamma2-500.ttf', 'assets/fonts/BalooTamma2-700.ttf', 'assets/fonts/BalooTamma2-800.ttf']);
     await loadFont('Roboto', ['$mf/Roboto-Regular.ttf', '$mf/Roboto-Medium.ttf', '$mf/Roboto-Bold.ttf']);
     await loadFont('MaterialIcons', ['$mf/MaterialIcons-Regular.otf']);
     await loadFont('NotoColorEmoji', ['/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf']);

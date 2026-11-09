@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../data/curriculum.dart';
-import '../data/shop_catalog.dart';
 import '../engine/adaptive_engine.dart';
 import '../models/profile.dart';
 import '../models/question.dart';
@@ -63,7 +62,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: ChoiceChip(
-                        avatar: Text(ShopCatalog.emojiFor(c.avatar)),
+                        avatar: AppImage(c.avatar, size: 24),
                         label: Text(c.name, style: const TextStyle(fontSize: 18)),
                         selected: c.id == p.id,
                         onSelected: (_) => setState(() => _profile = c),

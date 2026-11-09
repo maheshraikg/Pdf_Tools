@@ -256,7 +256,7 @@ class _Balloon extends StatelessWidget {
     return Opacity(
       opacity: dim ? 0.45 : 1,
       child: CustomPaint(
-        painter: _BalloonPainter(color, highlight),
+        painter: BalloonPainter(color, highlight),
         child: Align(
           alignment: const Alignment(0, -0.42),
           child: SizedBox(
@@ -280,8 +280,8 @@ class _Balloon extends StatelessWidget {
   }
 }
 
-class _BalloonPainter extends CustomPainter {
-  _BalloonPainter(this.color, this.highlight);
+class BalloonPainter extends CustomPainter {
+  BalloonPainter(this.color, this.highlight);
 
   final Color color;
   final bool highlight;
@@ -320,5 +320,5 @@ class _BalloonPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_BalloonPainter old) => old.color != color || old.highlight != highlight;
+  bool shouldRepaint(BalloonPainter old) => old.color != color || old.highlight != highlight;
 }

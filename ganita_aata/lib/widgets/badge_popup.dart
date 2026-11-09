@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'app_theme.dart';
+import 'badge_icon.dart';
+import 'common.dart';
 import 'l10n_ext.dart';
 
 /// Celebrates a newly earned badge with a bouncing, spinning medal.
@@ -30,32 +32,24 @@ Future<void> showBadgePopup(BuildContext context, String badgeId) {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(l.newBadge, style: Theme.of(c).textTheme.headlineMedium),
+                    Text(l.newBadge, style: display(30, color: AppColors.primaryDark)),
                     const SizedBox(height: 12),
                     TweenAnimationBuilder<double>(
                       tween: Tween(begin: 0, end: 1),
                       duration: const Duration(milliseconds: 1200),
                       builder: (c, v, child) => Transform.rotate(angle: sin(v * pi * 2) * 0.25, child: child),
-                      child: Container(
-                        width: 120,
-                        height: 120,
-                        alignment: Alignment.center,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: RadialGradient(colors: [Color(0xFFFFF59D), AppColors.coin]),
-                        ),
-                        child: Text(badgeEmoji(badgeId), style: const TextStyle(fontSize: 64)),
-                      ),
+                      child: BadgeIcon(id: badgeId, size: 130),
                     ),
                     const SizedBox(height: 12),
-                    Text(l.badgeName(badgeId), textAlign: TextAlign.center, style: Theme.of(c).textTheme.titleLarge),
+                    Text(l.badgeName(badgeId), textAlign: TextAlign.center, style: display(24)),
                     const SizedBox(height: 4),
                     Text(l.badgeDesc(badgeId), textAlign: TextAlign.center),
                     const SizedBox(height: 16),
-                    FilledButton(
+                    ChunkyButton(
                       key: const ValueKey('badge_ok'),
-                      onPressed: () => Navigator.pop(c),
-                      child: Text(l.yay),
+                      color: AppColors.good,
+                      onTap: () => Navigator.pop(c),
+                      child: Text(l.yay, style: display(22, color: Colors.white)),
                     ),
                   ],
                 ),

@@ -88,8 +88,6 @@ class ShopCatalog {
 
   static List<ShopItem> get freeAvatars => items.where((i) => i.kind == ShopKind.avatar && i.isFree).toList();
 
-  static String emojiFor(String avatarId) => byId(avatarId).emoji ?? '🐯';
-
   static Color carColor(String id) {
     final i = byId(id);
     return i.kind == ShopKind.car ? i.colors.first : const Color(0xFFE53935);

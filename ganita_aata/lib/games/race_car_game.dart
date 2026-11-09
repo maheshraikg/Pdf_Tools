@@ -8,6 +8,8 @@ import '../data/shop_catalog.dart';
 import '../models/game_result.dart';
 import '../models/question.dart';
 import '../services/app_state.dart';
+import '../widgets/app_theme.dart';
+import '../widgets/common.dart';
 import '../widgets/game_shell.dart';
 import '../widgets/l10n_ext.dart';
 import '../widgets/mcq_panel.dart';
@@ -125,8 +127,9 @@ class _RaceCarGameState extends State<RaceCarGame> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(l.getReady, style: Theme.of(context).textTheme.headlineMedium),
-                          Text('$_ready', style: const TextStyle(fontSize: 96, fontWeight: FontWeight.w700)),
+                          const AppImage('flag', size: 80),
+                          Text(l.getReady, style: display(34)),
+                          Text('$_ready', style: display(120, color: AppColors.primary, height: 1)),
                         ],
                       ),
                     )
@@ -175,10 +178,7 @@ class _Track extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CustomPaint(size: const Size(carW, 34), painter: CarPainter(c)),
-                Text(
-                  label,
-                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white),
-                ),
+                Text(label, style: display(14, color: Colors.white)),
               ],
             ),
           );

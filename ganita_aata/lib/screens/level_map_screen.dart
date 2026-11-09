@@ -9,7 +9,6 @@ import '../services/app_state.dart';
 import '../widgets/app_theme.dart';
 import '../widgets/common.dart';
 import '../widgets/l10n_ext.dart';
-import 'home_screen.dart';
 
 /// A winding path of levels. Locked levels show a lock. Tap a level to pick
 /// a topic, then a game.
@@ -39,24 +38,29 @@ class LevelMapScreen extends StatelessWidget {
                 child: Stack(
                   children: [
                     Positioned.fill(child: CustomPaint(painter: _PathPainter(points))),
-                    for (final (dx, dy, e) in const [
-                      (0.85, 0.3, '🌳'),
-                      (0.1, 1.5, '🌴'),
-                      (0.88, 2.4, '🌻'),
-                      (0.08, 3.3, '🌳'),
-                      (0.86, 4.2, '🏰'),
+                    for (final (dx, dy, img, sz) in const [
+                      (0.86, 0.25, 'tree', 54.0),
+                      (0.06, 1.35, 'palm', 58.0),
+                      (0.84, 2.3, 'sunflower', 46.0),
+                      (0.05, 3.25, 'tree', 50.0),
+                      (0.02, 4.45, 'flag', 54.0),
+                      (0.82, 4.25, 'castle', 64.0),
                     ])
                       Positioned(
-                        left: w * dx - 20,
+                        left: w * dx,
                         top: dy * _rowH,
-                        child: Text(e, style: const TextStyle(fontSize: 40)),
+                        child: AppImage(img, size: sz),
                       ),
                     for (var i = 0; i < levels.length; i++)
                       Positioned(
                         left: points[i].dx - 70,
                         top: points[i].dy - 50,
                         width: 140,
-                        child: _LevelNode(level: levels[i], unlocked: app.isLevelUnlocked(levels[i].number)),
+                        child: _LevelNode(
+                          level: levels[i],
+                          unlocked: app.isLevelUnlocked(levels[i].number),
+                          openTopics: levels[i].topics.where((t) => app.isUnlocked(t.id)).length,
+                        ),
                       ),
                   ],
                 ),
@@ -108,54 +112,67 @@ class _PathPainter extends CustomPainter {
 }
 
 class _LevelNode extends StatelessWidget {
-  const _LevelNode({required this.level, required this.unlocked});
+  const _LevelNode({required this.level, required this.unlocked, required this.openTopics});
 
   final Level level;
   final bool unlocked;
 
+  /// How many of this level's topics are open.
+  final int openTopics;
+
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final color = AppColors.cardColors[(level.number - 1) % AppColors.cardColors.length];
+    final (face, edge) = AppColors.card(level.number - 1);
     final classes = level.fromClass == level.toClass
         ? l.classN(level.fromClass)
         : l.classRange(level.fromClass, level.toClass);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Material(
-          shape: const CircleBorder(),
-          color: unlocked ? color : Colors.grey.shade400,
-          elevation: 4,
-          child: InkWell(
+        SizedBox(
+          width: 98,
+          height: 98,
+          child: ChunkyButton(
             key: ValueKey('level_${level.number}'),
-            customBorder: const CircleBorder(),
+            color: unlocked ? face : const Color(0xFFC9C5D8),
+            edgeColor: unlocked ? edge : const Color(0xFFA19CB5),
+            radius: 49,
+            depth: 7,
+            padding: EdgeInsets.zero,
             onTap: () => unlocked
                 ? _showTopics(context, level)
-                : ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(l.lockedLevelSnack, style: const TextStyle(fontSize: 18)))),
-            child: SizedBox(
-              width: 96,
-              height: 96,
-              child: Center(
-                child: unlocked
-                    ? Text(
-                        '${level.number}',
-                        style: const TextStyle(fontSize: 46, fontWeight: FontWeight.w700, color: Colors.white),
-                      )
-                    : Icon(Icons.lock_rounded, size: 46, color: Colors.white, semanticLabel: l.locked),
-              ),
-            ),
+                : ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.lockedLevelSnack))),
+            child: unlocked
+                ? Text('${level.number}', style: display(50, color: Colors.white, height: 1))
+                : AppImage('lock', size: 46, semanticLabel: l.locked),
           ),
         ),
         const SizedBox(height: 4),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var i = 0; i < level.topics.length; i++)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 1),
+                child: Opacity(opacity: i < openTopics ? 1 : 0.25, child: const AppImage('star', size: 18)),
+              ),
+          ],
+        ),
+        const SizedBox(height: 2),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14)),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(color: AppColors.ink.withValues(alpha: 0.1), blurRadius: 6, offset: const Offset(0, 2)),
+            ],
+          ),
           child: Column(
             children: [
-              Text(l.levelN(level.number), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-              Text(classes, style: const TextStyle(fontSize: 14)),
+              Text(l.levelN(level.number), style: display(18)),
+              Text(classes, style: const TextStyle(fontSize: 13, color: AppColors.inkSoft)),
             ],
           ),
         ),
@@ -197,12 +214,10 @@ Widget _topicTile(BuildContext context, BuildContext sheet, AppState app, Topic 
   return ListTile(
     key: ValueKey('topic_${t.id}'),
     minTileHeight: 68,
-    leading: Icon(
-      open ? (current ? Icons.radio_button_checked_rounded : Icons.play_circle_fill_rounded) : Icons.lock_rounded,
-      size: 36,
-      color: open ? AppColors.good : Colors.grey,
-    ),
-    title: Text(l.topicName(t.id), style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w700)),
+    leading: open
+        ? (current ? const AppImage('glow_star', size: 40) : const AppImage('star', size: 36))
+        : const AppImage('lock', size: 34),
+    title: Text(l.topicName(t.id), style: display(21, color: open ? AppColors.ink : AppColors.inkSoft)),
     subtitle: open
         ? (stat == null || stat.attempts == 0
               ? null
@@ -259,12 +274,9 @@ void _chooseGame(BuildContext context, String topicId) {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(HomeScreen.modeEmoji(modes[i]), style: const TextStyle(fontSize: 34)),
+                        AppImage(modeImage(modes[i]), size: 50),
                         FittedBox(
-                          child: Text(
-                            l.gameName(modes[i]),
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white),
-                          ),
+                          child: Text(l.gameName(modes[i]), style: display(20, color: Colors.white)),
                         ),
                       ],
                     ),

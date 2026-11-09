@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../data/shop_catalog.dart';
+import '../games/balloon_pop_game.dart';
 import '../games/race_car_game.dart';
 import '../services/app_state.dart';
 import '../services/audio_service.dart';
@@ -17,27 +18,48 @@ class ShopScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final app = context.watch<AppState>();
+    Tab tab(String img, String text) => Tab(
+      height: 64,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AppImage(img, size: 28),
+          FittedBox(child: Text(text)),
+        ],
+      ),
+    );
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        backgroundColor: const Color(0xFFF3EEFF),
         appBar: AppBar(
-          title: Text(l.shop),
+          backgroundColor: const Color(0xFFF3EEFF),
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const AppImage('shop', size: 34),
+              const SizedBox(width: 8),
+              Flexible(
+                child: FittedBox(fit: BoxFit.scaleDown, child: Text(l.shop)),
+              ),
+            ],
+          ),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 12),
-              child: CoinChip(coins: app.active!.coins),
+              child: CoinChip(coins: app.active!.coins, compact: true),
             ),
           ],
           bottom: TabBar(
-            labelStyle: const TextStyle(fontFamily: 'NotoSansKannada', fontSize: 17, fontWeight: FontWeight.w700),
-            tabs: [
-              Tab(text: l.avatars),
-              Tab(text: l.carColours),
-              Tab(text: l.balloonThemes),
-            ],
+            labelStyle: display(16, weight: FontWeight.w700),
+            labelColor: AppColors.secondary,
+            unselectedLabelColor: AppColors.inkSoft,
+            indicatorColor: AppColors.secondary,
+            indicatorWeight: 4,
+            tabs: [tab(app.active!.avatar, l.avatars), tab('race', l.carColours), tab('balloon', l.balloonThemes)],
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
             _Grid(kind: ShopKind.avatar),
             _Grid(kind: ShopKind.car),
@@ -61,9 +83,9 @@ class _Grid extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: kind == ShopKind.avatar ? 3 : 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: kind == ShopKind.avatar ? 0.72 : 0.95,
+        mainAxisSpacing: 14,
+        crossAxisSpacing: 14,
+        childAspectRatio: kind == ShopKind.avatar ? 0.7 : 0.9,
       ),
       itemCount: items.length,
       itemBuilder: (context, i) => _ItemCard(item: items[i]),
@@ -83,57 +105,89 @@ class _ItemCard extends StatelessWidget {
     final owned = app.owns(item);
     final equipped = app.isEquipped(item);
     final Widget preview = switch (item.kind) {
-      ShopKind.avatar => AvatarCircle(avatarId: item.id, size: 72, selected: equipped),
-      ShopKind.car => CustomPaint(size: const Size(110, 56), painter: CarPainter(item.colors.first)),
+      ShopKind.avatar => AvatarCircle(avatarId: item.id, size: 76, selected: equipped),
+      ShopKind.car => CustomPaint(size: const Size(112, 56), painter: CarPainter(item.colors.first)),
       ShopKind.balloon => Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           for (final c in item.colors.take(4))
             Padding(
-              padding: const EdgeInsets.all(2),
-              child: Icon(Icons.circle, size: 28, color: c),
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: CustomPaint(size: const Size(30, 58), painter: BalloonPainter(c, false)),
             ),
         ],
       ),
     };
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-        side: BorderSide(color: equipped ? AppColors.good : Colors.transparent, width: 3),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(child: Center(child: preview)),
-            if (item.kind != ShopKind.avatar)
-              Text(l.itemName(item), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-            const SizedBox(height: 6),
-            SizedBox(
-              width: double.infinity,
-              child: equipped
-                  ? FilledButton(
-                      onPressed: null,
-                      style: FilledButton.styleFrom(minimumSize: const Size(0, 48)),
-                      child: FittedBox(child: Text(l.inUse)),
-                    )
-                  : owned
-                  ? OutlinedButton(
-                      key: ValueKey('use_${item.id}'),
-                      style: OutlinedButton.styleFrom(minimumSize: const Size(0, 48)),
-                      onPressed: () => app.equip(item),
-                      child: FittedBox(child: Text(l.use)),
-                    )
-                  : FilledButton(
-                      key: ValueKey('buy_${item.id}'),
-                      style: FilledButton.styleFrom(minimumSize: const Size(0, 48)),
-                      onPressed: () => _buy(context, app),
-                      child: FittedBox(child: Text('🪙 ${item.price}')),
-                    ),
-            ),
-          ],
+    final Widget button;
+    if (equipped) {
+      button = Container(
+        height: 46,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: AppColors.good.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(16),
         ),
+        child: FittedBox(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const AppImage('check', size: 22),
+              const SizedBox(width: 4),
+              Text(l.inUse, style: display(16, color: AppColors.goodDark)),
+            ],
+          ),
+        ),
+      );
+    } else if (owned) {
+      button = ChunkyButton(
+        key: ValueKey('use_${item.id}'),
+        color: Colors.white,
+        edgeColor: const Color(0xFFC9BCF7),
+        radius: 16,
+        depth: 4,
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        onTap: () => app.equip(item),
+        child: FittedBox(
+          child: Text(l.use, style: display(18, color: AppColors.secondary)),
+        ),
+      );
+    } else {
+      final afford = (app.active?.coins ?? 0) >= item.price;
+      button = ChunkyButton(
+        key: ValueKey('buy_${item.id}'),
+        color: afford ? AppColors.primary : const Color(0xFFBDB7D1),
+        radius: 16,
+        depth: 4,
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        onTap: () => _buy(context, app),
+        child: FittedBox(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const AppImage('coin', size: 24),
+              const SizedBox(width: 4),
+              Text('${item.price}', style: display(20, color: Colors.white)),
+            ],
+          ),
+        ),
+      );
+    }
+    return Panel(
+      padding: const EdgeInsets.all(10),
+      color: equipped ? const Color(0xFFEFFFF4) : Colors.white,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Center(child: FittedBox(child: preview)),
+          ),
+          if (item.kind != ShopKind.avatar)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(l.itemName(item), style: display(18)),
+            ),
+          SizedBox(width: double.infinity, child: button),
+        ],
       ),
     );
   }
@@ -145,9 +199,9 @@ class _ItemCard extends StatelessWidget {
     messenger.hideCurrentSnackBar();
     if (app.buy(item)) {
       app.audio.sfx(Sfx.coin);
-      messenger.showSnackBar(SnackBar(content: Text(l.bought, style: const TextStyle(fontSize: 18))));
+      messenger.showSnackBar(SnackBar(content: Text(l.bought)));
     } else {
-      messenger.showSnackBar(SnackBar(content: Text(l.needMoreCoins(missing), style: const TextStyle(fontSize: 18))));
+      messenger.showSnackBar(SnackBar(content: Text(l.needMoreCoins(missing))));
     }
   }
 }

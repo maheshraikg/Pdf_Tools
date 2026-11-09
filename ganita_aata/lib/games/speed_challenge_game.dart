@@ -9,6 +9,7 @@ import '../services/app_state.dart';
 import '../services/audio_service.dart';
 import '../widgets/app_theme.dart';
 import '../widgets/game_shell.dart';
+import '../widgets/common.dart';
 import '../widgets/l10n_ext.dart';
 import '../widgets/number_pad.dart';
 import '../widgets/question_card.dart';
@@ -137,7 +138,14 @@ class _SpeedChallengeGameState extends State<SpeedChallengeGame> with Countdown 
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           children: [
-            Text(l.personalBest(best), style: Theme.of(context).textTheme.titleMedium),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const AppImage('trophy', size: 26),
+                const SizedBox(width: 6),
+                Text(l.personalBest(best), style: display(20, color: AppColors.secondary)),
+              ],
+            ),
             const SizedBox(height: 6),
             QuestionCard(question: _q, fontSize: small ? 36 : 44),
             FeedbackLine(text: _flashGood == null ? null : _feedback, good: _flashGood ?? true),
@@ -154,15 +162,12 @@ class _SpeedChallengeGameState extends State<SpeedChallengeGame> with Countdown 
                     : AppColors.gentle.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(color: AppColors.secondary, width: 3),
+                boxShadow: const [BoxShadow(color: AppColors.secondaryDark, offset: Offset(0, 4))],
               ),
               child: Text(
                 shown.isEmpty ? '?' : shown,
                 key: const ValueKey('speed_input'),
-                style: TextStyle(
-                  fontSize: 44,
-                  fontWeight: FontWeight.w700,
-                  color: shown.isEmpty ? Colors.black26 : AppColors.ink,
-                ),
+                style: display(46, color: shown.isEmpty ? Colors.black26 : AppColors.ink, height: 1.1),
               ),
             ),
             const Spacer(),

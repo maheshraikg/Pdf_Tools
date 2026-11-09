@@ -20,15 +20,6 @@ class HomeScreen extends StatelessWidget {
 
   static const modes = [GameMode.balloon, GameMode.race, GameMode.treasure, GameMode.tables, GameMode.speed];
 
-  static String modeEmoji(GameMode m) => switch (m) {
-    GameMode.balloon => '🎈',
-    GameMode.race => '🏎️',
-    GameMode.treasure => '💰',
-    GameMode.tables => '📖',
-    GameMode.speed => '⚡',
-    GameMode.daily => '📅',
-  };
-
   @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
@@ -36,156 +27,148 @@ class HomeScreen extends StatelessWidget {
     final l = context.l10n;
     if (p == null) return const ProfileSetupScreen(firstRun: true);
     final streak = app.currentStreak;
+    void openMap() => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const LevelMapScreen()));
     return Scaffold(
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  key: const ValueKey('avatar_button'),
-                  onTap: () => showProfileSwitcher(context),
-                  child: AvatarCircle(avatarId: p.avatar, size: 64),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l.helloName(p.name),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      Text(l.greetingSub, maxLines: 2, style: Theme.of(context).textTheme.bodyMedium),
-                    ],
+      body: GameBackground(
+        colors: const [Color(0xFFFFE3B3), Color(0xFFFFF7EA), Color(0xFFE9F5FF)],
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+            children: [
+              Row(
+                children: [
+                  GestureDetector(
+                    key: const ValueKey('avatar_button'),
+                    onTap: () => showProfileSwitcher(context),
+                    child: AvatarCircle(avatarId: p.avatar, size: 66),
                   ),
-                ),
-                IconButton(
-                  key: const ValueKey('parents_button'),
-                  tooltip: l.forParents,
-                  iconSize: 30,
-                  onPressed: () => _parents(context),
-                  icon: const Icon(Icons.lock_rounded),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 10,
-              runSpacing: 8,
-              children: [
-                CoinChip(coins: p.coins, semantics: l.coins),
-                StatChip(
-                  icon: const Text('🔥', style: TextStyle(fontSize: 20)),
-                  label: l.streakDays(streak),
-                  color: AppColors.primary,
-                  semantics: l.streak,
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _DailyCard(done: app.dailyDoneToday),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 84,
-              child: FilledButton.icon(
-                key: const ValueKey('play_button'),
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.good,
-                  textStyle: const TextStyle(fontFamily: 'NotoSansKannada', fontSize: 34, fontWeight: FontWeight.w700),
-                ),
-                onPressed: () =>
-                    Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const LevelMapScreen())),
-                icon: const Icon(Icons.play_arrow_rounded, size: 48),
-                label: Text(l.play),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    l.currentTopic(l.topicName(p.currentTopic)),
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () =>
-                      Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const LevelMapScreen())),
-                  child: Text(l.change),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Text(l.games, style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 10),
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 0.95,
-              children: [
-                for (var i = 0; i < modes.length; i++)
-                  BigCard(
-                    key: ValueKey('mode_${modes[i].name}'),
-                    color: AppColors.cardColors[i],
-                    onTap: () => startGame(context, modes[i]),
-                    padding: const EdgeInsets.all(12),
+                  const SizedBox(width: 12),
+                  Expanded(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(modeEmoji(modes[i]), style: const TextStyle(fontSize: 42, height: 1.2)),
+                        Text(l.helloName(p.name), maxLines: 1, overflow: TextOverflow.ellipsis, style: display(26)),
                         const SizedBox(height: 4),
-                        FittedBox(
-                          child: Text(
-                            l.gameName(modes[i]),
-                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white),
-                          ),
-                        ),
-                        Flexible(
-                          child: Text(
-                            l.gameDesc(modes[i]),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 14, height: 1.25, color: Colors.white),
-                          ),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 6,
+                          children: [
+                            CoinChip(coins: p.coins, semantics: l.coins, compact: true),
+                            StatChip(
+                              icon: const AppImage('fire', size: 22),
+                              label: l.streakDays(streak),
+                              color: AppColors.primary,
+                              semantics: l.streak,
+                              compact: true,
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    key: const ValueKey('shop_button'),
-                    onPressed: () =>
-                        Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const ShopScreen())),
-                    icon: const Text('🛍️', style: TextStyle(fontSize: 24)),
-                    label: Text(l.shop),
+                  Material(
+                    color: Colors.white,
+                    shape: const CircleBorder(),
+                    elevation: 2,
+                    child: IconButton(
+                      key: const ValueKey('parents_button'),
+                      tooltip: l.forParents,
+                      iconSize: 26,
+                      onPressed: () => _parents(context),
+                      icon: const Icon(Icons.lock_rounded, color: AppColors.inkSoft),
+                    ),
                   ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              MascotBubble(text: l.greetingSub, size: 64),
+              const SizedBox(height: 14),
+              _DailyCard(done: app.dailyDoneToday),
+              const SizedBox(height: 16),
+              ChunkyButton(
+                key: const ValueKey('play_button'),
+                color: AppColors.good,
+                depth: 8,
+                radius: 28,
+                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                onTap: openMap,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.play_arrow_rounded, size: 48, color: Colors.white),
+                    const SizedBox(width: 6),
+                    Text(l.play, style: display(38, color: Colors.white)),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    key: const ValueKey('badges_button'),
-                    onPressed: () =>
-                        Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const BadgesScreen())),
-                    icon: const Text('🏅', style: TextStyle(fontSize: 24)),
-                    label: Text(l.badges),
-                  ),
+              ),
+              const SizedBox(height: 10),
+              Panel(
+                padding: const EdgeInsets.fromLTRB(14, 6, 6, 6),
+                child: Row(
+                  children: [
+                    const AppImage('abacus', size: 30),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        l.currentTopic(l.topicName(p.currentTopic)),
+                        style: display(17, weight: FontWeight.w700, color: AppColors.inkSoft),
+                      ),
+                    ),
+                    TextButton(onPressed: openMap, child: Text(l.change)),
+                  ],
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 18),
+              Text(l.games, style: display(26)),
+              const SizedBox(height: 10),
+              GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                mainAxisSpacing: 14,
+                crossAxisSpacing: 14,
+                childAspectRatio: 0.92,
+                children: [
+                  for (var i = 0; i < modes.length; i++)
+                    BigCard(
+                      key: ValueKey('mode_${modes[i].name}'),
+                      color: AppColors.card(i).$1,
+                      onTap: () => startGame(context, modes[i]),
+                      padding: const EdgeInsets.fromLTRB(10, 12, 10, 10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 78,
+                            height: 78,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.3),
+                              shape: BoxShape.circle,
+                            ),
+                            child: AppImage(modeImage(modes[i]), size: 60),
+                          ),
+                          const SizedBox(height: 6),
+                          FittedBox(
+                            child: Text(l.gameName(modes[i]), style: display(21, color: Colors.white)),
+                          ),
+                          Flexible(
+                            child: Text(
+                              l.gameDesc(modes[i]),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 13, height: 1.25, color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  _ShopBadgesTile(),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -200,11 +183,11 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(l.forParents, style: Theme.of(c).textTheme.titleLarge),
+            Text(l.forParents, style: display(24)),
             ListTile(
               key: const ValueKey('open_progress'),
-              leading: const Icon(Icons.insights_rounded, size: 32),
-              title: Text(l.progress, style: const TextStyle(fontSize: 22)),
+              leading: const AppImage('chart', size: 40),
+              title: Text(l.progress, style: display(21, weight: FontWeight.w700)),
               onTap: () async {
                 Navigator.pop(c);
                 if (await requireParentPin(context) && context.mounted) {
@@ -214,8 +197,8 @@ class HomeScreen extends StatelessWidget {
             ),
             ListTile(
               key: const ValueKey('open_settings'),
-              leading: const Icon(Icons.settings_rounded, size: 32),
-              title: Text(l.settings, style: const TextStyle(fontSize: 22)),
+              leading: const AppImage('gear', size: 40),
+              title: Text(l.settings, style: display(21, weight: FontWeight.w700)),
               onTap: () async {
                 Navigator.pop(c);
                 if (await requireParentPin(context) && context.mounted) {
@@ -227,6 +210,45 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// The sixth tile of the games grid: Shop and Badges.
+class _ShopBadgesTile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    Widget half(String key, String img, String label, Widget page) => Expanded(
+      child: ChunkyButton(
+        key: ValueKey(key),
+        color: Colors.white,
+        edgeColor: const Color(0xFFD9D2F5),
+        radius: 22,
+        depth: 5,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        onTap: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => page)),
+        child: Row(
+          children: [
+            AppImage(img, size: 40),
+            const SizedBox(width: 8),
+            Expanded(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(label, style: display(20, color: AppColors.secondary)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    return Column(
+      children: [
+        half('shop_button', 'shop', l.shop, const ShopScreen()),
+        const SizedBox(height: 12),
+        half('badges_button', 'medal', l.badges, const BadgesScreen()),
+      ],
     );
   }
 }
@@ -243,34 +265,33 @@ class _DailyCard extends StatelessWidget {
       key: const ValueKey('daily_card'),
       color: AppColors.secondary,
       onTap: () => startGame(context, GameMode.daily),
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       child: Row(
         children: [
-          Text(done ? '✅' : '📅', style: const TextStyle(fontSize: 48)),
-          const SizedBox(width: 14),
+          AppImage(done ? 'check' : 'calendar', size: 62),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  l.dailyChallenge,
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: Colors.white),
-                ),
+                Text(l.dailyChallenge, style: display(23, color: Colors.white)),
+                const SizedBox(height: 2),
                 Text(
                   done ? l.dailyDone : l.dailyChallengeDesc,
-                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                  style: const TextStyle(fontSize: 14, height: 1.3, color: Colors.white),
                 ),
               ],
             ),
           ),
           const SizedBox(width: 8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18)),
-            child: Text(
-              done ? l.playAgainToday : l.start,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.secondary),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: const [BoxShadow(color: Color(0x33000000), offset: Offset(0, 3))],
             ),
+            child: Text(done ? l.playAgainToday : l.start, style: display(17, color: AppColors.secondary)),
           ),
         ],
       ),
@@ -291,7 +312,7 @@ void showProfileSwitcher(BuildContext context) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(l.switchChild, style: Theme.of(c).textTheme.titleLarge),
+            Text(l.switchChild, style: display(24)),
             const SizedBox(height: 8),
             for (final p in app.profiles)
               ListTile(
