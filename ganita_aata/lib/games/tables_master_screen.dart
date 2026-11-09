@@ -329,7 +329,9 @@ class _TableQuizGameState extends State<TableQuizGame> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     return GameShell(
+      combo: GameResult.comboOf(_results),
       title: '${l.gameTables} · ${l.tableOf(widget.table)}',
+      scene: Scene.forest,
       score: _results.where((r) => r.correct).length,
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16),

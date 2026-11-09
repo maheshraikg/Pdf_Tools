@@ -9,6 +9,7 @@ import '../services/app_state.dart';
 import '../services/audio_service.dart';
 import 'answer_grid.dart';
 import 'l10n_ext.dart';
+import 'motion.dart';
 import 'question_card.dart';
 
 /// One multiple-choice question: shows the sum and 4 answers, gives
@@ -85,7 +86,17 @@ class _McqPanelState extends State<McqPanel> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        QuestionCard(question: widget.question),
+        Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            QuestionCard(question: widget.question),
+            if (_chosen != null && _chosen == widget.question.answer) ...[
+              const StarBurst(),
+              const Positioned(right: 8, top: -6, child: FloatingReward()),
+            ],
+          ],
+        ),
         const SizedBox(height: 8),
         FeedbackLine(text: _feedback, good: _chosen == widget.question.answer),
         const SizedBox(height: 8),

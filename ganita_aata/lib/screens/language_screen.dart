@@ -42,7 +42,8 @@ class LanguageScreen extends StatelessWidget {
     );
     return Scaffold(
       body: GameBackground(
-        colors: const [Color(0xFFFFE3B3), Color(0xFFFFF7EA)],
+        scene: Scene.grass,
+        clouds: true,
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, box) => SingleChildScrollView(

@@ -25,8 +25,11 @@ import 'package:ganita_aata/screens/shop_screen.dart';
 import 'package:ganita_aata/services/app_state.dart';
 import 'package:ganita_aata/services/audio_service.dart';
 import 'package:ganita_aata/services/notification_service.dart';
+import 'package:ganita_aata/widgets/motion.dart';
 
 void main() {
+  setUpAll(() => motionEnabled = false);
+
   AppState makeApp(String lang) {
     final app = AppState(
       store: MemoryAppStore(),
@@ -35,7 +38,7 @@ void main() {
       clock: () => DateTime(2026, 11, 9, 10),
     );
     app.setLanguage(lang);
-    app.createProfile(name: 'Lakshminarayana', schoolClass: 5, avatar: 'av_tiger');
+    app.createProfile(name: 'Lakshminarayana', schoolClass: 5, avatar: 'av_monkey');
     app.active!.coins = 12345;
     for (var i = 0; i < 40; i++) {
       final q = app.nextQuestion(i.isEven ? 'tab11_20' : 'divRem');

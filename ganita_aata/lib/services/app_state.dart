@@ -41,6 +41,7 @@ class AppState extends ChangeNotifier {
   late String _lang;
   late bool _languageChosen;
   late bool _soundOn;
+  late bool _musicOn;
   late bool _reminderOn;
   late int _reminderMinutes;
   String? _pinHash;
@@ -50,6 +51,7 @@ class AppState extends ChangeNotifier {
   String get lang => _lang;
   bool get languageChosen => _languageChosen;
   bool get soundOn => _soundOn;
+  bool get musicOn => _musicOn;
   bool get reminderOn => _reminderOn;
   TimeOfDay get reminderTime => TimeOfDay(hour: _reminderMinutes ~/ 60, minute: _reminderMinutes % 60);
   bool get hasPin => _pinHash != null;
@@ -69,6 +71,8 @@ class AppState extends ChangeNotifier {
     _lang = s['lang'] as String? ?? 'kn';
     _languageChosen = s['langChosen'] as bool? ?? false;
     _soundOn = s['sound'] as bool? ?? true;
+    _musicOn = s['music'] as bool? ?? true;
+    audio.musicEnabled = _musicOn;
     _reminderOn = s['reminder'] as bool? ?? false;
     _reminderMinutes = s['reminderMin'] as int? ?? 17 * 60;
     _pinHash = s['pinHash'] as String?;
@@ -108,6 +112,18 @@ class AppState extends ChangeNotifier {
     _soundOn = on;
     audio.enabled = on;
     store.saveSetting('sound', on);
+    notifyListeners();
+  }
+
+  void setMusic(bool on) {
+    _musicOn = on;
+    audio.musicEnabled = on;
+    store.saveSetting('music', on);
+    if (on) {
+      audio.playMusic(audio.currentTrack ?? MusicTrack.menu);
+    } else {
+      audio.stopMusic();
+    }
     notifyListeners();
   }
 

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../data/shop_catalog.dart';
 import '../games/balloon_pop_game.dart';
-import '../games/race_car_game.dart';
 import '../services/app_state.dart';
 import '../services/audio_service.dart';
 import '../widgets/app_theme.dart';
@@ -18,12 +17,12 @@ class ShopScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final app = context.watch<AppState>();
-    Tab tab(String img, String text) => Tab(
+    Tab tab(Widget img, String text) => Tab(
       height: 64,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          AppImage(img, size: 28),
+          SizedBox(height: 28, child: img),
           FittedBox(child: Text(text)),
         ],
       ),
@@ -56,7 +55,11 @@ class ShopScreen extends StatelessWidget {
             unselectedLabelColor: AppColors.inkSoft,
             indicatorColor: AppColors.secondary,
             indicatorWeight: 4,
-            tabs: [tab(app.active!.avatar, l.avatars), tab('race', l.carColours), tab('balloon', l.balloonThemes)],
+            tabs: [
+              tab(GameImage(app.active!.avatar, width: 28), l.avatars),
+              tab(const RotatedBox(quarterTurns: 1, child: GameImage('car_red', height: 28)), l.carColours),
+              tab(const AppImage('balloon', size: 28), l.balloonThemes),
+            ],
           ),
         ),
         body: const TabBarView(
@@ -106,7 +109,7 @@ class _ItemCard extends StatelessWidget {
     final equipped = app.isEquipped(item);
     final Widget preview = switch (item.kind) {
       ShopKind.avatar => AvatarCircle(avatarId: item.id, size: 76, selected: equipped),
-      ShopKind.car => CustomPaint(size: const Size(112, 56), painter: CarPainter(item.colors.first)),
+      ShopKind.car => RotatedBox(quarterTurns: 1, child: GameImage(item.id, height: 110)),
       ShopKind.balloon => Row(
         mainAxisSize: MainAxisSize.min,
         children: [

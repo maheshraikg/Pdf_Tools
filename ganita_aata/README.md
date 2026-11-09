@@ -178,6 +178,25 @@ messages are `|`-separated lists in `praise` and `encourage`.
 
 ## Look and feel
 
+- **Game art** (`assets/game/*.png`, Kenney, CC0 public domain): 30 round
+  animal avatars, landscape scenes (grass, forest, autumn, castles, desert),
+  clouds, trees, houses, castle, medals and race cars/track props.
+  `GameImage('name')` shows one; `GameBackground(scene: Scene.grass)` draws a
+  landscape under the sky.
+- **Motion** (`lib/widgets/motion.dart`): bobbing owl mascot and avatar,
+  drifting clouds, pulsing Play button, wiggling game icons, bouncing card
+  entrances, a hopping "you are here" avatar on the level map, coins and
+  star bursts on right answers, and a flame combo counter for answers in a
+  row. Looping motion stops when the phone's "remove animations" setting is
+  on (`motionEnabled` switches it off in tests).
+- **Music** (`assets/audio/music/`): two original loops composed by
+  `tool/gen_music.py` – `menu.ogg` (calm) on menus and `game.ogg` (bouncy)
+  during games – with a separate Music switch in Settings. Music pauses when
+  the app goes to the background. Success sounds (`correct`, `coin`, `chest`,
+  `badge`, `win`) are Kenney Music Jingles (CC0). Replace any file with one of
+  the same name to change it.
+
+
 - **Fonts** (`assets/fonts`, SIL Open Font License): Baloo Tamma 2, a rounded,
   playful face covering Kannada and Latin, for titles, buttons and numbers;
   Noto Sans Kannada for body text.

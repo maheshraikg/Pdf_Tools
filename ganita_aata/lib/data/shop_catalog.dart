@@ -3,16 +3,13 @@ import 'package:flutter/material.dart';
 enum ShopKind { avatar, car, balloon }
 
 class ShopItem {
-  const ShopItem({required this.id, required this.kind, required this.price, this.emoji, this.colors = const []});
+  const ShopItem({required this.id, required this.kind, required this.price, this.colors = const []});
 
   final String id;
   final ShopKind kind;
 
   /// 0 = free for everyone.
   final int price;
-
-  /// Avatar picture.
-  final String? emoji;
 
   /// Car colour (one) or balloon theme colours (several).
   final List<Color> colors;
@@ -26,29 +23,43 @@ class ShopCatalog {
   ShopCatalog._();
 
   static const items = <ShopItem>[
-    // Avatars (emoji, so no image assets are needed).
-    ShopItem(id: 'av_tiger', kind: ShopKind.avatar, price: 0, emoji: '🐯'),
-    ShopItem(id: 'av_elephant', kind: ShopKind.avatar, price: 0, emoji: '🐘'),
-    ShopItem(id: 'av_peacock', kind: ShopKind.avatar, price: 0, emoji: '🦚'),
-    ShopItem(id: 'av_monkey', kind: ShopKind.avatar, price: 0, emoji: '🐒'),
-    ShopItem(id: 'av_rabbit', kind: ShopKind.avatar, price: 0, emoji: '🐰'),
-    ShopItem(id: 'av_turtle', kind: ShopKind.avatar, price: 0, emoji: '🐢'),
-    ShopItem(id: 'av_lion', kind: ShopKind.avatar, price: 30, emoji: '🦁'),
-    ShopItem(id: 'av_panda', kind: ShopKind.avatar, price: 30, emoji: '🐼'),
-    ShopItem(id: 'av_fox', kind: ShopKind.avatar, price: 40, emoji: '🦊'),
-    ShopItem(id: 'av_dolphin', kind: ShopKind.avatar, price: 40, emoji: '🐬'),
-    ShopItem(id: 'av_robot', kind: ShopKind.avatar, price: 50, emoji: '🤖'),
-    ShopItem(id: 'av_unicorn', kind: ShopKind.avatar, price: 60, emoji: '🦄'),
-    ShopItem(id: 'av_rocket', kind: ShopKind.avatar, price: 70, emoji: '🚀'),
-    ShopItem(id: 'av_dragon', kind: ShopKind.avatar, price: 80, emoji: '🐉'),
-    // Car colours.
+    // Avatars: Kenney round animals (assets/game/av_<name>.png).
+    ShopItem(id: 'av_monkey', kind: ShopKind.avatar, price: 0),
+    ShopItem(id: 'av_elephant', kind: ShopKind.avatar, price: 0),
+    ShopItem(id: 'av_rabbit', kind: ShopKind.avatar, price: 0),
+    ShopItem(id: 'av_panda', kind: ShopKind.avatar, price: 0),
+    ShopItem(id: 'av_parrot', kind: ShopKind.avatar, price: 0),
+    ShopItem(id: 'av_chick', kind: ShopKind.avatar, price: 0),
+    ShopItem(id: 'av_dog', kind: ShopKind.avatar, price: 0),
+    ShopItem(id: 'av_owl', kind: ShopKind.avatar, price: 0),
+    ShopItem(id: 'av_penguin', kind: ShopKind.avatar, price: 20),
+    ShopItem(id: 'av_frog', kind: ShopKind.avatar, price: 20),
+    ShopItem(id: 'av_pig', kind: ShopKind.avatar, price: 20),
+    ShopItem(id: 'av_chicken', kind: ShopKind.avatar, price: 25),
+    ShopItem(id: 'av_cow', kind: ShopKind.avatar, price: 25),
+    ShopItem(id: 'av_duck', kind: ShopKind.avatar, price: 25),
+    ShopItem(id: 'av_giraffe', kind: ShopKind.avatar, price: 30),
+    ShopItem(id: 'av_zebra', kind: ShopKind.avatar, price: 30),
+    ShopItem(id: 'av_hippo', kind: ShopKind.avatar, price: 30),
+    ShopItem(id: 'av_horse', kind: ShopKind.avatar, price: 30),
+    ShopItem(id: 'av_goat', kind: ShopKind.avatar, price: 35),
+    ShopItem(id: 'av_bear', kind: ShopKind.avatar, price: 35),
+    ShopItem(id: 'av_sloth', kind: ShopKind.avatar, price: 40),
+    ShopItem(id: 'av_gorilla', kind: ShopKind.avatar, price: 40),
+    ShopItem(id: 'av_rhino', kind: ShopKind.avatar, price: 45),
+    ShopItem(id: 'av_crocodile', kind: ShopKind.avatar, price: 45),
+    ShopItem(id: 'av_snake', kind: ShopKind.avatar, price: 45),
+    ShopItem(id: 'av_walrus', kind: ShopKind.avatar, price: 50),
+    ShopItem(id: 'av_whale', kind: ShopKind.avatar, price: 50),
+    ShopItem(id: 'av_narwhal', kind: ShopKind.avatar, price: 60),
+    ShopItem(id: 'av_moose', kind: ShopKind.avatar, price: 60),
+    ShopItem(id: 'av_buffalo', kind: ShopKind.avatar, price: 60),
+    // Car colours (assets/game/car_<colour>.png).
     ShopItem(id: 'car_red', kind: ShopKind.car, price: 0, colors: [Color(0xFFE53935)]),
     ShopItem(id: 'car_blue', kind: ShopKind.car, price: 20, colors: [Color(0xFF1E88E5)]),
     ShopItem(id: 'car_green', kind: ShopKind.car, price: 20, colors: [Color(0xFF43A047)]),
     ShopItem(id: 'car_yellow', kind: ShopKind.car, price: 25, colors: [Color(0xFFFDD835)]),
-    ShopItem(id: 'car_orange', kind: ShopKind.car, price: 25, colors: [Color(0xFFFB8C00)]),
-    ShopItem(id: 'car_purple', kind: ShopKind.car, price: 30, colors: [Color(0xFF8E24AA)]),
-    ShopItem(id: 'car_pink', kind: ShopKind.car, price: 30, colors: [Color(0xFFEC407A)]),
+    ShopItem(id: 'car_black', kind: ShopKind.car, price: 30, colors: [Color(0xFF424242)]),
     // Balloon themes.
     ShopItem(
       id: 'theme_rainbow',

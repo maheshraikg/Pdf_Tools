@@ -65,7 +65,9 @@ flutter:
     - assets/fonts/OFL.txt
     - assets/fonts/OFL-BalooTamma2.txt
     - assets/images/
+    - assets/game/
     - assets/audio/sfx/
+    - assets/audio/music/
     - assets/audio/en/
     - assets/audio/en/tables/
     - assets/audio/kn/

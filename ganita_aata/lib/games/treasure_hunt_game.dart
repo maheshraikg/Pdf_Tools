@@ -104,10 +104,11 @@ class _TreasureHuntGameState extends State<TreasureHuntGame> with Countdown {
   Widget build(BuildContext context) {
     final l = context.l10n;
     return GameShell(
+      combo: GameResult.comboOf(_results),
       title: l.gameTreasure,
       secondsLeft: secondsLeft,
       score: _results.where((r) => r.correct).length,
-      background: const [Color(0xFFFFE7B0), Color(0xFFFFF8EC)],
+      scene: Scene.desert,
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'app_theme.dart';
+import 'motion.dart';
 
 /// A flat 2D vector illustration from assets/images (Fluent Emoji "Flat"
 /// style, MIT licence). Vectors stay sharp at any size.
@@ -26,6 +27,38 @@ class AppImage extends StatelessWidget {
     );
   }
 }
+
+/// Flat 2D game art from assets/game (Kenney, CC0): animal avatars,
+/// scenes, scenery, medals and cars.
+class GameImage extends StatelessWidget {
+  const GameImage(this.name, {super.key, this.width, this.height, this.fit = BoxFit.contain, this.semanticLabel});
+
+  final String name;
+  final double? width;
+  final double? height;
+  final BoxFit fit;
+  final String? semanticLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(
+      'assets/game/$name.png',
+      width: width,
+      height: height,
+      fit: fit,
+      filterQuality: FilterQuality.medium,
+      semanticLabel: semanticLabel,
+      excludeFromSemantics: semanticLabel == null,
+      errorBuilder: (c, e, s) => SizedBox(width: width, height: height),
+    );
+  }
+}
+
+/// Sky colour shared by all scene backgrounds.
+const skyColor = Color(0xFFCEEEFB);
+
+/// Scene backgrounds (`assets/game/bg_<name>.png`).
+enum Scene { grass, forest, fall, castles, desert }
 
 class AvatarCircle extends StatelessWidget {
   const AvatarCircle({super.key, required this.avatarId, this.size = 56, this.selected = false});
@@ -51,7 +84,7 @@ class AvatarCircle extends StatelessWidget {
         border: Border.all(color: selected ? AppColors.primary : Colors.white, width: selected ? 4 : 3),
         boxShadow: [BoxShadow(color: AppColors.ink.withValues(alpha: 0.15), blurRadius: 8, offset: const Offset(0, 3))],
       ),
-      child: AppImage(avatarId, size: size * 0.68),
+      child: GameImage(avatarId, width: size * 0.86, height: size * 0.86),
     );
   }
 }
@@ -235,14 +268,29 @@ class BigCard extends StatelessWidget {
 
 /// Soft gradient with a few floating bubbles, used behind screens.
 class GameBackground extends StatelessWidget {
-  const GameBackground({super.key, required this.child, this.colors, this.clouds = false});
+  const GameBackground({super.key, required this.child, this.colors, this.clouds = false, this.scene});
 
   final Widget child;
   final List<Color>? colors;
   final bool clouds;
 
+  /// A landscape drawn along the bottom, under the sky.
+  final Scene? scene;
+
   @override
   Widget build(BuildContext context) {
+    if (scene != null) {
+      return ColoredBox(
+        color: skyColor,
+        child: Stack(
+          children: [
+            Positioned(left: 0, right: 0, bottom: 0, child: GameImage('bg_${scene!.name}', fit: BoxFit.fitWidth)),
+            if (clouds) const Positioned.fill(child: DriftingClouds()),
+            Positioned.fill(child: child),
+          ],
+        ),
+      );
+    }
     final c = colors ?? const [Color(0xFFBFE6FF), Color(0xFFFFF4E0)];
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -253,10 +301,7 @@ class GameBackground extends StatelessWidget {
           Positioned.fill(
             child: RepaintBoundary(child: CustomPaint(painter: _BubblesPainter())),
           ),
-          if (clouds) ...[
-            const Positioned(top: 70, left: -18, child: Opacity(opacity: 0.85, child: AppImage('cloud', size: 110))),
-            const Positioned(top: 150, right: -24, child: Opacity(opacity: 0.7, child: AppImage('cloud', size: 90))),
-          ],
+          if (clouds) const Positioned.fill(child: DriftingClouds()),
           Positioned.fill(child: child),
         ],
       ),
@@ -295,7 +340,9 @@ class MascotBubble extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        AppImage('owl', size: size),
+        Bob(
+          child: GameImage('av_owl', width: size, height: size),
+        ),
         const SizedBox(width: 6),
         Flexible(
           child: Container(

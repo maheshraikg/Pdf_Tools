@@ -26,7 +26,7 @@ class Profile {
   /// 1–8.
   int schoolClass;
 
-  /// Shop item id of the avatar, e.g. `av_tiger`.
+  /// Shop item id of the avatar, e.g. `av_monkey`.
   String avatar;
   int coins;
 
@@ -68,7 +68,7 @@ class Profile {
     id: j['id'] as String,
     name: j['name'] as String,
     schoolClass: j['class'] as int? ?? 1,
-    avatar: j['avatar'] as String? ?? 'av_tiger',
+    avatar: j['avatar'] as String? ?? 'av_monkey',
     coins: j['coins'] as int? ?? 0,
     owned: {...(j['owned'] as List? ?? const []).cast<String>()},
     carColor: j['car'] as String? ?? 'car_red',

@@ -53,6 +53,13 @@ class SettingsScreen extends StatelessWidget {
             onChanged: app.setSound,
           ),
           SwitchListTile(
+            key: const ValueKey('music_switch'),
+            secondary: const Icon(Icons.music_note_rounded, size: 30),
+            title: Text(l.music, style: big),
+            value: app.musicOn,
+            onChanged: app.setMusic,
+          ),
+          SwitchListTile(
             key: const ValueKey('reminder_switch'),
             secondary: const Icon(Icons.notifications_active_rounded, size: 30),
             title: Text(l.dailyReminder, style: big),

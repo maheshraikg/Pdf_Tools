@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/game_result.dart';
 import '../models/question.dart';
 import '../services/app_state.dart';
+import '../widgets/common.dart';
 import '../widgets/game_shell.dart';
 import '../widgets/l10n_ext.dart';
 import '../widgets/mcq_panel.dart';
@@ -51,9 +52,10 @@ class _DailyChallengeGameState extends State<DailyChallengeGame> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     return GameShell(
+      combo: GameResult.comboOf(_results),
       title: l.dailyChallenge,
       score: _results.where((r) => r.correct).length,
-      background: const [Color(0xFFE1D7FF), Color(0xFFFFF8EC)],
+      scene: Scene.fall,
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(

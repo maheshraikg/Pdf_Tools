@@ -8,6 +8,7 @@ import 'package:ganita_aata/screens/result_screen.dart';
 import 'package:ganita_aata/services/app_state.dart';
 import 'package:ganita_aata/services/audio_service.dart';
 import 'package:ganita_aata/services/notification_service.dart';
+import 'package:ganita_aata/widgets/motion.dart';
 import 'package:ganita_aata/widgets/answer_grid.dart';
 
 final today = DateTime(2026, 11, 9, 10);
@@ -21,7 +22,7 @@ AppState newApp({String? lang = 'en', int? schoolClass = 2, String topic = 'add1
   );
   if (lang != null) app.setLanguage(lang);
   if (schoolClass != null) {
-    app.createProfile(name: 'Asha', schoolClass: schoolClass, avatar: 'av_tiger');
+    app.createProfile(name: 'Asha', schoolClass: schoolClass, avatar: 'av_monkey');
     app.active!.unlocked.add(topic);
     app.setCurrentTopic(topic);
   }
@@ -82,6 +83,8 @@ Future<void> pumpSeconds(WidgetTester tester, int s) async {
 }
 
 void main() {
+  setUpAll(() => motionEnabled = false);
+
   testWidgets('first launch: language (Kannada default) → profile → home', (tester) async {
     final app = newApp(lang: null, schoolClass: null);
     expect(app.lang, 'kn');
@@ -372,17 +375,18 @@ void main() {
 
   testWidgets('Shop: buy and use items; profile switcher adds a child', (tester) async {
     final app = newApp();
-    app.active!.coins = 60;
+    app.active!.coins = 30;
     await pumpApp(tester, app, home: const HomeScreen());
     await tapKey(tester, 'shop_button');
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('buy_av_lion')));
+    await tester.tap(find.byKey(const ValueKey('buy_av_penguin')));
     await tester.pump();
-    expect(app.active!.coins, 30);
-    expect(app.active!.avatar, 'av_lion');
-    await tester.tap(find.byKey(const ValueKey('buy_av_unicorn')));
+    expect(app.active!.coins, 10);
+    expect(app.active!.avatar, 'av_penguin');
+    await tester.tap(find.byKey(const ValueKey('buy_av_frog')));
     await tester.pump();
-    expect(find.text('Play more to earn 30 more coins!'), findsOneWidget);
+    expect(find.text('Play more to earn 10 more coins!'), findsOneWidget);
+    app.active!.coins += 20;
     await tester.tap(find.text('Car colours'));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('buy_car_blue')));
@@ -411,6 +415,6 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('profile_Asha')));
     await tester.pumpAndSettle();
     expect(find.text('Hello, Asha!'), findsOneWidget);
-    expect(app.active!.coins, 60 - 30 - 20);
+    expect(app.active!.coins, 10);
   });
 }

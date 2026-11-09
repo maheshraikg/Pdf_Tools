@@ -454,6 +454,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get color_pink => 'ಗುಲಾಬಿ';
 
   @override
+  String get color_black => 'ಕಪ್ಪು';
+
+  @override
   String get theme_rainbow => 'ಕಾಮನಬಿಲ್ಲು';
 
   @override
@@ -585,6 +588,9 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get sound => 'ಧ್ವನಿ';
+
+  @override
+  String get music => 'ಸಂಗೀತ';
 
   @override
   String get dailyReminder => 'ದೈನಂದಿನ ಜ್ಞಾಪನೆ';

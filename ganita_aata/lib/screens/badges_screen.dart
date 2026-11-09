@@ -21,7 +21,7 @@ class BadgesScreen extends StatelessWidget {
       extendBodyBehindAppBar: true,
       appBar: AppBar(title: Text(l.badges)),
       body: GameBackground(
-        colors: const [Color(0xFFFFF0C2), Color(0xFFFFF7EA)],
+        scene: Scene.castles,
         child: SafeArea(
           child: CustomScrollView(
             slivers: [

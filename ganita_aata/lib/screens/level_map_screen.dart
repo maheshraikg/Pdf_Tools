@@ -9,6 +9,7 @@ import '../services/app_state.dart';
 import '../widgets/app_theme.dart';
 import '../widgets/common.dart';
 import '../widgets/l10n_ext.dart';
+import '../widgets/motion.dart';
 
 /// A winding path of levels. Locked levels show a lock. Tap a level to pick
 /// a topic, then a game.
@@ -25,7 +26,7 @@ class LevelMapScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l.levelMap)),
       body: GameBackground(
-        colors: const [Color(0xFFD6F5D6), Color(0xFFFFF8EC)],
+        colors: const [Color(0xFFBDF0C6), Color(0xFF8EDB9C)],
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 24),
           child: LayoutBuilder(
@@ -39,17 +40,21 @@ class LevelMapScreen extends StatelessWidget {
                   children: [
                     Positioned.fill(child: CustomPaint(painter: _PathPainter(points))),
                     for (final (dx, dy, img, sz) in const [
-                      (0.86, 0.25, 'tree', 54.0),
-                      (0.06, 1.35, 'palm', 58.0),
-                      (0.84, 2.3, 'sunflower', 46.0),
-                      (0.05, 3.25, 'tree', 50.0),
-                      (0.02, 4.45, 'flag', 54.0),
-                      (0.82, 4.25, 'castle', 64.0),
+                      (0.80, 0.05, 'sc_house1', 70.0),
+                      (0.04, 0.55, 'sc_bush1', 60.0),
+                      (0.06, 1.15, 'sc_treePalm', 70.0),
+                      (0.84, 1.85, 'sc_tree', 46.0),
+                      (0.74, 2.15, 'sc_bush2', 60.0),
+                      (0.04, 2.75, 'sc_treePine', 44.0),
+                      (0.12, 3.05, 'sc_houseSmall1', 60.0),
+                      (0.84, 3.45, 'sc_treeLong', 34.0),
+                      (0.70, 4.15, 'sc_castleSmall', 110.0),
+                      (0.04, 4.35, 'sc_towerSmall', 40.0),
                     ])
                       Positioned(
                         left: w * dx,
                         top: dy * _rowH,
-                        child: AppImage(img, size: sz),
+                        child: GameImage(img, width: sz),
                       ),
                     for (var i = 0; i < levels.length; i++)
                       Positioned(
@@ -60,6 +65,8 @@ class LevelMapScreen extends StatelessWidget {
                           level: levels[i],
                           unlocked: app.isLevelUnlocked(levels[i].number),
                           openTopics: levels[i].topics.where((t) => app.isUnlocked(t.id)).length,
+                          current: levels[i].topics.any((t) => t.id == app.active?.currentTopic),
+                          avatar: app.active?.avatar,
                         ),
                       ),
                   ],
@@ -112,7 +119,17 @@ class _PathPainter extends CustomPainter {
 }
 
 class _LevelNode extends StatelessWidget {
-  const _LevelNode({required this.level, required this.unlocked, required this.openTopics});
+  const _LevelNode({
+    required this.level,
+    required this.unlocked,
+    required this.openTopics,
+    this.current = false,
+    this.avatar,
+  });
+
+  /// The child's current topic is in this level ("you are here").
+  final bool current;
+  final String? avatar;
 
   final Level level;
   final bool unlocked;
@@ -130,23 +147,56 @@ class _LevelNode extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-          width: 98,
-          height: 98,
-          child: ChunkyButton(
-            key: ValueKey('level_${level.number}'),
-            color: unlocked ? face : const Color(0xFFC9C5D8),
-            edgeColor: unlocked ? edge : const Color(0xFFA19CB5),
-            radius: 49,
-            depth: 7,
-            padding: EdgeInsets.zero,
-            onTap: () => unlocked
-                ? _showTopics(context, level)
-                : ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.lockedLevelSnack))),
-            child: unlocked
-                ? Text('${level.number}', style: display(50, color: Colors.white, height: 1))
-                : AppImage('lock', size: 46, semanticLabel: l.locked),
-          ),
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            current
+                ? Pulse(
+                    amount: 0.06,
+                    child: SizedBox(
+                      width: 98,
+                      height: 98,
+                      child: ChunkyButton(
+                        key: ValueKey('level_${level.number}'),
+                        color: unlocked ? face : const Color(0xFFC9C5D8),
+                        edgeColor: unlocked ? edge : const Color(0xFFA19CB5),
+                        radius: 49,
+                        depth: 7,
+                        padding: EdgeInsets.zero,
+                        onTap: () => unlocked
+                            ? _showTopics(context, level)
+                            : ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.lockedLevelSnack))),
+                        child: unlocked
+                            ? Text('${level.number}', style: display(50, color: Colors.white, height: 1))
+                            : AppImage('lock', size: 46, semanticLabel: l.locked),
+                      ),
+                    ),
+                  )
+                : SizedBox(
+                    width: 98,
+                    height: 98,
+                    child: ChunkyButton(
+                      key: ValueKey('level_${level.number}'),
+                      color: unlocked ? face : const Color(0xFFC9C5D8),
+                      edgeColor: unlocked ? edge : const Color(0xFFA19CB5),
+                      radius: 49,
+                      depth: 7,
+                      padding: EdgeInsets.zero,
+                      onTap: () => unlocked
+                          ? _showTopics(context, level)
+                          : ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.lockedLevelSnack))),
+                      child: unlocked
+                          ? Text('${level.number}', style: display(50, color: Colors.white, height: 1))
+                          : AppImage('lock', size: 46, semanticLabel: l.locked),
+                    ),
+                  ),
+            if (current && avatar != null)
+              Positioned(
+                top: -34,
+                right: -30,
+                child: Bob(height: 5, child: AvatarCircle(avatarId: avatar!, size: 50, selected: true)),
+              ),
+          ],
         ),
         const SizedBox(height: 4),
         Row(

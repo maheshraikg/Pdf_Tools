@@ -30,6 +30,7 @@ import 'package:ganita_aata/screens/shop_screen.dart';
 import 'package:ganita_aata/services/app_state.dart';
 import 'package:ganita_aata/services/audio_service.dart';
 import 'package:ganita_aata/services/notification_service.dart';
+import 'package:ganita_aata/widgets/motion.dart';
 import 'package:ganita_aata/widgets/app_theme.dart';
 
 Future<void> loadFont(String family, List<String> paths) async {
@@ -43,6 +44,8 @@ Future<void> loadFont(String family, List<String> paths) async {
 }
 
 void main() {
+  setUpAll(() => motionEnabled = false);
+
   final sdk = Platform.environment['FLUTTER_ROOT'] ?? '/opt/flutter';
   final mf = '$sdk/bin/cache/artifacts/material_fonts';
 
@@ -65,7 +68,7 @@ void main() {
       clock: () => now,
     );
     app.setLanguage(lang);
-    app.createProfile(name: lang == 'kn' ? 'ಅನನ್ಯ' : 'Ananya', schoolClass: 4, avatar: 'av_peacock');
+    app.createProfile(name: lang == 'kn' ? 'ಅನನ್ಯ' : 'Ananya', schoolClass: 4, avatar: 'av_parrot');
     app.active!
       ..coins = 135
       ..streak = 4
@@ -131,6 +134,11 @@ void main() {
         final waits = e.key == 'race' ? 16 : (e.key == 'balloon' ? 10 : 3);
         for (var i = 0; i < waits; i++) {
           await tester.pump(const Duration(milliseconds: 300));
+        }
+        // Let asset images decode (real async I/O), then repaint.
+        for (var i = 0; i < 6; i++) {
+          await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 150)));
+          await tester.pump(const Duration(milliseconds: 50));
         }
         await shot(tester, key, '${lang}_${idx.toString().padLeft(2, '0')}_${e.key}');
         await tester.pumpWidget(const SizedBox());

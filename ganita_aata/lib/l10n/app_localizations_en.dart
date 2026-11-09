@@ -455,6 +455,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get color_pink => 'Pink';
 
   @override
+  String get color_black => 'Black';
+
+  @override
   String get theme_rainbow => 'Rainbow';
 
   @override
@@ -586,6 +589,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sound => 'Sound';
+
+  @override
+  String get music => 'Music';
 
   @override
   String get dailyReminder => 'Daily reminder';

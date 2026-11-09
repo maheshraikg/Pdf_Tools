@@ -16,31 +16,34 @@ class BadgeIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final table = Badges.tableOf(id);
+    final medal = switch (id) {
+      Badges.speedStar => 'medal4',
+      Badges.day100 => 'medal1',
+      Badges.streak7 => 'medal9',
+      Badges.streak30 => 'medal8',
+      _ => 'medal6',
+    };
     Widget img = Stack(
-      alignment: Alignment.center,
+      alignment: Alignment.topCenter,
       children: [
-        Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(
-              colors: earned
-                  ? const [Color(0xFFFFF6C9), Color(0xFFFFD45C)]
-                  : const [Color(0xFFF1F1F4), Color(0xFFDCDCE3)],
+        GameImage(medal, height: size, width: size),
+        // Emblem on the medal's disc.
+        Positioned(
+          bottom: size * 0.1,
+          child: SizedBox(
+            width: size * 0.42,
+            height: size * 0.42,
+            child: Center(
+              child: table != null
+                  ? Container(
+                      padding: EdgeInsets.symmetric(horizontal: size * 0.05),
+                      decoration: BoxDecoration(color: AppColors.secondary, borderRadius: BorderRadius.circular(size)),
+                      child: Text('$table', style: display(size * 0.2, color: Colors.white, height: 1.1)),
+                    )
+                  : AppImage(badgeImage(id), size: size * 0.3),
             ),
           ),
         ),
-        AppImage(badgeImage(id), size: size * 0.72),
-        if (table != null)
-          Positioned(
-            bottom: size * 0.14,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              decoration: BoxDecoration(color: AppColors.secondary, borderRadius: BorderRadius.circular(10)),
-              child: Text('$table', style: display(size * 0.22, color: Colors.white)),
-            ),
-          ),
       ],
     );
     if (!earned) {

@@ -11,6 +11,7 @@ import '../widgets/app_theme.dart';
 import '../widgets/game_shell.dart';
 import '../widgets/common.dart';
 import '../widgets/l10n_ext.dart';
+import '../widgets/motion.dart';
 import '../widgets/number_pad.dart';
 import '../widgets/question_card.dart';
 import 'game_launcher.dart';
@@ -131,7 +132,9 @@ class _SpeedChallengeGameState extends State<SpeedChallengeGame> with Countdown 
     final shown = _input.replaceAll('R', ' ${l.remainderShort} ');
     final small = MediaQuery.sizeOf(context).height < 700;
     return GameShell(
+      combo: GameResult.comboOf(_results),
       title: l.gameSpeed,
+      scene: Scene.castles,
       secondsLeft: secondsLeft,
       score: score,
       child: Padding(
@@ -149,26 +152,39 @@ class _SpeedChallengeGameState extends State<SpeedChallengeGame> with Countdown 
             const SizedBox(height: 6),
             QuestionCard(question: _q, fontSize: small ? 36 : 44),
             FeedbackLine(text: _flashGood == null ? null : _feedback, good: _flashGood ?? true),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              height: small ? 60 : 76,
-              width: double.infinity,
+            Stack(
+              clipBehavior: Clip.none,
               alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: _flashGood == null
-                    ? Colors.white
-                    : _flashGood!
-                    ? AppColors.good.withValues(alpha: 0.25)
-                    : AppColors.gentle.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: AppColors.secondary, width: 3),
-                boxShadow: const [BoxShadow(color: AppColors.secondaryDark, offset: Offset(0, 4))],
-              ),
-              child: Text(
-                shown.isEmpty ? '?' : shown,
-                key: const ValueKey('speed_input'),
-                style: display(46, color: shown.isEmpty ? Colors.black26 : AppColors.ink, height: 1.1),
-              ),
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  height: small ? 60 : 76,
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: _flashGood == null
+                        ? Colors.white
+                        : _flashGood!
+                        ? AppColors.good.withValues(alpha: 0.25)
+                        : AppColors.gentle.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: AppColors.secondary, width: 3),
+                    boxShadow: const [BoxShadow(color: AppColors.secondaryDark, offset: Offset(0, 4))],
+                  ),
+                  child: Text(
+                    shown.isEmpty ? '?' : shown,
+                    key: const ValueKey('speed_input'),
+                    style: display(46, color: shown.isEmpty ? Colors.black26 : AppColors.ink, height: 1.1),
+                  ),
+                ),
+                if (_flashGood == true)
+                  Positioned(
+                    key: ValueKey('reward_${_results.length}'),
+                    right: 12,
+                    top: -10,
+                    child: const FloatingReward(),
+                  ),
+              ],
             ),
             const Spacer(),
             NumberPad(

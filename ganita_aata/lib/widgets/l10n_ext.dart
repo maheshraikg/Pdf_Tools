@@ -133,15 +133,13 @@ extension AppStrings on AppLocalizations {
     'car_blue' => color_blue,
     'car_green' => color_green,
     'car_yellow' => color_yellow,
-    'car_orange' => color_orange,
-    'car_purple' => color_purple,
-    'car_pink' => color_pink,
+    'car_black' => color_black,
     'theme_rainbow' => theme_rainbow,
     'theme_pastel' => theme_pastel,
     'theme_ocean' => theme_ocean,
     'theme_sunset' => theme_sunset,
     'theme_candy' => theme_candy,
-    _ => i.emoji ?? i.id,
+    _ => i.id,
   };
 }
 

@@ -872,6 +872,12 @@ abstract class AppLocalizations {
   /// **'Pink'**
   String get color_pink;
 
+  /// No description provided for @color_black.
+  ///
+  /// In en, this message translates to:
+  /// **'Black'**
+  String get color_black;
+
   /// No description provided for @theme_rainbow.
   ///
   /// In en, this message translates to:
@@ -1123,6 +1129,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sound'**
   String get sound;
+
+  /// No description provided for @music.
+  ///
+  /// In en, this message translates to:
+  /// **'Music'**
+  String get music;
 
   /// No description provided for @dailyReminder.
   ///

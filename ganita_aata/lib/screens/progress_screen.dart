@@ -62,7 +62,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: ChoiceChip(
-                        avatar: AppImage(c.avatar, size: 24),
+                        avatar: GameImage(c.avatar, width: 26),
                         label: Text(c.name, style: const TextStyle(fontSize: 18)),
                         selected: c.id == p.id,
                         onSelected: (_) => setState(() => _profile = c),

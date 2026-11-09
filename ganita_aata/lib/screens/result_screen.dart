@@ -31,7 +31,7 @@ class _ResultScreenState extends State<ResultScreen> {
 
   Future<void> _celebrate() async {
     final audio = context.read<AppState>().audio;
-    if (widget.summary.coins > 0) await audio.sfx(Sfx.coin);
+    await audio.sfx(widget.summary.stars > 0 ? Sfx.win : Sfx.coin);
     for (final b in widget.summary.newBadges) {
       if (!mounted) return;
       await audio.sfx(Sfx.badge);
@@ -61,7 +61,8 @@ class _ResultScreenState extends State<ResultScreen> {
     ];
     return Scaffold(
       body: GameBackground(
-        colors: const [Color(0xFFFFE6B5), Color(0xFFFFF7EA), Color(0xFFEAF3FF)],
+        scene: Scene.castles,
+        clouds: true,
         child: Stack(
           children: [
             SafeArea(

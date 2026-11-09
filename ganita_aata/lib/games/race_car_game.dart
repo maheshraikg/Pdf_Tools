@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../data/curriculum.dart';
-import '../data/shop_catalog.dart';
 import '../models/game_result.dart';
 import '../models/question.dart';
 import '../services/app_state.dart';
@@ -105,8 +104,10 @@ class _RaceCarGameState extends State<RaceCarGame> {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final car = ShopCatalog.carColor(context.watch<AppState>().active!.carColor);
+    final car = context.watch<AppState>().active!.carColor;
+    final rival = car == 'car_black' ? 'car_blue' : 'car_black';
     return GameShell(
+      combo: GameResult.comboOf(_results),
       title: l.gameRace,
       score: _steps,
       child: Padding(
@@ -116,7 +117,8 @@ class _RaceCarGameState extends State<RaceCarGame> {
             _Track(
               player: _player,
               computer: _computer,
-              playerColor: car,
+              playerCar: car,
+              computerCar: rival,
               playerLabel: l.you,
               computerLabel: l.computer,
             ),
@@ -148,62 +150,119 @@ class _Track extends StatelessWidget {
   const _Track({
     required this.player,
     required this.computer,
-    required this.playerColor,
+    required this.playerCar,
+    required this.computerCar,
     required this.playerLabel,
     required this.computerLabel,
   });
 
   final double player;
   final double computer;
-  final Color playerColor;
+  final String playerCar;
+  final String computerCar;
   final String playerLabel;
   final String computerLabel;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 170,
-      decoration: BoxDecoration(color: const Color(0xFF7CC576), borderRadius: BorderRadius.circular(24)),
-      padding: const EdgeInsets.all(10),
+      height: 200,
+      decoration: BoxDecoration(
+        color: const Color(0xFF5DBB63),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white, width: 4),
+        boxShadow: [
+          BoxShadow(color: AppColors.ink.withValues(alpha: 0.15), blurRadius: 10, offset: const Offset(0, 5)),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
       child: LayoutBuilder(
         builder: (context, box) {
-          const carW = 64.0, laneH = 70.0;
-          final run = box.maxWidth - carW - 16;
-          Widget lane(double p, Color c, String label, double top, Duration d) => AnimatedPositioned(
+          const carLen = 62.0, laneH = 62.0, top = 50.0;
+          final run = box.maxWidth - carLen - 40;
+          Widget car(double p, String img, String label, double y, Duration d) => AnimatedPositioned(
             duration: d,
             curve: Curves.easeOut,
-            left: p * run,
-            top: top + 8,
-            child: Column(
+            left: 14 + p * run,
+            top: y,
+            height: laneH,
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CustomPaint(size: const Size(carW, 34), painter: CarPainter(c)),
-                Text(label, style: display(14, color: Colors.white)),
+                RotatedBox(
+                  quarterTurns: 1,
+                  child: GameImage(img, height: carLen, width: carLen * 0.54),
+                ),
+                const SizedBox(width: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.circular(8)),
+                  child: Text(label, style: display(13, color: Colors.white)),
+                ),
               ],
             ),
           );
           return Stack(
             children: [
-              for (final top in [0.0, laneH + 6])
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: top,
-                  height: laneH,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(color: const Color(0xFF555B66), borderRadius: BorderRadius.circular(12)),
-                  ),
+              // Grandstand along the top.
+              Positioned(
+                left: 0,
+                right: 0,
+                top: 4,
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: const [
+                    GameImage('race_tribune_full', height: 38),
+                    GameImage('race_tent_red', height: 34),
+                    GameImage('race_tribune_full', height: 38),
+                    GameImage('race_tree_small', height: 34),
+                  ],
                 ),
+              ),
+              // Road.
+              Positioned(
+                left: 0,
+                right: 0,
+                top: top,
+                height: laneH * 2 + 8,
+                child: CustomPaint(painter: _RoadPainter()),
+              ),
               // Finish line.
-              Positioned(right: 4, top: 0, bottom: 0, width: 12, child: CustomPaint(painter: _FinishPainter())),
-              lane(player, playerColor, playerLabel, 0, const Duration(milliseconds: 500)),
-              lane(computer, const Color(0xFF9E9E9E), computerLabel, laneH + 6, const Duration(milliseconds: 250)),
+              Positioned(
+                right: 18,
+                top: top,
+                height: laneH * 2 + 8,
+                width: 14,
+                child: CustomPaint(painter: _FinishPainter()),
+              ),
+              const Positioned(right: 2, bottom: 2, child: GameImage('race_tires_red', height: 22)),
+              const Positioned(left: 4, bottom: 2, child: GameImage('race_cone_straight', height: 18)),
+              car(player, playerCar, playerLabel, top + 2, const Duration(milliseconds: 500)),
+              car(computer, computerCar, computerLabel, top + laneH + 6, const Duration(milliseconds: 250)),
             ],
           );
         },
       ),
     );
   }
+}
+
+class _RoadPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRect(Offset.zero & size, Paint()..color = const Color(0xFF5E636E));
+    final edge = Paint()..color = Colors.white;
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, 4), edge);
+    canvas.drawRect(Rect.fromLTWH(0, size.height - 4, size.width, 4), edge);
+    final dash = Paint()..color = const Color(0xFFFFD54F);
+    for (var x = 8.0; x < size.width; x += 30) {
+      canvas.drawRect(Rect.fromLTWH(x, size.height / 2 - 2, 16, 4), dash);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _FinishPainter extends CustomPainter {

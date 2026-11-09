@@ -39,6 +39,16 @@ class GameResult {
   final int? table;
 
   int get correct => items.where((i) => i.correct).length;
+
+  /// Right answers in a row at the end of [items].
+  static int comboOf(List<QuestionResult> items) {
+    var n = 0;
+    for (var i = items.length - 1; i >= 0 && items[i].correct; i--) {
+      n++;
+    }
+    return n;
+  }
+
   int get total => items.length;
   List<QuestionResult> get mistakes => items.where((i) => !i.correct).toList();
 }

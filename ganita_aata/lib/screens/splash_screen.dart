@@ -7,6 +7,7 @@ import '../services/app_state.dart';
 import '../widgets/app_theme.dart';
 import '../widgets/common.dart';
 import '../widgets/l10n_ext.dart';
+import '../widgets/motion.dart';
 import 'home_screen.dart';
 import 'language_screen.dart';
 import 'profile_setup_screen.dart';
@@ -66,7 +67,11 @@ class _SplashScreenState extends State<SplashScreen> {
                   clipBehavior: Clip.none,
                   children: [
                     const AppLogo(size: 150),
-                    const Positioned(right: -34, bottom: -18, child: AppImage('owl', size: 86)),
+                    const Positioned(
+                      right: -34,
+                      bottom: -18,
+                      child: Bob(height: 8, child: GameImage('av_owl', width: 90)),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 28),

@@ -7,6 +7,7 @@ import '../services/app_state.dart';
 import '../widgets/app_theme.dart';
 import '../widgets/common.dart';
 import '../widgets/l10n_ext.dart';
+import '../widgets/motion.dart';
 import 'badges_screen.dart';
 import 'level_map_screen.dart';
 import 'pin_screen.dart';
@@ -30,7 +31,8 @@ class HomeScreen extends StatelessWidget {
     void openMap() => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const LevelMapScreen()));
     return Scaffold(
       body: GameBackground(
-        colors: const [Color(0xFFFFE3B3), Color(0xFFFFF7EA), Color(0xFFE9F5FF)],
+        scene: Scene.grass,
+        clouds: true,
         child: SafeArea(
           child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
@@ -40,7 +42,7 @@ class HomeScreen extends StatelessWidget {
                   GestureDetector(
                     key: const ValueKey('avatar_button'),
                     onTap: () => showProfileSwitcher(context),
-                    child: AvatarCircle(avatarId: p.avatar, size: 66),
+                    child: Bob(height: 3, child: AvatarCircle(avatarId: p.avatar, size: 66)),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -85,20 +87,22 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 14),
               _DailyCard(done: app.dailyDoneToday),
               const SizedBox(height: 16),
-              ChunkyButton(
-                key: const ValueKey('play_button'),
-                color: AppColors.good,
-                depth: 8,
-                radius: 28,
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-                onTap: openMap,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.play_arrow_rounded, size: 48, color: Colors.white),
-                    const SizedBox(width: 6),
-                    Text(l.play, style: display(38, color: Colors.white)),
-                  ],
+              Pulse(
+                child: ChunkyButton(
+                  key: const ValueKey('play_button'),
+                  color: AppColors.good,
+                  depth: 8,
+                  radius: 28,
+                  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                  onTap: openMap,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.play_arrow_rounded, size: 48, color: Colors.white),
+                      const SizedBox(width: 6),
+                      Text(l.play, style: display(38, color: Colors.white)),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
@@ -130,41 +134,44 @@ class HomeScreen extends StatelessWidget {
                 childAspectRatio: 0.92,
                 children: [
                   for (var i = 0; i < modes.length; i++)
-                    BigCard(
-                      key: ValueKey('mode_${modes[i].name}'),
-                      color: AppColors.card(i).$1,
-                      onTap: () => startGame(context, modes[i]),
-                      padding: const EdgeInsets.fromLTRB(10, 12, 10, 10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 78,
-                            height: 78,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.3),
-                              shape: BoxShape.circle,
+                    Entrance(
+                      delay: 120 * i,
+                      child: BigCard(
+                        key: ValueKey('mode_${modes[i].name}'),
+                        color: AppColors.card(i).$1,
+                        onTap: () => startGame(context, modes[i]),
+                        padding: const EdgeInsets.fromLTRB(10, 12, 10, 10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 78,
+                              height: 78,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.3),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Wiggle(phase: i * 0.2, child: AppImage(modeImage(modes[i]), size: 60)),
                             ),
-                            child: AppImage(modeImage(modes[i]), size: 60),
-                          ),
-                          const SizedBox(height: 6),
-                          FittedBox(
-                            child: Text(l.gameName(modes[i]), style: display(21, color: Colors.white)),
-                          ),
-                          Flexible(
-                            child: Text(
-                              l.gameDesc(modes[i]),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 13, height: 1.25, color: Colors.white),
+                            const SizedBox(height: 6),
+                            FittedBox(
+                              child: Text(l.gameName(modes[i]), style: display(21, color: Colors.white)),
                             ),
-                          ),
-                        ],
+                            Flexible(
+                              child: Text(
+                                l.gameDesc(modes[i]),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 13, height: 1.25, color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  _ShopBadgesTile(),
+                  Entrance(delay: 120 * modes.length, child: _ShopBadgesTile()),
                 ],
               ),
             ],
@@ -268,7 +275,7 @@ class _DailyCard extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       child: Row(
         children: [
-          AppImage(done ? 'check' : 'calendar', size: 62),
+          Bob(height: 4, child: AppImage(done ? 'check' : 'calendar', size: 62)),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

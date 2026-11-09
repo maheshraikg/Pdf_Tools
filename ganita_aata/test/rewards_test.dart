@@ -58,7 +58,7 @@ void main() {
         notifications: NoopNotificationService(),
         clock: () => now,
       );
-      app.createProfile(name: 'Asha', schoolClass: 4, avatar: 'av_tiger');
+      app.createProfile(name: 'Asha', schoolClass: 4, avatar: 'av_monkey');
     });
 
     GameResult round(GameMode mode, int correct, int total, {String topic = 'tab6_10'}) {
@@ -130,12 +130,12 @@ void main() {
     });
 
     test('shop: buy needs coins, equips, and free items are owned', () {
-      final lion = ShopCatalog.byId('av_lion');
+      final lion = ShopCatalog.byId('av_giraffe');
       expect(app.buy(lion), isFalse);
       app.active!.coins = 100;
       expect(app.buy(lion), isTrue);
       expect(app.active!.coins, 100 - lion.price);
-      expect(app.active!.avatar, 'av_lion');
+      expect(app.active!.avatar, 'av_giraffe');
       expect(app.owns(ShopCatalog.byId('car_red')), isTrue);
       expect(app.buy(lion), isFalse); // already owned
     });

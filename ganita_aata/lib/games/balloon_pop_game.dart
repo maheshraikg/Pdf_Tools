@@ -12,6 +12,7 @@ import '../services/app_state.dart';
 import '../services/audio_service.dart';
 import '../widgets/game_shell.dart';
 import '../widgets/l10n_ext.dart';
+import '../widgets/motion.dart';
 import '../widgets/question_card.dart';
 import '../widgets/shake.dart';
 import 'game_launcher.dart';
@@ -153,6 +154,7 @@ class _BalloonPopGameState extends State<BalloonPopGame> with SingleTickerProvid
   Widget build(BuildContext context) {
     final l = context.l10n;
     return GameShell(
+      combo: GameResult.comboOf(_results),
       title: l.gameBalloon,
       secondsLeft: secondsLeft,
       score: _results.where((r) => r.correct).length,
@@ -176,7 +178,17 @@ class _BalloonPopGameState extends State<BalloonPopGame> with SingleTickerProvid
                     final t = _float.value;
                     return Stack(
                       clipBehavior: Clip.hardEdge,
-                      children: [for (var i = 0; i < 4; i++) _balloon(i, t, w, h, bw, bh)],
+                      children: [
+                        for (var i = 0; i < 4; i++) _balloon(i, t, w, h, bw, bh),
+                        if (_popped != null)
+                          Positioned(
+                            key: ValueKey('reward_${_results.length}'),
+                            top: 8,
+                            left: 0,
+                            right: 0,
+                            child: const Center(child: FloatingReward()),
+                          ),
+                      ],
                     );
                   },
                 );
@@ -213,7 +225,7 @@ class _BalloonPopGameState extends State<BalloonPopGame> with SingleTickerProvid
           alignment: Alignment.center,
           children: [
             b,
-            Icon(Icons.auto_awesome, size: bw, color: Colors.amber),
+            StarBurst(size: bw * 1.5),
           ],
         ),
       );

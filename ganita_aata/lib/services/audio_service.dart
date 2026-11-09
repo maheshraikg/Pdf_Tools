@@ -5,7 +5,10 @@ import 'package:just_audio/just_audio.dart';
 
 import '../models/question.dart';
 
-enum Sfx { correct, wrong, pop, coin, badge, chest, tap }
+enum Sfx { correct, wrong, pop, coin, badge, chest, tap, win }
+
+/// Background music loops (`assets/audio/music/<name>.ogg`).
+enum MusicTrack { menu, game }
 
 /// Plays sound effects and spoken numbers/table lines from assets/audio/.
 ///
@@ -16,8 +19,59 @@ enum Sfx { correct, wrong, pop, coin, badge, chest, tap }
 class AudioService {
   AudioService({this.enabled = true});
 
-  /// Sound on/off (Settings).
+  /// Sound effects and voice on/off (Settings).
   bool enabled;
+
+  /// Background music on/off (Settings).
+  bool musicEnabled = true;
+
+  AudioPlayer? _music;
+  MusicTrack? _track;
+  bool _musicPaused = false;
+
+  /// Starts (or switches to) a looping background track.
+  Future<void> playMusic(MusicTrack track) async {
+    _track = track;
+    if (!musicEnabled || _musicPaused) return;
+    try {
+      final p = _music ??= AudioPlayer();
+      await p.setLoopMode(LoopMode.one);
+      await p.setVolume(0.35);
+      await p.setAsset('assets/audio/music/${track.name}.ogg');
+      if (_track == track) unawaited(p.play());
+    } catch (e) {
+      debugPrint('music failed: $e');
+    }
+  }
+
+  Future<void> stopMusic() async {
+    try {
+      await _music?.stop();
+    } catch (_) {}
+  }
+
+  /// App went to the background.
+  Future<void> pauseMusic() async {
+    _musicPaused = true;
+    try {
+      await _music?.pause();
+    } catch (_) {}
+  }
+
+  /// App came back.
+  Future<void> resumeMusic() async {
+    _musicPaused = false;
+    if (!musicEnabled || _track == null) return;
+    try {
+      if (_music?.audioSource == null) {
+        await playMusic(_track!);
+      } else {
+        unawaited(_music!.play());
+      }
+    } catch (_) {}
+  }
+
+  MusicTrack? get currentTrack => _track;
 
   AudioPlayer? _sfx;
   AudioPlayer? _voice;
@@ -79,6 +133,7 @@ class AudioService {
 
   Future<void> dispose() async {
     await _sfx?.dispose();
+    await _music?.dispose();
     await _voice?.dispose();
   }
 }
@@ -89,6 +144,18 @@ class SilentAudioService extends AudioService {
 
   @override
   Future<void> sfx(Sfx s) async {}
+
+  @override
+  Future<void> playMusic(MusicTrack track) async {}
+
+  @override
+  Future<void> pauseMusic() async {}
+
+  @override
+  Future<void> resumeMusic() async {}
+
+  @override
+  Future<void> stopMusic() async {}
 
   @override
   Future<void> tableLine(int a, int b, String lang) => Future.delayed(const Duration(milliseconds: 10));
