@@ -1,0 +1,415 @@
+{
+  "@@locale": "en",
+  "appTitle": "Ganita Aata",
+  "chooseLanguage": "Choose a language",
+  "continueBtn": "Continue",
+  "welcome": "Welcome!",
+  "profileSetupTitle": "Who is playing?",
+  "editProfile": "Edit profile",
+  "childName": "Child's first name",
+  "nameRequired": "Please type a name",
+  "schoolClass": "Class",
+  "classN": "Class {n}",
+  "@classN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "classRange": "Class {from}–{to}",
+  "@classRange": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      }
+    }
+  },
+  "chooseAvatar": "Choose an avatar",
+  "save": "Save",
+  "addChild": "Add child",
+  "switchChild": "Who is playing?",
+  "helloName": "Hello, {name}!",
+  "@helloName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "greetingSub": "Ready to play with numbers?",
+  "dailyChallenge": "Daily Challenge",
+  "dailyChallengeDesc": "10 sums – the same for everyone today!",
+  "dailyDone": "Done for today! Come back tomorrow.",
+  "start": "Start",
+  "playAgainToday": "Play again",
+  "streakDays": "{count, plural, =1{1 day} other{{count} days}}",
+  "@streakDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streak": "Streak",
+  "coins": "Coins",
+  "play": "Play",
+  "games": "Games",
+  "currentTopic": "Topic: {topic}",
+  "@currentTopic": {
+    "placeholders": {
+      "topic": {
+        "type": "String"
+      }
+    }
+  },
+  "change": "Change",
+  "gameBalloon": "Balloon Pop",
+  "gameBalloonDesc": "Pop the balloon with the right answer",
+  "gameRace": "Race Car",
+  "gameRaceDesc": "Right answers make your car zoom",
+  "gameTreasure": "Treasure Hunt",
+  "gameTreasureDesc": "5 right in a row opens a chest",
+  "gameTables": "Tables Master",
+  "gameTablesDesc": "Learn and practise tables 2–20",
+  "gameSpeed": "Speed Challenge",
+  "gameSpeedDesc": "How many in 60 seconds?",
+  "levelMap": "Level map",
+  "levelN": "Level {n}",
+  "@levelN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "locked": "Locked",
+  "lockedHint": "Score above 85% in the topic before this one to open it.",
+  "chooseTopic": "Choose a topic",
+  "chooseGame": "Choose a game",
+  "topic_num100": "Numbers up to 100",
+  "topic_add1": "Single-digit addition",
+  "topic_sub1": "Single-digit subtraction",
+  "topic_add2": "2-digit addition",
+  "topic_sub2": "2-digit subtraction",
+  "topic_tab2_5": "Tables 2–5",
+  "topic_tab6_10": "Tables 6–10",
+  "topic_add3": "3-digit addition",
+  "topic_sub3": "3-digit subtraction",
+  "topic_div1": "Simple division",
+  "topic_tab11_20": "Tables 11–20",
+  "topic_mul21": "2-digit × 1-digit",
+  "topic_divRem": "Division with remainder",
+  "topic_mixed": "Mixed operations",
+  "topic_squares": "Squares 1–30",
+  "topic_cubes": "Cubes 1–15",
+  "topic_percent": "Percentages",
+  "topic_fractions": "Simple fractions",
+  "qAfter": "What comes after {n}?",
+  "@qAfter": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "qBefore": "What comes before {n}?",
+  "@qBefore": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "qTenMore": "10 more than {n}",
+  "@qTenMore": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "qTenLess": "10 less than {n}",
+  "@qTenLess": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "qPercentOf": "{p}% of {n}",
+  "@qPercentOf": {
+    "placeholders": {
+      "p": {
+        "type": "int"
+      },
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "qFractionOf": "{fraction} of {n}",
+  "@qFractionOf": {
+    "placeholders": {
+      "fraction": {
+        "type": "String"
+      },
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "remainderShort": "R",
+  "score": "Score",
+  "secondsShort": "{n}s",
+  "@secondsShort": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "quitGameTitle": "Stop this round?",
+  "quitGameBody": "Coins from this round will not be added.",
+  "keepPlaying": "Keep playing",
+  "stop": "Stop",
+  "answerIs": "The answer is {answer}",
+  "@answerIs": {
+    "placeholders": {
+      "answer": {
+        "type": "String"
+      }
+    }
+  },
+  "praise": "Super!|Well done!|Excellent!|Great job!|You're a star!|Wonderful!",
+  "encourage": "Try again, you can do it!|Almost! Keep going!|Good try! Here is the next one.|Nice effort! You are learning!",
+  "getReady": "Get ready!",
+  "go": "Go!",
+  "you": "You",
+  "computer": "Computer",
+  "raceWon": "You won the race!",
+  "raceLost": "Great race! Practise a little more to win next time.",
+  "chestOpened": "Chest opened! +{n} coins",
+  "@chestOpened": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "chestStreakReset": "Start a new set of 5!",
+  "chestsOpened": "{count, plural, =0{No chests yet} =1{1 chest opened} other{{count} chests opened}}",
+  "@chestsOpened": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "personalBest": "Best: {n}",
+  "@personalBest": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "newBest": "New personal best!",
+  "clear": "Clear",
+  "pickTable": "Pick a table",
+  "learn": "Learn",
+  "quiz": "Quiz",
+  "tableOf": "Table of {n}",
+  "@tableOf": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "listen": "Listen",
+  "pause": "Pause",
+  "startQuiz": "Start quiz",
+  "mastered": "Mastered",
+  "questionOf": "{n} / {total}",
+  "@questionOf": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "resultTitle": "Round complete!",
+  "correctLabel": "Correct",
+  "practiseLabel": "To practise",
+  "practiseThese": "Let's practise these",
+  "coinsEarned": "+{n} coins",
+  "@coinsEarned": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "playAgain": "Play again",
+  "home": "Home",
+  "resultMsg3": "Amazing! You are a maths star!",
+  "resultMsg2": "Great work!",
+  "resultMsg1": "Good job! Keep practising!",
+  "resultMsg0": "Good try! Every round makes you better!",
+  "allCorrect": "All correct!",
+  "newTopicUnlocked": "New topic open: {topic}",
+  "@newTopicUnlocked": {
+    "placeholders": {
+      "topic": {
+        "type": "String"
+      }
+    }
+  },
+  "streakNow": "Daily streak: {days}",
+  "@streakNow": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "shop": "Shop",
+  "avatars": "Avatars",
+  "carColours": "Car colours",
+  "balloonThemes": "Balloons",
+  "buy": "Buy",
+  "use": "Use",
+  "inUse": "In use",
+  "needMoreCoins": "Play more to earn {n} more coins!",
+  "@needMoreCoins": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "bought": "Yours now!",
+  "color_red": "Red",
+  "color_blue": "Blue",
+  "color_green": "Green",
+  "color_yellow": "Yellow",
+  "color_purple": "Purple",
+  "color_orange": "Orange",
+  "color_pink": "Pink",
+  "theme_rainbow": "Rainbow",
+  "theme_pastel": "Pastel",
+  "theme_ocean": "Ocean",
+  "theme_sunset": "Sunset",
+  "theme_candy": "Candy",
+  "badges": "Badges",
+  "badgeTableMaster": "Table {n} Master",
+  "@badgeTableMaster": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "badgeTableMasterDesc": "Master every line of the {n} table",
+  "@badgeTableMasterDesc": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "badgeStreak7": "7-day streak",
+  "badgeStreak7Desc": "Do the Daily Challenge 7 days in a row",
+  "badgeStreak30": "30-day streak",
+  "badgeStreak30Desc": "Do the Daily Challenge 30 days in a row",
+  "badgeDay100": "100 sums in a day",
+  "badgeDay100Desc": "Solve 100 sums in one day",
+  "badgeSpeedStar": "Speed Star",
+  "badgeSpeedStarDesc": "20 or more right in a Speed Challenge",
+  "newBadge": "New badge!",
+  "yay": "Yay!",
+  "forParents": "For parents",
+  "enterPin": "Enter parent PIN",
+  "createPin": "Create a 4-digit parent PIN",
+  "confirmPin": "Enter the same PIN again",
+  "newPin": "Enter a new 4-digit PIN",
+  "pinMismatch": "The PINs were different. Please try again.",
+  "pinWrong": "That PIN is not right. Please try again.",
+  "pinForParents": "For grown-ups only",
+  "pinForgot": "Forgot the PIN? Clearing this app's storage in phone settings resets the PIN and all progress.",
+  "pinChanged": "PIN changed",
+  "progress": "Progress",
+  "totalSums": "Sums solved",
+  "accuracy": "Accuracy",
+  "factsMastered": "Facts mastered",
+  "daysPractised": "Days practised",
+  "accuracyPerTopic": "Accuracy per topic",
+  "speedOverTime": "Average seconds per sum",
+  "weakFacts": "Facts to practise",
+  "noWeakFacts": "Nothing difficult right now. Well done!",
+  "noDataYet": "No practice yet.",
+  "triesRight": "{n} tries · {pct}% right",
+  "@triesRight": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "pct": {
+        "type": "int"
+      }
+    }
+  },
+  "settings": "Settings",
+  "language": "Language",
+  "sound": "Sound",
+  "dailyReminder": "Daily reminder",
+  "reminderTime": "Reminder time",
+  "notificationsBlocked": "Notifications are turned off for this app in the phone settings.",
+  "changePin": "Change parent PIN",
+  "resetProgress": "Reset progress",
+  "resetProgressBody": "This clears all of {name}'s scores, coins, badges and opened levels.",
+  "@resetProgressBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "reset": "Reset",
+  "cancel": "Cancel",
+  "progressReset": "Progress cleared",
+  "removeChild": "Remove this child",
+  "removeChildBody": "Remove {name} and all of their progress from this phone?",
+  "@removeChildBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remove": "Remove",
+  "child": "Child",
+  "about": "About",
+  "aboutBody": "Ganita Aata helps children of Classes 1–8 practise maths in short, fun rounds. It works fully offline, has no ads and needs no account. Only the child's first name and class are kept, and only on this phone.",
+  "version": "Version {v}",
+  "@version": {
+    "placeholders": {
+      "v": {
+        "type": "String"
+      }
+    }
+  },
+  "licenses": "Licences",
+  "close": "Close",
+  "reminderBody": "Time for today's Ganita Aata challenge!",
+  "reminderChannel": "Daily reminder",
+  "lockedLevelSnack": "Keep practising to open this level!",
+  "hearAgain": "Hear again"
+}
