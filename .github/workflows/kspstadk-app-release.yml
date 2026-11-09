@@ -1,10 +1,10 @@
 name: KSPSTADK app — publish APK (GitHub Release)
 
 # Builds the release APKs and attaches them to the GitHub Release
-# `kspstadk-app-v<version>` so they have permanent, public download links:
-#   https://github.com/maheshraikg/Pdf_Tools/releases/download/kspstadk-app-v1.0.0/kspstadk-arm64.apk
-# Re-running replaces the files of the same version (bump `version:` in
-# kspstadk_app/pubspec.yaml for a new release).
+# `kspstadk-apk-keep`, so they have permanent, public download links:
+#   https://github.com/maheshraikg/Pdf_Tools/releases/download/kspstadk-apk-keep/kspstadk-arm64.apk
+# The tag contains "keep" so manage-releases.yml never prunes it (same
+# convention as waqt-apk-keep / rupeetrack-keep). Each run replaces the files.
 on:
   push:
     branches: [ master, main, claude/kspstadk-flutter-android-app-pfa9z4 ]
@@ -49,7 +49,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//; s/+.*//')
-          TAG="kspstadk-app-v$VERSION"
+          TAG="kspstadk-apk-keep"
           NOTES="KSPSTADK Android app $VERSION (built from ${GITHUB_SHA::7}).
 
           * kspstadk-arm64.apk — most phones (recommended)
@@ -58,7 +58,7 @@ jobs:
 
           Test build signed with the debug key. Install: open the APK on the phone and allow 'Install unknown apps'."
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release edit "$TAG" --notes "$NOTES"
+            gh release edit "$TAG" --title "KSPSTADK app $VERSION" --notes "$NOTES"
           else
             gh release create "$TAG" --target "$GITHUB_SHA" --prerelease --title "KSPSTADK app $VERSION" --notes "$NOTES"
           fi
