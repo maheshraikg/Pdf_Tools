@@ -35,7 +35,9 @@ jobs:
       - run: flutter test
 
       - name: Build release APK
-        run: flutter build apk --release 2>&1 | tee build.log
+        run: |
+          set -o pipefail
+          flutter build apk --release 2>&1 | tee build.log
 
       - name: Check build log for warnings
         run: |

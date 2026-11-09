@@ -8,7 +8,8 @@ plugins {
 
 android {
     namespace = "com.ganitaaata.app"
-    compileSdk = flutter.compileSdkVersion
+    // flutter_local_notifications 23 needs compileSdk 37 or newer.
+    compileSdk = maxOf(flutter.compileSdkVersion, 37)
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
