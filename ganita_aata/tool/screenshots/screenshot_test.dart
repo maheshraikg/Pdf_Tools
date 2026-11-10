@@ -53,9 +53,12 @@ void main() {
     await loadFont('NotoSansKannada', ['assets/fonts/NotoSansKannada-Regular.ttf', 'assets/fonts/NotoSansKannada-Bold.ttf']);
     await loadFont('Baloo', ['assets/fonts/BalooTamma2-500.ttf', 'assets/fonts/BalooTamma2-700.ttf', 'assets/fonts/BalooTamma2-800.ttf']);
     await loadFont('Roboto', ['$mf/Roboto-Regular.ttf', '$mf/Roboto-Medium.ttf', '$mf/Roboto-Bold.ttf']);
+    for (final f in ['BalooDeva', 'BalooTamil', 'BalooTelugu', 'BalooMalayalam', 'BalooBengali', 'BalooGujarati', 'BalooGurmukhi', 'BalooOdia', 'BalooArabic']) {
+      await loadFont(f, ['assets/fonts/$f-700.ttf']);
+    }
     await loadFont('MaterialIcons', ['$mf/MaterialIcons-Regular.otf']);
     await loadFont('NotoColorEmoji', ['/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf']);
-    debugFontFallback = ['Roboto', 'NotoColorEmoji'];
+    debugFontFallback = ['Roboto', 'NotoColorEmoji', 'NotoSansFallback'];
     Directory('docs/screenshots').createSync(recursive: true);
   });
 
@@ -122,9 +125,15 @@ void main() {
     'settings': () => const SettingsScreen(),
   };
 
-  for (final lang in ['kn', 'en']) {
+  const extraLangs = ['hi', 'mr', 'ta', 'te', 'ml', 'bn', 'gu', 'pa', 'or', 'ur'];
+  for (final lang in ['kn', 'en', ...extraLangs]) {
     var n = 0;
     for (final e in screens.entries) {
+      // Other languages: just Home and a game.
+      if (extraLangs.contains(lang) && e.key != 'home' && e.key != 'balloon') {
+        n++;
+        continue;
+      }
       final idx = ++n;
       testWidgets('$lang ${e.key}', (tester) async {
         await tester.binding.setSurfaceSize(const Size(400, 860));

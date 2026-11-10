@@ -152,7 +152,11 @@ class _ResultScreenState extends State<ResultScreen> {
                                 child: FittedBox(
                                   fit: BoxFit.scaleDown,
                                   alignment: Alignment.centerLeft,
-                                  child: Text(l.solvedText(m.question), style: display(28)),
+                                  child: Text(
+                                    l.solvedText(m.question),
+                                    textDirection: mathDirection(m.question),
+                                    style: display(28),
+                                  ),
                                 ),
                               ),
                             ],

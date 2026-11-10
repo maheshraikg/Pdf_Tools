@@ -6,7 +6,7 @@ sound effects are simple synthesised tones. Replace any file with a real
 recording of the same name (see README "Replacing audio files").
 
 Requires: espeak-ng (with the 'kn' voice), ffmpeg (libopus), numpy.
-Usage:  python3 tool/gen_audio.py            (run from ganita_aata/)
+Usage:  python3 tool/gen_audio.py [lang ...]   (run from ganita_aata/)
 """
 import os, subprocess, tempfile, wave
 import numpy as np
@@ -22,7 +22,7 @@ KN_MULT = {1: 'ಒಂದ್ಲ', 2: 'ಎರಡ್ಲ', 3: 'ಮೂರ್ಲ', 4: 
 def encode(wav_path, out_path):
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', wav_path, '-ac', '1',
-                    '-ar', '24000', '-c:a', 'libopus', '-b:a', '16k',
+                    '-ar', '24000', '-c:a', 'libopus', '-b:a', '12k',
                     '-application', 'voip', out_path], check=True)
 
 
@@ -61,23 +61,51 @@ def noise_pop(out_path, sr=24000):
         encode(t.name, out_path)
 
 
-def main():
+# How a table line is read in each language: (a, b, a×b) → text.
+TABLE_LINE = {
+    'en': lambda a, b, c: f'{a} times {b} is {c}',
+    'kn': lambda a, b, c: f'{a} {KN_MULT[b]} {c}',
+    'hi': lambda a, b, c: f'{a} गुणा {b} बराबर {c}',
+    'mr': lambda a, b, c: f'{a} गुणिले {b} बरोबर {c}',
+    'ta': lambda a, b, c: f'{a} பெருக்கல் {b} சமம் {c}',
+    'te': lambda a, b, c: f'{a} ఇంటూ {b} సమానం {c}',
+    'ml': lambda a, b, c: f'{a} ഗുണം {b} സമം {c}',
+    'bn': lambda a, b, c: f'{a} গুণ {b} সমান {c}',
+    'gu': lambda a, b, c: f'{a} ગુણ્યા {b} બરાબર {c}',
+    'pa': lambda a, b, c: f'{a} ਗੁਣਾ {b} ਬਰਾਬਰ {c}',
+    'or': lambda a, b, c: f'{a} ଗୁଣନ {b} ସମାନ {c}',
+    'ur': lambda a, b, c: f'{a} ضرب {b} برابر {c}',
+}
+
+
+def voice(lang):
+    """Numbers 0–100 and every table line (2–20 × 1–10) for one language."""
     for n in range(0, 101):
-        speak(str(n), 'en', f'{OUT}/en/n_{n}.ogg')
-        speak(str(n), 'kn', f'{OUT}/kn/n_{n}.ogg')
+        speak(str(n), lang, f'{OUT}/{lang}/n_{n}.ogg')
     for a in range(2, 21):
         for b in range(1, 11):
-            speak(f'{a} times {b} is {a * b}', 'en', f'{OUT}/en/tables/t{a}_{b}.ogg')
-            speak(f'{a} {KN_MULT[b]} {a * b}', 'kn', f'{OUT}/kn/tables/t{a}_{b}.ogg')
+            speak(TABLE_LINE[lang](a, b, a * b), lang, f'{OUT}/{lang}/tables/t{a}_{b}.ogg')
+
+
+def synth_sfx():
+    """The synthesised effects (wrong, pop, tap). correct/coin/badge/chest/win
+    are Kenney Music Jingles (CC0) copied into assets/audio/sfx/."""
     s = f'{OUT}/sfx'
-    tone(f'{s}/correct.ogg', [(880, 880, 0.09), (1320, 1320, 0.18)])
     tone(f'{s}/wrong.ogg', [(330, 260, 0.25)], vol=0.35)
     noise_pop(f'{s}/pop.ogg')
-    tone(f'{s}/coin.ogg', [(988, 988, 0.07), (1319, 1319, 0.2)])
-    tone(f'{s}/badge.ogg', [(523, 523, 0.12), (659, 659, 0.12), (784, 784, 0.12), (1047, 1047, 0.35)])
-    tone(f'{s}/chest.ogg', [(392, 784, 0.35), (1047, 1047, 0.25)])
     tone(f'{s}/tap.ogg', [(660, 660, 0.04)], vol=0.25)
 
 
+def main(langs=None):
+    for lang in langs or TABLE_LINE:
+        voice(lang)
+
+
 if __name__ == '__main__':
-    main()
+    import sys
+    args = sys.argv[1:]
+    if '--sfx' in args:
+        synth_sfx()
+        args.remove('--sfx')
+    # Optional: language codes to (re)generate, e.g. `gen_audio.py hi ta`.
+    main(args or None)

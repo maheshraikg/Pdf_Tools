@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ganita_aata/data/app_store.dart';
+import 'package:ganita_aata/data/languages.dart';
 import 'package:ganita_aata/games/balloon_pop_game.dart';
 import 'package:ganita_aata/games/daily_challenge_game.dart';
 import 'package:ganita_aata/games/race_car_game.dart';
@@ -85,13 +86,23 @@ void main() {
     ),
   };
 
-  for (final lang in ['kn', 'en']) {
+  for (final lang in Languages.all.map((l) => l.code)) {
     for (final e in screens.entries) {
       testWidgets('$lang ${e.key} fits a small phone', (tester) async {
         tester.view.physicalSize = const Size(720, 1280);
         tester.view.devicePixelRatio = 2.0;
         addTearDown(tester.view.reset);
         final app = makeApp(lang);
+        final overflowCreators = <String>[];
+        final previous = FlutterError.onError;
+        FlutterError.onError = (d) {
+          final text = d.toString();
+          final m = RegExp(r'creator: ([^\n]*)').firstMatch(text);
+          final loc = RegExp(r'file:///[^\s]*lib/[^\s)]*').firstMatch(text);
+          overflowCreators.add('${m?.group(1) ?? ''} ${loc?.group(0) ?? ''}');
+          previous?.call(d);
+        };
+        addTearDown(() => FlutterError.onError = previous);
         await tester.pumpWidget(
           MediaQuery(
             data: const MediaQueryData(textScaler: TextScaler.linear(1.15)),
@@ -101,7 +112,12 @@ void main() {
         for (var i = 0; i < 12; i++) {
           await tester.pump(const Duration(milliseconds: 500));
         }
-        expect(tester.takeException(), isNull);
+        final error = tester.takeException();
+        if (error != null) {
+          // Say where the overflow is, to make it easy to fix.
+          final where = overflowCreators.join('\n');
+          fail('$error\n$where');
+        }
         // Leave timed games cleanly.
         await tester.pumpWidget(const SizedBox());
       });

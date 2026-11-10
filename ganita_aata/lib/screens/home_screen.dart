@@ -100,7 +100,12 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       const Icon(Icons.play_arrow_rounded, size: 48, color: Colors.white),
                       const SizedBox(width: 6),
-                      Text(l.play, style: display(38, color: Colors.white)),
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(l.play, style: display(38, color: Colors.white)),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -291,14 +296,20 @@ class _DailyCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: const [BoxShadow(color: Color(0x33000000), offset: Offset(0, 3))],
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 104),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: const [BoxShadow(color: Color(0x33000000), offset: Offset(0, 3))],
+              ),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(done ? l.playAgainToday : l.start, style: display(17, color: AppColors.secondary)),
+              ),
             ),
-            child: Text(done ? l.playAgainToday : l.start, style: display(17, color: AppColors.secondary)),
           ),
         ],
       ),

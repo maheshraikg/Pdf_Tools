@@ -219,6 +219,7 @@ class _TableLearnScreenState extends State<TableLearnScreen> {
                       },
                       title: Text(
                         '$n × $b = ${n * b}',
+                        textDirection: TextDirection.ltr,
                         style: display(on ? 36 : 30, color: on ? Colors.white : AppColors.ink),
                       ),
                       trailing: mastered

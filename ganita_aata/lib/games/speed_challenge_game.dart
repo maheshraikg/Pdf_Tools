@@ -146,7 +146,12 @@ class _SpeedChallengeGameState extends State<SpeedChallengeGame> with Countdown 
               children: [
                 const AppImage('trophy', size: 26),
                 const SizedBox(width: 6),
-                Text(l.personalBest(best), style: display(20, color: AppColors.secondary)),
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(l.personalBest(best), style: display(20, color: AppColors.secondary)),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 6),
@@ -174,6 +179,7 @@ class _SpeedChallengeGameState extends State<SpeedChallengeGame> with Countdown 
                   child: Text(
                     shown.isEmpty ? '?' : shown,
                     key: const ValueKey('speed_input'),
+                    textDirection: TextDirection.ltr,
                     style: display(46, color: shown.isEmpty ? Colors.black26 : AppColors.ink, height: 1.1),
                   ),
                 ),

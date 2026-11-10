@@ -147,26 +147,35 @@ class _PinScreenState extends State<PinScreen> {
                         style: const TextStyle(color: Color(0xFFB35C00), fontSize: 17),
                       ),
               ),
-              for (final row in const [
-                ['1', '2', '3'],
-                ['4', '5', '6'],
-                ['7', '8', '9'],
-              ])
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [for (final d in row) key(d)]),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(width: 100),
-                  key('0'),
-                  SizedBox(
-                    width: 100,
-                    child: IconButton(
-                      iconSize: 32,
-                      onPressed: _pin.isEmpty ? null : () => setState(() => _pin = _pin.substring(0, _pin.length - 1)),
-                      icon: const Icon(Icons.backspace_outlined),
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: Column(
+                  children: [
+                    for (final row in const [
+                      ['1', '2', '3'],
+                      ['4', '5', '6'],
+                      ['7', '8', '9'],
+                    ])
+                      Row(mainAxisAlignment: MainAxisAlignment.center, children: [for (final d in row) key(d)]),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(width: 100),
+                        key('0'),
+                        SizedBox(
+                          width: 100,
+                          child: IconButton(
+                            iconSize: 32,
+                            onPressed: _pin.isEmpty
+                                ? null
+                                : () => setState(() => _pin = _pin.substring(0, _pin.length - 1)),
+                            icon: const Icon(Icons.backspace_outlined),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               if (widget.mode == PinMode.verify)
                 Padding(

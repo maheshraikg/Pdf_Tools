@@ -328,7 +328,9 @@ void main() {
     expect(find.text('Settings'), findsOneWidget);
     expect(app.checkPin('1234'), isTrue);
 
-    await tester.tap(find.text('ಕನ್ನಡ'));
+    await tester.tap(find.byKey(const ValueKey('lang_toggle')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('lang_kn')));
     await tester.pumpAndSettle();
     expect(find.text('ಸೆಟ್ಟಿಂಗ್‌ಗಳು'), findsOneWidget);
     expect(app.lang, 'kn');

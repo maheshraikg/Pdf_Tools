@@ -38,6 +38,7 @@ class QuestionCard extends StatelessWidget {
               child: Text(
                 text,
                 key: const ValueKey('question_text'),
+                textDirection: mathDirection(question),
                 textAlign: TextAlign.center,
                 style: display(isLong ? fontSize * 0.66 : fontSize, height: 1.2),
               ),

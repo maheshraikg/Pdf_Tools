@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../app_info.dart';
+import '../data/languages.dart';
 import '../services/app_state.dart';
 import '../widgets/app_theme.dart';
 import '../widgets/l10n_ext.dart';
+import '../widgets/language_grid.dart';
 import 'pin_screen.dart';
 import 'splash_screen.dart';
 
@@ -24,24 +26,27 @@ class SettingsScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8),
         children: [
           ListTile(
+            key: const ValueKey('lang_toggle'),
             leading: const Icon(Icons.translate_rounded, size: 30),
             title: Text(l.language, style: big),
-            subtitle: Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: SegmentedButton<String>(
-                key: const ValueKey('lang_toggle'),
-                segments: const [
-                  ButtonSegment(
-                    value: 'kn',
-                    label: Text('ಕನ್ನಡ', style: TextStyle(fontSize: 18)),
+            subtitle: Text(Languages.byCode(app.lang).nativeName, style: big.copyWith(color: AppColors.secondary)),
+            trailing: const Icon(Icons.chevron_right_rounded, size: 30),
+            onTap: () => showModalBottomSheet<void>(
+              context: context,
+              showDragHandle: true,
+              isScrollControlled: true,
+              builder: (c) => SafeArea(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(l.language, style: display(24)),
+                      const SizedBox(height: 12),
+                      LanguageGrid(onPicked: () => Navigator.pop(c)),
+                    ],
                   ),
-                  ButtonSegment(
-                    value: 'en',
-                    label: Text('English', style: TextStyle(fontSize: 18)),
-                  ),
-                ],
-                selected: {app.lang},
-                onSelectionChanged: (s) => app.setLanguage(s.first),
+                ),
               ),
             ),
           ),

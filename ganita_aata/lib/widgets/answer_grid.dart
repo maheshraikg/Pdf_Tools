@@ -64,7 +64,11 @@ class AnswerGrid extends StatelessWidget {
                           onTap: done ? null : () => onTap(options[i]),
                           child: FittedBox(
                             fit: BoxFit.scaleDown,
-                            child: Text(l.answerText(options[i]), style: display(42, color: Colors.white)),
+                            child: Text(
+                              l.answerText(options[i]),
+                              textDirection: TextDirection.ltr,
+                              style: display(42, color: Colors.white),
+                            ),
                           ),
                         ),
                       ),

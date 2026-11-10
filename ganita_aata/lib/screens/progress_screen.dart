@@ -167,7 +167,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
               dense: true,
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.lightbulb_rounded, color: AppColors.gentle),
-              title: Text(l.solvedText(q), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+              title: Text(
+                l.solvedText(q),
+                textDirection: mathDirection(q),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              ),
               subtitle: Text('${l.topicName(f.topicId)} · ${l.triesRight(f.attempts, (f.accuracy * 100).round())}'),
             ),
       ],

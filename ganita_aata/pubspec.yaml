@@ -64,6 +64,7 @@ flutter:
   assets:
     - assets/fonts/OFL.txt
     - assets/fonts/OFL-BalooTamma2.txt
+    - assets/fonts/OFL-Baloo2.txt
     - assets/images/
     - assets/game/
     - assets/audio/sfx/
@@ -72,6 +73,26 @@ flutter:
     - assets/audio/en/tables/
     - assets/audio/kn/
     - assets/audio/kn/tables/
+    - assets/audio/hi/
+    - assets/audio/hi/tables/
+    - assets/audio/mr/
+    - assets/audio/mr/tables/
+    - assets/audio/ta/
+    - assets/audio/ta/tables/
+    - assets/audio/te/
+    - assets/audio/te/tables/
+    - assets/audio/ml/
+    - assets/audio/ml/tables/
+    - assets/audio/bn/
+    - assets/audio/bn/tables/
+    - assets/audio/gu/
+    - assets/audio/gu/tables/
+    - assets/audio/pa/
+    - assets/audio/pa/tables/
+    - assets/audio/or/
+    - assets/audio/or/tables/
+    - assets/audio/ur/
+    - assets/audio/ur/tables/
 
   fonts:
     # Baloo Tamma 2 (SIL OFL 1.1) – rounded, playful; Kannada + Latin.
@@ -84,19 +105,47 @@ flutter:
           weight: 700
         - asset: assets/fonts/BalooTamma2-800.ttf
           weight: 800
+    # Baloo 2 family for the other Indian scripts and Urdu (SIL OFL 1.1), one
+    # weight each, subset to their script. Fallbacks of Baloo.
+    - family: BalooDeva
+      fonts:
+        - asset: assets/fonts/BalooDeva-700.ttf
+          weight: 700
+    - family: BalooTamil
+      fonts:
+        - asset: assets/fonts/BalooTamil-700.ttf
+          weight: 700
+    - family: BalooTelugu
+      fonts:
+        - asset: assets/fonts/BalooTelugu-700.ttf
+          weight: 700
+    - family: BalooMalayalam
+      fonts:
+        - asset: assets/fonts/BalooMalayalam-700.ttf
+          weight: 700
+    - family: BalooBengali
+      fonts:
+        - asset: assets/fonts/BalooBengali-700.ttf
+          weight: 700
+    - family: BalooGujarati
+      fonts:
+        - asset: assets/fonts/BalooGujarati-700.ttf
+          weight: 700
+    - family: BalooGurmukhi
+      fonts:
+        - asset: assets/fonts/BalooGurmukhi-700.ttf
+          weight: 700
+    - family: BalooOdia
+      fonts:
+        - asset: assets/fonts/BalooOdia-700.ttf
+          weight: 700
+    - family: BalooArabic
+      fonts:
+        - asset: assets/fonts/BalooArabic-700.ttf
+          weight: 700
     # Noto Sans Kannada (SIL OFL 1.1) – body text.
     - family: NotoSansKannada
       fonts:
-    # Baloo Tamma 2 (SIL OFL 1.1) – rounded, playful; Kannada + Latin.
-    # Used for titles, buttons and numbers.
-    - family: Baloo
-      fonts:
-        - asset: assets/fonts/BalooTamma2-500.ttf
-          weight: 500
-        - asset: assets/fonts/BalooTamma2-700.ttf
-          weight: 700
-        - asset: assets/fonts/BalooTamma2-800.ttf
-          weight: 800
         - asset: assets/fonts/NotoSansKannada-Regular.ttf
         - asset: assets/fonts/NotoSansKannada-Bold.ttf
           weight: 700

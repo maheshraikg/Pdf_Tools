@@ -96,14 +96,16 @@ class GameShell extends StatelessWidget {
                           child: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: display(21)),
                         ),
                         if (secondsLeft != null) ...[
-                          StatChip(
-                            icon: Icon(
-                              Icons.timer_rounded,
-                              color: secondsLeft! <= 10 ? AppColors.primary : AppColors.ink,
+                          Flexible(
+                            child: StatChip(
+                              icon: Icon(
+                                Icons.timer_rounded,
+                                color: secondsLeft! <= 10 ? AppColors.primary : AppColors.ink,
+                              ),
+                              label: l.secondsShort(secondsLeft!),
+                              color: secondsLeft! <= 10 ? AppColors.primary : AppColors.secondary,
+                              compact: true,
                             ),
-                            label: l.secondsShort(secondsLeft!),
-                            color: secondsLeft! <= 10 ? AppColors.primary : AppColors.secondary,
-                            compact: true,
                           ),
                           const SizedBox(width: 6),
                         ],

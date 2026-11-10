@@ -6,7 +6,9 @@ addition, subtraction, tables, division, squares, cubes, fractions and
 percentages. The app adapts to each child and keeps a progress report for
 parents.
 
-- **Bilingual**: Kannada (default) and English, switchable in Settings.
+- **12 languages**: Kannada (default), English, Hindi, Marathi, Tamil, Telugu,
+  Malayalam, Bengali, Gujarati, Punjabi, Odia and Urdu (right-to-left),
+  chosen on first launch and switchable in Settings.
 - **Fully offline**: no internet permission, no ads, no login, no analytics.
 - **Child-safe**: only the child's first name and class are stored, and only
   on the phone. Settings, Progress and reset are behind a parent PIN.
@@ -172,9 +174,26 @@ Tips:
 
 ## Localisation
 
-All visible text lives in `lib/l10n/app_kn.arb` and `lib/l10n/app_en.arb`
-(generated into `lib/l10n/app_localizations*.dart`). Praise and encouragement
-messages are `|`-separated lists in `praise` and `encourage`.
+All visible text lives in `lib/l10n/app_<code>.arb` – `kn` (default), `en`,
+`hi`, `mr`, `ta`, `te`, `ml`, `bn`, `gu`, `pa`, `or`, `ur` – generated into
+`lib/l10n/app_localizations*.dart`. Praise and encouragement messages are
+`|`-separated lists in `praise` and `encourage`. The language list (native
+names) is `lib/data/languages.dart`.
+
+- **Translations other than Kannada and English were machine-written and need
+  review by native speakers** before release; keep placeholders such as
+  `{n}` and `{name}` unchanged.
+- **Fonts**: each script has a matching rounded Baloo font for titles and
+  numbers (Baloo 2 family, subset per script); body text uses the phone's
+  own Noto fonts for scripts other than Kannada.
+- **Urdu** is laid out right to left; sums, answers, number pads and the PIN
+  pad always stay left to right (`mathDirection()` in `l10n_ext.dart`).
+- **Audio**: every language has spoken numbers 0–100 and table lines in
+  `assets/audio/<code>/` (placeholders from `tool/gen_audio.py <code>`).
+- **Adding a language**: add `app_<code>.arb`, a row in `languages.dart`, a
+  `TABLE_LINE` entry in `tool/gen_audio.py` (then run it), the asset folders
+  in `pubspec.yaml`, a Baloo font for a new script, and
+  `android/app/src/main/res/values-<code>/strings.xml` for the launcher name.
 
 ## Look and feel
 

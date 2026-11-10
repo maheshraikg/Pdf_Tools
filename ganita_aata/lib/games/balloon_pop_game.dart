@@ -276,6 +276,7 @@ class _Balloon extends StatelessWidget {
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
+                textDirection: TextDirection.ltr,
                 label,
                 style: const TextStyle(
                   fontSize: 30,

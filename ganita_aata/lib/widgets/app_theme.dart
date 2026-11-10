@@ -38,14 +38,30 @@ const displayFont = 'Baloo';
 /// Body text font.
 const bodyFont = 'NotoSansKannada';
 
+/// Rounded display fonts for the other Indian scripts (and Urdu), used when a
+/// character is not in Baloo Tamma 2.
+const scriptFallback = [
+  'BalooDeva',
+  'BalooTamil',
+  'BalooTelugu',
+  'BalooMalayalam',
+  'BalooBengali',
+  'BalooGujarati',
+  'BalooGurmukhi',
+  'BalooOdia',
+  'BalooArabic',
+];
+
 /// Extra fallback fonts for screenshot tests (null in the app, where the
 /// phone's own fonts are the fallback).
 List<String>? debugFontFallback;
 
+List<String> get _displayFallback => [...scriptFallback, ...?debugFontFallback];
+
 TextStyle display(double size, {Color color = AppColors.ink, FontWeight weight = FontWeight.w800, double? height}) =>
     TextStyle(
       fontFamily: displayFont,
-      fontFamilyFallback: debugFontFallback,
+      fontFamilyFallback: _displayFallback,
       fontSize: size,
       fontWeight: weight,
       color: color,
@@ -66,8 +82,13 @@ ThemeData buildTheme() {
     fontFamilyFallback: debugFontFallback,
   );
   final t = base.textTheme.apply(bodyColor: AppColors.ink, displayColor: AppColors.ink);
-  TextStyle? d(TextStyle? s, double size, [FontWeight w = FontWeight.w800]) =>
-      s?.copyWith(fontFamily: displayFont, fontSize: size, fontWeight: w, height: 1.15);
+  TextStyle? d(TextStyle? s, double size, [FontWeight w = FontWeight.w800]) => s?.copyWith(
+    fontFamily: displayFont,
+    fontFamilyFallback: _displayFallback,
+    fontSize: size,
+    fontWeight: w,
+    height: 1.15,
+  );
   return base.copyWith(
     scaffoldBackgroundColor: AppColors.cream,
     textTheme: t.copyWith(

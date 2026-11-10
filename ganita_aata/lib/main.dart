@@ -18,6 +18,7 @@ Future<void> main() async {
   LicenseRegistry.addLicense(() async* {
     final ofl = await rootBundle.loadString('assets/fonts/OFL.txt');
     yield LicenseEntryWithLineBreaks(['Noto Sans Kannada'], ofl);
+    yield LicenseEntryWithLineBreaks(['Baloo 2 family'], await rootBundle.loadString('assets/fonts/OFL-Baloo2.txt'));
     yield LicenseEntryWithLineBreaks([
       'Baloo Tamma 2',
     ], await rootBundle.loadString('assets/fonts/OFL-BalooTamma2.txt'));

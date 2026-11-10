@@ -144,6 +144,10 @@ extension AppStrings on AppLocalizations {
 }
 
 /// Illustration (assets/images) for a badge.
+/// Sums always read left to right, also in Urdu; sentence questions follow
+/// the app language.
+TextDirection? mathDirection(Question q) => q.isWordQuestion ? null : TextDirection.ltr;
+
 String badgeImage(String id) {
   if (Badges.tableOf(id) != null) return 'medal';
   return switch (id) {
