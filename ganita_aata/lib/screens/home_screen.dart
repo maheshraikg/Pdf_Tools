@@ -49,7 +49,12 @@ class HomeScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l.helloName(p.name), maxLines: 1, overflow: TextOverflow.ellipsis, style: display(26)),
+                        Text(
+                          l.helloName(p.name),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: display(26, color: Colors.white),
+                        ),
                         const SizedBox(height: 4),
                         Wrap(
                           spacing: 8,
@@ -128,7 +133,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 18),
-              Text(l.games, style: display(26)),
+              Text(l.games, style: display(26, color: Colors.white)),
               const SizedBox(height: 10),
               GridView.count(
                 crossAxisCount: 2,

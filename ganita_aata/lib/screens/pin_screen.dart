@@ -109,84 +109,87 @@ class _PinScreenState extends State<PinScreen> {
         ),
       ),
     );
-    return Scaffold(
-      appBar: AppBar(title: Text(l.forParents)),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              const Icon(Icons.lock_rounded, size: 56, color: AppColors.secondary),
-              Text(l.pinForParents, style: Theme.of(context).textTheme.bodyLarge),
-              const SizedBox(height: 12),
-              Text(_title(), textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (var i = 0; i < PinScreen.length; i++)
-                    Container(
-                      margin: const EdgeInsets.all(8),
-                      width: 22,
-                      height: 22,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: i < _pin.length ? AppColors.secondary : Colors.transparent,
-                        border: Border.all(color: AppColors.secondary, width: 2),
-                      ),
-                    ),
-                ],
-              ),
-              SizedBox(
-                height: 52,
-                child: _error == null
-                    ? null
-                    : Text(
-                        _error!,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: Color(0xFFB35C00), fontSize: 17),
-                      ),
-              ),
-              Directionality(
-                textDirection: TextDirection.ltr,
-                child: Column(
+    return Theme(
+      data: buildParentTheme(),
+      child: Scaffold(
+        appBar: AppBar(title: Text(l.forParents)),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                const Icon(Icons.lock_rounded, size: 56, color: AppColors.secondary),
+                Text(l.pinForParents, style: Theme.of(context).textTheme.bodyLarge),
+                const SizedBox(height: 12),
+                Text(_title(), textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    for (final row in const [
-                      ['1', '2', '3'],
-                      ['4', '5', '6'],
-                      ['7', '8', '9'],
-                    ])
-                      Row(mainAxisAlignment: MainAxisAlignment.center, children: [for (final d in row) key(d)]),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(width: 100),
-                        key('0'),
-                        SizedBox(
-                          width: 100,
-                          child: IconButton(
-                            iconSize: 32,
-                            onPressed: _pin.isEmpty
-                                ? null
-                                : () => setState(() => _pin = _pin.substring(0, _pin.length - 1)),
-                            icon: const Icon(Icons.backspace_outlined),
-                          ),
+                    for (var i = 0; i < PinScreen.length; i++)
+                      Container(
+                        margin: const EdgeInsets.all(8),
+                        width: 22,
+                        height: 22,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: i < _pin.length ? AppColors.secondary : Colors.transparent,
+                          border: Border.all(color: AppColors.secondary, width: 2),
                         ),
-                      ],
-                    ),
+                      ),
                   ],
                 ),
-              ),
-              if (widget.mode == PinMode.verify)
-                Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: Text(
-                    l.pinForgot,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 14, color: Colors.black54),
+                SizedBox(
+                  height: 52,
+                  child: _error == null
+                      ? null
+                      : Text(
+                          _error!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Color(0xFFB35C00), fontSize: 17),
+                        ),
+                ),
+                Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: Column(
+                    children: [
+                      for (final row in const [
+                        ['1', '2', '3'],
+                        ['4', '5', '6'],
+                        ['7', '8', '9'],
+                      ])
+                        Row(mainAxisAlignment: MainAxisAlignment.center, children: [for (final d in row) key(d)]),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(width: 100),
+                          key('0'),
+                          SizedBox(
+                            width: 100,
+                            child: IconButton(
+                              iconSize: 32,
+                              onPressed: _pin.isEmpty
+                                  ? null
+                                  : () => setState(() => _pin = _pin.substring(0, _pin.length - 1)),
+                              icon: const Icon(Icons.backspace_outlined),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-            ],
+                if (widget.mode == PinMode.verify)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Text(
+                      l.pinForgot,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 14, color: Colors.black54),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

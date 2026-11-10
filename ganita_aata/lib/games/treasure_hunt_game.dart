@@ -8,6 +8,7 @@ import '../models/game_result.dart';
 import '../models/question.dart';
 import '../services/app_state.dart';
 import '../services/audio_service.dart';
+import '../widgets/app_theme.dart';
 import '../widgets/common.dart';
 import '../widgets/game_shell.dart';
 import '../widgets/l10n_ext.dart';
@@ -135,7 +136,7 @@ class _TreasureHuntGameState extends State<TreasureHuntGame> with Countdown {
                       const SizedBox(height: 4),
                       Text(
                         _opening ? l.chestOpened(Rewards.chestCoins) : l.chestsOpened(_chests),
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style: display(20, color: Colors.white),
                       ),
                     ],
                   ),

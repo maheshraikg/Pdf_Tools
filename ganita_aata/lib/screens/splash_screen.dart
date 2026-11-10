@@ -53,7 +53,6 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GameBackground(
-        colors: const [Color(0xFFFFA62B), Color(0xFFFF7A00)],
         child: Center(
           child: TweenAnimationBuilder<double>(
             tween: Tween(begin: 0.3, end: 1),
@@ -75,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   ],
                 ),
                 const SizedBox(height: 28),
-                Text(context.l10n.appTitle, style: display(52, color: Colors.white)),
+                Text(context.l10n.appTitle, style: display(52, color: AppColors.primary)),
               ],
             ),
           ),

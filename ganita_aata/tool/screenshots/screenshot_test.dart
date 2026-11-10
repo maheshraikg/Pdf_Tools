@@ -125,7 +125,7 @@ void main() {
     'settings': () => const SettingsScreen(),
   };
 
-  const extraLangs = ['hi', 'mr', 'ta', 'te', 'ml', 'bn', 'gu', 'pa', 'or', 'ur'];
+  const extraLangs = <String>[];
   for (final lang in ['kn', 'en', ...extraLangs]) {
     var n = 0;
     for (final e in screens.entries) {

@@ -93,7 +93,12 @@ class GameShell extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Expanded(
-                          child: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: display(21)),
+                          child: Text(
+                            title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: display(21, color: Colors.white),
+                          ),
                         ),
                         if (secondsLeft != null) ...[
                           Flexible(

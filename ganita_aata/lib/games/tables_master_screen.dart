@@ -340,7 +340,7 @@ class _TableQuizGameState extends State<TableQuizGame> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Text(l.questionOf(_i + 1, _questions.length), style: Theme.of(context).textTheme.titleLarge),
+              child: Text(l.questionOf(_i + 1, _questions.length), style: display(24, color: Colors.white)),
             ),
             McqPanel(
               key: ValueKey('tq_$_i'),

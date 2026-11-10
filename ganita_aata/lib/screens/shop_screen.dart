@@ -30,9 +30,9 @@ class ShopScreen extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF3EEFF),
+        backgroundColor: AppColors.night1,
         appBar: AppBar(
-          backgroundColor: const Color(0xFFF3EEFF),
+          backgroundColor: AppColors.night0,
           title: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -51,9 +51,9 @@ class ShopScreen extends StatelessWidget {
           ],
           bottom: TabBar(
             labelStyle: display(16, weight: FontWeight.w700),
-            labelColor: AppColors.secondary,
-            unselectedLabelColor: AppColors.inkSoft,
-            indicatorColor: AppColors.secondary,
+            labelColor: AppColors.primary,
+            unselectedLabelColor: AppColors.onDarkSoft,
+            indicatorColor: AppColors.primary,
             indicatorWeight: 4,
             tabs: [
               tab(GameImage(app.active!.avatar, width: 28), l.avatars),

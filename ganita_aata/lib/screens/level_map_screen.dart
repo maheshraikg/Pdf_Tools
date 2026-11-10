@@ -26,7 +26,6 @@ class LevelMapScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l.levelMap)),
       body: GameBackground(
-        colors: const [Color(0xFFBDF0C6), Color(0xFF8EDB9C)],
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 24),
           child: LayoutBuilder(
@@ -97,14 +96,14 @@ class _PathPainter extends CustomPainter {
     canvas.drawPath(
       path,
       Paint()
-        ..color = const Color(0xFFE8C48A)
+        ..color = const Color(0x55FFC23D)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 34
         ..strokeCap = StrokeCap.round,
     );
     // Dashed centre line.
     final dash = Paint()
-      ..color = Colors.white
+      ..color = AppColors.primary
       ..strokeWidth = 5
       ..strokeCap = StrokeCap.round;
     for (final m in path.computeMetrics()) {

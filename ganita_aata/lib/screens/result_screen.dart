@@ -71,7 +71,11 @@ class _ResultScreenState extends State<ResultScreen> {
                 children: [
                   Center(child: AppImage(s.stars >= 2 ? 'trophy' : (s.stars == 1 ? 'party' : 'muscle'), size: 96)),
                   const SizedBox(height: 6),
-                  Text(l.resultTitle, textAlign: TextAlign.center, style: display(32)),
+                  Text(
+                    l.resultTitle,
+                    textAlign: TextAlign.center,
+                    style: display(32, color: Colors.white),
+                  ),
                   const SizedBox(height: 8),
                   _Stars(stars: s.stars),
                   const SizedBox(height: 8),
@@ -137,7 +141,7 @@ class _ResultScreenState extends State<ResultScreen> {
                       ),
                     )
                   else if (r.mistakes.isNotEmpty) ...[
-                    Text(l.practiseThese, style: display(21)),
+                    Text(l.practiseThese, style: display(21, color: Colors.white)),
                     const SizedBox(height: 8),
                     for (final m in r.mistakes)
                       Padding(

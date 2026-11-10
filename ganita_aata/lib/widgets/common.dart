@@ -31,7 +31,17 @@ class AppImage extends StatelessWidget {
 /// Flat 2D game art from assets/game (Kenney, CC0): animal avatars,
 /// scenes, scenery, medals and cars.
 class GameImage extends StatelessWidget {
-  const GameImage(this.name, {super.key, this.width, this.height, this.fit = BoxFit.contain, this.semanticLabel});
+  const GameImage(
+    this.name, {
+    super.key,
+    this.width,
+    this.height,
+    this.fit = BoxFit.contain,
+    this.alignment = Alignment.center,
+    this.semanticLabel,
+  });
+
+  final Alignment alignment;
 
   final String name;
   final double? width;
@@ -46,6 +56,7 @@ class GameImage extends StatelessWidget {
       width: width,
       height: height,
       fit: fit,
+      alignment: alignment,
       filterQuality: FilterQuality.medium,
       semanticLabel: semanticLabel,
       excludeFromSemantics: semanticLabel == null,
@@ -115,10 +126,10 @@ class StatChip extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.fromLTRB(compact ? 6 : 8, compact ? 3 : 4, compact ? 10 : 14, compact ? 3 : 4),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.night0.withValues(alpha: 0.55),
           borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: color, width: 2.5),
-          boxShadow: [BoxShadow(color: color.withValues(alpha: 0.35), offset: const Offset(0, 3))],
+          border: Border.all(color: color, width: 2),
+          boxShadow: [BoxShadow(color: color.withValues(alpha: 0.35), blurRadius: 10)],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -128,7 +139,7 @@ class StatChip extends StatelessWidget {
             Flexible(
               child: FittedBox(
                 fit: BoxFit.scaleDown,
-                child: Text(label, style: display(compact ? 18 : 21)),
+                child: Text(label, style: display(compact ? 18 : 21, color: Colors.white)),
               ),
             ),
           ],
@@ -172,7 +183,10 @@ class ChunkyButton extends StatefulWidget {
     this.radius = 22,
     this.padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
     this.gradient = true,
+    this.colors,
   });
+
+  /// Two-tone (top, bottom) face; overrides [color].
 
   final Widget child;
   final VoidCallback? onTap;
@@ -182,6 +196,7 @@ class ChunkyButton extends StatefulWidget {
   final double radius;
   final EdgeInsets padding;
   final bool gradient;
+  final List<Color>? colors;
 
   @override
   State<ChunkyButton> createState() => _ChunkyButtonState();
@@ -193,8 +208,8 @@ class _ChunkyButtonState extends State<ChunkyButton> {
   @override
   Widget build(BuildContext context) {
     final enabled = widget.onTap != null;
-    final face = widget.color;
-    final edge = widget.edgeColor ?? darken(face);
+    final face = widget.colors?.last ?? widget.color;
+    final edge = widget.edgeColor ?? darken(face, 0.14);
     final sink = _down ? widget.depth - 1.5 : 0.0;
     final r = BorderRadius.circular(widget.radius);
     return Semantics(
@@ -222,9 +237,9 @@ class _ChunkyButtonState extends State<ChunkyButton> {
                 borderRadius: r,
                 gradient: widget.gradient
                     ? LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Color.lerp(face, Colors.white, 0.18)!, face],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: widget.colors ?? [Color.lerp(face, Colors.white, 0.18)!, face],
                       )
                     : null,
                 color: widget.gradient ? null : face,
@@ -255,9 +270,12 @@ class BigCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Card colours get their matching two-tone gradient.
+    final pair = AppColors.cards.where((c) => c.$1 == color).firstOrNull;
     return ChunkyButton(
       onTap: onTap ?? () {},
       color: color,
+      colors: pair == null ? null : [pair.$1, pair.$2],
       radius: 26,
       depth: 6,
       padding: padding,
@@ -266,42 +284,56 @@ class BigCard extends StatelessWidget {
   }
 }
 
-/// Soft gradient with a few floating bubbles, used behind screens.
+/// The night sky behind kids' screens: indigo-to-violet gradient, stars,
+/// soft glowing planets and, optionally, a landscape silhouette.
 class GameBackground extends StatelessWidget {
   const GameBackground({super.key, required this.child, this.colors, this.clouds = false, this.scene});
 
   final Widget child;
+
+  /// Custom gradient (top → bottom); defaults to the night sky.
   final List<Color>? colors;
   final bool clouds;
 
-  /// A landscape drawn along the bottom, under the sky.
+  /// A landscape drawn along the bottom as a night silhouette.
   final Scene? scene;
+
+  static const sky = [AppColors.night0, AppColors.night1, AppColors.night2];
 
   @override
   Widget build(BuildContext context) {
-    if (scene != null) {
-      return ColoredBox(
-        color: skyColor,
-        child: Stack(
-          children: [
-            Positioned(left: 0, right: 0, bottom: 0, child: GameImage('bg_${scene!.name}', fit: BoxFit.fitWidth)),
-            if (clouds) const Positioned.fill(child: DriftingClouds()),
-            Positioned.fill(child: child),
-          ],
-        ),
-      );
-    }
-    final c = colors ?? const [Color(0xFFBFE6FF), Color(0xFFFFF4E0)];
     return DecoratedBox(
       decoration: BoxDecoration(
-        gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: c),
+        gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: colors ?? sky),
       ),
       child: Stack(
         children: [
           Positioned.fill(
-            child: RepaintBoundary(child: CustomPaint(painter: _BubblesPainter())),
+            child: RepaintBoundary(child: CustomPaint(painter: _SkyPainter())),
           ),
-          if (clouds) const Positioned.fill(child: DriftingClouds()),
+          if (scene != null)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: 150,
+              child: ShaderMask(
+                // Fade the top so the band melts into the sky.
+                shaderCallback: (r) => const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0x00000000), Color(0xFF000000)],
+                  stops: [0, 0.45],
+                ).createShader(r),
+                blendMode: BlendMode.dstIn,
+                child: ColorFiltered(
+                  // Day landscape → a violet night tree-line along the bottom.
+                  colorFilter: const ColorFilter.mode(Color(0xFF4A35B0), BlendMode.modulate),
+                  child: GameImage('bg_${scene!.name}', fit: BoxFit.cover, alignment: const Alignment(0, 0.05)),
+                ),
+              ),
+            ),
+          if (clouds) const Positioned.fill(child: Opacity(opacity: 0.18, child: DriftingClouds())),
           Positioned.fill(child: child),
         ],
       ),
@@ -309,18 +341,43 @@ class GameBackground extends StatelessWidget {
   }
 }
 
-class _BubblesPainter extends CustomPainter {
+class _SkyPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final rng = Random(7);
-    final p = Paint();
-    for (var i = 0; i < 10; i++) {
-      p.color = Colors.white.withValues(alpha: 0.18 + rng.nextDouble() * 0.15);
+    final rng = Random(11);
+    // Soft glowing planets.
+    for (final (x, y, r, c) in const [
+      (0.88, 0.10, 70.0, Color(0x33FF7AD9)),
+      (0.05, 0.42, 90.0, Color(0x2A3FD5FF)),
+      (0.75, 0.68, 60.0, Color(0x26FFC23D)),
+    ]) {
       canvas.drawCircle(
-        Offset(rng.nextDouble() * size.width, rng.nextDouble() * size.height),
-        18 + rng.nextDouble() * 50,
-        p,
+        Offset(size.width * x, size.height * y),
+        r,
+        Paint()
+          ..shader = RadialGradient(colors: [c, c.withValues(alpha: 0)])
+              .createShader(Rect.fromCircle(center: Offset(size.width * x, size.height * y), radius: r)),
       );
+    }
+    // Stars.
+    final p = Paint();
+    for (var i = 0; i < 70; i++) {
+      final big = rng.nextDouble() < 0.12;
+      p.color = Colors.white.withValues(alpha: 0.25 + rng.nextDouble() * 0.6);
+      final o = Offset(rng.nextDouble() * size.width, rng.nextDouble() * size.height * 0.85);
+      if (big) {
+        // Four-point sparkle.
+        final r = 3.0 + rng.nextDouble() * 2;
+        final path = Path()
+          ..moveTo(o.dx, o.dy - r * 2)
+          ..quadraticBezierTo(o.dx, o.dy, o.dx + r * 2, o.dy)
+          ..quadraticBezierTo(o.dx, o.dy, o.dx, o.dy + r * 2)
+          ..quadraticBezierTo(o.dx, o.dy, o.dx - r * 2, o.dy)
+          ..quadraticBezierTo(o.dx, o.dy, o.dx, o.dy - r * 2);
+        canvas.drawPath(path, p);
+      } else {
+        canvas.drawCircle(o, 0.8 + rng.nextDouble() * 1.4, p);
+      }
     }
   }
 

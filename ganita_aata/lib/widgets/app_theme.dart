@@ -1,35 +1,55 @@
 import 'package:flutter/material.dart';
 
-/// Bright, child-friendly colours.
+/// "Night-sky adventure" palette: a deep indigo sky, white text on it, gold
+/// for the main action and one two-tone gradient per game. Keep to these.
 class AppColors {
   AppColors._();
 
-  static const primary = Color(0xFFFF8A00); // mango orange
-  static const primaryDark = Color(0xFFE06A00);
-  static const secondary = Color(0xFF7B5CFF); // grape purple
-  static const secondaryDark = Color(0xFF5B3FD9);
-  static const sky = Color(0xFFE6F4FF);
-  static const cream = Color(0xFFFFF7EA);
-  static const good = Color(0xFF22C55E);
-  static const goodDark = Color(0xFF16A34A);
-  static const gentle = Color(0xFFFFB547); // used instead of "red" for mistakes
-  static const coin = Color(0xFFFFC21A);
-  static const ink = Color(0xFF2B2550);
-  static const inkSoft = Color(0xFF6B6690);
+  // Sky (backgrounds).
+  static const night0 = Color(0xFF120B33);
+  static const night1 = Color(0xFF241460);
+  static const night2 = Color(0xFF3F2185);
+  static const onDark = Colors.white;
+  static const onDarkSoft = Color(0xFFCBC3FF);
+  static const glass = Color(0x1FFFFFFF);
+  static const glassBorder = Color(0x40FFFFFF);
 
-  /// Card colours: (light, dark) pairs for gradients and 3D edges.
+  // Accents.
+  static const primary = Color(0xFFFFC23D); // gold – main action
+  static const primaryDark = Color(0xFFF29A0C);
+  static const secondary = Color(0xFF8B6CFF); // violet
+  static const secondaryDark = Color(0xFF5F43D6);
+  static const good = Color(0xFF34D399); // mint – right answers
+  static const goodDark = Color(0xFF0E9F6E);
+  static const gentle = Color(0xFFFFB86B); // soft orange instead of "red"
+  static const coin = Color(0xFFFFC23D);
+
+  // Text on white surfaces.
+  static const ink = Color(0xFF1E1546);
+  static const inkSoft = Color(0xFF6E66A3);
+
+  // Light surfaces (parent screens).
+  static const sky = Color(0xFFEEEAFF);
+  static const cream = Color(0xFFF6F3FF);
+
+  /// One (top, bottom) gradient per game / answer button.
   static const cards = <(Color, Color)>[
-    (Color(0xFFFF7A8A), Color(0xFFE5485F)), // strawberry
-    (Color(0xFF4FA3FF), Color(0xFF2B7BE0)), // sky blue
-    (Color(0xFF3DDC84), Color(0xFF1FAF62)), // leaf green
-    (Color(0xFFFFB627), Color(0xFFE8920B)), // sunflower
-    (Color(0xFFA77BFF), Color(0xFF7D4FE6)), // grape
-    (Color(0xFF22D3EE), Color(0xFF0BA5C2)), // aqua
+    (Color(0xFFFF9A5A), Color(0xFFFF4F8B)), // sunset
+    (Color(0xFF3FD5FF), Color(0xFF3E7BFF)), // ocean
+    (Color(0xFF5BE7A9), Color(0xFF12B886)), // mint
+    (Color(0xFFFFD45C), Color(0xFFFF9F1C)), // mango
+    (Color(0xFFB88CFF), Color(0xFF7B4DFF)), // grape
+    (Color(0xFFFF7AD9), Color(0xFFB84DFF)), // berry
   ];
 
   static List<Color> get cardColors => [for (final c in cards) c.$1];
 
   static (Color, Color) card(int i) => cards[i % cards.length];
+
+  static List<Color> cardGradient(int i) => [card(i).$1, card(i).$2];
+
+  static const goldGradient = [Color(0xFFFFE07A), Color(0xFFFFB21E)];
+  static const mintGradient = [Color(0xFF6EF2B8), Color(0xFF14B985)];
 }
 
 /// Rounded, playful display font (Kannada + Latin).
@@ -70,9 +90,11 @@ TextStyle display(double size, {Color color = AppColors.ink, FontWeight weight =
 
 ThemeData buildTheme() {
   final scheme = ColorScheme.fromSeed(
-    seedColor: AppColors.primary,
-    primary: AppColors.primary,
-    secondary: AppColors.secondary,
+    seedColor: AppColors.secondary,
+    primary: AppColors.secondary,
+    onPrimary: Colors.white,
+    secondary: AppColors.primary,
+    onSecondary: AppColors.ink,
     surface: Colors.white,
   );
   final base = ThemeData(
@@ -90,7 +112,7 @@ ThemeData buildTheme() {
     height: 1.15,
   );
   return base.copyWith(
-    scaffoldBackgroundColor: AppColors.cream,
+    scaffoldBackgroundColor: AppColors.night1,
     textTheme: t.copyWith(
       displaySmall: d(t.displaySmall, 38),
       headlineMedium: d(t.headlineMedium, 30),
@@ -104,9 +126,9 @@ ThemeData buildTheme() {
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
-      foregroundColor: AppColors.ink,
+      foregroundColor: AppColors.onDark,
       centerTitle: true,
-      titleTextStyle: display(26),
+      titleTextStyle: display(26, color: AppColors.onDark),
     ),
     cardTheme: CardThemeData(
       elevation: 0,
@@ -125,7 +147,7 @@ ThemeData buildTheme() {
       style: OutlinedButton.styleFrom(
         minimumSize: const Size(64, 56),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        side: const BorderSide(color: AppColors.primary, width: 2),
+        side: const BorderSide(color: AppColors.secondary, width: 2),
         textStyle: display(20, weight: FontWeight.w700),
       ),
     ),
@@ -148,6 +170,19 @@ ThemeData buildTheme() {
     ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? Colors.white : null),
+    ),
+  );
+}
+
+/// Calm light theme for the parent screens (Progress, Settings, PIN).
+ThemeData buildParentTheme() {
+  final t = buildTheme();
+  return t.copyWith(
+    scaffoldBackgroundColor: AppColors.cream,
+    appBarTheme: t.appBarTheme.copyWith(
+      foregroundColor: AppColors.ink,
+      titleTextStyle: display(26),
+      backgroundColor: AppColors.cream,
     ),
   );
 }

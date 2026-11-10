@@ -130,7 +130,7 @@ class _RaceCarGameState extends State<RaceCarGame> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const AppImage('flag', size: 80),
-                          Text(l.getReady, style: display(34)),
+                          Text(l.getReady, style: display(34, color: Colors.white)),
                           Text('$_ready', style: display(120, color: AppColors.primary, height: 1)),
                         ],
                       ),

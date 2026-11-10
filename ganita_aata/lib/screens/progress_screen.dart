@@ -47,65 +47,68 @@ class _ProgressScreenState extends State<ProgressScreen> {
     final accuracy = total == 0 ? 0 : (e.totalCorrect * 100 / total).round();
     final mastered = e.facts.values.where((f) => f.mastered).length;
     final practised = e.days.values.where((d) => d.sums > 0).length;
-    return Scaffold(
-      appBar: AppBar(title: Text(l.progress)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          if (app.profiles.length > 1)
-            SizedBox(
-              height: 64,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  for (final c in app.profiles)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: ChoiceChip(
-                        avatar: GameImage(c.avatar, width: 26),
-                        label: Text(c.name, style: const TextStyle(fontSize: 18)),
-                        selected: c.id == p.id,
-                        onSelected: (_) => setState(() => _profile = c),
+    return Theme(
+      data: buildParentTheme(),
+      child: Scaffold(
+        appBar: AppBar(title: Text(l.progress)),
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            if (app.profiles.length > 1)
+              SizedBox(
+                height: 64,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    for (final c in app.profiles)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ChoiceChip(
+                          avatar: GameImage(c.avatar, width: 26),
+                          label: Text(c.name, style: const TextStyle(fontSize: 18)),
+                          selected: c.id == p.id,
+                          onSelected: (_) => setState(() => _profile = c),
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
+            Row(
+              children: [
+                AvatarCircle(avatarId: p.avatar, size: 56),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text('${p.name} · ${l.classN(p.schoolClass)}', style: Theme.of(context).textTheme.titleLarge),
+                ),
+              ],
             ),
-          Row(
-            children: [
-              AvatarCircle(avatarId: p.avatar, size: 56),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text('${p.name} · ${l.classN(p.schoolClass)}', style: Theme.of(context).textTheme.titleLarge),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            childAspectRatio: 1.6,
-            children: [
-              _Stat(label: l.totalSums, value: '$total', color: AppColors.secondary),
-              _Stat(label: l.accuracy, value: '$accuracy%', color: AppColors.good),
-              _Stat(label: l.factsMastered, value: '$mastered', color: AppColors.coin),
-              _Stat(label: l.daysPractised, value: '$practised', color: AppColors.primary),
-            ],
-          ),
-          _Section(title: l.accuracyPerTopic, child: _topicAccuracy(context, e)),
-          _Section(
-            title: l.speedOverTime,
-            child: _SpeedChart(days: e.days, now: app.now),
-          ),
-          _Section(title: l.weakFacts, child: _weakFacts(context, e)),
-          _Section(
-            title: l.daysPractised,
-            child: _Calendar(month: _month, days: e.days, onMonth: (m) => setState(() => _month = m)),
-          ),
-        ],
+            const SizedBox(height: 12),
+            GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 1.6,
+              children: [
+                _Stat(label: l.totalSums, value: '$total', color: AppColors.secondary),
+                _Stat(label: l.accuracy, value: '$accuracy%', color: AppColors.good),
+                _Stat(label: l.factsMastered, value: '$mastered', color: AppColors.coin),
+                _Stat(label: l.daysPractised, value: '$practised', color: AppColors.primary),
+              ],
+            ),
+            _Section(title: l.accuracyPerTopic, child: _topicAccuracy(context, e)),
+            _Section(
+              title: l.speedOverTime,
+              child: _SpeedChart(days: e.days, now: app.now),
+            ),
+            _Section(title: l.weakFacts, child: _weakFacts(context, e)),
+            _Section(
+              title: l.daysPractised,
+              child: _Calendar(month: _month, days: e.days, onMonth: (m) => setState(() => _month = m)),
+            ),
+          ],
+        ),
       ),
     );
   }

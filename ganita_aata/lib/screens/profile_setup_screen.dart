@@ -68,7 +68,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            Text(l.childName, style: Theme.of(context).textTheme.titleMedium),
+            Text(l.childName, style: display(20, color: Colors.white)),
             const SizedBox(height: 8),
             TextField(
               key: const ValueKey('name_field'),
@@ -87,7 +87,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               },
             ),
             const SizedBox(height: 12),
-            Text(l.schoolClass, style: Theme.of(context).textTheme.titleMedium),
+            Text(l.schoolClass, style: display(20, color: Colors.white)),
             const SizedBox(height: 8),
             Wrap(
               spacing: 10,
@@ -116,10 +116,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             const SizedBox(height: 4),
             Text(
               l.classN(_class),
-              style: display(18, color: AppColors.inkSoft, weight: FontWeight.w700),
+              style: display(18, color: AppColors.onDarkSoft, weight: FontWeight.w700),
             ),
             const SizedBox(height: 16),
-            Text(l.chooseAvatar, style: Theme.of(context).textTheme.titleMedium),
+            Text(l.chooseAvatar, style: display(20, color: Colors.white)),
             const SizedBox(height: 8),
             Wrap(
               spacing: 12,

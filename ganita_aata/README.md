@@ -197,6 +197,15 @@ names) is `lib/data/languages.dart`.
 
 ## Look and feel
 
+- **Theme – "night-sky adventure"** (`lib/widgets/app_theme.dart`): a deep
+  indigo-to-violet sky with stars and soft glowing planets behind every
+  child screen, white text on the sky, white cards with a glowing rim for
+  sums, **gold** for the main action, and one two-tone gradient per game /
+  answer button (sunset, ocean, mint, mango, grape, berry). Stick to
+  `AppColors` – no new colours. Landscapes appear as a violet night
+  tree-line along the bottom. Parent screens (Progress, Settings, PIN) use
+  a calm light theme (`buildParentTheme()`).
+
 - **Game art** (`assets/game/*.png`, Kenney, CC0 public domain): 30 round
   animal avatars, landscape scenes (grass, forest, autumn, castles, desert),
   clouds, trees, houses, castle, medals and race cars/track props.

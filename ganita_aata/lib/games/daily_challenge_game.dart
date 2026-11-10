@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/game_result.dart';
 import '../models/question.dart';
 import '../services/app_state.dart';
+import '../widgets/app_theme.dart';
 import '../widgets/common.dart';
 import '../widgets/game_shell.dart';
 import '../widgets/l10n_ext.dart';
@@ -64,7 +65,7 @@ class _DailyChallengeGameState extends State<DailyChallengeGame> {
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Column(
                 children: [
-                  Text(l.questionOf(_i + 1, _questions.length), style: Theme.of(context).textTheme.titleLarge),
+                  Text(l.questionOf(_i + 1, _questions.length), style: display(24, color: Colors.white)),
                   const SizedBox(height: 6),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
