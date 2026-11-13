@@ -97,7 +97,7 @@ Hive (`hive_ce`) with JSON values, all on the device.
 
 ## Build
 
-Requires Flutter stable (3.47+, Dart 3.13+), JDK 17 and the Android SDK.
+Requires Flutter 3.47.9 (stable; CI is pinned to it), Dart 3.13+, JDK 17 and the Android SDK.
 
 ```sh
 cd ganita_aata
