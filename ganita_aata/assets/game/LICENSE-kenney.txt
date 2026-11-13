@@ -1,0 +1,12 @@
+Game art in assets/game/ (animal avatars, scene backgrounds, clouds, trees,
+buildings, medals and race cars) is by Kenney (www.kenney.nl), from the packs
+"Animal Pack Remastered", "Background Elements Remastered", "Medals" and
+"Racing Pack".
+
+License: Creative Commons Zero, CC0 1.0 Universal
+http://creativecommons.org/publicdomain/zero/1.0/
+
+"You can use this content for personal, educational, and commercial purposes.
+Support by crediting 'Kenney' or 'www.kenney.nl' (this is not a requirement)."
+
+Thank you, Kenney!

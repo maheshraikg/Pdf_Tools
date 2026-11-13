@@ -1,0 +1,179 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+
+import 'app_theme.dart';
+import 'common.dart';
+import 'l10n_ext.dart';
+import '../services/audio_service.dart';
+import 'motion.dart';
+import 'music_scope.dart';
+
+/// Common frame for game screens: close button (asks before leaving),
+/// title, timer and score.
+class GameShell extends StatelessWidget {
+  const GameShell({
+    super.key,
+    required this.title,
+    required this.child,
+    this.secondsLeft,
+    this.score,
+    this.background,
+    this.scene = Scene.grass,
+    this.confirmExit = true,
+    this.combo = 0,
+    this.totalSeconds,
+  });
+
+  final String title;
+  final Widget child;
+  final int? secondsLeft;
+  final int? score;
+  final List<Color>? background;
+
+  /// Landscape along the bottom (ignored when [background] is set).
+  final Scene scene;
+  final bool confirmExit;
+
+  /// Right answers in a row; shown as a flame badge from 2 up.
+  final int combo;
+
+  /// Length of a timed round; shows the time bar.
+  final int? totalSeconds;
+
+  static Future<bool> askToQuit(BuildContext context) async {
+    final l = context.l10n;
+    final r = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text(l.quitGameTitle),
+        content: Text(l.quitGameBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, true), child: Text(l.stop)),
+          FilledButton(onPressed: () => Navigator.pop(c, false), child: Text(l.keepPlaying)),
+        ],
+      ),
+    );
+    return r ?? false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return MusicScope(
+      track: MusicTrack.game,
+      child: PopScope(
+        canPop: !confirmExit,
+        onPopInvokedWithResult: (didPop, _) async {
+          if (didPop) return;
+          final nav = Navigator.of(context);
+          if (await askToQuit(context)) nav.pop();
+        },
+        child: Scaffold(
+          body: GameBackground(
+            colors: background,
+            scene: background == null ? scene : null,
+            clouds: background == null,
+            child: SafeArea(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 8, 12, 4),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 48,
+                          height: 50,
+                          child: ChunkyButton(
+                            key: const ValueKey('close_game'),
+                            color: Colors.white,
+                            edgeColor: const Color(0xFFD5CFEA),
+                            radius: 16,
+                            depth: 4,
+                            padding: EdgeInsets.zero,
+                            onTap: () => Navigator.maybePop(context),
+                            child: Icon(Icons.close_rounded, size: 28, color: AppColors.inkSoft, semanticLabel: l.stop),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: display(21, color: Colors.white),
+                          ),
+                        ),
+                        if (secondsLeft != null) ...[
+                          Flexible(
+                            child: StatChip(
+                              icon: Icon(
+                                Icons.timer_rounded,
+                                color: secondsLeft! <= 10 ? AppColors.primary : AppColors.ink,
+                              ),
+                              label: l.secondsShort(secondsLeft!),
+                              color: secondsLeft! <= 10 ? AppColors.primary : AppColors.secondary,
+                              compact: true,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                        ],
+                        if (score != null)
+                          StatChip(
+                            icon: const AppImage('star', size: 22),
+                            label: '$score',
+                            semantics: l.score,
+                            compact: true,
+                          ),
+                      ],
+                    ),
+                  ),
+                  if (secondsLeft != null && totalSeconds != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: TimeBar(secondsLeft: secondsLeft!, total: totalSeconds!),
+                    ),
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        Positioned.fill(child: child),
+                        Positioned(top: 0, right: 12, child: ComboBadge(combo: combo)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A one-second countdown for timed rounds.
+mixin Countdown<T extends StatefulWidget> on State<T> {
+  Timer? _timer;
+  int secondsLeft = 0;
+
+  void startCountdown(int seconds, {required VoidCallback onDone}) {
+    secondsLeft = seconds;
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (!mounted) return t.cancel();
+      setState(() => secondsLeft--);
+      if (secondsLeft <= 0) {
+        t.cancel();
+        onDone();
+      }
+    });
+  }
+
+  void stopCountdown() => _timer?.cancel();
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+}
