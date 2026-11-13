@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'motion.dart';
+
 /// "Night-sky adventure" palette: a deep indigo sky, white text on it, gold
 /// for the main action and one two-tone gradient per game. Keep to these.
 class AppColors {
@@ -113,6 +115,13 @@ ThemeData buildTheme() {
   );
   return base.copyWith(
     scaffoldBackgroundColor: AppColors.night1,
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: PlayfulPageTransitionsBuilder(),
+        TargetPlatform.iOS: PlayfulPageTransitionsBuilder(),
+        TargetPlatform.linux: PlayfulPageTransitionsBuilder(),
+      },
+    ),
     textTheme: t.copyWith(
       displaySmall: d(t.displaySmall, 38),
       headlineMedium: d(t.headlineMedium, 30),

@@ -14,7 +14,7 @@ parents.
   on the phone. Settings, Progress and reset are behind a parent PIN.
 - Package name: `com.ganitaaata.app`. Portrait only.
 
-<img src="docs/icon_512.png" width="96" alt="App icon">
+<img src="docs/icon_512.png" width="96" alt="App icon"> <img src="docs/preview.gif" width="240" alt="Animated preview">
 
 ## Features
 
@@ -211,7 +211,11 @@ names) is `lib/data/languages.dart`.
   clouds, trees, houses, castle, medals and race cars/track props.
   `GameImage('name')` shows one; `GameBackground(scene: Scene.grass)` draws a
   landscape under the sky.
-- **Motion** (`lib/widgets/motion.dart`): bobbing owl mascot and avatar,
+- **Motion** (`lib/widgets/motion.dart`): soft zoom-and-fade screen
+  transitions, twinkling stars, sums and answer buttons that pop in one by
+  one, an owl that hops for right answers and tilts "hmm" for wrong ones,
+  scores and coins that count up, a gold time bar in timed games, a light
+  sweep across gold buttons, confetti behind new badges, haptic taps, plus bobbing owl mascot and avatar,
   drifting clouds, pulsing Play button, wiggling game icons, bouncing card
   entrances, a hopping "you are here" avatar on the level map, coins and
   star bursts on right answers, and a flame combo counter for answers in a

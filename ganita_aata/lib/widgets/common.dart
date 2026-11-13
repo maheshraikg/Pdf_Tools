@@ -1,6 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'app_theme.dart';
@@ -216,7 +215,12 @@ class _ChunkyButtonState extends State<ChunkyButton> {
       button: true,
       enabled: enabled,
       child: GestureDetector(
-        onTapDown: enabled ? (_) => setState(() => _down = true) : null,
+        onTapDown: enabled
+            ? (_) {
+                HapticFeedback.selectionClick();
+                setState(() => _down = true);
+              }
+            : null,
         onTapUp: enabled ? (_) => setState(() => _down = false) : null,
         onTapCancel: enabled ? () => setState(() => _down = false) : null,
         onTap: widget.onTap,
@@ -308,9 +312,7 @@ class GameBackground extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Positioned.fill(
-            child: RepaintBoundary(child: CustomPaint(painter: _SkyPainter())),
-          ),
+          const Positioned.fill(child: RepaintBoundary(child: TwinklingSky())),
           if (scene != null)
             Positioned(
               left: 0,
@@ -339,50 +341,6 @@ class GameBackground extends StatelessWidget {
       ),
     );
   }
-}
-
-class _SkyPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rng = Random(11);
-    // Soft glowing planets.
-    for (final (x, y, r, c) in const [
-      (0.88, 0.10, 70.0, Color(0x33FF7AD9)),
-      (0.05, 0.42, 90.0, Color(0x2A3FD5FF)),
-      (0.75, 0.68, 60.0, Color(0x26FFC23D)),
-    ]) {
-      canvas.drawCircle(
-        Offset(size.width * x, size.height * y),
-        r,
-        Paint()
-          ..shader = RadialGradient(colors: [c, c.withValues(alpha: 0)])
-              .createShader(Rect.fromCircle(center: Offset(size.width * x, size.height * y), radius: r)),
-      );
-    }
-    // Stars.
-    final p = Paint();
-    for (var i = 0; i < 70; i++) {
-      final big = rng.nextDouble() < 0.12;
-      p.color = Colors.white.withValues(alpha: 0.25 + rng.nextDouble() * 0.6);
-      final o = Offset(rng.nextDouble() * size.width, rng.nextDouble() * size.height * 0.85);
-      if (big) {
-        // Four-point sparkle.
-        final r = 3.0 + rng.nextDouble() * 2;
-        final path = Path()
-          ..moveTo(o.dx, o.dy - r * 2)
-          ..quadraticBezierTo(o.dx, o.dy, o.dx + r * 2, o.dy)
-          ..quadraticBezierTo(o.dx, o.dy, o.dx, o.dy + r * 2)
-          ..quadraticBezierTo(o.dx, o.dy, o.dx - r * 2, o.dy)
-          ..quadraticBezierTo(o.dx, o.dy, o.dx, o.dy - r * 2);
-        canvas.drawPath(path, p);
-      } else {
-        canvas.drawCircle(o, 0.8 + rng.nextDouble() * 1.4, p);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 /// The owl mascot with a speech bubble.

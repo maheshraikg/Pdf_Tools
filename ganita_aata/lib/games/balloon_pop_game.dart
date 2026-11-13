@@ -157,12 +157,16 @@ class _BalloonPopGameState extends State<BalloonPopGame> with SingleTickerProvid
       combo: GameResult.comboOf(_results),
       title: l.gameBalloon,
       secondsLeft: secondsLeft,
+      totalSeconds: BalloonPopGame.roundSeconds,
       score: _results.where((r) => r.correct).length,
       child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-            child: QuestionCard(question: _q, fontSize: 42),
+            child: Entrance(
+              key: ValueKey('q_${_results.length}'),
+              child: QuestionCard(question: _q, fontSize: 42),
+            ),
           ),
           const SizedBox(height: 4),
           FeedbackLine(text: _feedback, good: _feedbackGood),

@@ -108,6 +108,7 @@ class _TreasureHuntGameState extends State<TreasureHuntGame> with Countdown {
       combo: GameResult.comboOf(_results),
       title: l.gameTreasure,
       secondsLeft: secondsLeft,
+      totalSeconds: TreasureHuntGame.roundSeconds,
       score: _results.where((r) => r.correct).length,
       scene: Scene.desert,
       child: SingleChildScrollView(

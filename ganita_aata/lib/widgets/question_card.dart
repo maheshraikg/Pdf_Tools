@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../models/question.dart';
 import 'app_theme.dart';
-import 'common.dart';
 import 'l10n_ext.dart';
+import 'motion.dart';
 
 /// The current sum, in very large type, on a white card with a colourful rim.
 class QuestionCard extends StatelessWidget {
@@ -71,7 +71,7 @@ class FeedbackLine extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  AppImage(good ? 'glow_star' : 'muscle', size: 32),
+                  OwlReaction(happy: good, size: 40),
                   const SizedBox(width: 6),
                   Flexible(
                     child: FittedBox(

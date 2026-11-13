@@ -22,6 +22,7 @@ class GameShell extends StatelessWidget {
     this.scene = Scene.grass,
     this.confirmExit = true,
     this.combo = 0,
+    this.totalSeconds,
   });
 
   final String title;
@@ -36,6 +37,9 @@ class GameShell extends StatelessWidget {
 
   /// Right answers in a row; shown as a flame badge from 2 up.
   final int combo;
+
+  /// Length of a timed round; shows the time bar.
+  final int? totalSeconds;
 
   static Future<bool> askToQuit(BuildContext context) async {
     final l = context.l10n;
@@ -124,6 +128,11 @@ class GameShell extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (secondsLeft != null && totalSeconds != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: TimeBar(secondsLeft: secondsLeft!, total: totalSeconds!),
+                    ),
                   Expanded(
                     child: Stack(
                       children: [

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/question.dart';
 import 'app_theme.dart';
 import 'common.dart';
+import 'motion.dart';
 import 'l10n_ext.dart';
 import 'shake.dart';
 
@@ -46,34 +47,37 @@ class AnswerGrid extends StatelessWidget {
                   : isChosen
                   ? AppColors.gentle
                   : const Color(0xFFCFCBE0);
-              return Shake(
-                active: done && isChosen && !isRight,
-                child: AnimatedScale(
-                  scale: done && isRight ? 1.06 : 1,
-                  duration: const Duration(milliseconds: 200),
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Positioned.fill(
-                        child: ChunkyButton(
-                          key: ValueKey('answer_$i'),
-                          color: color,
-                          radius: 24,
-                          depth: 7,
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          onTap: done ? null : () => onTap(options[i]),
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              l.answerText(options[i]),
-                              textDirection: TextDirection.ltr,
-                              style: display(42, color: Colors.white),
+              return Entrance(
+                delay: 90 + 70 * i,
+                child: Shake(
+                  active: done && isChosen && !isRight,
+                  child: AnimatedScale(
+                    scale: done && isRight ? 1.06 : 1,
+                    duration: const Duration(milliseconds: 200),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Positioned.fill(
+                          child: ChunkyButton(
+                            key: ValueKey('answer_$i'),
+                            color: color,
+                            radius: 24,
+                            depth: 7,
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            onTap: done ? null : () => onTap(options[i]),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                l.answerText(options[i]),
+                                textDirection: TextDirection.ltr,
+                                style: display(42, color: Colors.white),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      if (done && isRight) const Positioned(right: -6, top: -10, child: AppImage('check', size: 34)),
-                    ],
+                        if (done && isRight) const Positioned(right: -6, top: -10, child: AppImage('check', size: 34)),
+                      ],
+                    ),
                   ),
                 ),
               );

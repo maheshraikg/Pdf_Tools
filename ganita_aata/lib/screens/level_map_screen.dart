@@ -60,12 +60,15 @@ class LevelMapScreen extends StatelessWidget {
                         left: points[i].dx - 70,
                         top: points[i].dy - 50,
                         width: 140,
-                        child: _LevelNode(
-                          level: levels[i],
-                          unlocked: app.isLevelUnlocked(levels[i].number),
-                          openTopics: levels[i].topics.where((t) => app.isUnlocked(t.id)).length,
-                          current: levels[i].topics.any((t) => t.id == app.active?.currentTopic),
-                          avatar: app.active?.avatar,
+                        child: Entrance(
+                          delay: 120 * i,
+                          child: _LevelNode(
+                            level: levels[i],
+                            unlocked: app.isLevelUnlocked(levels[i].number),
+                            openTopics: levels[i].topics.where((t) => app.isUnlocked(t.id)).length,
+                            current: levels[i].topics.any((t) => t.id == app.active?.currentTopic),
+                            avatar: app.active?.avatar,
+                          ),
                         ),
                       ),
                   ],

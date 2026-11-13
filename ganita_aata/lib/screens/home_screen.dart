@@ -93,25 +93,28 @@ class HomeScreen extends StatelessWidget {
               _DailyCard(done: app.dailyDoneToday),
               const SizedBox(height: 16),
               Pulse(
-                child: ChunkyButton(
-                  key: const ValueKey('play_button'),
-                  color: AppColors.good,
-                  depth: 8,
+                child: Shimmer(
                   radius: 28,
-                  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-                  onTap: openMap,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.play_arrow_rounded, size: 48, color: Colors.white),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(l.play, style: display(38, color: Colors.white)),
+                  child: ChunkyButton(
+                    key: const ValueKey('play_button'),
+                    color: AppColors.good,
+                    depth: 8,
+                    radius: 28,
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                    onTap: openMap,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.play_arrow_rounded, size: 48, color: Colors.white),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(l.play, style: display(38, color: Colors.white)),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

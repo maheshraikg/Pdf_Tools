@@ -8,6 +8,7 @@ import '../widgets/app_theme.dart';
 import '../widgets/badge_popup.dart';
 import '../widgets/common.dart';
 import '../widgets/confetti.dart';
+import '../widgets/motion.dart';
 import '../widgets/l10n_ext.dart';
 
 /// Score, stars, coins, mistakes with correct answers, and what to do next.
@@ -88,15 +89,35 @@ class _ResultScreenState extends State<ResultScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: _Tile(label: l.score, value: '${r.correct}/${r.total}', color: AppColors.secondary),
+                        child: Entrance(
+                          delay: 300,
+                          child: CountUp(
+                            value: r.correct,
+                            builder: (c, v) =>
+                                _Tile(label: l.score, value: '$v/${r.total}', color: AppColors.secondary),
+                          ),
+                        ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: _Tile(label: l.correctLabel, value: '${r.correct}', color: AppColors.good),
+                        child: Entrance(
+                          delay: 420,
+                          child: CountUp(
+                            value: r.correct,
+                            builder: (c, v) => _Tile(label: l.correctLabel, value: '$v', color: AppColors.good),
+                          ),
+                        ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: _Tile(label: l.practiseLabel, value: '${r.total - r.correct}', color: AppColors.gentle),
+                        child: Entrance(
+                          delay: 540,
+                          child: _Tile(
+                            label: l.practiseLabel,
+                            value: '${r.total - r.correct}',
+                            color: AppColors.gentle,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -107,7 +128,11 @@ class _ResultScreenState extends State<ResultScreen> {
                       duration: const Duration(milliseconds: 700),
                       curve: Curves.elasticOut,
                       builder: (c, v, child) => Transform.scale(scale: v, child: child),
-                      child: StatChip(icon: const AppImage('coin', size: 32), label: l.coinsEarned(s.coins)),
+                      child: CountUp(
+                        value: s.coins,
+                        ms: 1200,
+                        builder: (c, v) => StatChip(icon: const AppImage('coin', size: 32), label: l.coinsEarned(v)),
+                      ),
                     ),
                   ),
                   for (final e in extras)
@@ -193,21 +218,24 @@ class _ResultScreenState extends State<ResultScreen> {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: ChunkyButton(
-                          key: const ValueKey('again_btn'),
-                          color: AppColors.primary,
-                          onTap: () => widget.onReplay(context),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.replay_rounded, color: Colors.white, size: 28),
-                              const SizedBox(width: 6),
-                              Flexible(
-                                child: FittedBox(
-                                  child: Text(l.playAgain, style: display(21, color: Colors.white)),
+                        child: Shimmer(
+                          radius: 22,
+                          child: ChunkyButton(
+                            key: const ValueKey('again_btn'),
+                            color: AppColors.primary,
+                            onTap: () => widget.onReplay(context),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.replay_rounded, color: Colors.white, size: 28),
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: FittedBox(
+                                    child: Text(l.playAgain, style: display(21, color: Colors.white)),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),

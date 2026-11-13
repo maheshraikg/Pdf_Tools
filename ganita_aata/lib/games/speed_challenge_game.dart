@@ -136,6 +136,7 @@ class _SpeedChallengeGameState extends State<SpeedChallengeGame> with Countdown 
       title: l.gameSpeed,
       scene: Scene.castles,
       secondsLeft: secondsLeft,
+      totalSeconds: SpeedChallengeGame.roundSeconds,
       score: score,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -155,7 +156,10 @@ class _SpeedChallengeGameState extends State<SpeedChallengeGame> with Countdown 
               ],
             ),
             const SizedBox(height: 6),
-            QuestionCard(question: _q, fontSize: small ? 36 : 44),
+            Entrance(
+              key: ValueKey('q_${_results.length}'),
+              child: QuestionCard(question: _q, fontSize: small ? 36 : 44),
+            ),
             FeedbackLine(text: _flashGood == null ? null : _feedback, good: _flashGood ?? true),
             Stack(
               clipBehavior: Clip.none,

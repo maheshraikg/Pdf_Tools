@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'app_theme.dart';
 import 'badge_icon.dart';
 import 'common.dart';
+import 'confetti.dart';
 import 'l10n_ext.dart';
 
 /// Celebrates a newly earned badge with a bouncing, spinning medal.
@@ -20,42 +21,47 @@ Future<void> showBadgePopup(BuildContext context, String badgeId) {
       final t = Curves.elasticOut.transform(anim.value.clamp(0.0, 1.0));
       return Opacity(
         opacity: anim.value.clamp(0.0, 1.0),
-        child: Center(
-          child: Transform.scale(
-            scale: 0.4 + 0.6 * t,
-            child: Material(
-              color: Colors.transparent,
-              child: Container(
-                width: 300,
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(32)),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(l.newBadge, style: display(30, color: AppColors.primaryDark)),
-                    const SizedBox(height: 12),
-                    TweenAnimationBuilder<double>(
-                      tween: Tween(begin: 0, end: 1),
-                      duration: const Duration(milliseconds: 1200),
-                      builder: (c, v, child) => Transform.rotate(angle: sin(v * pi * 2) * 0.25, child: child),
-                      child: BadgeIcon(id: badgeId, size: 130),
+        child: Stack(
+          children: [
+            const Positioned.fill(child: Confetti(pieces: 50)),
+            Center(
+              child: Transform.scale(
+                scale: 0.4 + 0.6 * t,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    width: 300,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(32)),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(l.newBadge, style: display(30, color: AppColors.primaryDark)),
+                        const SizedBox(height: 12),
+                        TweenAnimationBuilder<double>(
+                          tween: Tween(begin: 0, end: 1),
+                          duration: const Duration(milliseconds: 1200),
+                          builder: (c, v, child) => Transform.rotate(angle: sin(v * pi * 2) * 0.25, child: child),
+                          child: BadgeIcon(id: badgeId, size: 130),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(l.badgeName(badgeId), textAlign: TextAlign.center, style: display(24)),
+                        const SizedBox(height: 4),
+                        Text(l.badgeDesc(badgeId), textAlign: TextAlign.center),
+                        const SizedBox(height: 16),
+                        ChunkyButton(
+                          key: const ValueKey('badge_ok'),
+                          color: AppColors.good,
+                          onTap: () => Navigator.pop(c),
+                          child: Text(l.yay, style: display(22, color: Colors.white)),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    Text(l.badgeName(badgeId), textAlign: TextAlign.center, style: display(24)),
-                    const SizedBox(height: 4),
-                    Text(l.badgeDesc(badgeId), textAlign: TextAlign.center),
-                    const SizedBox(height: 16),
-                    ChunkyButton(
-                      key: const ValueKey('badge_ok'),
-                      color: AppColors.good,
-                      onTap: () => Navigator.pop(c),
-                      child: Text(l.yay, style: display(22, color: Colors.white)),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
       );
     },

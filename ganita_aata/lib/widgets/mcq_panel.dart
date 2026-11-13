@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../models/game_result.dart';
@@ -62,6 +63,7 @@ class _McqPanelState extends State<McqPanel> {
     final ok = a == widget.question.answer;
     app.recordAnswer(widget.question, ok, ms);
     if (ok) {
+      HapticFeedback.lightImpact();
       app.audio.sfx(Sfx.correct);
     } else if (widget.speakAnswer) {
       app.audio.wrongThenAnswer(widget.question.answer, app.lang);
@@ -90,7 +92,7 @@ class _McqPanelState extends State<McqPanel> {
           clipBehavior: Clip.none,
           alignment: Alignment.center,
           children: [
-            QuestionCard(question: widget.question),
+            Entrance(child: QuestionCard(question: widget.question)),
             if (_chosen != null && _chosen == widget.question.answer) ...[
               const StarBurst(),
               const Positioned(right: 8, top: -6, child: FloatingReward()),

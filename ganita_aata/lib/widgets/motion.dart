@@ -331,3 +331,244 @@ class ComboBadge extends StatelessWidget {
     );
   }
 }
+
+/// A soft light sweep across its child every few seconds (gold buttons).
+class Shimmer extends StatefulWidget {
+  const Shimmer({super.key, required this.child, this.period = 3200, this.radius = 24});
+
+  final Widget child;
+  final int period;
+  final double radius;
+
+  @override
+  State<Shimmer> createState() => _ShimmerState();
+}
+
+class _ShimmerState extends _LoopState<Shimmer> {
+  @override
+  Duration get period => Duration(milliseconds: widget.period);
+
+  @override
+  Widget build(BuildContext context) => Stack(
+    children: [
+      widget.child,
+      Positioned.fill(
+        child: IgnorePointer(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(widget.radius),
+            child: AnimatedBuilder(
+              animation: loop,
+              builder: (context, _) {
+                // Sweep during the first 35% of each cycle.
+                final v = (loop.value / 0.35).clamp(0.0, 1.0);
+                if (v <= 0 || v >= 1) return const SizedBox.shrink();
+                return FractionallySizedBox(
+                  widthFactor: 0.35,
+                  alignment: Alignment(-1.6 + 3.2 * v, 0),
+                  child: Transform(
+                    transform: Matrix4.skewX(-0.35),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.white.withValues(alpha: 0),
+                            Colors.white.withValues(alpha: 0.45),
+                            Colors.white.withValues(alpha: 0),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+/// Counts a number up from 0 when it first appears (scores, coins).
+class CountUp extends StatelessWidget {
+  const CountUp({super.key, required this.value, required this.builder, this.ms = 900});
+
+  final int value;
+  final Widget Function(BuildContext context, int shown) builder;
+  final int ms;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: value.toDouble()),
+      duration: Duration(milliseconds: motionEnabled ? ms : 1),
+      curve: Curves.easeOutCubic,
+      builder: (context, v, _) => builder(context, v.round()),
+    );
+  }
+}
+
+/// The owl mascot reacting to an answer: a happy hop or a gentle "hmm" tilt.
+class OwlReaction extends StatelessWidget {
+  const OwlReaction({super.key, required this.happy, this.size = 44});
+
+  final bool happy;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 700),
+      builder: (context, t, child) {
+        if (happy) {
+          final hop = sin(t * pi * 2) * (1 - t);
+          return Transform.translate(
+            offset: Offset(0, -18 * hop.abs()),
+            child: Transform.scale(scale: 1 + 0.15 * hop.abs(), child: child),
+          );
+        }
+        return Transform.rotate(angle: sin(t * pi * 3) * 0.2 * (1 - t), child: child);
+      },
+      child: GameImage('av_owl', width: size, height: size),
+    );
+  }
+}
+
+/// Screen-to-screen transition: the new page zooms in softly with a fade.
+class PlayfulPageTransitionsBuilder extends PageTransitionsBuilder {
+  const PlayfulPageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final a = CurvedAnimation(parent: animation, curve: Curves.easeOutBack, reverseCurve: Curves.easeIn);
+    final out = CurvedAnimation(parent: secondaryAnimation, curve: Curves.easeOut);
+    return FadeTransition(
+      opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+      child: ScaleTransition(
+        scale: Tween(begin: 0.92, end: 1.0).animate(a),
+        child: FadeTransition(
+          opacity: Tween(begin: 1.0, end: 0.6).animate(out),
+          child: ScaleTransition(scale: Tween(begin: 1.0, end: 0.96).animate(out), child: child),
+        ),
+      ),
+    );
+  }
+}
+
+/// A thin bar showing the time left in a round; turns orange near the end.
+class TimeBar extends StatelessWidget {
+  const TimeBar({super.key, required this.secondsLeft, required this.total});
+
+  final int secondsLeft;
+  final int total;
+
+  @override
+  Widget build(BuildContext context) {
+    final f = total <= 0 ? 0.0 : (secondsLeft / total).clamp(0.0, 1.0);
+    final low = secondsLeft <= 10;
+    return Container(
+      height: 8,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(end: f),
+        duration: const Duration(milliseconds: 950),
+        builder: (context, v, _) => FractionallySizedBox(
+          alignment: Alignment.centerLeft,
+          widthFactor: v,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              gradient: LinearGradient(
+                colors: low ? const [Color(0xFFFFB86B), Color(0xFFFF6B6B)] : AppColors.goldGradient,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: (low ? const Color(0xFFFF8A5B) : AppColors.primary).withValues(alpha: 0.6),
+                  blurRadius: 8,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The night sky's stars, softly twinkling, and glowing planets.
+class TwinklingSky extends StatefulWidget {
+  const TwinklingSky({super.key});
+
+  @override
+  State<TwinklingSky> createState() => _TwinklingSkyState();
+}
+
+class _TwinklingSkyState extends _LoopState<TwinklingSky> {
+  @override
+  Duration get period => const Duration(seconds: 5);
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: loop,
+    builder: (context, _) => CustomPaint(painter: _SkyPainter(loop.value)),
+  );
+}
+
+class _SkyPainter extends CustomPainter {
+  _SkyPainter(this.t);
+
+  /// 0–1 twinkle phase.
+  final double t;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rng = Random(11);
+    // Soft glowing planets.
+    for (final (x, y, r, c) in const [
+      (0.88, 0.10, 70.0, Color(0x33FF7AD9)),
+      (0.05, 0.42, 90.0, Color(0x2A3FD5FF)),
+      (0.75, 0.68, 60.0, Color(0x26FFC23D)),
+    ]) {
+      canvas.drawCircle(
+        Offset(size.width * x, size.height * y),
+        r,
+        Paint()
+          ..shader = RadialGradient(colors: [c, c.withValues(alpha: 0)])
+              .createShader(Rect.fromCircle(center: Offset(size.width * x, size.height * y), radius: r)),
+      );
+    }
+    // Stars.
+    final p = Paint();
+    for (var i = 0; i < 70; i++) {
+      final big = rng.nextDouble() < 0.12;
+      final base = 0.25 + rng.nextDouble() * 0.6;
+      final phase = rng.nextDouble() * 2 * pi;
+      p.color = Colors.white.withValues(alpha: (base * (0.55 + 0.45 * sin(t * 2 * pi + phase))).clamp(0.0, 1.0));
+      final o = Offset(rng.nextDouble() * size.width, rng.nextDouble() * size.height * 0.85);
+      if (big) {
+        // Four-point sparkle.
+        final r = 3.0 + rng.nextDouble() * 2;
+        final path = Path()
+          ..moveTo(o.dx, o.dy - r * 2)
+          ..quadraticBezierTo(o.dx, o.dy, o.dx + r * 2, o.dy)
+          ..quadraticBezierTo(o.dx, o.dy, o.dx, o.dy + r * 2)
+          ..quadraticBezierTo(o.dx, o.dy, o.dx - r * 2, o.dy)
+          ..quadraticBezierTo(o.dx, o.dy, o.dx, o.dy - r * 2);
+        canvas.drawPath(path, p);
+      } else {
+        canvas.drawCircle(o, 0.8 + rng.nextDouble() * 1.4, p);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_SkyPainter old) => old.t != t;
+}
